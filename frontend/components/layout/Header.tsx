@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Search } from 'lucide-react';
 import { useUI } from '../../context/UIContext';
 import ThemeToggle from '../ui/ThemeToggle';
-import SearchBar from '../ui/SearchBar';
 
 const Header = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const { isMobileMenuOpen, setMobileMenuOpen } = useUI();
-  const [showSearch, setShowSearch] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   
   // Ensure component is mounted on the client
   useEffect(() => {
@@ -36,8 +36,11 @@ const Header = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
   
-  const toggleSearch = () => {
-    setShowSearch(!showSearch);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/stocks/${encodeURIComponent(searchQuery.trim())}`);
+    }
   };
   
   return (
@@ -68,17 +71,31 @@ const Header = () => {
             ))}
           </nav>
           
+          {/* Search Bar (Desktop) */}
+          <div className="hidden md:block relative w-64 lg:w-80">
+            <form onSubmit={handleSearch} className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search stocks (e.g., ITC)"
+                className="w-full py-2 pl-10 pr-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                aria-label="Search stocks"
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <Search className="w-4 h-4 text-gray-400" aria-hidden="true" />
+              </div>
+              <button 
+                type="submit"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 hover:text-blue-800"
+              >
+                Go
+              </button>
+            </form>
+          </div>
+          
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            {/* Search Button */}
-            <button
-              onClick={toggleSearch}
-              className="p-2 rounded-full text-gray-600 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:bg-gray-800"
-              aria-label="Search"
-            >
-              {mounted ? <Search size={20} suppressHydrationWarning /> : <span className="w-5 h-5"></span>}
-            </button>
-            
             {/* Theme Toggle */}
             <ThemeToggle />
             
@@ -119,13 +136,29 @@ const Header = () => {
                 </Link>
               ))}
             </nav>
-          </div>
-        )}
-        
-        {/* Search Bar */}
-        {showSearch && (
-          <div className="py-3 border-t border-gray-200 dark:border-gray-800">
-            <SearchBar onClose={toggleSearch} />
+            
+            {/* Search Bar (Mobile) */}
+            <div className="mt-4 px-2">
+              <form onSubmit={handleSearch} className="relative">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search stocks (e.g., ITC)"
+                  className="w-full py-2 pl-10 pr-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  aria-label="Search stocks"
+                />
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Search className="w-4 h-4 text-gray-400" aria-hidden="true" />
+                </div>
+                <button 
+                  type="submit"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 hover:text-blue-800"
+                >
+                  Go
+                </button>
+              </form>
+            </div>
           </div>
         )}
       </div>
