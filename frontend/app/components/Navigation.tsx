@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { Button } from '../../components/ui/button';
 import { Moon, Sun, Menu, X, Bug } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import SearchBar from './SearchBar';
 
 interface NavLinkProps {
   href: string;
@@ -83,6 +82,7 @@ const Navigation: React.FC = () => {
               <div className="flex space-x-1">
                 <NavLink href="/dashboard">Dashboard</NavLink>
                 <NavLink href="/stocks">Stocks</NavLink>
+                <NavLink href="/search">Advanced Search</NavLink>
                 <NavLink href="/mutual-funds">Mutual Funds</NavLink>
                 <NavLink href="/commodities">Commodities</NavLink>
                 <NavLink href="/ipo">IPO</NavLink>
@@ -139,6 +139,7 @@ const Navigation: React.FC = () => {
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <NavLink href="/dashboard" className="block">Dashboard</NavLink>
               <NavLink href="/stocks" className="block">Stocks</NavLink>
+              <NavLink href="/search" className="block">Advanced Search</NavLink>
               <NavLink href="/mutual-funds" className="block">Mutual Funds</NavLink>
               <NavLink href="/commodities" className="block">Commodities</NavLink>
               <NavLink href="/ipo" className="block">IPO</NavLink>
@@ -148,22 +149,10 @@ const Navigation: React.FC = () => {
                   {mounted && <Bug className="inline-block w-4 h-4 mr-1" />} Debug
                 </span>
               </NavLink>
-              
-              {/* Mobile Search */}
-              <div className="mt-3 px-2" suppressHydrationWarning>
-                <SearchBar />
-              </div>
             </div>
           </div>
         )}
       </nav>
-      
-      {/* Search Bar (Desktop) */}
-      <div className="bg-gray-50 dark:bg-gray-900 py-3 border-b border-gray-200 dark:border-gray-800 hidden md:block" suppressHydrationWarning>
-        <div className="max-w-2xl mx-auto px-4">
-          <SearchBar />
-        </div>
-      </div>
     </>
   );
 };
