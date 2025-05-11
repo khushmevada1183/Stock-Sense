@@ -188,21 +188,6 @@ class ApiService {
       );
     } catch (error) {
       console.error(`Error searching stocks for "${query}":`, error);
-      
-      // Fallback for common Indian stocks
-      if (['ITC', 'RELIANCE', 'TCS', 'HDFC', 'INFY', 'SBIN'].includes(query.toUpperCase())) {
-        return {
-          results: [{
-            symbol: query.toUpperCase(),
-            companyName: this.getMockCompanyName(query.toUpperCase()),
-            latestPrice: this.getMockPrice(query.toUpperCase()),
-            change: parseFloat((Math.random() * 10 - 5).toFixed(2)),
-            changePercent: parseFloat((Math.random() * 2 - 1).toFixed(2)),
-            sector: this.getMockSector(query.toUpperCase())
-          }]
-        };
-      }
-      
       return { results: [] };
     }
   }
@@ -326,46 +311,6 @@ class ApiService {
       console.error('Error fetching market indices:', error);
       throw error;
     }
-  }
-
-  // Helper methods for fallback data
-  private getMockCompanyName(symbol: string): string {
-    const mockNames: Record<string, string> = {
-      'ITC': 'ITC Ltd',
-      'RELIANCE': 'Reliance Industries Ltd',
-      'TCS': 'Tata Consultancy Services Ltd',
-      'HDFC': 'HDFC Bank Ltd',
-      'INFY': 'Infosys Ltd',
-      'SBIN': 'State Bank of India'
-    };
-    
-    return mockNames[symbol] || `${symbol} Corporation`;
-  }
-
-  private getMockPrice(symbol: string): number {
-    const mockPrices: Record<string, number> = {
-      'ITC': 425.8,
-      'RELIANCE': 2842.4,
-      'TCS': 3567.8,
-      'HDFC': 1625.6,
-      'INFY': 1452.8,
-      'SBIN': 754.2
-    };
-    
-    return mockPrices[symbol] || parseFloat((Math.random() * 1000 + 500).toFixed(2));
-  }
-
-  private getMockSector(symbol: string): string {
-    const mockSectors: Record<string, string> = {
-      'ITC': 'FMCG',
-      'RELIANCE': 'Energy',
-      'TCS': 'Technology',
-      'HDFC': 'Financial Services',
-      'INFY': 'Technology',
-      'SBIN': 'Financial Services'
-    };
-    
-    return mockSectors[symbol] || 'Miscellaneous';
   }
 }
 

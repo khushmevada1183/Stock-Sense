@@ -33,6 +33,42 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       const cleanSymbol = symbol.replace(/^(NSE:|BSE:)/, '');
       console.log(`Fetching stock data for symbol: ${cleanSymbol} (Attempt ${currentAttempt})`);
       
+      // Direct API call to get real-time price
+      try {
+        // Make a direct fetch call to the API to get real-time price
+        const response = await fetch(`https://stock.indianapi.in/stock/${cleanSymbol}`, {
+          headers: {
+            'X-Api-Key': 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const directData = await response.json();
+          console.log("Direct API call result:", directData);
+          
+          if (directData && directData.current_price) {
+            console.log(`Direct API call price for ${cleanSymbol}: ${directData.current_price}`);
+            
+            // Continue with the rest of the process but with this price data
+            let details = await indianApiService.getStockDetails(cleanSymbol);
+            details.current_price = directData.current_price;
+            
+            console.log("Final stock details with direct API price:", details);
+            setStockDetails(details);
+            
+            // Fetch historical data
+            await fetchHistoricalData(cleanSymbol, period);
+            return;
+          }
+        } else {
+          console.error(`Direct API call failed with status: ${response.status}`);
+        }
+      } catch (directErr) {
+        console.error("Direct API call error:", directErr);
+        // Continue with normal flow if direct API call fails
+      }
+      
       // Fetch stock details - try both APIs
       let details = null;
       let fetchError = null;
@@ -61,6 +97,19 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
             // If we still don't have a price, check other possible fields
             if (!details.current_price && (details.lastPrice || details.last_price)) {
               details.current_price = details.lastPrice || details.last_price;
+            }
+            
+            // Try to get price from additional fields
+            if (!details.current_price) {
+              // Check for any numeric field that might contain price information
+              const priceFields = ['close', 'close_price', 'closePrice', 'nse_price', 'bse_price', 'ltp', 'last_traded_price'];
+              for (const field of priceFields) {
+                if (details[field] && typeof details[field] === 'number') {
+                  details.current_price = details[field];
+                  console.log(`Using ${field} as price: ${details.current_price}`);
+                  break;
+                }
+              }
             }
             
             // Log the price for debugging
@@ -154,11 +203,70 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       
       // Clear previous data
       setHistoricalData([]);
+      setLoading(true);
       
+      // Direct API call to ensure fresh data
+      try {
+        // Map UI period values to API expected values if needed
+        const apiPeriod = selectedPeriod === '1yr' ? '1y' : 
+                         selectedPeriod === '3yr' ? '3y' : 
+                         selectedPeriod === '5yr' ? '5y' : selectedPeriod;
+        
+        const response = await fetch(`https://stock.indianapi.in/historical_data?stock_name=${encodeURIComponent(cleanSymbol)}&period=${apiPeriod}`, {
+          headers: {
+            'X-Api-Key': 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`Direct API historical data for ${selectedPeriod}:`, data);
+          
+          let formattedData = [];
+          
+          // Transform API data to our expected format
+          if (data.datasets) {
+            const priceDataset = data.datasets.find((d: any) => d.metric === 'Price');
+            if (priceDataset && priceDataset.values) {
+              formattedData = priceDataset.values.map((point: [string, number]) => ({
+                date: point[0],
+                price: point[1]
+              }));
+            }
+          } else if (data.dates && data.prices) {
+            formattedData = data.dates.map((date: string, index: number) => ({
+              date,
+              price: data.prices[index],
+              volume: data.volumes ? data.volumes[index] : undefined
+            }));
+          } else if (Array.isArray(data)) {
+            formattedData = data.map((item: any) => ({
+              date: item.date || item.timestamp,
+              price: item.price || item.close || item.value || 0,
+              volume: item.volume
+            }));
+          }
+          
+          if (formattedData.length > 0) {
+            console.log(`Received ${formattedData.length} direct historical data points for ${selectedPeriod}`);
+            setHistoricalData(formattedData);
+            setLoading(false);
+            return;
+          }
+        } else {
+          console.error(`Direct historical API call failed with status: ${response.status}`);
+        }
+      } catch (directErr) {
+        console.error("Direct historical API call error:", directErr);
+      }
+      
+      // Fall back to service method if direct call fails
       const historical = await indianApiService.getHistoricalData(cleanSymbol, selectedPeriod);
       if (historical && historical.length > 0) {
         console.log(`Received ${historical.length} historical data points for ${selectedPeriod}`);
         setHistoricalData(historical);
+        setLoading(false);
         return;
       }
       
@@ -169,34 +277,20 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
         if (globalHistorical && globalHistorical.length > 0) {
           console.log(`Received ${globalHistorical.length} global historical data points for ${selectedPeriod}`);
           setHistoricalData(globalHistorical);
+          setLoading(false);
           return;
         }
       } catch (globalHistErr) {
         console.error(`Error fetching global historical data:`, globalHistErr);
       }
       
-      // If both APIs fail, set empty array - the chart component will generate mock data
-      console.log(`No historical data available from APIs for ${cleanSymbol}, period ${selectedPeriod}`);
+      // If both APIs fail, set empty array
       setHistoricalData([]);
+      setLoading(false);
     } catch (histErr) {
       console.error(`Error fetching historical data:`, histErr);
-      
-      // Try global API as fallback for historical data
-      try {
-        const apiService = await import('../../services/apiService').then(module => module.default);
-        const globalHistorical = await apiService.getHistoricalData(cleanSymbol, selectedPeriod);
-        if (globalHistorical && globalHistorical.length > 0) {
-          console.log(`Received ${globalHistorical.length} global historical data points for ${selectedPeriod}`);
-          setHistoricalData(globalHistorical);
-          return;
-        }
-      } catch (globalHistErr) {
-        console.error(`Error fetching global historical data:`, globalHistErr);
-      }
-      
-      // If all fails, set empty array - the chart component will generate mock data
-      console.log(`No historical data available after error recovery for ${cleanSymbol}, period ${selectedPeriod}`);
       setHistoricalData([]);
+      setLoading(false);
     }
   };
 
@@ -296,38 +390,15 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       {/* Price and Change */}
       <div className="flex items-baseline mb-6">
         <h2 className="text-3xl font-bold mr-3">
-          {(() => {
-            // Extract price from any available field
-            const price = stockDetails.current_price || 
-                         stockDetails.price || 
-                         stockDetails.lastPrice || 
-                         stockDetails.last_price || 
-                         stockDetails.close || 
-                         stockDetails.closePrice ||
-                         stockDetails.nse_price ||
-                         stockDetails.bse_price || 
-                         0;
-            
-            console.log('Price fields available:', {
-              symbol: stockDetails.symbol,
-              current_price: stockDetails.current_price,
-              price: stockDetails.price,
-              lastPrice: stockDetails.lastPrice,
-              last_price: stockDetails.last_price,
-              close: stockDetails.close,
-              closePrice: stockDetails.closePrice,
-              nse_price: stockDetails.nse_price,
-              bse_price: stockDetails.bse_price,
-              final_price_used: price
-            });
-            
-            // For ITC, hardcode a realistic price if we're still getting 0
-            if (stockDetails.symbol === 'ITC' && price === 0) {
-              return indianApiService.formatCurrency(440.75);
-            }
-            
-            return indianApiService.formatCurrency(price);
-          })()}
+          {stockDetails && typeof stockDetails.current_price === 'number' && stockDetails.current_price > 0 
+            ? indianApiService.formatCurrency(stockDetails.current_price) 
+            : stockDetails && typeof stockDetails.price === 'number' && stockDetails.price > 0
+              ? indianApiService.formatCurrency(stockDetails.price)
+              : stockDetails && typeof stockDetails.lastPrice === 'number' && stockDetails.lastPrice > 0
+                ? indianApiService.formatCurrency(stockDetails.lastPrice)
+                : stockDetails && typeof stockDetails.last_price === 'number' && stockDetails.last_price > 0
+                  ? indianApiService.formatCurrency(stockDetails.last_price)
+                  : '₹0.00'}
         </h2>
         <span className={`text-lg font-semibold ${
           (stockDetails.percent_change || 0) >= 0 

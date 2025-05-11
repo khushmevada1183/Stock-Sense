@@ -378,55 +378,11 @@ class IndianApiService {
       if (priceValue) {
         console.log(`Normalizing price for ${stock.symbol}: setting current_price to ${priceValue}`);
         stock.current_price = priceValue;
-      } else {
-        // If no price is available, use mock data for common stocks
-        const mockPrice = this.getMockPriceForStock(stock.symbol);
-        if (mockPrice > 0) {
-          console.log(`Using mock price for ${stock.symbol}: ${mockPrice}`);
-          stock.current_price = mockPrice;
-        }
       }
     }
     
     // Log the final price
     console.log(`Final price for ${stock.symbol}: ${stock.current_price}`);
-  }
-
-  /**
-   * Gets mock price data for common Indian stocks when API fails
-   * @param {string} symbol - Stock symbol
-   * @returns {number} Mock price
-   */
-  private getMockPriceForStock(symbol: string): number {
-    // Common Indian stocks with realistic prices
-    const mockPrices: Record<string, number> = {
-      'ITC': 440.75,
-      'RELIANCE': 2950.25,
-      'TCS': 3780.50,
-      'INFY': 1560.30,
-      'HDFCBANK': 1680.45,
-      'SBIN': 780.20,
-      'TATASTEEL': 145.60,
-      'ICICIBANK': 1050.75,
-      'AXISBANK': 1120.30,
-      'WIPRO': 450.25,
-      'BAJFINANCE': 7240.60,
-      'BHARTIARTL': 1180.45,
-      'HINDUNILVR': 2560.75,
-      'KOTAKBANK': 1850.30,
-      'MARUTI': 10450.80,
-      'ASIANPAINT': 3120.45,
-      'HCLTECH': 1240.60,
-      'ULTRACEMCO': 9780.25,
-      'TITAN': 3450.40,
-      'SUNPHARMA': 1320.75
-    };
-    
-    // Try to match the symbol (case insensitive)
-    const upperSymbol = symbol.toUpperCase().replace(/^(NSE:|BSE:)/, '');
-    
-    // Return mock price if available, otherwise 0
-    return mockPrices[upperSymbol] || 0;
   }
 
   /**
@@ -460,11 +416,27 @@ class IndianApiService {
     filter: string = 'default'
   ): Promise<HistoricalDataPoint[]> {
     try {
-      const data = await this.getWithCache<any>('/historical_data', {
-        stock_name: stockName,
-        period: period,
-        filter: filter
+      console.log(`Fetching historical data for ${stockName} with period ${period}`);
+      
+      // Map our UI period values to API expected values if needed
+      const apiPeriod = period === '1yr' ? '1y' : 
+                       period === '3yr' ? '3y' : 
+                       period === '5yr' ? '5y' : period;
+      
+      // Direct API call to ensure fresh data
+      const response = await fetch(`https://stock.indianapi.in/historical_data?stock_name=${encodeURIComponent(stockName)}&period=${apiPeriod}&filter=${filter}`, {
+        headers: {
+          'X-Api-Key': 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq',
+          'Content-Type': 'application/json'
+        }
       });
+      
+      if (!response.ok) {
+        throw new Error(`API returned status ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log(`Historical data response for ${period}:`, data);
       
       // Transform API data to our expected format
       if (data.datasets) {
@@ -483,8 +455,8 @@ class IndianApiService {
         }));
       } else if (Array.isArray(data)) {
         return data.map((item: any) => ({
-          date: item.date,
-          price: item.price || item.close,
+          date: item.date || item.timestamp,
+          price: item.price || item.close || item.value || 0,
           volume: item.volume
         }));
       }
@@ -492,6 +464,41 @@ class IndianApiService {
       return [];
     } catch (error) {
       console.error(`Error fetching historical data for ${stockName}:`, error);
+      
+      // Try cached data as fallback
+      try {
+        const data = await this.getWithCache<any>('/historical_data', {
+          stock_name: stockName,
+          period: period,
+          filter: filter
+        });
+        
+        // Transform API data to our expected format
+        if (data.datasets) {
+          const priceDataset = data.datasets.find((d: any) => d.metric === 'Price');
+          if (priceDataset && priceDataset.values) {
+            return priceDataset.values.map((point: [string, number]) => ({
+              date: point[0],
+              price: point[1]
+            }));
+          }
+        } else if (data.dates && data.prices) {
+          return data.dates.map((date: string, index: number) => ({
+            date,
+            price: data.prices[index],
+            volume: data.volumes ? data.volumes[index] : undefined
+          }));
+        } else if (Array.isArray(data)) {
+          return data.map((item: any) => ({
+            date: item.date || item.timestamp,
+            price: item.price || item.close || item.value || 0,
+            volume: item.volume
+          }));
+        }
+      } catch (cacheErr) {
+        console.error(`Error fetching cached historical data:`, cacheErr);
+      }
+      
       throw error;
     }
   }
