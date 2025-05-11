@@ -38,7 +38,7 @@ First, set up Axios and your API configuration:
 import axios from 'axios';
 
 // API Configuration
-const API_KEY = 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht';
+const API_KEY = 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
 const BASE_URL = 'https://stock.indianapi.in';
 
 // Create Axios instance with default config

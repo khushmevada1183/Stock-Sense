@@ -119,7 +119,7 @@ export default function ApiDocs() {
               <div className="mb-6">
                 <h3 className="text-lg font-medium mb-2">API Key Header</h3>
                 <div className="bg-gray-100 dark:bg-gray-900 p-3 rounded font-mono text-sm">
-                  x-api-key: sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht
+                  x-api-key: sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq
                 </div>
               </div>
               
@@ -130,7 +130,7 @@ export default function ApiDocs() {
   method: 'GET',
   headers: {
     'Content-Type': 'application/json',
-    'x-api-key': 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht'
+    'x-api-key': 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq'
   }
 })
 .then(response => response.json())

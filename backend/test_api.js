@@ -5,7 +5,7 @@ const API_CONFIG = {
   baseURL: 'https://stock.indianapi.in',
   headers: {
     'Content-Type': 'application/json',
-    'x-api-key': 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht'
+    'x-api-key': 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq'
   }
 };
 

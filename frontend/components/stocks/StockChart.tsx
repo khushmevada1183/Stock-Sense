@@ -43,7 +43,7 @@ const StockChart: React.FC<StockChartProps> = ({ data }) => {
     });
     
     const prices = sortedData.map(item => item.price);
-
+          
     // Calculate gradient for line
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue with opacity
@@ -70,43 +70,43 @@ const StockChart: React.FC<StockChartProps> = ({ data }) => {
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          intersect: false,
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
           mode: 'index',
-        },
-        plugins: {
-          tooltip: {
+    },
+    plugins: {
+      tooltip: {
             enabled: true,
-            callbacks: {
+        callbacks: {
               label: function(context) {
                 return `₹${context.parsed.y.toFixed(2)}`;
-              }
-            }
-          },
+        }
+      }
+    },
           legend: {
             display: false
           }
         },
         scales: {
           x: {
-            ticks: {
+        ticks: {
               maxTicksLimit: 8,
               maxRotation: 0
             },
             grid: {
               display: false
-            }
-          },
-          y: {
+        }
+      },
+      y: {
             position: 'right',
             ticks: {
               callback: function(value) {
                 return '₹' + value;
               }
             },
-            grid: {
+        grid: {
               color: 'rgba(0, 0, 0, 0.05)'
             }
           }

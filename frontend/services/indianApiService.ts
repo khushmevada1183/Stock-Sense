@@ -65,7 +65,7 @@ class IndianApiService {
 
   constructor() {
     // API Configuration
-    const API_KEY = process.env.NEXT_PUBLIC_INDIAN_API_KEY || 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht';
+    const API_KEY = process.env.NEXT_PUBLIC_INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
     const BASE_URL = process.env.NEXT_PUBLIC_INDIAN_API_URL || 'https://stock.indianapi.in';
 
     // Create axios instance with default config

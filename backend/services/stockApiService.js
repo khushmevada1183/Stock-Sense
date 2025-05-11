@@ -5,7 +5,7 @@ class StockApiService {
   constructor() {
     this.baseUrl = 'https://stock.indianapi.in/stock';
     // API key from indianapi.in - replace with your actual API key
-    this.apiKey = process.env.STOCK_API_KEY || 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht';
+    this.apiKey = process.env.STOCK_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
   }
 
   /**

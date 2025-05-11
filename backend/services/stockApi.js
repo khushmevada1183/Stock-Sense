@@ -2,7 +2,7 @@ const axios = require('axios');
 const { cacheService, DEFAULT_TTL } = require('./cacheService');
 
 // Get API key from environment variable with fallback
-const API_KEY = process.env.STOCK_API_KEY || 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht';
+const API_KEY = process.env.STOCK_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
 const API_BASE_URL = process.env.STOCK_API_BASE_URL || 'https://stock.indianapi.in';
 
 // Helper function to generate cache keys

@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 5002;
 console.log(`Server configured to use port: ${PORT}`);
 
 // API key from environment variable with fallback
-const STOCK_API_KEY = process.env.STOCK_API_KEY || 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht';
+const STOCK_API_KEY = process.env.STOCK_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
 
 // Apply security middleware
 app.use(helmet({
