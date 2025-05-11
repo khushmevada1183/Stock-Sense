@@ -27,8 +27,8 @@ A comprehensive web application for analyzing Indian stocks with real-time data,
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/indian-stock-analyzer.git
-cd indian-stock-analyzer
+git clone https://github.com/khushmevada5005/Stock-Sense.git
+cd Stock-Sense
 ```
 
 2. Install dependencies:
