@@ -1,96 +1,66 @@
 import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import morgan from 'morgan';
 import compression from 'compression';
-import env from './config/env';
+import stockRoutes from './routes/stockRoutes';
+import { 
+  corsMiddleware, 
+  securityMiddleware, 
+  rateLimitMiddleware, 
+  errorMiddleware,
+  requestLoggerMiddleware
+} from './middleware/securityMiddleware';
 
-// Import routes
-import authRoutes from './routes/auth.routes';
-import stockRoutes from './routes/stock.routes';
+// Load environment variables if .env exists
+try {
+  require('dotenv').config();
+} catch (err) {
+  console.log('No .env file found, using default values');
+}
 
 // Create Express app
 const app = express();
 
-// Middleware
-app.use(helmet()); // Security headers
-app.use(cors({
-  origin: env.CORS_ORIGIN,
-  credentials: true,
-}));
-app.use(compression()); // Compress responses
-app.use(morgan('dev')); // Logging
-app.use(express.json()); // Parse JSON bodies
-app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
+// Apply middleware
+app.use(requestLoggerMiddleware);
+app.use(corsMiddleware);
+app.use(securityMiddleware);
+app.use(rateLimitMiddleware);
+app.use(compression()); // Compress all responses
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'UP', timestamp: new Date() });
+  res.status(200).json({
+      status: 'success',
+    data: {
+      status: 'UP',
+      timestamp: new Date(),
+      environment: process.env.NODE_ENV || 'development'
+    }
+  });
+});
+
+// API key config - returns masked API key for display purposes
+app.get('/api/config', (req, res) => {
+  const apiKey = process.env.STOCK_API_KEY || '';
+  const maskedKey = apiKey 
+    ? `sk-live-${'*'.repeat(Math.max(0, apiKey.length - 15))}${apiKey.substring(Math.max(0, apiKey.length - 4))}`
+    : 'Not configured';
+  
+  res.status(200).json({
+    status: 'success',
+    data: {
+      apiKey: maskedKey,
+      version: '1.0.0',
+      environment: process.env.NODE_ENV || 'development'
+    }
+  });
 });
 
 // API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/stocks', stockRoutes);
+app.use('/api', stockRoutes);
 
-// Add routes for IPO and market-indices
-app.get('/api/ipo', async (req, res) => {
-  try {
-    const stockApiService = require('../services/stockApi');
-    const ipoData = await stockApiService.getIpoData();
-    
-    res.json({
-      status: 'success',
-      data: ipoData
-    });
-  } catch (error) {
-    console.error('Error in /api/ipo:', error);
-    
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch IPO data',
-      error: (error as Error).message
-    });
-  }
-});
-
-app.get('/api/market-indices', async (req, res) => {
-  try {
-    const stockApiService = require('../services/stockApi');
-    const indicesData = await stockApiService.getMarketIndices();
-    
-    res.json({
-      status: 'success',
-      data: indicesData
-    });
-  } catch (error) {
-    console.error('Error in /api/market-indices:', error);
-    
-    res.status(500).json({
-      status: 'error',
-      message: 'Failed to fetch market indices data',
-      error: (error as Error).message
-    });
-  }
-});
-
-// 404 handler
-app.use((req, res) => {
-  res.status(404).json({ 
-    status: 'error',
-    message: `Cannot ${req.method} ${req.url}` 
-  });
-});
-
-// Error handling middleware
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-  const statusCode = err.statusCode || 500;
-  console.error('❌ Error:', err.message);
-  
-  res.status(statusCode).json({ 
-    status: 'error',
-    message: err.message,
-    ...(env.NODE_ENV === 'development' ? { stack: err.stack } : {})
-  });
-});
+// Error handling middleware should be last
+app.use(errorMiddleware);
 
 export default app; 

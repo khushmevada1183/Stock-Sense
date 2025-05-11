@@ -3,6 +3,22 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
+// Parse command line arguments
+function parseArgs() {
+  const args = {};
+  process.argv.slice(2).forEach(arg => {
+    if (arg.startsWith('--')) {
+      const [key, value] = arg.substring(2).split('=');
+      args[key] = value || true;
+    }
+  });
+  return args;
+}
+
+const cmdArgs = parseArgs();
+const backendPort = cmdArgs['backend-port'] || 5002;
+const frontendPort = cmdArgs['frontend-port'] || 3001;
+
 // Get the local IP address
 function getLocalIpAddress() {
   const interfaces = os.networkInterfaces();
@@ -26,21 +42,21 @@ const config = {
     args: ['run', 'dev:simple'],
     name: 'BACKEND',
     color: '\x1b[36m', // Cyan
-    port: 5001
+    port: backendPort
   },
   frontend: {
     dir: path.join(__dirname, 'frontend'),
     command: 'npm',
-    args: ['run', 'dev'],
+    args: ['run', 'dev', '--', '-p', frontendPort],
     name: 'FRONTEND',
     color: '\x1b[35m', // Magenta
-    port: 3000,
+    port: frontendPort,
     env: {
       // Add Next.js specific environment variables
       HOSTNAME: '0.0.0.0',
-      PORT: '3000',
+      PORT: frontendPort,
       // Ensure correct backend API URL
-      NEXT_PUBLIC_API_URL: `http://localhost:5001`
+      NEXT_PUBLIC_API_URL: `http://localhost:${backendPort}`
     }
   }
 };

@@ -1,107 +1,76 @@
 # Indian Stock Analyzer
 
-A comprehensive web application for analyzing Indian stocks with real-time data, search functionality, and detailed analysis.
+A comprehensive web application for analyzing Indian stocks with real-time data, charts, and financial insights.
 
-## Features
+## 🚀 Optimized Version
 
-- **Real-time Stock Data**: Get up-to-date information on Indian stocks
-- **Search Functionality**: Search for stocks by name or symbol from a single search bar in the header
-- **Stock Details**: View detailed information about any stock including price, change, volume, etc.
-- **Market Overview**: See market indices, top gainers, and top losers at a glance
-- **Responsive Design**: Works on desktop, tablet, and mobile devices
+This repository contains the optimized version of the Indian Stock Analyzer application. Key improvements include:
 
-## Technology Stack
+- **Modern Architecture**: Clean, modular codebase with TypeScript
+- **Enhanced Performance**: Efficient caching, debouncing, and parallel data fetching
+- **Improved Security**: Environment variables, rate limiting, and input validation
+- **Better User Experience**: Responsive UI, dark mode, and accessibility improvements
+- **Development Efficiency**: Better error handling, logging, and code organization
 
-- **Frontend**: Next.js, TypeScript, Tailwind CSS
-- **Backend**: Node.js, Express
-- **Data Source**: Integration with stock market APIs with caching layer
+## 🛠️ Tech Stack
 
-## Installation
+- **Backend**:
+  - Node.js + Express
+  - TypeScript
+  - Caching with configurable TTLs
+  - Security middleware (Helmet, Rate Limiting)
 
-### Prerequisites
+- **Frontend**:
+  - Next.js (App Router)
+  - React with TypeScript
+  - Context-based state management
+  - Custom hooks for data fetching
+  - Tailwind CSS for styling
 
-- Node.js (v14+)
-- npm or yarn
+## 📝 Features
 
-### Setup
+- Real-time stock data from Indian exchanges
+- Stock search with debounced auto-complete
+- Detailed stock information and charts
+- Market news and IPO updates
+- Top gainers and losers tracking
+- Responsive design with dark mode support
+- Favorites management
 
-1. Clone the repository:
-```bash
-git clone https://github.com/khushmevada5005/Stock-Sense.git
-cd Stock-Sense
-```
+## 🔧 Setup
 
-2. Install dependencies:
+See the [OPTIMIZED_SETUP.md](./OPTIMIZED_SETUP.md) file for detailed installation and setup instructions.
 
-```bash
-# Install backend dependencies
-cd backend
-npm install
+## 📊 Stock Data
 
-# Install frontend dependencies
-cd ../frontend
-npm install
-```
+The application uses the Indian Stock API for real-time market data. You'll need to:
 
-3. Create environment files:
+1. Get an API key from [Indian Stock API](https://stock.indianapi.in)
+2. Add it to your `.env` file as described in the setup guide
 
-```bash
-# Backend .env
-cd ../backend
-touch .env
-# Add the following:
-# PORT=5001
-# API_KEY=your_api_key_here
+## 🌐 Ports
 
-# Frontend .env
-cd ../frontend
-touch .env.local
-# Add the following:
-# NEXT_PUBLIC_API_URL=http://localhost:5001/api
-```
+- Backend: 5002 (configured in `.env`)
+- Frontend: 3001 (configured in `.env.local`)
 
-## Running the Application
+## 📑 Documentation
 
-1. Start the backend server:
+- [Optimization Plan](./optimization-plan.md) - Details of the optimization strategy
+- [Setup Guide](./OPTIMIZED_SETUP.md) - Detailed setup instructions
 
-```bash
-cd backend
-npm start
-```
+## 📷 Screenshots
 
-2. Start the frontend development server:
+![Dashboard](https://stock-analyzer-screenshots.vercel.app/dashboard.png)
+![Stock Details](https://stock-analyzer-screenshots.vercel.app/stock-details.png)
+![Market Overview](https://stock-analyzer-screenshots.vercel.app/market.png)
 
-```bash
-cd frontend
-npm run dev
-```
+## 🚧 Future Improvements
 
-3. Access the application:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:5001
+- Implement comprehensive test suite
+- Add user authentication and portfolios
+- Enhance analytics with machine learning predictions
+- Integrate with additional data sources
 
-## Usage
+## 📄 License
 
-- Use the search bar in the header to find stocks
-- Browse market overview to see trending stocks
-- Click on any stock to view detailed information and analysis
-- View IPO information, news, and more from the homepage
-
-## API Documentation
-
-The backend provides several API endpoints:
-
-- `/api/stocks/search?query=<query>` - Search for stocks
-- `/api/stocks/:symbol` - Get details for a specific stock
-- `/api/stocks/:symbol/historical` - Get historical data for a stock
-- `/api/market-indices` - Get market indices data
-- `/api/featured-stocks` - Get featured stocks
-- Additional endpoints for various market data
-
-## License
-
-MIT
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. 
+This project is licensed under the MIT License - see the LICENSE file for details. 
