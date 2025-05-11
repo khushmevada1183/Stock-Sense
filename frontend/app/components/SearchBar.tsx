@@ -50,14 +50,27 @@ const SearchBar: React.FC = () => {
 
   // Convert StockDetails to UnifiedSearchResult
   const mapStockDetailsToUnified = (stocks: StockDetails[]): UnifiedSearchResult[] => {
-    return stocks.map(stock => ({
-      symbol: stock.symbol,
-      companyName: stock.name || stock.company_name || stock.symbol,
-      latestPrice: stock.current_price,
-      change: stock.change,
-      changePercent: stock.percent_change,
-      sector: stock.sector
-    }));
+    return stocks.map(stock => {
+      // Get price from any available price field
+      const price = stock.current_price || stock.price || stock.lastPrice || stock.last_price || 0;
+      
+      console.log(`Mapping stock ${stock.symbol} with price:`, {
+        current_price: stock.current_price,
+        price: stock.price,
+        lastPrice: stock.lastPrice,
+        last_price: stock.last_price,
+        final_price: price
+      });
+      
+      return {
+        symbol: stock.symbol,
+        companyName: stock.name || stock.company_name || stock.symbol,
+        latestPrice: price,
+        change: stock.change,
+        changePercent: stock.percent_change,
+        sector: stock.sector
+      };
+    });
   };
 
   // Fetch stock details directly from API
@@ -159,19 +172,18 @@ const SearchBar: React.FC = () => {
         result.companyName.toLowerCase() === query.trim().toLowerCase()
       );
       
-      if (matchingResult) {
-        router.push(`/stocks/${encodeURIComponent(matchingResult.symbol)}`);
-      } else {
-        // Otherwise just use the query as is
-        router.push(`/stocks/${encodeURIComponent(query.trim())}`);
-      }
+      // Use the matching result's symbol if found, otherwise use the query
+      const searchTerm = matchingResult ? matchingResult.symbol : query.trim();
+      router.push(`/stocks/${encodeURIComponent(searchTerm)}`);
     }
   };
 
   const handleResultClick = (symbol: string, name: string) => {
     setIsResultsVisible(false);
     setQuery(name); // Set the query to the stock name for better UX
-    fetchStockDetails(name); // Fetch details for the selected stock
+    
+    // Don't fetch details here, let the stock details page handle it
+    // This prevents duplicate API calls and potential race conditions
     
     // Navigate to the stock detail page
     router.push(`/stocks/${encodeURIComponent(symbol)}`);
@@ -252,7 +264,7 @@ const SearchBar: React.FC = () => {
                         <div className="text-right" suppressHydrationWarning>
                           <p className="font-medium">
                             {searchMode === 'indian' ? '₹' : '$'}
-                            {typeof stock.latestPrice === 'number' 
+                            {typeof stock.latestPrice === 'number' && stock.latestPrice > 0
                                 ? stock.latestPrice.toLocaleString(searchMode === 'indian' ? 'en-IN' : 'en-US', {
                                     maximumFractionDigits: 2,
                                     minimumFractionDigits: 2

@@ -221,7 +221,11 @@ class IndianApiService {
         try {
           const result = await this.getWithCache<StockDetails>(`/stock/${encodeURIComponent(cleanStockName)}`, {});
           if (result && Object.keys(result).length > 0) {
-            console.log(`Found stock details with direct API call for ${cleanStockName}`);
+            console.log(`Found stock details with direct API call for ${cleanStockName}:`, result);
+            
+            // Ensure price fields are properly set
+            this.normalizeStockPrices(result);
+            
             return result;
           }
         } catch (err) {
@@ -235,7 +239,11 @@ class IndianApiService {
         try {
           const result = await this.getWithCache<StockDetails>('/stock', { name: cleanStockName });
           if (result && Object.keys(result).length > 0) {
-            console.log(`Found stock details with query params for ${cleanStockName}`);
+            console.log(`Found stock details with query params for ${cleanStockName}:`, result);
+            
+            // Ensure price fields are properly set
+            this.normalizeStockPrices(result);
+            
             return result;
           }
         } catch (err) {
@@ -249,7 +257,11 @@ class IndianApiService {
         try {
           const result = await this.getWithCache<StockDetails>('/stock', { name: cleanStockName.toUpperCase() });
           if (result && Object.keys(result).length > 0) {
-            console.log(`Found stock details with uppercase name for ${cleanStockName}`);
+            console.log(`Found stock details with uppercase name for ${cleanStockName}:`, result);
+            
+            // Ensure price fields are properly set
+            this.normalizeStockPrices(result);
+            
             return result;
           }
         } catch (err) {
@@ -264,7 +276,11 @@ class IndianApiService {
           try {
             const result = await this.getWithCache<StockDetails>(`/symbol/${encodeURIComponent(cleanStockName)}`, {});
             if (result && Object.keys(result).length > 0) {
-              console.log(`Found stock details with symbol endpoint for ${cleanStockName}`);
+              console.log(`Found stock details with symbol endpoint for ${cleanStockName}:`, result);
+              
+              // Ensure price fields are properly set
+              this.normalizeStockPrices(result);
+              
               return result;
             }
           } catch (err) {
@@ -280,7 +296,11 @@ class IndianApiService {
           const nseSymbol = `NSE:${cleanStockName}`;
           const result = await this.getWithCache<StockDetails>('/stock', { name: nseSymbol });
           if (result && Object.keys(result).length > 0) {
-            console.log(`Found stock details with NSE prefix for ${cleanStockName}`);
+            console.log(`Found stock details with NSE prefix for ${cleanStockName}:`, result);
+            
+            // Ensure price fields are properly set
+            this.normalizeStockPrices(result);
+            
             return result;
           }
         } catch (err) {
@@ -295,7 +315,11 @@ class IndianApiService {
           const bseSymbol = `BSE:${cleanStockName}`;
           const result = await this.getWithCache<StockDetails>('/stock', { name: bseSymbol });
           if (result && Object.keys(result).length > 0) {
-            console.log(`Found stock details with BSE prefix for ${cleanStockName}`);
+            console.log(`Found stock details with BSE prefix for ${cleanStockName}:`, result);
+            
+            // Ensure price fields are properly set
+            this.normalizeStockPrices(result);
+            
             return result;
           }
         } catch (err) {
@@ -311,6 +335,10 @@ class IndianApiService {
           if (searchResults && searchResults.results && searchResults.results.length > 0) {
             const firstResult = searchResults.results[0];
             console.log(`Found stock details via search API for ${cleanStockName}:`, firstResult);
+            
+            // Ensure price fields are properly set
+            this.normalizeStockPrices(firstResult);
+            
             return firstResult;
           }
         } catch (err) {
@@ -328,6 +356,33 @@ class IndianApiService {
     
     // If all attempts fail, throw an error
     throw new Error(`No data found for stock ${stockName} after multiple attempts. Please check the stock symbol and try again.`);
+  }
+
+  /**
+   * Normalizes stock price fields to ensure current_price is set
+   * @param {StockDetails} stock - Stock details object to normalize
+   */
+  private normalizeStockPrices(stock: StockDetails): void {
+    // Check for price in various fields and ensure current_price is set
+    if (!stock.current_price) {
+      // Check various price fields that might be present
+      const priceValue = stock.price || 
+                        stock.lastPrice || 
+                        stock.last_price || 
+                        stock.close || 
+                        stock.close_price || 
+                        stock.closePrice ||
+                        stock.nse_price ||
+                        stock.bse_price;
+      
+      if (priceValue) {
+        console.log(`Normalizing price for ${stock.symbol}: setting current_price to ${priceValue}`);
+        stock.current_price = priceValue;
+      }
+    }
+    
+    // Log the final price
+    console.log(`Final price for ${stock.symbol}: ${stock.current_price}`);
   }
 
   /**
@@ -627,6 +682,12 @@ class IndianApiService {
     
     try {
       const data = await this.getWithCache<{results: StockDetails[]}>('/stock-search', { query }, 60 * 1000); // 1 minute cache
+      
+      // Normalize prices in search results
+      if (data && data.results && Array.isArray(data.results)) {
+        data.results.forEach(stock => this.normalizeStockPrices(stock));
+      }
+      
       return data;
     } catch (error) {
       console.error(`Error searching stocks for "${query}":`, error);
