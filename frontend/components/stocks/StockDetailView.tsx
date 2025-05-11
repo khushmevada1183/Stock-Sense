@@ -17,6 +17,95 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
   const [period, setPeriod] = useState<string>('1m');
   const [fetchAttempts, setFetchAttempts] = useState<number>(0);
 
+  // Add this helper function at the top of the component, after the state declarations
+  const extractPriceFromResponse = (data: any): number => {
+    // Check all possible price fields in the response
+    const priceFields = [
+      'current_price', 'price', 'last_price', 'lastPrice', 'close', 
+      'close_price', 'closePrice', 'ltp', 'last_traded_price',
+      'regularMarketPrice', 'latestPrice', 'regularMarketLastPrice',
+      'nse_price', 'bse_price', 'stockPrice', 'marketPrice'
+    ];
+    
+    for (const field of priceFields) {
+      if (data[field] && !isNaN(parseFloat(String(data[field])))) {
+        const price = parseFloat(String(data[field]));
+        console.log(`Found price in field '${field}': ${price}`);
+        return price;
+      }
+    }
+    
+    // If no price field is found, check if there's a 'data' object that might contain price
+    if (data.data) {
+      for (const field of priceFields) {
+        if (data.data[field] && !isNaN(parseFloat(String(data.data[field])))) {
+          const price = parseFloat(String(data.data[field]));
+          console.log(`Found price in data.${field}: ${price}`);
+          return price;
+        }
+      }
+    }
+    
+    // If no standard price field is found, look for any numeric field that might be a price
+    // Only consider fields with values between 10 and 100000 as potential prices (reasonable range for Indian stocks)
+    for (const field in data) {
+      if (typeof data[field] === 'number' || 
+         (typeof data[field] === 'string' && !isNaN(parseFloat(data[field])))) {
+        const value = typeof data[field] === 'number' ? data[field] : parseFloat(data[field]);
+        if (value >= 10 && value <= 100000) {
+          console.log(`Found potential price in field '${field}': ${value}`);
+          return value;
+        }
+      }
+    }
+    
+    // Check nested data object for any numeric field
+    if (data.data) {
+      for (const field in data.data) {
+        if (typeof data.data[field] === 'number' || 
+           (typeof data.data[field] === 'string' && !isNaN(parseFloat(data.data[field])))) {
+          const value = typeof data.data[field] === 'number' ? data.data[field] : parseFloat(data.data[field]);
+          if (value >= 10 && value <= 100000) {
+            console.log(`Found potential price in data.${field}: ${value}`);
+            return value;
+          }
+        }
+      }
+    }
+    
+    // If no price is found, log the issue
+    console.warn('No valid price found in response:', data);
+    return 0;
+  };
+
+  // Add this helper function after the extractPriceFromResponse function
+  const getBestAvailablePrice = (details: StockDetails): number => {
+    if (typeof details.current_price === 'number' && details.current_price > 0) {
+      return details.current_price;
+    }
+    if (typeof details.price === 'number' && details.price > 0) {
+      return details.price;
+    }
+    if (typeof details.lastPrice === 'number' && details.lastPrice > 0) {
+      return details.lastPrice;
+    }
+    if (typeof details.last_price === 'number' && details.last_price > 0) {
+      return details.last_price;
+    }
+    
+    // Check other possible price fields
+    const priceFields = ['close', 'close_price', 'closePrice', 'ltp', 'last_traded_price'];
+    for (const field of priceFields) {
+      if (typeof details[field] === 'number' && details[field] > 0) {
+        console.log(`Using ${field} as price: ${details[field]}`);
+        return details[field];
+      }
+    }
+    
+    console.warn('No valid price found in stock details:', details);
+    return 0;
+  };
+
   // Fetch stock data with proper error handling
   const fetchStockData = useCallback(async () => {
     if (!symbol) return;
@@ -44,13 +133,35 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
           const directData = await response.json();
           console.log("Direct API call result:", directData);
           
+          // Debug: Log all potential price fields
+          console.log("Debugging price fields in response:");
+          ['current_price', 'price', 'last_price', 'lastPrice', 'close', 
+           'close_price', 'closePrice', 'ltp', 'last_traded_price',
+           'regularMarketPrice', 'latestPrice', 'regularMarketLastPrice'].forEach(field => {
+            if (directData[field] !== undefined) {
+              console.log(`Field ${field}:`, directData[field]);
+            }
+          });
+          
+          // If there's a data object, check that too
+          if (directData.data) {
+            console.log("Checking nested data object for price fields:");
+            ['current_price', 'price', 'last_price', 'lastPrice', 'close', 
+             'close_price', 'closePrice', 'ltp', 'last_traded_price',
+             'regularMarketPrice', 'latestPrice', 'regularMarketLastPrice'].forEach(field => {
+              if (directData.data[field] !== undefined) {
+                console.log(`Field data.${field}:`, directData.data[field]);
+              }
+            });
+          }
+          
           // Create stock details object from direct API response
           const details: StockDetails = {
             symbol: directData.symbol || cleanSymbol,
             name: directData.name || directData.company_name || cleanSymbol,
             company_name: directData.company_name || directData.name || '',
-            current_price: parseFloat(directData.current_price || directData.price || directData.last_price || directData.close || 0),
-            price: parseFloat(directData.price || directData.current_price || directData.last_price || directData.close || 0),
+            current_price: extractPriceFromResponse(directData),
+            price: extractPriceFromResponse(directData),
             change: parseFloat(directData.change || 0),
             percent_change: parseFloat(directData.percent_change || directData.changePercent || 0),
             market_cap: parseFloat(directData.market_cap || directData.marketCap || 0),
@@ -93,13 +204,22 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
           const nseData = await nseResponse.json();
           console.log("NSE API call result:", nseData);
           
+          // Debug: Log all potential price fields
+          console.log("Debugging NSE price fields in response:");
+          ['current_price', 'price', 'last_price', 'lastPrice', 'close', 
+           'close_price', 'closePrice', 'ltp', 'last_traded_price'].forEach(field => {
+            if (nseData[field] !== undefined) {
+              console.log(`NSE Field ${field}:`, nseData[field]);
+            }
+          });
+          
           // Create stock details object from NSE API response
           const details: StockDetails = {
             symbol: nseData.symbol || `NSE:${cleanSymbol}`,
             name: nseData.name || nseData.company_name || cleanSymbol,
             company_name: nseData.company_name || nseData.name || '',
-            current_price: parseFloat(nseData.current_price || nseData.price || nseData.last_price || nseData.close || 0),
-            price: parseFloat(nseData.price || nseData.current_price || nseData.last_price || nseData.close || 0),
+            current_price: extractPriceFromResponse(nseData),
+            price: extractPriceFromResponse(nseData),
             change: parseFloat(nseData.change || 0),
             percent_change: parseFloat(nseData.percent_change || nseData.changePercent || 0),
             market_cap: parseFloat(nseData.market_cap || nseData.marketCap || 0),
@@ -126,52 +246,125 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
         console.error("NSE API call error:", nseErr);
       }
       
+      // Try with BSE prefix if NSE fails
+      try {
+        console.log("Trying with BSE prefix");
+        const bseResponse = await fetch(`https://stock.indianapi.in/stock/BSE:${cleanSymbol}`, {
+          headers: {
+            'X-Api-Key': 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (bseResponse.ok) {
+          const bseData = await bseResponse.json();
+          console.log("BSE API call result:", bseData);
+          
+          // Debug: Log all potential price fields
+          console.log("Debugging BSE price fields in response:");
+          ['current_price', 'price', 'last_price', 'lastPrice', 'close', 
+           'close_price', 'closePrice', 'ltp', 'last_traded_price'].forEach(field => {
+            if (bseData[field] !== undefined) {
+              console.log(`BSE Field ${field}:`, bseData[field]);
+            }
+          });
+          
+          // Create stock details object from BSE API response
+          const details: StockDetails = {
+            symbol: bseData.symbol || `BSE:${cleanSymbol}`,
+            name: bseData.name || bseData.company_name || cleanSymbol,
+            company_name: bseData.company_name || bseData.name || '',
+            current_price: extractPriceFromResponse(bseData),
+            price: extractPriceFromResponse(bseData),
+            change: parseFloat(bseData.change || 0),
+            percent_change: parseFloat(bseData.percent_change || bseData.changePercent || 0),
+            market_cap: parseFloat(bseData.market_cap || bseData.marketCap || 0),
+            pe_ratio: parseFloat(bseData.pe_ratio || bseData.peRatio || 0),
+            eps: parseFloat(bseData.eps || 0),
+            dividend_yield: parseFloat(bseData.dividend_yield || bseData.dividendYield || 0),
+            volume: parseFloat(bseData.volume || 0),
+            sector: bseData.sector || '',
+            industry: bseData.industry || '',
+            year_high: parseFloat(bseData.year_high || bseData.yearHigh || bseData.week52High || 0),
+            year_low: parseFloat(bseData.year_low || bseData.yearLow || bseData.week52Low || 0)
+          };
+          
+          // Log the price for debugging
+          console.log(`BSE API price for ${cleanSymbol}:`, details.current_price);
+          
+          // Set stock details and fetch historical data
+          setStockDetails(details);
+          await fetchHistoricalData(cleanSymbol, period);
+          setLoading(false);
+          return;
+        }
+      } catch (bseErr) {
+        console.error("BSE API call error:", bseErr);
+      }
+      
+      // Try a direct search API call as a last resort
+      try {
+        console.log("Trying search API as last resort");
+        const searchResponse = await fetch(`https://stock.indianapi.in/stock-search?query=${encodeURIComponent(cleanSymbol)}`, {
+          headers: {
+            'X-Api-Key': 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (searchResponse.ok) {
+          const searchData = await searchResponse.json();
+          console.log("Search API call result:", searchData);
+          
+          if (searchData.results && searchData.results.length > 0) {
+            // Use the first search result
+            const firstResult = searchData.results[0];
+            console.log("Using first search result:", firstResult);
+            
+            // Create stock details from search result
+            const details: StockDetails = {
+              symbol: firstResult.symbol || cleanSymbol,
+              name: firstResult.name || firstResult.company_name || cleanSymbol,
+              company_name: firstResult.company_name || firstResult.name || '',
+              current_price: extractPriceFromResponse(firstResult),
+              price: extractPriceFromResponse(firstResult),
+              change: parseFloat(firstResult.change || 0),
+              percent_change: parseFloat(firstResult.percent_change || firstResult.changePercent || 0),
+              market_cap: parseFloat(firstResult.market_cap || firstResult.marketCap || 0),
+              pe_ratio: parseFloat(firstResult.pe_ratio || firstResult.peRatio || 0),
+              eps: parseFloat(firstResult.eps || 0),
+              dividend_yield: parseFloat(firstResult.dividend_yield || firstResult.dividendYield || 0),
+              volume: parseFloat(firstResult.volume || 0),
+              sector: firstResult.sector || '',
+              industry: firstResult.industry || '',
+              year_high: parseFloat(firstResult.year_high || firstResult.yearHigh || firstResult.week52High || 0),
+              year_low: parseFloat(firstResult.year_low || firstResult.yearLow || firstResult.week52Low || 0)
+            };
+            
+            // Log the price for debugging
+            console.log(`Search API price for ${cleanSymbol}:`, details.current_price);
+            
+            // Set stock details and fetch historical data
+            setStockDetails(details);
+            await fetchHistoricalData(cleanSymbol, period);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch (searchErr) {
+        console.error("Search API call error:", searchErr);
+      }
+      
       // If all direct API calls fail, fall back to the service layer
       console.log("Falling back to service layer");
       const details = await indianApiService.getStockDetails(cleanSymbol);
       
-      // Ensure we have a valid current_price
-      if (!details.current_price && details.price) {
-        details.current_price = details.price;
-      }
-      
-      // If we still don't have a price, check other possible fields
-      if (!details.current_price && (details.lastPrice || details.last_price)) {
-        details.current_price = details.lastPrice || details.last_price;
-      }
-      
-      // Try to get price from additional fields
-      if (!details.current_price) {
-        // Check for any numeric field that might contain price information
-        const priceFields = ['close', 'close_price', 'closePrice', 'nse_price', 'bse_price', 'ltp', 'last_traded_price'];
-        for (const field of priceFields) {
-          if (details[field] && typeof details[field] === 'number') {
-            details.current_price = details[field];
-            console.log(`Using ${field} as price: ${details.current_price}`);
-            break;
-          }
-        }
-      }
-      
-      // As a last resort, try to fetch a hardcoded price for common Indian stocks
+      // Ensure we have a valid current_price using our extraction helper
       if (!details.current_price || details.current_price === 0) {
-        const commonStockPrices: Record<string, number> = {
-          'ITC': 485.75,
-          'RELIANCE': 2975.30,
-          'TCS': 3890.45,
-          'INFY': 1560.20,
-          'HDFC': 1725.80,
-          'SBIN': 778.65,
-          'TATASTEEL': 145.25,
-          'WIPRO': 475.90,
-          'HDFCBANK': 1680.40,
-          'ICICIBANK': 1120.55
-        };
-        
-        const upperSymbol = cleanSymbol.toUpperCase();
-        if (commonStockPrices[upperSymbol]) {
-          details.current_price = commonStockPrices[upperSymbol];
-          console.log(`Using hardcoded price for ${upperSymbol}: ${details.current_price}`);
+        const extractedPrice = extractPriceFromResponse(details);
+        if (extractedPrice > 0) {
+          details.current_price = extractedPrice;
+          details.price = extractedPrice;
         }
       }
       
@@ -275,67 +468,13 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
         console.error(`Error fetching global historical data:`, globalHistErr);
       }
       
-      // If both APIs fail, create mock data as a last resort
-      if (selectedPeriod === '1m') {
-        // Create 30 days of mock data
-        const mockData = createMockHistoricalData(30, selectedPeriod);
-        setHistoricalData(mockData);
-        console.log("Using mock data for 1 month chart");
-      } else if (selectedPeriod === '6m') {
-        // Create 180 days of mock data
-        const mockData = createMockHistoricalData(180, selectedPeriod);
-        setHistoricalData(mockData);
-        console.log("Using mock data for 6 month chart");
-      } else if (selectedPeriod === '1yr' || selectedPeriod === '1y') {
-        // Create 365 days of mock data
-        const mockData = createMockHistoricalData(365, selectedPeriod);
-        setHistoricalData(mockData);
-        console.log("Using mock data for 1 year chart");
-      } else if (selectedPeriod === '3yr' || selectedPeriod === '3y') {
-        // Create 1095 days of mock data
-        const mockData = createMockHistoricalData(1095, selectedPeriod);
-        setHistoricalData(mockData);
-        console.log("Using mock data for 3 year chart");
-      } else if (selectedPeriod === '5yr' || selectedPeriod === '5y') {
-        // Create 1825 days of mock data
-        const mockData = createMockHistoricalData(1825, selectedPeriod);
-        setHistoricalData(mockData);
-        console.log("Using mock data for 5 year chart");
-      } else {
-        // Create 2555 days of mock data for max
-        const mockData = createMockHistoricalData(2555, selectedPeriod);
-        setHistoricalData(mockData);
-        console.log("Using mock data for max chart");
-      }
+      // If all APIs fail, just set empty array - NO MOCK DATA
+      console.log(`No historical data available for ${cleanSymbol} with period ${selectedPeriod}`);
+      setHistoricalData([]);
     } catch (histErr) {
       console.error(`Error fetching historical data:`, histErr);
       setHistoricalData([]);
     }
-  };
-
-  // Helper function to create mock historical data when API fails
-  const createMockHistoricalData = (days: number, period: string): HistoricalDataPoint[] => {
-    const data: HistoricalDataPoint[] = [];
-    const today = new Date();
-    const basePrice = stockDetails?.current_price || 450; // Use current price or default to 450
-    
-    for (let i = days; i >= 0; i--) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      
-      // Generate price with some randomness but following a trend
-      const randomFactor = Math.sin(i / (days / 10)) * 0.2 + Math.random() * 0.1 - 0.05;
-      const priceChange = basePrice * randomFactor;
-      const price = basePrice + priceChange * (i / (days / 5));
-      
-      data.push({
-        date: date.toISOString().split('T')[0],
-        price: parseFloat(price.toFixed(2)),
-        volume: Math.floor(Math.random() * 1000000) + 500000
-      });
-    }
-    
-    return data;
   };
 
   useEffect(() => {
@@ -434,15 +573,7 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       {/* Price and Change */}
       <div className="flex items-baseline mb-6">
         <h2 className="text-3xl font-bold mr-3">
-          {stockDetails && typeof stockDetails.current_price === 'number' && stockDetails.current_price > 0 
-            ? indianApiService.formatCurrency(stockDetails.current_price) 
-            : stockDetails && typeof stockDetails.price === 'number' && stockDetails.price > 0
-              ? indianApiService.formatCurrency(stockDetails.price)
-              : stockDetails && typeof stockDetails.lastPrice === 'number' && stockDetails.lastPrice > 0
-                ? indianApiService.formatCurrency(stockDetails.lastPrice)
-                : stockDetails && typeof stockDetails.last_price === 'number' && stockDetails.last_price > 0
-                  ? indianApiService.formatCurrency(stockDetails.last_price)
-                  : '₹0.00'}
+          {indianApiService.formatCurrency(getBestAvailablePrice(stockDetails))}
         </h2>
         <span className={`text-lg font-semibold ${
           (stockDetails.percent_change || 0) >= 0 
