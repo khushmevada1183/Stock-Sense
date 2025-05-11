@@ -2,16 +2,34 @@
 
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
 import apiService from '../services/apiService';
+import indianApiService from '../services/indianApiService';
 
 // Import types from the apiService
 import type { 
   SearchResult, 
-  StockDetails, 
+  StockDetails as GlobalStockDetails, 
   HistoricalDataPoint, 
   NewsItem
 } from '../services/apiService';
 
-// Use the default exported apiService instance
+// Import types from indianApiService
+import type { StockDetails as IndianStockDetails } from '../services/indianApiService';
+
+// Create a unified type for stock details that can handle both API formats
+interface UnifiedStockDetails {
+  symbol: string;
+  companyName: string;
+  company_name?: string;
+  current_price?: number;
+  latestPrice?: number;
+  change?: number;
+  changePercent?: number;
+  percent_change?: number;
+  sector?: string;
+  industry?: string;
+  isIndianStock?: boolean;
+  [key: string]: any; // For any other fields
+}
 
 interface StockContextValue {
   // Search
@@ -28,8 +46,8 @@ interface StockContextValue {
   isFavorite: (symbol: string) => boolean;
   
   // Market data
-  topGainers: StockDetails[];
-  topLosers: StockDetails[];
+  topGainers: UnifiedStockDetails[];
+  topLosers: UnifiedStockDetails[];
   isLoadingMarketData: boolean;
   marketDataError: string | null;
   refreshMarketData: () => Promise<void>;
@@ -41,7 +59,7 @@ interface StockContextValue {
   refreshNews: () => Promise<void>;
   
   // Current stock details
-  currentStock: StockDetails | null;
+  currentStock: UnifiedStockDetails | null;
   isLoadingStockDetails: boolean;
   stockDetailsError: string | null;
   setCurrentStockSymbol: (symbol: string) => void;
@@ -51,6 +69,9 @@ interface StockContextValue {
   isLoadingHistoricalData: boolean;
   historicalDataError: string | null;
   refreshHistoricalData: (symbol: string, period?: string) => Promise<void>;
+  
+  // Indian market specific
+  isIndianStock: (symbol: string) => boolean;
 }
 
 // Create the context with default values
@@ -91,7 +112,10 @@ const StockContext = createContext<StockContextValue>({
   historicalData: [],
   isLoadingHistoricalData: false,
   historicalDataError: null,
-  refreshHistoricalData: async () => {}
+  refreshHistoricalData: async () => {},
+  
+  // Indian market specific
+  isIndianStock: () => false,
 });
 
 // Provider component
@@ -112,8 +136,8 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   });
   
   // Market data state
-  const [topGainers, setTopGainers] = useState<StockDetails[]>([]);
-  const [topLosers, setTopLosers] = useState<StockDetails[]>([]);
+  const [topGainers, setTopGainers] = useState<UnifiedStockDetails[]>([]);
+  const [topLosers, setTopLosers] = useState<UnifiedStockDetails[]>([]);
   const [isLoadingMarketData, setIsLoadingMarketData] = useState(false);
   const [marketDataError, setMarketDataError] = useState<string | null>(null);
   
@@ -123,7 +147,7 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [newsError, setNewsError] = useState<string | null>(null);
   
   // Current stock details state
-  const [currentStock, setCurrentStock] = useState<StockDetails | null>(null);
+  const [currentStock, setCurrentStock] = useState<UnifiedStockDetails | null>(null);
   const [currentStockSymbol, setCurrentStockSymbol] = useState<string>('');
   const [isLoadingStockDetails, setIsLoadingStockDetails] = useState(false);
   const [stockDetailsError, setStockDetailsError] = useState<string | null>(null);
@@ -133,6 +157,12 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [historicalPeriod, setHistoricalPeriod] = useState('1yr');
   const [isLoadingHistoricalData, setIsLoadingHistoricalData] = useState(false);
   const [historicalDataError, setHistoricalDataError] = useState<string | null>(null);
+  
+  // Helper to check if a symbol is an Indian stock
+  const isIndianStock = useCallback((symbol: string) => {
+    // Check if the symbol matches Indian stock patterns
+    return /^(NSE:|BSE:|RELIANCE|TCS|INFY|SBIN|HDFC|ITC)/i.test(symbol);
+  }, []);
   
   // Favorites management
   const addFavorite = useCallback((symbol: string) => {
@@ -167,7 +197,27 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setSearchError(null);
       
       try {
-        const response = await apiService.searchStocks(searchQuery);
+        // Determine if we should use Indian API based on the query
+        const shouldUseIndianApi = isIndianStock(searchQuery);
+        
+        let response;
+        if (shouldUseIndianApi) {
+          const indianResponse = await indianApiService.searchStocks(searchQuery);
+          // Convert Indian API response to expected format
+          response = {
+            results: indianResponse.results.map(stock => ({
+              symbol: stock.symbol,
+              companyName: stock.name || stock.company_name || stock.symbol,
+              latestPrice: stock.current_price,
+              change: stock.change,
+              changePercent: stock.percent_change,
+              sector: stock.sector
+            }))
+          };
+        } else {
+          response = await apiService.searchStocks(searchQuery);
+        }
+        
         setSearchResults(response.results);
       } catch (error) {
         setSearchError(error instanceof Error ? error.message : 'An error occurred during search');
@@ -178,7 +228,34 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }, 300);
     
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery]);
+  }, [searchQuery, isIndianStock]);
+  
+  // Helper to convert GlobalStockDetails to UnifiedStockDetails
+  const convertGlobalToUnified = (stock: GlobalStockDetails): UnifiedStockDetails => {
+    return {
+      ...stock,
+      companyName: stock.companyName || stock.company_name || stock.symbol,
+      changePercent: stock.changePercent,
+      isIndianStock: false
+    };
+  };
+  
+  // Helper to convert IndianStockDetails to UnifiedStockDetails
+  const convertIndianToUnified = (stock: IndianStockDetails): UnifiedStockDetails => {
+    return {
+      symbol: stock.symbol,
+      companyName: stock.name || stock.company_name || stock.symbol,
+      company_name: stock.company_name,
+      latestPrice: stock.current_price,
+      current_price: stock.current_price,
+      change: stock.change,
+      changePercent: stock.percent_change,
+      percent_change: stock.percent_change,
+      sector: stock.sector,
+      industry: stock.industry,
+      isIndianStock: true
+    };
+  };
   
   // Fetch market data
   const refreshMarketData = useCallback(async () => {
@@ -186,13 +263,35 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setMarketDataError(null);
     
     try {
-      const [gainersData, losersData] = await Promise.all([
+      // Fetch from both APIs and combine results
+      const [globalGainers, globalLosers, indianTrending] = await Promise.all([
         apiService.getTopGainers(),
-        apiService.getTopLosers()
+        apiService.getTopLosers(),
+        indianApiService.getTrendingStocks().catch(() => [])
       ]);
       
-      setTopGainers(gainersData);
-      setTopLosers(losersData);
+      // Convert to unified format
+      const gainersWithSource = globalGainers.map(convertGlobalToUnified);
+      const losersWithSource = globalLosers.map(convertGlobalToUnified);
+      
+      // Process Indian trending stocks into gainers and losers
+      const indianGainers = indianTrending
+        .filter(stock => stock.percent_change && stock.percent_change > 0)
+        .map(convertIndianToUnified);
+      
+      const indianLosers = indianTrending
+        .filter(stock => stock.percent_change && stock.percent_change < 0)
+        .map(convertIndianToUnified);
+      
+      // Combine and sort the results
+      const combinedGainers = [...gainersWithSource, ...indianGainers]
+        .sort((a, b) => ((b.changePercent || b.percent_change || 0) - (a.changePercent || a.percent_change || 0)));
+      
+      const combinedLosers = [...losersWithSource, ...indianLosers]
+        .sort((a, b) => ((a.changePercent || a.percent_change || 0) - (b.changePercent || b.percent_change || 0)));
+      
+      setTopGainers(combinedGainers);
+      setTopLosers(combinedLosers);
     } catch (error) {
       setMarketDataError(error instanceof Error ? error.message : 'Failed to load market data');
     } finally {
@@ -206,7 +305,26 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setNewsError(null);
     
     try {
-      const newsData = await apiService.getMarketNews();
+      // Try to get Indian news first, fall back to global news
+      let newsData: NewsItem[] = [];
+      
+      try {
+        const indianNews = await indianApiService.getNewsData();
+        // Convert to common format if needed
+        newsData = indianNews.map(item => ({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          url: item.url,
+          date: item.date,
+          source: item.source,
+          imageUrl: item.imageUrl
+        }));
+      } catch (err) {
+        console.error('Failed to load Indian news, falling back to global news', err);
+        newsData = await apiService.getMarketNews();
+      }
+      
       setMarketNews(newsData);
     } catch (error) {
       setNewsError(error instanceof Error ? error.message : 'Failed to load market news');
@@ -224,8 +342,27 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       setStockDetailsError(null);
       
       try {
-        const stockData = await apiService.getStockDetails(currentStockSymbol);
-        setCurrentStock(stockData);
+        // Determine which API to use based on the symbol
+        const useIndianApi = isIndianStock(currentStockSymbol);
+        
+        if (useIndianApi) {
+          // Clean the symbol (remove NSE: or BSE: prefix if present)
+          const cleanSymbol = currentStockSymbol.replace(/^(NSE:|BSE:)/, '');
+          
+          try {
+            const indianStockData = await indianApiService.getStockDetails(cleanSymbol);
+            // Convert to unified format
+            setCurrentStock(convertIndianToUnified(indianStockData));
+          } catch (err) {
+            // If Indian API fails, try global API as fallback
+            console.error('Failed to load Indian stock details, trying global API', err);
+            const stockData = await apiService.getStockDetails(currentStockSymbol);
+            setCurrentStock(convertGlobalToUnified(stockData));
+          }
+        } else {
+          const stockData = await apiService.getStockDetails(currentStockSymbol);
+          setCurrentStock(convertGlobalToUnified(stockData));
+        }
       } catch (error) {
         setStockDetailsError(error instanceof Error ? error.message : 'Failed to load stock details');
       } finally {
@@ -234,7 +371,7 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
     
     fetchStockDetails();
-  }, [currentStockSymbol]);
+  }, [currentStockSymbol, isIndianStock]);
   
   // Fetch historical data
   const refreshHistoricalData = useCallback(async (symbol: string, period: string = '1yr') => {
@@ -245,14 +382,46 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setHistoricalPeriod(period);
     
     try {
-      const data = await apiService.getHistoricalData(symbol, period);
+      // Determine which API to use
+      const useIndianApi = isIndianStock(symbol);
+      
+      let data: HistoricalDataPoint[] = [];
+      
+      if (useIndianApi) {
+        // Clean the symbol (remove NSE: or BSE: prefix if present)
+        const cleanSymbol = symbol.replace(/^(NSE:|BSE:)/, '');
+        
+        try {
+          // Convert period to format expected by Indian API
+          const periodMap: Record<string, string> = {
+            '1d': '1d',
+            '5d': '5d',
+            '1m': '1m',
+            '3m': '3m',
+            '6m': '6m',
+            '1yr': '1y',
+            '2yr': '2y',
+            '5yr': '5y',
+            'max': 'max'
+          };
+          
+          const mappedPeriod = periodMap[period] || '1m';
+          data = await indianApiService.getHistoricalData(cleanSymbol, mappedPeriod);
+        } catch (err) {
+          console.error('Failed to load Indian historical data, trying global API', err);
+          data = await apiService.getHistoricalData(symbol, period);
+        }
+      } else {
+        data = await apiService.getHistoricalData(symbol, period);
+      }
+      
       setHistoricalData(data);
     } catch (error) {
       setHistoricalDataError(error instanceof Error ? error.message : 'Failed to load historical data');
     } finally {
       setIsLoadingHistoricalData(false);
     }
-  }, []);
+  }, [isIndianStock]);
   
   // Initially load market data and news
   useEffect(() => {
@@ -303,7 +472,10 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     historicalData,
     isLoadingHistoricalData,
     historicalDataError,
-    refreshHistoricalData
+    refreshHistoricalData,
+    
+    // Indian market specific
+    isIndianStock
   };
   
   return (
