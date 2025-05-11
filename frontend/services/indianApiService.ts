@@ -6,6 +6,9 @@ export interface StockDetails {
   name: string;
   company_name?: string;
   current_price?: number;
+  price?: number;          // Add price field
+  lastPrice?: number;      // Add lastPrice field
+  last_price?: number;     // Add last_price field
   change?: number;
   percent_change?: number;
   market_cap?: number;

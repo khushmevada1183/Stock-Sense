@@ -25,9 +25,13 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       setLoading(true);
       setError(null);
       
+      // Track attempts locally instead of in state to avoid re-renders
+      const currentAttempt = fetchAttempts + 1;
+      setFetchAttempts(currentAttempt);
+      
       // Clean up the symbol - remove any exchange prefixes
       const cleanSymbol = symbol.replace(/^(NSE:|BSE:)/, '');
-      console.log(`Fetching stock data for symbol: ${cleanSymbol} (Attempt ${fetchAttempts + 1})`);
+      console.log(`Fetching stock data for symbol: ${cleanSymbol} (Attempt ${currentAttempt})`);
       
       // Fetch stock details - try both APIs
       let details = null;
@@ -48,6 +52,20 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
           details = await indianApiService.getStockDetails(variation);
           if (details && Object.keys(details).length > 0) {
             console.log("Successfully fetched from Indian API:", details);
+            
+            // Ensure we have a valid current_price
+            if (!details.current_price && details.price) {
+              details.current_price = details.price;
+            }
+            
+            // If we still don't have a price, check other possible fields
+            if (!details.current_price && (details.lastPrice || details.last_price)) {
+              details.current_price = details.lastPrice || details.last_price;
+            }
+            
+            // Log the price for debugging
+            console.log(`Current price for ${variation}: ${details.current_price}`);
+            
             break;
           }
         } catch (err) {
@@ -57,7 +75,7 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       }
       
       // If Indian API fails, try global API
-      if (!details) {
+      if (!details || !details.current_price) {
         try {
           console.log("Trying global API as fallback");
           // Check if we have access to the global API service
@@ -76,7 +94,7 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
                   symbol: globalDetails.symbol,
                   name: globalDetails.companyName || globalDetails.company_name || globalDetails.symbol,
                   company_name: globalDetails.company_name || globalDetails.companyName,
-                  current_price: globalDetails.current_price || globalDetails.latestPrice || 0,
+                  current_price: globalDetails.current_price || globalDetails.latestPrice || globalDetails.price || globalDetails.last_price || 0,
                   change: globalDetails.change || 0,
                   percent_change: globalDetails.changePercent || globalDetails.percent_change || 0,
                   market_cap: globalDetails.market_cap || globalDetails.marketCap,
@@ -89,6 +107,10 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
                   year_high: globalDetails.year_high || globalDetails.yearHigh || globalDetails.week52High,
                   year_low: globalDetails.year_low || globalDetails.yearLow || globalDetails.week52Low
                 };
+                
+                // Log the price for debugging
+                console.log(`Global API price for ${variation}: ${details.current_price}`);
+                
                 break;
               }
             } catch (err) {
@@ -105,6 +127,12 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
         throw fetchError || new Error(`Failed to fetch stock details for ${cleanSymbol} after multiple attempts`);
       }
       
+      // Ensure we have a valid current_price before setting the state
+      if (!details.current_price && (details.price || details.lastPrice || details.last_price)) {
+        details.current_price = details.price || details.lastPrice || details.last_price;
+      }
+      
+      console.log("Final stock details with price:", details);
       setStockDetails(details);
       
       // Fetch historical data
@@ -116,15 +144,20 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       setStockDetails(null);
     } finally {
       setLoading(false);
-      setFetchAttempts(prev => prev + 1);
     }
-  }, [symbol, period, fetchAttempts]);
+  }, [symbol, period]);
 
   // Separate function to fetch historical data
   const fetchHistoricalData = async (cleanSymbol: string, selectedPeriod: string) => {
     try {
+      console.log(`Fetching historical data for ${cleanSymbol} with period ${selectedPeriod}`);
+      
+      // Clear previous data
+      setHistoricalData([]);
+      
       const historical = await indianApiService.getHistoricalData(cleanSymbol, selectedPeriod);
       if (historical && historical.length > 0) {
+        console.log(`Received ${historical.length} historical data points for ${selectedPeriod}`);
         setHistoricalData(historical);
         return;
       }
@@ -134,6 +167,7 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
         const apiService = await import('../../services/apiService').then(module => module.default);
         const globalHistorical = await apiService.getHistoricalData(cleanSymbol, selectedPeriod);
         if (globalHistorical && globalHistorical.length > 0) {
+          console.log(`Received ${globalHistorical.length} global historical data points for ${selectedPeriod}`);
           setHistoricalData(globalHistorical);
           return;
         }
@@ -151,6 +185,7 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
         const apiService = await import('../../services/apiService').then(module => module.default);
         const globalHistorical = await apiService.getHistoricalData(cleanSymbol, selectedPeriod);
         if (globalHistorical && globalHistorical.length > 0) {
+          console.log(`Received ${globalHistorical.length} global historical data points for ${selectedPeriod}`);
           setHistoricalData(globalHistorical);
           return;
         }
@@ -164,12 +199,26 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
 
   useEffect(() => {
     if (symbol) {
+      // Reset state when symbol changes to prevent showing old data
+      setStockDetails(null);
+      setHistoricalData([]);
+      setError(null);
+      setLoading(true);
+      
+      // Fetch new data
       fetchStockData();
     }
   }, [symbol, period, fetchStockData]);
 
   const handlePeriodChange = (newPeriod: string) => {
+    console.log(`Changing period to ${newPeriod}`);
     setPeriod(newPeriod);
+    
+    // If we already have stock details, just fetch new historical data
+    if (stockDetails && symbol) {
+      const cleanSymbol = symbol.replace(/^(NSE:|BSE:)/, '');
+      fetchHistoricalData(cleanSymbol, newPeriod);
+    }
   };
 
   const handleRetry = () => {
@@ -244,7 +293,7 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       {/* Price and Change */}
       <div className="flex items-baseline mb-6">
         <h2 className="text-3xl font-bold mr-3">
-          {indianApiService.formatCurrency(stockDetails.current_price || 0)}
+          {indianApiService.formatCurrency(stockDetails.current_price || stockDetails.price || stockDetails.lastPrice || stockDetails.last_price || 0)}
         </h2>
         <span className={`text-lg font-semibold ${
           (stockDetails.percent_change || 0) >= 0 
@@ -268,7 +317,11 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
                 : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
             }`}
           >
-            {p}
+            {p === '1m' ? '1M' : 
+             p === '6m' ? '6M' : 
+             p === '1yr' ? '1Y' : 
+             p === '3yr' ? '3Y' : 
+             p === '5yr' ? '5Y' : 'Max'}
           </button>
         ))}
       </div>
@@ -276,7 +329,7 @@ const StockDetailView: React.FC<StockDetailViewProps> = ({ symbol }) => {
       {/* Stock Chart */}
       <div className="mb-8 h-64">
         {historicalData.length > 0 ? (
-          <StockChart data={historicalData} />
+          <StockChart data={historicalData} period={period} />
         ) : (
           <div className="h-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded">
             <p className="text-gray-500 dark:text-gray-400">No historical data available</p>
