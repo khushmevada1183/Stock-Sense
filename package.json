@@ -1,0 +1,29 @@
+{
+  "name": "indian-stock-analyzer",
+  "version": "1.0.0",
+  "description": "Full stack application for analyzing Indian stock market data",
+  "main": "run.js",
+  "scripts": {
+    "start": "node run.js",
+    "backend": "cd backend && npm run dev:simple",
+    "frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "stocks",
+    "finance",
+    "analysis",
+    "india",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+} 
