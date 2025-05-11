@@ -5,6 +5,7 @@ const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const stockApiService = require('./services/stockApi');
+const indianApiRoutes = require('./routes/indianApiRoutes');
 
 // Load environment variables if .env exists
 try {
@@ -584,6 +585,9 @@ app.get('/api/stocks/top-losers', async (req, res) => {
     handleApiError(res, error, 'Failed to fetch top losers');
   }
 });
+
+// Indian API routes
+app.use('/api/indian', indianApiRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
