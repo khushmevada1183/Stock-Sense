@@ -6,6 +6,8 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const stockApiService = require('./services/stockApi');
 const indianApiRoutes = require('./routes/indianApiRoutes');
+const apiKeyRoutes = require('./routes/apiKeyRoutes');
+const apiKeyManager = require('./services/apiKeyManager');
 
 // Load environment variables if .env exists
 try {
@@ -57,6 +59,9 @@ app.use(apiLimiter);
 // Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Register API routes
+app.use('/api/keys', apiKeyRoutes);
 
 // Create an API client function that uses request-specific headers
 // instead of a global Axios instance
@@ -187,12 +192,39 @@ app.get('/api/stocks/search', async (req, res) => {
     const searchResults = await stockApiService.searchStocks(query);
     
     // Ensure we always return a consistent format with a results array
-    res.json(createApiResponse(
-      'success', 
-      searchResults && searchResults.results ? 
-        { results: searchResults.results } : 
-        { results: [] }
-    ));
+    let results = [];
+    
+    if (searchResults && searchResults.results && Array.isArray(searchResults.results)) {
+      // Process each result to ensure consistent data format
+      results = searchResults.results.map(stock => {
+        // Normalize price field to ensure it's always accessible as latestPrice
+        let latestPrice = null;
+        
+        if (stock.latestPrice) {
+          latestPrice = stock.latestPrice;
+        } else if (stock.price) {
+          latestPrice = stock.price;
+        } else if (stock.last_price) {
+          latestPrice = stock.last_price;
+        } else if (stock.current_price) {
+          latestPrice = stock.current_price;
+        } else if (stock.fullData && stock.fullData.currentPrice) {
+          // Extract from nested structure if available
+          latestPrice = stock.fullData.currentPrice.BSE || stock.fullData.currentPrice.NSE;
+        }
+        
+        return {
+          ...stock,
+          latestPrice,
+          // Ensure these fields are always present
+          symbol: stock.symbol || stock.ticker || '',
+          companyName: stock.companyName || stock.name || stock.company_name || '',
+          changePercent: stock.changePercent || stock.percent_change || 0
+        };
+      });
+    }
+    
+    res.json(createApiResponse('success', { results }));
   } catch (error) {
     console.error(`Error in /api/stocks/search:`, error.message);
     return res.status(500).json(createApiResponse(
@@ -203,17 +235,76 @@ app.get('/api/stocks/search', async (req, res) => {
   }
 });
 
-app.get('/api/stocks/:symbol', async (req, res) => {
+app.get('/api/stock/:symbol', async (req, res) => {
   try {
     const { symbol } = req.params;
-    const stock = await stockApiService.getStockBySymbol(symbol);
+    console.log(`Fetching stock data for symbol: ${symbol} (from /api/stock endpoint)`);
+    
+    // Clean the symbol by removing any exchange prefixes
+    const cleanSymbol = symbol.replace(/^(NSE:|BSE:)/, '');
+    
+    // Try to get stock details directly from the external API
+    const API_KEY = apiKeyManager.getCurrentKey();
+    
+    try {
+      // Make direct API call to get the most up-to-date data
+      const response = await axios.get('https://stock.indianapi.in/stock', {
+        params: { name: cleanSymbol },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Api-Key': API_KEY
+        }
+      });
+      
+      // Process the API response
+      let stockData = response.data;
+      
+      // Add a symbol field if it doesn't exist
+      if (stockData && !stockData.symbol) {
+        stockData.symbol = cleanSymbol;
+      }
+      
+      // Extract price information for easy access
+      if (stockData && stockData.currentPrice) {
+        const bsePrice = stockData.currentPrice.BSE;
+        const nsePrice = stockData.currentPrice.NSE;
+        
+        // Add latestPrice field for consistency with frontend expectations
+        stockData.latestPrice = bsePrice || nsePrice || 0;
+        
+        console.log(`Price data for ${cleanSymbol}: BSE=${bsePrice}, NSE=${nsePrice}`);
+      } else if (stockData && stockData.stockTechnicalData && stockData.stockTechnicalData.length > 0) {
+        const technicalPrice = stockData.stockTechnicalData[0].bsePrice || stockData.stockTechnicalData[0].nsePrice;
+        stockData.latestPrice = technicalPrice;
+        console.log(`Technical price data for ${cleanSymbol}: ${technicalPrice}`);
+      }
+      
+      // Return the data
+      res.json(createApiResponse('success', stockData));
+    } catch (apiError) {
+      console.error(`Error calling external API for ${cleanSymbol}:`, apiError.message);
+      
+      // Fall back to our service if direct API call fails
+      try {
+        const stock = await stockApiService.getStockBySymbol(cleanSymbol);
     
     if (!stock) {
-      return res.status(404).json(createApiResponse('error', null, `Stock ${symbol} not found`));
+          console.log(`No stock data found for ${cleanSymbol}`);
+          return res.status(404).json(createApiResponse('error', null, `Stock ${cleanSymbol} not found`));
     }
     
+        // Log successful response
+        console.log(`Successfully retrieved data for ${cleanSymbol} from service`);
+        
+        // Ensure we return data in a consistent format
     res.json(createApiResponse('success', stock));
+      } catch (serviceError) {
+        console.error(`Service fallback also failed for ${cleanSymbol}:`, serviceError.message);
+        return res.status(500).json(createApiResponse('error', null, `Failed to fetch stock data for ${cleanSymbol}`));
+      }
+    }
   } catch (error) {
+    console.error(`Error fetching stock data for ${req.params.symbol}:`, error.message);
     handleApiError(res, error, `Failed to fetch stock data for ${req.params.symbol}`);
   }
 });

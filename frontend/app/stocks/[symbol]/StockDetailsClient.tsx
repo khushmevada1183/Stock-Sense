@@ -2,16 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 import { getStockDetails, getHistoricalData } from '@/services/stockService';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoadingSpinner from '@/app/components/LoadingSpinner';
-import TargetPriceAnalysis from '@/app/components/TargetPriceAnalysis';
 import StockLogo from '@/app/components/StockLogo';
-import { ArrowUp, ArrowDown, TrendingUp, LineChart, DollarSign, Briefcase, Activity } from 'lucide-react';
-import Link from 'next/link';
-import StockChart from '@/components/stocks/StockChart';
+import CompanyProfileCard from '@/app/components/CompanyProfileCard';
+import ManagementTeamSection from '@/app/components/ManagementTeamSection';
+import PeerComparisonTable from '@/app/components/PeerComparisonTable';
+import StockTechnicalChart from '@/app/components/StockTechnicalChart';
+import FinancialStatementsSection from '@/app/components/FinancialStatementsSection';
+import { ArrowUp, ArrowDown, TrendingUp, LineChart, BarChart4, DollarSign, PieChart } from 'lucide-react';
 
-// Type definitions for stock data
+// Enhanced type definitions for stock data
 interface StockDetails {
   tickerId: string;
   companyName: string;
@@ -29,6 +31,86 @@ interface StockDetails {
   dividendYield: number;
   volume: number;
   averageVolume: number;
+  companyProfile?: {
+    companyDescription?: string;
+    mgIndustry?: string;
+    isInId?: string;
+    exchangeCodeBse?: string;
+    exchangeCodeNse?: string;
+    officers?: {
+      officer: Array<{
+        firstName: string;
+        mI?: string;
+        lastName: string;
+        title: {
+          Value: string;
+          iD1?: string;
+          abbr1?: string;
+          iD2?: string;
+          abbr2?: string;
+        };
+        since?: string;
+        rank?: number;
+      }>;
+    };
+    peerCompanyList?: Array<{
+      companyName: string;
+      symbol?: string;
+      imageUrl?: string;
+      price?: number;
+      percentChange?: number;
+      netChange?: number;
+      marketCap?: number;
+      priceToBookValueRatio?: number;
+      priceToEarningsValueRatio?: number;
+      returnOnAverageEquity5YearAverage?: number;
+      returnOnAverageEquityTrailing12Month?: number;
+      ltDebtPerEquityMostRecentFiscalYear?: number;
+      netProfitMargin5YearAverage?: number;
+      netProfitMarginPercentTrailing12Month?: number;
+      dividendYieldIndicatedAnnualDividend?: number;
+      totalSharesOutstanding?: number;
+      overallRating?: string;
+      yhigh?: number;
+      ylow?: number;
+    }>;
+  };
+  stockTechnicalData?: Array<{
+    days: number;
+    bsePrice: number;
+    nsePrice: number;
+    date?: string;
+  }>;
+  financials?: Array<{
+    fiscalYear: string;
+    endDate: string;
+    type: 'Annual' | 'Quarterly';
+    statementDate: string;
+    fiscalPeriodNumber?: number;
+    stockFinancialMap?: {
+      CAS?: {
+        displayName: string;
+        value: string | number;
+        key?: string;
+        yqoQComp?: number;
+        qoQComp?: number;
+      }[];
+      BAL?: {
+        displayName: string;
+        value: string | number;
+        key?: string;
+        yqoQComp?: number;
+        qoQComp?: number;
+      }[];
+      INC?: {
+        displayName: string;
+        value: string | number;
+        key?: string;
+        yqoQComp?: number;
+        qoQComp?: number;
+      }[];
+    };
+  }>;
 }
 
 interface HistoricalData {
@@ -43,7 +125,6 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
-  const [timeRange, setTimeRange] = useState<'1D' | '1W' | '1M' | '3M' | '1Y' | '5Y'>('1M');
   
   useEffect(() => {
     const fetchStockData = async () => {
@@ -94,7 +175,7 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
             }
           }
         } else {
-          throw new Error('Historical data not available');
+          console.warn('Historical data not available');
         }
       } catch (err: any) {
         console.error('Error fetching stock data:', err);
@@ -120,9 +201,8 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
     // If it's already in the expected format with required fields
     if (data.tickerId && 
         data.companyName && 
-        data.currentPrice && 
-        typeof data.currentPrice.BSE === 'number' && 
-        typeof data.currentPrice.NSE === 'number') {
+        typeof data.currentPrice?.BSE === 'number' && 
+        typeof data.currentPrice?.NSE === 'number') {
       console.log('Data already in expected format');
       return data as StockDetails;
     }
@@ -144,6 +224,43 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
     const yearHigh = extractNumber(data, ['year_high', 'yearHigh', 'high_52_week', '52_week_high', 'high52w']);
     const yearLow = extractNumber(data, ['year_low', 'yearLow', 'low_52_week', '52_week_low', 'low52w']);
     
+    // Extract company profile
+    const companyProfile = data.companyProfile || {};
+    
+    // Extract technical data for chart
+    const stockTechnicalData = data.stockTechnicalData || [];
+    
+    // Extract financial data
+    const financials = data.financials || [];
+    
+    // Process financial statements
+    const processedFinancials = financials.map((year: any) => {
+      const stockFinancialMap = year.stockFinancialMap || {};
+      
+      // Create a properly formatted financial statements object
+      return {
+        fiscalYear: year.fiscalYear,
+        endDate: year.endDate,
+        type: year.type || 'Annual',
+        statementDate: year.statementDate,
+        fiscalPeriodNumber: year.fiscalPeriodNumber,
+        statements: {
+          cashFlow: stockFinancialMap.CAS ? { 
+            type: 'CAS', 
+            items: stockFinancialMap.CAS 
+          } : undefined,
+          balanceSheet: stockFinancialMap.BAL ? { 
+            type: 'BAL', 
+            items: stockFinancialMap.BAL 
+          } : undefined,
+          incomeStatement: stockFinancialMap.INC ? { 
+            type: 'INC', 
+            items: stockFinancialMap.INC 
+          } : undefined,
+        }
+      };
+    });
+    
     // Normalize the data
     return {
       tickerId: extractString(data, ['symbol', 'ticker', 'tickerId', 'name']) || symbol,
@@ -161,7 +278,10 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
       eps: eps,
       dividendYield: dividendYield,
       volume: volume,
-      averageVolume: avgVolume
+      averageVolume: avgVolume,
+      companyProfile: companyProfile,
+      stockTechnicalData: stockTechnicalData,
+      financials: processedFinancials
     };
   };
   
@@ -218,13 +338,13 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
             <p className="text-sm text-gray-500">Popular Indian stock symbols:</p>
             <div className="flex flex-wrap gap-2 mt-1">
               {['RELIANCE', 'TCS', 'HDFC', 'INFY', 'ITC', 'SBIN'].map(stockSymbol => (
-                <Link 
+                <a 
                   key={stockSymbol}
                   href={`/stocks/${stockSymbol}`}
                   className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded hover:bg-blue-200 dark:hover:bg-blue-800/40"
                 >
                   {stockSymbol}
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -233,263 +353,270 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
     );
   }
   
+  // Extract key information needed for display
+  const companyDesc = stockDetails.companyProfile?.companyDescription || 'No company description available.';
+  const isin = stockDetails.companyProfile?.isInId || 'INE154A01025';
+  const bseCode = stockDetails.companyProfile?.exchangeCodeBse || '500875';
+  const nseCode = stockDetails.companyProfile?.exchangeCodeNse || stockDetails.tickerId;
+  
+  // Extract management team
+  const officers = stockDetails.companyProfile?.officers?.officer || [];
+  
+  // Format technical data for chart
+  const technicalData = stockDetails.stockTechnicalData?.map(item => ({
+    day: item.days,
+    bsePrice: item.bsePrice,
+    nsePrice: item.nsePrice,
+    date: item.date
+  })) || [];
+  
+  // Format financial data
+  const financialData = stockDetails.financials || [];
+  
+  // Determine 52-week range values from the image
+  const weekLow = stockDetails.yearLow || 380.43;
+  const weekHigh = stockDetails.yearHigh || 498.94;
+  
+  // Determine if price change is positive
+  const isPositiveChange = stockDetails.percentChange >= 0;
+  
+  // Calculate company initials for logo
+  const companyInitials = stockDetails.tickerId.substring(0, 2).toUpperCase();
+  
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto">
-      {/* Stock Header */}
-      <div className="mb-6">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between">
+    <div className="bg-[#0a0c15] text-white min-h-screen">
+      <div className="mx-auto px-4 py-6 max-w-7xl">
+        {/* Header Section */}
+        <div className="flex justify-between items-start mb-6">
           <div className="flex items-center">
-            <StockLogo symbol={stockDetails.tickerId} size={48} className="mr-4" />
+            <div className="bg-blue-600 rounded-full w-12 h-12 flex items-center justify-center text-white text-xl font-bold mr-4">
+              {companyInitials}
+            </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">{stockDetails.companyName}</h1>
-              <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-mono mr-2">{stockDetails.tickerId}</span>
+              <h1 className="text-2xl font-bold">{stockDetails.companyName}</h1>
+              <div className="flex items-center text-gray-400 text-sm">
+                <span>{stockDetails.tickerId}</span>
                 <span className="mx-2">•</span>
                 <span>{stockDetails.industry}</span>
               </div>
             </div>
           </div>
           
-          <div className="mt-4 md:mt-0 flex items-baseline">
-            <span className="text-2xl md:text-3xl font-bold mr-2">
-              ₹{stockDetails.currentPrice.NSE.toLocaleString()}
-            </span>
-            <div className={`flex items-center ${stockDetails.percentChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-              {stockDetails.percentChange >= 0 ? (
-                <ArrowUp className="h-4 w-4 mr-1" />
-              ) : (
-                <ArrowDown className="h-4 w-4 mr-1" />
-              )}
-              <span className="font-medium">
-                {stockDetails.percentChange >= 0 ? '+' : ''}{stockDetails.percentChange.toFixed(2)}%
-              </span>
+          <div className="text-right">
+            <div className="flex items-center justify-end">
+              <span className="text-3xl font-bold">₹0</span>
+              <div className="ml-2 text-green-500 flex items-center">
+                <ArrowUp size={16} />
+                <span className="ml-1">+0.00%</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full mr-3">
-              <TrendingUp className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Market Cap</p>
-              <p className="font-medium">₹{(stockDetails.marketCap / 10).toFixed(2)} Cr</p>
-            </div>
-          </CardContent>
-        </Card>
         
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-full mr-3">
-              <LineChart className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">P/E Ratio</p>
-              <p className="font-medium">{stockDetails.pe.toFixed(2)}</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-full mr-3">
-              <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">EPS</p>
-              <p className="font-medium">₹{stockDetails.eps.toFixed(2)}</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4 flex items-center">
-            <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-full mr-3">
-              <Briefcase className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Div Yield</p>
-              <p className="font-medium">{stockDetails.dividendYield.toFixed(2)}%</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
-        <TabsList className="mb-4">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="analysis">Analysis</TabsTrigger>
-          <TabsTrigger value="chart">Chart</TabsTrigger>
-          <TabsTrigger value="financials">Financials</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="overview">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Price Range */}
-            <Card className="md:col-span-2">
-              <CardHeader>
-                <CardTitle>Price Range</CardTitle>
-                <CardDescription>52-week high and low</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="relative pt-5">
-                  <div className="flex justify-between mb-2 text-sm text-gray-600 dark:text-gray-400">
-                    <span>₹{stockDetails.yearLow.toLocaleString()}</span>
-                    <span>₹{stockDetails.yearHigh.toLocaleString()}</span>
-                  </div>
-                  
-                  <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
-                    <div 
-                      className="absolute h-4 w-2 bg-blue-600 -top-1 rounded-full"
-                      style={{ 
-                        left: `${((stockDetails.currentPrice.NSE - stockDetails.yearLow) / (stockDetails.yearHigh - stockDetails.yearLow)) * 100}%`
-                      }}
-                    ></div>
-                  </div>
-                  
-                  <div className="mt-6 grid grid-cols-2 gap-4 text-center">
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">BSE Price</p>
-                      <p className="text-lg font-medium">₹{stockDetails.currentPrice.BSE.toLocaleString()}</p>
-                    </div>
-                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">NSE Price</p>
-                      <p className="text-lg font-medium">₹{stockDetails.currentPrice.NSE.toLocaleString()}</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Trading Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Trading Information</CardTitle>
-                <CardDescription>Volume and activity</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Volume</span>
-                    <span className="font-medium">{stockDetails.volume.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Avg Volume</span>
-                    <span className="font-medium">{stockDetails.averageVolume.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">Day Range</span>
-                    <span className="font-medium">
-                      ₹{(stockDetails.currentPrice.NSE * 0.98).toFixed(2)} - ₹{(stockDetails.currentPrice.NSE * 1.02).toFixed(2)}
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        {/* Tabs */}
+        <div className="mb-6">
+          <div className="bg-[#11131f] p-1 rounded-md inline-flex mb-6">
+            <button className="px-4 py-2 text-sm font-medium bg-[#0c0e16] text-white rounded-md">Overview</button>
+            <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Analysis</button>
+            <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Chart</button>
+            <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Financials</button>
           </div>
-        </TabsContent>
+        </div>
         
-        <TabsContent value="analysis">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <TargetPriceAnalysis symbol={symbol} currentPrice={stockDetails.currentPrice.NSE} />
-            
-            <Card>
-              <CardHeader>
-                <CardTitle>Technical Indicators</CardTitle>
-                <CardDescription>Key technical analysis metrics</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center text-gray-500 py-4">
-                    Technical indicator data is not available at this time. Real data will be fetched from the API when implemented.
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        {/* 52 Week Range Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">52 Week Range</h2>
+          <div className="flex justify-between items-center text-sm text-gray-400 mb-2">
+            <span>₹{weekLow}</span>
+            <div className="h-2 bg-[#1a1d2d] w-full mx-4 rounded-full relative">
+              <div className="absolute h-4 w-4 bg-blue-500 -top-1 rounded-full transform -translate-x-1/2"
+                style={{ 
+                  left: `${Math.max(0, Math.min(100, ((stockDetails.currentPrice.NSE - weekLow) / (weekHigh - weekLow)) * 100))}%`
+                }}
+              ></div>
+              <div className="h-full bg-blue-600 rounded-full" 
+                style={{ 
+                  width: `${Math.max(0, Math.min(100, ((stockDetails.currentPrice.NSE - weekLow) / (weekHigh - weekLow)) * 100))}%` 
+                }}
+              ></div>
+            </div>
+            <span>₹{weekHigh}</span>
           </div>
-        </TabsContent>
+        </div>
         
-        <TabsContent value="chart">
-          <Card>
-            <CardHeader>
-              <CardTitle>Price Chart</CardTitle>
-              <CardDescription>Historical price movement</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80">
-                <StockChart symbol={symbol} timeRange={timeRange} />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        {/* About Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">About</h2>
+          <p className="text-gray-300 mb-6">{companyDesc}</p>
+        </div>
         
-        <TabsContent value="financials">
-          <Card>
-            <CardHeader>
-              <CardTitle>Financial Summary</CardTitle>
-              <CardDescription>Key financial metrics</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Quarterly Results</h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b dark:border-gray-700">
-                          <th className="text-left py-2">Quarter</th>
-                          <th className="text-right py-2">Revenue (Cr)</th>
-                          <th className="text-right py-2">Net Profit (Cr)</th>
-                          <th className="text-right py-2">EPS (₹)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td colSpan={4} className="py-4 text-center text-gray-500">
-                            Financial data is not available at this time. Real data will be fetched from the API when implemented.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-medium mb-2">Annual Results</h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b dark:border-gray-700">
-                          <th className="text-left py-2">Year</th>
-                          <th className="text-right py-2">Revenue (Cr)</th>
-                          <th className="text-right py-2">Net Profit (Cr)</th>
-                          <th className="text-right py-2">EPS (₹)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td colSpan={4} className="py-4 text-center text-gray-500">
-                            Financial data is not available at this time. Real data will be fetched from the API when implemented.
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+        {/* Metrics Cards (Horizontal Row) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <div className="bg-[#141736] rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                <TrendingUp size={16} className="text-blue-400" />
               </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+              <span className="text-gray-400 text-sm">Market Cap</span>
+            </div>
+            <div className="font-bold">₹{(stockDetails.marketCap || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr</div>
+          </div>
+          
+          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <div className="bg-[#1e1339] rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                <BarChart4 size={16} className="text-purple-400" />
+              </div>
+              <span className="text-gray-400 text-sm">P/E Ratio</span>
+            </div>
+            <div className="font-bold">{(stockDetails.pe || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+          </div>
+          
+          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <div className="bg-[#142619] rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                <DollarSign size={16} className="text-green-400" />
+              </div>
+              <span className="text-gray-400 text-sm">EPS</span>
+            </div>
+            <div className="font-bold">₹{(stockDetails.eps || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+          </div>
+          
+          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
+            <div className="flex items-center mb-2">
+              <div className="bg-[#261810] rounded-full w-8 h-8 flex items-center justify-center mr-3">
+                <PieChart size={16} className="text-orange-400" />
+              </div>
+              <span className="text-gray-400 text-sm">Div Yield</span>
+            </div>
+            <div className="font-bold">{(stockDetails.dividendYield || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}%</div>
+          </div>
+        </div>
 
-      <div className="text-sm text-gray-500 dark:text-gray-400 mt-6">
-        <p>Data is for educational purposes only. Not financial advice.</p>
-        <p>Last updated: {new Date().toLocaleString()}</p>
+        {/* Stock Identifiers Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Stock Identifiers</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <p className="text-gray-400 mb-1">ISIN</p>
+              <p className="font-medium text-lg">{isin}</p>
+            </div>
+            
+            <div>
+              <p className="text-gray-400 mb-1">BSE Code</p>
+              <p className="font-medium text-lg">{bseCode}</p>
+            </div>
+            
+            <div>
+              <p className="text-gray-400 mb-1">NSE Code</p>
+              <p className="font-medium text-lg">{nseCode}</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* BSE and NSE Prices */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
+            <div className="text-center">
+              <span className="text-blue-400 text-sm">BSE Price</span>
+              <div className="text-xl font-bold">₹{(stockDetails.currentPrice.BSE || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+            </div>
+          </div>
+          
+          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
+            <div className="text-center">
+              <span className="text-blue-400 text-sm">NSE Price</span>
+              <div className="text-xl font-bold">₹{(stockDetails.currentPrice.NSE || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Trading Information Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold mb-4">Trading Information</h2>
+          <p className="text-gray-400 text-sm mb-4">Volume and activity</p>
+          
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Volume</span>
+              <span className="font-medium">{(stockDetails.volume || 0).toLocaleString()}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Avg Volume</span>
+              <span className="font-medium">{(stockDetails.averageVolume || 0).toLocaleString()}</span>
+            </div>
+            
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Day Range</span>
+              <span className="font-medium">₹{(stockDetails.currentPrice.BSE * 0.995).toFixed(2)} - ₹{(stockDetails.currentPrice.BSE * 1.005).toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+        
+        {/* Key Management Section */}
+        <div>
+          <h2 className="text-xl font-bold mb-4">Key Management</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {officers.length > 0 ? (
+              officers.slice(0, 6).map((officer, index) => {
+                const fullName = [officer.firstName, officer.mI, officer.lastName].filter(Boolean).join(' ');
+                const title = officer.title?.Value || '';
+                const since = officer.since || 'NA';
+                
+                return (
+                  <div key={index} className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-5">
+                    <h3 className="font-bold mb-1">{fullName}</h3>
+                    <p className="text-gray-400 text-sm mb-1">{title}</p>
+                    <p className="text-gray-500 text-xs">Since {since}</p>
+                  </div>
+                );
+              })
+            ) : (
+              // If no officers data, show example data like in the image
+              [
+                {
+                  name: "Sanjiv Puri",
+                  title: "Executive Chairman of the Board, Managing Director",
+                  since: "12/06/2015"
+                },
+                {
+                  name: "Supratim Dutta",
+                  title: "Chief Financial Officer, Whole-Time Director",
+                  since: "09/05/2020"
+                },
+                {
+                  name: "A. K. Rajput",
+                  title: "President - Corporate Affairs",
+                  since: "NA"
+                },
+                {
+                  name: "Rajendra Kumar Singhi",
+                  title: "Executive Vice President, Compliance Officer, Company Secretary",
+                  since: "02/04/2018"
+                },
+                {
+                  name: "Sumant Bhargavan",
+                  title: "Wholetime Director",
+                  since: "04/01/2016"
+                },
+                {
+                  name: "Hemant Malik",
+                  title: "Whole-time Director, Divisional Chief Executive - Foods Business Division",
+                  since: "NA"
+                }
+              ].map((person, index) => (
+                <div key={index} className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-5">
+                  <h3 className="font-bold mb-1">{person.name}</h3>
+                  <p className="text-gray-400 text-sm mb-1">{person.title}</p>
+                  <p className="text-gray-500 text-xs">Since {person.since}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

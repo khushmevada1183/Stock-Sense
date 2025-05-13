@@ -54,7 +54,7 @@ export const stockService = {
       const apiData = response.data.data || response.data;
       
       // Transform the data into the format expected by the frontend
-      let stocks = [];
+      let stocks: any[] = [];
       
       // Check if we have top_gainers or top_losers in the response
       if (apiData.top_gainers || apiData.top_losers) {

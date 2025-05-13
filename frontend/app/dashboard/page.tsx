@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import StockList from '@/components/StockList';
-import MarketNews from '@/components/MarketNews';
-import IPOTable from '@/components/IPOTable';
-import CommoditiesTable from '@/components/CommoditiesTable';
-import HighLowTable from '@/components/HighLowTable';
+import StockList from '@/components/stocks/StockList';
+import MarketNews from '@/components/News/MarketNews';
+import IPOTable from '@/components/IPO/IPOTable';
+import CommoditiesTable from '@/components/dashboard/CommoditiesTable';
+import HighLowTable from '@/components/market/HighLowTable';
 
 export default function Dashboard() {
   const [activeStock, setActiveStock] = useState('');

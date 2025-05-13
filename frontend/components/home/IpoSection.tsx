@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { stockService } from '@/services/api';
 
 interface IpoItem {
@@ -14,12 +16,34 @@ interface IpoItem {
   listing_date?: string;
   subscription_status?: string;
   gmp?: string; // Grey Market Premium
+  logo?: string; // Added logo field
+  issue_type?: string;
+  open?: string;
+  close?: string;
+  rhpLink?: string;
+  drhpLink?: string;
 }
 
 export default function IpoSection() {
   const [ipoData, setIpoData] = useState<IpoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Function to scroll carousel horizontally
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (!carouselRef.current) return;
+    
+    const scrollAmount = 250; // px to scroll
+    const scrollPosition = direction === 'left' 
+      ? carouselRef.current.scrollLeft - scrollAmount 
+      : carouselRef.current.scrollLeft + scrollAmount;
+      
+    carouselRef.current.scrollTo({
+      left: scrollPosition,
+      behavior: 'smooth'
+    });
+  };
 
   useEffect(() => {
     const fetchIpoData = async () => {
@@ -76,7 +100,15 @@ export default function IpoSection() {
   if (ipoData.length === 0) {
     return (
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h3 className="text-xl font-semibold mb-4">Upcoming IPOs</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold">Upcoming IPOs</h3>
+          <Link 
+            href="/ipo"
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm"
+          >
+            View All IPOs →
+          </Link>
+        </div>
         <p className="text-gray-500 dark:text-gray-400 text-center py-8">
           No upcoming IPO data available at this time.
         </p>
@@ -84,66 +116,134 @@ export default function IpoSection() {
     );
   }
 
+  // Get only the first 5 IPOs to display
+  const displayedIpos = ipoData.slice(0, 5);
+
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
       <div className="p-6">
-        <h3 className="text-xl font-semibold mb-4">Upcoming IPOs</h3>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-semibold">Upcoming IPOs</h3>
+          <Link 
+            href="/ipo"
+            className="px-4 py-1 bg-yellow-400 hover:bg-yellow-500 text-gray-800 rounded text-sm font-medium transition-colors"
+          >
+            View All
+          </Link>
+        </div>
+        <div className="text-gray-500 dark:text-gray-400 text-sm mb-4">
+          Companies that have filed for an IPO with SEBI. Details might be disclosed later.
+        </div>
         
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900">
-              <tr>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Company
-                </th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Price Range
-                </th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Issue Date
-                </th>
-                <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {ipoData.map((ipo, index) => (
-                <tr key={ipo.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {ipo.company_name}
+        {/* IPO Cards in a scrollable container */}
+        <div className="relative mb-2">
+          <div 
+            ref={carouselRef}
+            className="overflow-x-auto pb-4 relative max-w-full"
+          >
+            <div className="flex gap-6 px-1 py-2 min-w-full">
+              {displayedIpos.map((ipo, index) => (
+                <div key={ipo.id || index} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow duration-300 p-4 min-w-[250px] flex flex-col items-center">
+                  {ipo.logo ? (
+                    <div className="w-12 h-12 mb-3 rounded-lg bg-gray-50 dark:bg-gray-700 flex items-center justify-center overflow-hidden">
+                      <Image 
+                        src={ipo.logo} 
+                        alt={`${ipo.company_name} logo`} 
+                        width={48} 
+                        height={48} 
+                        className="object-contain" 
+                      />
                     </div>
-                    {ipo.symbol && (
-                      <div className="text-xs text-gray-500 dark:text-gray-400">
-                        {ipo.symbol}
+                  ) : (
+                    <div className="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-lg mb-3 text-gray-800 dark:text-gray-200 font-semibold">
+                      {ipo.symbol?.substring(0, 2) || ipo.company_name?.substring(0, 2) || 'IP'}
                       </div>
                     )}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                    {ipo.price_range || 'TBA'}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
-                    {ipo.issue_date || 'TBA'}
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                      ${getStatusColor(ipo.subscription_status || '')}`}>
+                  <div className="font-semibold text-gray-800 dark:text-gray-100 text-center mb-2 line-clamp-1">{ipo.company_name}</div>
+                  <div className="text-gray-500 dark:text-gray-400 text-sm mb-1">Issue Size: <span className="font-medium">{ipo.issue_size || 'TBA'}</span></div>
+                  <div className="text-gray-500 dark:text-gray-400 text-sm mb-1">Price Range: {ipo.price_range || 'TBA'}</div>
+                  <div className="text-gray-500 dark:text-gray-400 text-sm mb-1">Issue Date: {ipo.issue_date || 'TBA'}</div>
+                  <div className="mt-2">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(ipo.subscription_status || '')}`}>
                       {ipo.subscription_status || 'Upcoming'}
                     </span>
-                  </td>
-                </tr>
+                  </div>
+                  
+                  {/* Document links if available */}
+                  {(ipo.rhpLink || ipo.drhpLink) && (
+                    <div className="flex gap-4 mt-2">
+                      {ipo.rhpLink && (
+                        <a 
+                          href={ipo.rhpLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-yellow-500 hover:text-yellow-600 hover:underline text-xs font-medium transition-colors"
+                        >
+                          RHP
+                        </a>
+                      )}
+                      {ipo.drhpLink && (
+                        <a 
+                          href={ipo.drhpLink} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="text-green-500 hover:text-green-600 hover:underline text-xs font-medium transition-colors"
+                        >
+                          DRHP
+                        </a>
+                      )}
+                    </div>
+                  )}
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+            {/* Fade effect for scrolling indication */}
+            <div className="absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
+          </div>
+          
+          {/* Carousel navigation buttons */}
+          {displayedIpos.length > 2 && (
+            <div className="flex justify-end mt-2 gap-2">
+              <button 
+                onClick={() => scrollCarousel('left')}
+                className="p-1.5 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button 
+                onClick={() => scrollCarousel('right')}
+                className="p-1.5 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </div>
+        
+        {/* Demat Account CTA */}
+        <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 text-center">
+          <div className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Applying for IPOs?</div>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-3">
+            To apply for IPOs, you need a Demat account. Open your account now to start investing.
+          </p>
+          <a 
+            href="#" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="px-4 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded text-sm font-medium inline-block transition-colors"
+          >
+            Open a Demat Account
+          </a>
         </div>
         
         <div className="mt-4 text-right">
           <Link 
             href="/ipo"
-            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm"
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline font-medium text-sm transition-colors"
           >
-            View All IPOs →
+            Explore All IPOs →
           </Link>
         </div>
       </div>

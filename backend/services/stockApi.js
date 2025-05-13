@@ -1,8 +1,8 @@
 const axios = require('axios');
 const { cacheService, DEFAULT_TTL } = require('./cacheService');
+const apiKeyManager = require('./apiKeyManager');
 
-// Get API key from environment variable with fallback
-const API_KEY = process.env.STOCK_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
+// API base URL - keep this from environment variable with fallback
 const API_BASE_URL = process.env.STOCK_API_BASE_URL || 'https://stock.indianapi.in';
 
 // Helper function to generate cache keys
@@ -19,13 +19,21 @@ const generateCacheKey = (prefix, params = {}) => {
 const createApiClient = (customHeaders = {}) => {
   return {
     get: async (endpoint, options = {}) => {
+      // Maximum number of retry attempts when rate limited
+      const MAX_RETRIES = 3;
+      let retries = 0;
+      
+      while (retries <= MAX_RETRIES) {
       try {
+          // Get the current API key from the manager
+          const API_KEY = apiKeyManager.getCurrentKey();
+          
         console.log(`Making API request to: ${API_BASE_URL}${endpoint}`);
         
         // Set up request headers with API key
         const headers = {
           'Content-Type': 'application/json',
-          'x-api-key': API_KEY,
+            'X-Api-Key': API_KEY,
           ...customHeaders
         };
         
@@ -35,11 +43,44 @@ const createApiClient = (customHeaders = {}) => {
           headers,
           timeout: 10000 // 10 second timeout
         });
+          
+          // If successful, record the successful use
+          apiKeyManager.recordSuccessfulUse();
         
         return response;
       } catch (error) {
+          // Check if this is a rate limit error (HTTP 429)
+          if (error.response && error.response.status === 429) {
+            console.warn('Rate limit exceeded for current API key');
+            
+            // Set cooldown to 1 second per the API plan (1 request/second limit)
+            const resetTimeInSeconds = 1;
+            
+            // Mark current key as rate limited
+            apiKeyManager.markCurrentKeyRateLimited(resetTimeInSeconds);
+            
+            // Increment retry counter
+            retries++;
+            
+            // If we've hit the max retries or there are no more available keys, throw the error
+            if (retries > MAX_RETRIES) {
+              console.error(`Max retries (${MAX_RETRIES}) reached. No more available API keys.`);
+              throw new Error('All API keys have reached their rate limits. Please try again later.');
+            }
+            
+            console.log(`Retrying with new API key (attempt ${retries}/${MAX_RETRIES})...`);
+            
+            // Slight delay before retry to avoid hammering the API
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Continue to next iteration (which will use the next available key)
+            continue;
+          }
+          
+          // For other errors, log and rethrow
         console.error(`API request failed for ${endpoint}:`, error.message);
         throw error;
+        }
       }
     }
   };
@@ -60,6 +101,7 @@ const stockApiService = {
     }
     
     try {
+      console.log(`Fetching stock details for ${symbol} from API`);
       const apiClient = createApiClient();
       const response = await apiClient.get(`/stock`, {
         params: { name: symbol }
@@ -68,11 +110,32 @@ const stockApiService = {
       // Process the API response
       let stockData = response.data;
       
+      // Add a symbol field if it doesn't exist
+      if (stockData && !stockData.symbol) {
+        stockData.symbol = symbol;
+      }
+      
+      // Extract price information for easy access
+      if (stockData && stockData.currentPrice) {
+        const bsePrice = stockData.currentPrice.BSE;
+        const nsePrice = stockData.currentPrice.NSE;
+        
+        // Add latestPrice field for consistency with frontend expectations
+        stockData.latestPrice = bsePrice || nsePrice || 0;
+        
+        console.log(`Price data for ${symbol}: BSE=${bsePrice}, NSE=${nsePrice}`);
+      } else if (stockData && stockData.stockTechnicalData && stockData.stockTechnicalData.length > 0) {
+        const technicalPrice = stockData.stockTechnicalData[0].bsePrice || stockData.stockTechnicalData[0].nsePrice;
+        stockData.latestPrice = technicalPrice;
+        console.log(`Technical price data for ${symbol}: ${technicalPrice}`);
+      }
+      
       // Cache the result if we have data
-      if (stockData && stockData.data) {
-        await cacheService.set(cacheKey, stockData.data, DEFAULT_TTL.STOCK_DATA);
-        return stockData.data;
+      if (stockData) {
+        await cacheService.set(cacheKey, stockData, DEFAULT_TTL.STOCK_DATA);
+        return stockData;
       } else {
+        console.log(`No data found for stock ${symbol}`);
         throw new Error(`No data found for stock ${symbol}`);
       }
     } catch (error) {
@@ -99,17 +162,39 @@ const stockApiService = {
     
     try {
       const apiClient = createApiClient();
+      // Use the /stock endpoint directly with the name parameter
+      console.log(`Searching for stock with query: "${query}"...`);
       const response = await apiClient.get(`/stock`, {
           params: { name: query }
         });
         
       // Process API response
       const stockData = response.data;
+      console.log(`Search response received for "${query}"`);
       
-      // Format response to match the expected schema
+      // Format response to match the expected schema in the frontend
       let results = [];
       
-      if (stockData && stockData.data && Array.isArray(stockData.data)) {
+      if (stockData) {
+        // Different API response formats to handle
+        if (stockData.currentPrice || stockData.stockTechnicalData) {
+          // Format when we get a direct stock hit with price information
+          const price = stockData.currentPrice ? 
+            (stockData.currentPrice.BSE || stockData.currentPrice.NSE) : 
+            (stockData.stockTechnicalData && stockData.stockTechnicalData[0] ? 
+              parseFloat(stockData.stockTechnicalData[0].bsePrice) : 0);
+          
+          results = [{
+            symbol: stockData.symbol || stockData.companyName?.split(' ')[0] || query,
+            companyName: stockData.companyName || query,
+            latestPrice: price,
+            change: stockData.percentChange?.percent_change || 0,
+            changePercent: stockData.percentChange?.percent_change || 0,
+            sector: stockData.industry || stockData.sector || '',
+            fullData: stockData // Include the complete data for details page
+          }];
+        } else if (stockData.data && Array.isArray(stockData.data)) {
+          // Handle legacy format just in case
         results = stockData.data.map(item => ({
           symbol: item.symbol || item.name,
           companyName: item.company_name || item.name,
@@ -118,9 +203,11 @@ const stockApiService = {
           changePercent: item.percent_change,
           sector: item.sector
         }));
+        }
       }
       
       const formattedResponse = { results };
+      console.log(`Formatted ${results.length} search results for "${query}"`);
         
       // Cache the formatted results
       await cacheService.set(cacheKey, formattedResponse, DEFAULT_TTL.SEARCH_RESULTS);
@@ -128,7 +215,8 @@ const stockApiService = {
         return formattedResponse;
     } catch (error) {
       console.error(`Error searching for stocks with query "${query}":`, error.message);
-      throw error;
+      // If the API returns an error for this stock name, return empty results
+      return { results: [] };
     }
   },
 

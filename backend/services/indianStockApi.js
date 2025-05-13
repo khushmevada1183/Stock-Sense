@@ -1,8 +1,8 @@
 const axios = require('axios');
 const { cacheService, DEFAULT_TTL } = require('./cacheService');
+const apiKeyManager = require('./apiKeyManager');
 
-// Get API key from environment variable with fallback
-const API_KEY = process.env.INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
+// Get API base URL from environment variable with fallback
 const API_BASE_URL = process.env.INDIAN_API_BASE_URL || 'https://stock.indianapi.in';
 
 // Helper function to generate cache keys
@@ -19,7 +19,15 @@ const generateCacheKey = (prefix, params = {}) => {
 const createApiClient = () => {
   return {
     get: async (endpoint, options = {}) => {
+      // Maximum number of retry attempts when rate limited
+      const MAX_RETRIES = 3;
+      let retries = 0;
+      
+      while (retries <= MAX_RETRIES) {
       try {
+          // Get the current API key from the manager
+          const API_KEY = apiKeyManager.getCurrentKey();
+          
         console.log(`Making Indian API request to: ${API_BASE_URL}${endpoint}`);
         
         // Set up request headers with API key
@@ -34,11 +42,44 @@ const createApiClient = () => {
           headers,
           timeout: 10000 // 10 second timeout
         });
+          
+          // If successful, record the successful use
+          apiKeyManager.recordSuccessfulUse();
         
         return response;
       } catch (error) {
+          // Check if this is a rate limit error (HTTP 429)
+          if (error.response && error.response.status === 429) {
+            console.warn('Rate limit exceeded for current API key');
+            
+            // Set cooldown to 1 second per the API plan (1 request/second limit)
+            const resetTimeInSeconds = 1;
+            
+            // Mark current key as rate limited
+            apiKeyManager.markCurrentKeyRateLimited(resetTimeInSeconds);
+            
+            // Increment retry counter
+            retries++;
+            
+            // If we've hit the max retries or there are no more available keys, throw the error
+            if (retries > MAX_RETRIES) {
+              console.error(`Max retries (${MAX_RETRIES}) reached. No more available API keys.`);
+              throw new Error('All API keys have reached their rate limits. Please try again later.');
+            }
+            
+            console.log(`Retrying with new API key (attempt ${retries}/${MAX_RETRIES})...`);
+            
+            // Slight delay before retry to avoid hammering the API
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            // Continue to next iteration (which will use the next available key)
+            continue;
+          }
+          
+          // For other errors, log and rethrow
         console.error(`Indian API request failed for ${endpoint}:`, error.message);
         throw error;
+        }
       }
     }
   };
@@ -47,31 +88,8 @@ const createApiClient = () => {
 // Indian Stock API service
 const indianStockApiService = {
   // Get stock details by name
-  async getStockByName(stockName) {
-    if (!stockName) {
-      throw new Error('Stock name is required');
-    }
-    
-    // Clean up the stock name - remove extra spaces, etc.
-    const cleanStockName = stockName.trim();
-    
-    // Try different formats of the stock name
-    const stockNameVariations = [
-      cleanStockName,                     // Original (cleaned)
-      cleanStockName.toUpperCase(),       // Uppercase
-      cleanStockName.toLowerCase(),       // Lowercase
-      this.formatStockSymbol(cleanStockName) // Formatted as stock symbol
-    ];
-    
-    // Remove duplicates
-    const uniqueVariations = [...new Set(stockNameVariations)];
-    
-    // Try each variation
-    let lastError = null;
-    
-    for (const nameVariation of uniqueVariations) {
-      // Generate cache key
-      const cacheKey = generateCacheKey('stock', { name: nameVariation });
+  async getStockByName(name) {
+    const cacheKey = generateCacheKey('stock_name', { name });
       
       // Try to get from cache first
       const cachedData = await cacheService.get(cacheKey);
@@ -81,29 +99,42 @@ const indianStockApiService = {
       }
       
       try {
-        console.log(`Trying to fetch stock with name: ${nameVariation}`);
         const apiClient = createApiClient();
         const response = await apiClient.get('/stock', {
-          params: { name: nameVariation }
-        });
+        params: { name }
+      });
+      
+      let stockData = response.data;
         
-        // Process the API response
-        let stockData = response.data;
+      // Process and enrich the stock data before caching
+      if (stockData) {
+        // Extract price from currentPrice if available or from other fields
+        let latestPrice = null;
         
-        // Cache the result if we have data
-        if (stockData && Object.keys(stockData).length > 0) {
-          await cacheService.set(cacheKey, stockData, DEFAULT_TTL.STOCK_DATA);
-          return stockData;
+        if (stockData.currentPrice) {
+          // Try BSE price first, then NSE
+          latestPrice = stockData.currentPrice.BSE || stockData.currentPrice.NSE;
+        } else if (stockData.stockTechnicalData && stockData.stockTechnicalData.length > 0) {
+          latestPrice = stockData.stockTechnicalData[0].bsePrice || stockData.stockTechnicalData[0].nsePrice;
         }
-      } catch (error) {
-        console.error(`Error fetching stock ${nameVariation}:`, error.message);
-        lastError = error;
-        // Continue to next variation
+        
+        // Make sure we have a symbol
+        if (!stockData.symbol && stockData.companyName) {
+          stockData.symbol = stockData.companyName.split(' ')[0];
+        }
+        
+        // Add the latestPrice field for consistency
+        stockData.latestPrice = latestPrice;
       }
+      
+      // Cache the result
+      await cacheService.set(cacheKey, stockData, DEFAULT_TTL.STOCK_DETAILS);
+      
+          return stockData;
+      } catch (error) {
+      console.error(`Error fetching stock details for "${name}": ${error.message}`);
+      throw error;
     }
-    
-    // If we've tried all variations and none worked, throw the last error
-    throw lastError || new Error(`No data found for stock ${stockName}`);
   },
   
   // Helper function to format stock symbol

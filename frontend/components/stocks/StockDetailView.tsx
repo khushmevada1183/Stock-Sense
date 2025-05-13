@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import indianApiService from '../../services/indianApiService';
 import { StockDetails, HistoricalDataPoint } from '../../services/indianApiService';
-import StockChart from './StockChart';
+import StockChart from '@/components/stocks/StockChart';
 
 interface StockDetailViewProps {
   symbol: string;

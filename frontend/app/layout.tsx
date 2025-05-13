@@ -1,10 +1,10 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '../components/ThemeProvider';
+import { ThemeProvider } from '../components/ui/ThemeProvider';
 import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
 import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
+import Footer from '../components/Footer/Footer';
 import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
 

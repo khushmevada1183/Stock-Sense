@@ -231,8 +231,8 @@ export function useMarketData() {
       ]);
       
       const data = {
-        topGainers,
-        topLosers,
+        topGainers: topGainers as StockData[],
+        topLosers: topLosers as StockData[],
         indices
       };
       
