@@ -3,21 +3,22 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { stockService } from '@/services/api';
+import { Stock } from '@/types/stocks';
 
-interface Stock {
-  id?: number;
-  symbol: string;
-  company_name?: string; 
-  companyName?: string;
-  sector_name?: string;
-  sector?: string;
-  current_price?: number;
-  latestPrice?: number;
-  price_change_percentage?: number;
-  changePercent?: number;
-  change?: number;
-  volume?: number;
-}
+// Helper function to normalize stock data across different formats
+const normalizeStock = (stock: any): Stock => {
+  return {
+    id: stock.id || stock.symbol || '',
+    symbol: stock.symbol || '',
+    company_name: stock.company_name || stock.companyName || '',
+    sector_name: stock.sector_name || stock.sector || '',
+    price_change_percentage: stock.price_change_percentage || 
+                             stock.changePercent || 
+                             stock.change_percent || 
+                             stock.change || 0,
+    current_price: stock.current_price || stock.latestPrice || stock.price || 0
+  };
+};
 
 export default function FeaturedStocks() {
   const [stocks, setStocks] = useState<Stock[]>([]);
@@ -32,13 +33,13 @@ export default function FeaturedStocks() {
         
         if (data && Array.isArray(data)) {
           // Direct array of stocks
-          setStocks(data);
+          setStocks(data.map(normalizeStock));
         } else if (data && data.stocks && Array.isArray(data.stocks)) {
           // Stocks wrapped in a 'stocks' property
-          setStocks(data.stocks);
+          setStocks(data.stocks.map(normalizeStock));
         } else if (data && typeof data === 'object') {
           // No clear array structure, try to extract stocks from the object
-          const extractedStocks: Stock[] = [];
+          const extractedStocks: any[] = [];
           
           // Handle nested arrays like top_gainers, top_losers, etc.
           Object.entries(data).forEach(([key, value]) => {
@@ -48,7 +49,7 @@ export default function FeaturedStocks() {
           });
           
           if (extractedStocks.length > 0) {
-            setStocks(extractedStocks);
+            setStocks(extractedStocks.map(normalizeStock));
           } else {
             setError('No stocks data found');
           }
@@ -97,6 +98,29 @@ export default function FeaturedStocks() {
     );
   }
 
+  // Helper function to format a number with 2 decimal places
+  const formatNumber = (value: string | number): string => {
+    if (typeof value === 'number') {
+      return value.toFixed(2);
+    }
+    if (typeof value === 'string') {
+      const num = parseFloat(value);
+      return isNaN(num) ? '0.00' : num.toFixed(2);
+    }
+    return '0.00';
+  };
+
+  // Helper function to check if a value is positive
+  const isPositive = (value: string | number): boolean => {
+    if (typeof value === 'number') {
+      return value >= 0;
+    }
+    if (typeof value === 'string') {
+      return parseFloat(value) >= 0;
+    }
+    return true;
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {stocks.map((stock, index) => (
@@ -110,45 +134,27 @@ export default function FeaturedStocks() {
                   </Link>
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  {stock.company_name || stock.companyName || 'N/A'}
+                  {stock.company_name || 'N/A'}
                 </p>
               </div>
               <span className={`text-sm font-semibold rounded-full px-2 py-1 ${
-                ((stock.price_change_percentage || 0) >= 0 || 
-                 (stock.changePercent || 0) >= 0 || 
-                 (stock.change || 0) >= 0)
+                isPositive(stock.price_change_percentage)
                   ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
                   : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
               }`}>
-                {((stock.price_change_percentage || 0) >= 0 || 
-                  (stock.changePercent || 0) >= 0 || 
-                  (stock.change || 0) >= 0) ? '+' : ''}
-                {(() => {
-                  const value = stock.price_change_percentage !== undefined
-                  ? stock.price_change_percentage
-                  : stock.changePercent !== undefined
-                    ? stock.changePercent
-                      : stock.change || 0;
-                  
-                  // Ensure value is a number before using toFixed
-                  return typeof value === 'number' 
-                    ? value.toFixed(2) 
-                    : '0.00';
-                })()}%
+                {isPositive(stock.price_change_percentage) ? '+' : ''}
+                {formatNumber(stock.price_change_percentage)}%
               </span>
             </div>
             
             <div className="text-2xl font-bold mb-2">
-              ₹{(() => {
-                const price = stock.current_price || stock.latestPrice || 0;
-                return typeof price === 'number' 
-                  ? price.toLocaleString() 
-                  : '0';
-              })()}
+              ₹{typeof stock.current_price === 'number' 
+                 ? stock.current_price.toLocaleString() 
+                 : parseFloat(String(stock.current_price || 0)).toLocaleString()}
             </div>
             
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-              {stock.sector_name || stock.sector || 'Various Sectors'}
+              {stock.sector_name || 'Various Sectors'}
             </p>
             
             <Link 

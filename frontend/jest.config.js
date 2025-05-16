@@ -4,7 +4,9 @@ module.exports = {
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.next/',
-    '<rootDir>/cypress/'
+    '<rootDir>/cypress/e2e/',
+    '<rootDir>/cypress/support/',
+    '<rootDir>/cypress/fixtures/'
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
@@ -16,7 +18,15 @@ module.exports = {
   coveragePathIgnorePatterns: [
     '/node_modules/',
     '/.next/',
-    '/cypress/',
-    '/public/',
+    '/cypress/e2e/',
+    '/cypress/support/',
+    '/cypress/fixtures/',
+    '/public/'
+  ],
+  testMatch: [
+    '<rootDir>/tests/unit/**/*.test.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/api/**/*.test.{js,jsx,ts,tsx}',
+    '<rootDir>/tests/utils/**/*.test.{js,jsx,ts,tsx}',
+    '<rootDir>/cypress/unit/**/*.test.{js,jsx,ts,tsx}'
   ]
 }; 

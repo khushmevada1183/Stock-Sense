@@ -3,10 +3,12 @@ import { Inter } from 'next/font/google';
 import { ThemeProvider } from '../components/ui/ThemeProvider';
 import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
+import { AnimationProvider } from '../animations/shared/AnimationContext';
 import Header from '../components/layout/Header';
 import Footer from '../components/Footer/Footer';
 import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
+import ScrollProgressIndicator from '../components/layout/ScrollProgressIndicator';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -31,7 +33,9 @@ export default function RootLayout({
         >
           <UIProvider>
             <StockProvider>
+              <AnimationProvider>
             <div className="flex flex-col min-h-screen">
+                  <ScrollProgressIndicator />
                 <Header />
               <main className="flex-grow">
                 {children}
@@ -42,6 +46,7 @@ export default function RootLayout({
                 <Toasts />
                 <ModalContainer />
             </div>
+              </AnimationProvider>
             </StockProvider>
           </UIProvider>
         </ThemeProvider>

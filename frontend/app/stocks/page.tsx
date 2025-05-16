@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { stockService } from '@/services/api';
+import { useAnimation } from '@/animations/shared/AnimationContext';
+import { initStocksPageAnimations } from '@/animations/pages/stocksAnimations';
 
 interface Stock {
   id: number;
@@ -17,6 +19,14 @@ export default function StocksIndexPage() {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Refs for animating elements
+  const headerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+  const noticeRef = useRef<HTMLDivElement>(null);
+  
+  // Get animation context
+  const { isAnimationEnabled } = useAnimation();
 
   useEffect(() => {
     const fetchStocks = async () => {
@@ -59,6 +69,19 @@ export default function StocksIndexPage() {
 
     fetchStocks();
   }, []);
+  
+  // Initialize animations when component mounts and data is loaded
+  useEffect(() => {
+    if (!loading && isAnimationEnabled) {
+      const refs = {
+        headerRef,
+        tableRef,
+        noticeRef
+      };
+      
+      initStocksPageAnimations(refs);
+    }
+  }, [loading, isAnimationEnabled]);
 
   if (loading) {
     return (
@@ -96,7 +119,7 @@ export default function StocksIndexPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+      <div ref={headerRef} className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <h1 className="text-3xl font-bold">All Stocks</h1>
         
         <div className="mt-4 md:mt-0">
@@ -110,7 +133,7 @@ export default function StocksIndexPage() {
       </div>
       
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden mb-8">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <table ref={tableRef} className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -164,7 +187,7 @@ export default function StocksIndexPage() {
         </table>
       </div>
       
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-blue-800 dark:text-blue-300">
+      <div ref={noticeRef} className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-blue-800 dark:text-blue-300">
         <p className="flex items-center">
           <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9a1 1 0 00-1-1z" clipRule="evenodd" />

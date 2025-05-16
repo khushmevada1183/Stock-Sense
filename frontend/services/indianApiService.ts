@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
+import { apiHelpers } from '../utils/api';
 
 // API response types
 export interface StockDetails {
@@ -65,15 +66,16 @@ class IndianApiService {
   private api: AxiosInstance;
   private cacheData: Map<string, { data: any; timestamp: number }> = new Map();
   private cacheTTL: number = 5 * 60 * 1000; // 5 minutes default TTL
+  private baseURL: string;
 
   constructor() {
     // API Configuration
     const API_KEY = process.env.NEXT_PUBLIC_INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
-    const BASE_URL = process.env.NEXT_PUBLIC_INDIAN_API_URL || 'https://stock.indianapi.in';
+    this.baseURL = process.env.NEXT_PUBLIC_INDIAN_API_URL || 'https://stock.indianapi.in';
 
     // Create axios instance with default config
     this.api = axios.create({
-      baseURL: BASE_URL,
+      baseURL: this.baseURL,
       headers: {
         'X-Api-Key': API_KEY,
         'Content-Type': 'application/json'
@@ -744,6 +746,114 @@ class IndianApiService {
       console.error(`Error searching stocks for "${query}":`, error);
       return { results: [] };
     }
+  }
+
+  /**
+   * Get market overview data including indices, sectors, breadth
+   */
+  async getMarketOverview() {
+    try {
+      const response = await axios.get(`${this.baseURL}/api/market/overview`);
+      return apiHelpers.normalizeApiResponse(response.data);
+    } catch (error) {
+      console.error('Error fetching market overview:', error);
+      // Return mock data in case of error
+      return this.getMockMarketData();
+    }
+  }
+  
+  /**
+   * Get mock market data for fallback
+   */
+  private getMockMarketData() {
+    return {
+      indices: [
+        { name: "NIFTY 50", current: 22356.30, change: 203.25, percentChange: 0.92, color: "#22c55e" },
+        { name: "SENSEX", current: 73667.76, change: 612.21, percentChange: 0.84, color: "#22c55e" },
+        { name: "NIFTY BANK", current: 47892.35, change: 522.60, percentChange: 1.10, color: "#22c55e" },
+        { name: "NIFTY IT", current: 34562.15, change: -126.45, percentChange: -0.36, color: "#ef4444" },
+        { name: "NIFTY METAL", current: 8654.20, change: 98.70, percentChange: 1.15, color: "#22c55e" },
+        { name: "NIFTY PHARMA", current: 18642.80, change: -75.30, percentChange: -0.40, color: "#ef4444" }
+      ],
+      
+      breadth: {
+        advances: 1845,
+        declines: 1623,
+        unchanged: 176
+      },
+      
+      sectors: [
+        { name: "Metal", change: 2.14 },
+        { name: "Realty", change: 1.76 },
+        { name: "PSU Bank", change: 1.62 },
+        { name: "Auto", change: 1.35 },
+        { name: "Bank", change: 1.10 },
+        { name: "Finance", change: 0.87 },
+        { name: "FMCG", change: 0.32 },
+        { name: "Media", change: -0.11 },
+        { name: "Pharma", change: -0.40 },
+        { name: "IT", change: -0.36 }
+      ],
+      
+      topGainers: [
+        { symbol: "TATASTEEL", name: "Tata Steel Ltd.", price: 145.30, change: 9.25, percentChange: 6.8 },
+        { symbol: "HINDPETRO", name: "Hindustan Petroleum Corporation Ltd.", price: 478.55, change: 26.30, percentChange: 5.81 },
+        { symbol: "M&M", name: "Mahindra & Mahindra Ltd.", price: 2132.85, change: 99.65, percentChange: 4.9 },
+        { symbol: "ADANIPORTS", name: "Adani Ports and Special Economic Zone Ltd.", price: 1290.60, change: 53.20, percentChange: 4.3 },
+        { symbol: "SBIN", name: "State Bank of India", price: 782.40, change: 26.80, percentChange: 3.55 }
+      ],
+      
+      topLosers: [
+        { symbol: "WIPRO", name: "Wipro Ltd.", price: 452.65, change: -22.30, percentChange: -4.69 },
+        { symbol: "HCLTECH", name: "HCL Technologies Ltd.", price: 1342.10, change: -48.75, percentChange: -3.51 },
+        { symbol: "SUNPHARMA", name: "Sun Pharmaceutical Industries Ltd.", price: 1187.45, change: -36.30, percentChange: -2.97 },
+        { symbol: "TCS", name: "Tata Consultancy Services Ltd.", price: 3679.90, change: -94.20, percentChange: -2.5 },
+        { symbol: "DRREDDY", name: "Dr. Reddy's Laboratories Ltd.", price: 5642.35, change: -135.65, percentChange: -2.35 }
+      ],
+      
+      mostActive: [
+        { symbol: "RELIANCE", name: "Reliance Industries Ltd.", price: 2853.75, change: 32.45, percentChange: 1.15, volume: 15890000 },
+        { symbol: "HDFC", name: "Housing Development Finance Corporation Ltd.", price: 3126.90, change: 18.20, percentChange: 0.59, volume: 9540000 },
+        { symbol: "TATASTEEL", name: "Tata Steel Ltd.", price: 145.30, change: 9.25, percentChange: 6.8, volume: 8760000 },
+        { symbol: "SBIN", name: "State Bank of India", price: 782.40, change: 26.80, percentChange: 3.55, volume: 7230000 },
+        { symbol: "ICICIBANK", name: "ICICI Bank Ltd.", price: 1085.70, change: 12.35, percentChange: 1.15, volume: 6850000 }
+      ],
+      
+      heatMap: [
+        {
+          sector: "Banking & Finance",
+          stocks: [
+            { symbol: "HDFC", name: "Housing Development Finance Corporation Ltd.", change: 0.59, marketCap: 125000 },
+            { symbol: "SBIN", name: "State Bank of India", change: 3.55, marketCap: 85000 },
+            { symbol: "ICICIBANK", name: "ICICI Bank Ltd.", change: 1.15, marketCap: 95000 },
+            { symbol: "AXISBANK", name: "Axis Bank Ltd.", change: 1.82, marketCap: 65000 },
+            { symbol: "BAJFINANCE", name: "Bajaj Finance Ltd.", change: -0.72, marketCap: 45000 },
+            { symbol: "HDFCBANK", name: "HDFC Bank Ltd.", change: 0.85, marketCap: 115000 }
+          ]
+        },
+        {
+          sector: "IT & Technology",
+          stocks: [
+            { symbol: "TCS", name: "Tata Consultancy Services Ltd.", change: -2.5, marketCap: 105000 },
+            { symbol: "INFY", name: "Infosys Ltd.", change: -1.8, marketCap: 89000 },
+            { symbol: "WIPRO", name: "Wipro Ltd.", change: -4.69, marketCap: 42000 },
+            { symbol: "HCLTECH", name: "HCL Technologies Ltd.", change: -3.51, marketCap: 38000 },
+            { symbol: "TECHM", name: "Tech Mahindra Ltd.", change: -1.2, marketCap: 25000 }
+          ]
+        },
+        {
+          sector: "Energy & Metals",
+          stocks: [
+            { symbol: "RELIANCE", name: "Reliance Industries Ltd.", change: 1.15, marketCap: 145000 },
+            { symbol: "ONGC", name: "Oil and Natural Gas Corporation Ltd.", change: 2.3, marketCap: 35000 },
+            { symbol: "TATASTEEL", name: "Tata Steel Ltd.", change: 6.8, marketCap: 28000 },
+            { symbol: "HINDPETRO", name: "Hindustan Petroleum Corporation Ltd.", change: 5.81, marketCap: 18000 },
+            { symbol: "COALINDIA", name: "Coal India Ltd.", change: 3.2, marketCap: 22000 },
+            { symbol: "JSWSTEEL", name: "JSW Steel Ltd.", change: 4.1, marketCap: 19000 }
+          ]
+        }
+      ]
+    };
   }
 }
 

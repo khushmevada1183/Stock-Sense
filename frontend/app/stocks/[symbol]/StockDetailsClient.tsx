@@ -1,16 +1,16 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getStockDetails, getHistoricalData } from '@/services/stockService';
-import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import LoadingSpinner from '@/app/components/LoadingSpinner';
-import StockLogo from '@/app/components/StockLogo';
-import CompanyProfileCard from '@/app/components/CompanyProfileCard';
-import ManagementTeamSection from '@/app/components/ManagementTeamSection';
-import PeerComparisonTable from '@/app/components/PeerComparisonTable';
-import StockTechnicalChart from '@/app/components/StockTechnicalChart';
-import FinancialStatementsSection from '@/app/components/FinancialStatementsSection';
+import { getStockDetails, getHistoricalData } from '../../../services/stockService';
+import { Card, CardContent } from '../../../components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
+import LoadingSpinner from '../../../components/ui/LoadingSpinner';
+import StockLogo from '../../../components/stocks/StockLogo';
+import CompanyProfileCard from '../../../components/stocks/CompanyProfileCard';
+import ManagementTeamSection from '../../../components/stocks/ManagementTeamSection';
+import PeerComparisonTable from '../../../components/stocks/PeerComparisonTable';
+import StockTechnicalChart from '../../../components/stocks/StockTechnicalChart';
+import FinancialStatementsSection from '../../../components/stocks/FinancialStatementsSection';
 import { ArrowUp, ArrowDown, TrendingUp, LineChart, BarChart4, DollarSign, PieChart } from 'lucide-react';
 
 // Enhanced type definitions for stock data
@@ -559,63 +559,47 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
         <div>
           <h2 className="text-xl font-bold mb-4">Key Management</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {officers.length > 0 ? (
-              officers.slice(0, 6).map((officer, index) => {
-                const fullName = [officer.firstName, officer.mI, officer.lastName].filter(Boolean).join(' ');
-                const title = officer.title?.Value || '';
-                const since = officer.since || 'NA';
-                
-                return (
-                  <div key={index} className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-5">
-                    <h3 className="font-bold mb-1">{fullName}</h3>
-                    <p className="text-gray-400 text-sm mb-1">{title}</p>
-                    <p className="text-gray-500 text-xs">Since {since}</p>
-                  </div>
-                );
-              })
-            ) : (
-              // If no officers data, show example data like in the image
-              [
-                {
-                  name: "Sanjiv Puri",
-                  title: "Executive Chairman of the Board, Managing Director",
-                  since: "12/06/2015"
-                },
-                {
-                  name: "Supratim Dutta",
-                  title: "Chief Financial Officer, Whole-Time Director",
-                  since: "09/05/2020"
-                },
-                {
-                  name: "A. K. Rajput",
-                  title: "President - Corporate Affairs",
-                  since: "NA"
-                },
-                {
-                  name: "Rajendra Kumar Singhi",
-                  title: "Executive Vice President, Compliance Officer, Company Secretary",
-                  since: "02/04/2018"
-                },
-                {
-                  name: "Sumant Bhargavan",
-                  title: "Wholetime Director",
-                  since: "04/01/2016"
-                },
-                {
-                  name: "Hemant Malik",
-                  title: "Whole-time Director, Divisional Chief Executive - Foods Business Division",
-                  since: "NA"
-                }
-              ].map((person, index) => (
-                <div key={index} className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-5">
-                  <h3 className="font-bold mb-1">{person.name}</h3>
-                  <p className="text-gray-400 text-sm mb-1">{person.title}</p>
-                  <p className="text-gray-500 text-xs">Since {person.since}</p>
-                </div>
-              ))
-            )}
-          </div>
+          {officers.length > 0 ? (
+            <ManagementTeamSection officers={officers} />
+          ) : (
+            // If no officers data, convert example data to match Officer type and use the component
+            <ManagementTeamSection officers={[
+              {
+                firstName: "Sanjiv",
+                lastName: "Puri",
+                title: { Value: "Executive Chairman of the Board, Managing Director" },
+                since: "12/06/2015"
+              },
+              {
+                firstName: "Supratim",
+                lastName: "Dutta",
+                title: { Value: "Chief Financial Officer, Whole-Time Director" },
+                since: "09/05/2020"
+              },
+              {
+                firstName: "A. K.",
+                lastName: "Rajput",
+                title: { Value: "President - Corporate Affairs" }
+              },
+              {
+                firstName: "Rajendra Kumar",
+                lastName: "Singhi",
+                title: { Value: "Executive Vice President, Compliance Officer, Company Secretary" },
+                since: "02/04/2018"
+              },
+              {
+                firstName: "Sumant",
+                lastName: "Bhargavan",
+                title: { Value: "Wholetime Director" },
+                since: "04/01/2016"
+              },
+              {
+                firstName: "Hemant",
+                lastName: "Malik",
+                title: { Value: "Whole-time Director, Divisional Chief Executive - Foods Business Division" }
+              }
+            ]} />
+          )}
         </div>
       </div>
     </div>

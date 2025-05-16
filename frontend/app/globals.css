@@ -124,3 +124,109 @@ body {
     animation: accordion-up 0.2s ease-out;
   }
 }
+
+/* GSAP Animation Utilities */
+
+/* Loading shimmer effect for skeletons */
+.shimmer {
+  background-image: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.08) 0%,
+    rgba(0, 0, 0, 0.15) 20%,
+    rgba(0, 0, 0, 0.08) 40%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
+  background-size: 200% 100%;
+  background-position: -100% 0;
+}
+
+.dark .shimmer {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(255, 255, 255, 0.1) 20%,
+    rgba(255, 255, 255, 0.05) 40%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+}
+
+/* Page transitions */
+.page-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #111827;
+  z-index: 9999;
+  transform: translateY(100%);
+  pointer-events: none;
+}
+
+/* Clip paths for text reveal animations */
+.clip-text {
+  clip-path: inset(0 100% 0 0);
+}
+
+.clip-text-reveal {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Animated underlines */
+.hover-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.hover-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: currentColor;
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
+}
+
+.hover-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Magnetic element helpers */
+.magnetic-element {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.75, -0.5, 0, 1.75);
+}
+
+/* GSAP SVG path animations */
+.draw-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+}
+
+/* Stagger animation base classes */
+.stagger-item {
+  opacity: 0;
+}
+
+/* 3D card tilt effect */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+}
+
+.card-3d-content {
+  transform: translateZ(20px);
+}
+
+/* Help enable hardware acceleration for smoother animations */
+.gpu-accelerated {
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}

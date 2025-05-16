@@ -1,96 +1,74 @@
-import axios from 'axios';
+// Re-export all services from the new API structure
+// This file is maintained for backward compatibility
 
-// Get API URL from localStorage if available, otherwise use default
-let API_URL;
+import * as StocksAPI from './api/stocks';
+import * as IpoAPI from './api/ipo';
+import * as NewsAPI from './api/news';
+import * as MarketAPI from './api/market';
+import * as PortfolioAPI from './api/portfolio';
+import { ApiClient } from './api/client';
 
-// Check if we're in a browser environment
-if (typeof window !== 'undefined') {
-  API_URL = localStorage.getItem('api_url') || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
-} else {
-  API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+// Get primary API client (for backward compatibility)
+function getApiClient(): ApiClient {
+  // Get API URL from environment variables or localStorage
+  let apiUrl = '';
+  
+  if (typeof window !== 'undefined') {
+    apiUrl = localStorage.getItem('api_url') || 
+            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+  } else {
+    apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+  }
+
+  return new ApiClient({
+    baseURL: apiUrl,
+    timeout: 10000,
+    cacheTTL: 5 * 60 * 1000 // 5 minutes
+  });
 }
+import { StockDetails, SearchResult, HistoricalDataPoint, NewsItem, IpoItem, MarketIndex } from './api/types';
 
-// Set up axios instance
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  }
-});
+// Export types for backward compatibility
+export type { StockDetails, SearchResult, HistoricalDataPoint, NewsItem, IpoItem, MarketIndex };
 
-// Add request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    // Check if API_URL has been updated in sessionStorage
-    if (typeof window !== 'undefined') {
-      const tempApiUrl = sessionStorage.getItem('temp_api_url');
-      if (tempApiUrl) {
-        config.baseURL = tempApiUrl;
-      }
-    }
-    
-    // Add authentication token if available
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-    return config;
+// Maintain backward compatibility for existing code
+const api = {
+  get: async (url: string, config?: any) => {
+    const client = getApiClient();
+    return { data: await client.get(url, config?.params) };
   },
-  (error) => {
-    return Promise.reject(error);
+  post: async (url: string, data: any, config?: any) => {
+    const client = getApiClient();
+    return { data: await client.post(url, data, config) };
+  },
+  put: async (url: string, data: any, config?: any) => {
+    const client = getApiClient();
+    return { data: await client.put(url, data, config) };
+  },
+  delete: async (url: string, config?: any) => {
+    const client = getApiClient();
+    return { data: await client.delete(url, config) };
   }
-);
+};
 
 // Stock service
 export const stockService = {
   // Get featured stocks
   getFeaturedStocks: async () => {
     try {
-      const response = await api.get('/stocks');
-      
-      // Extract data from the API response
-      const apiData = response.data.data || response.data;
-      
-      // Transform the data into the format expected by the frontend
-      let stocks: any[] = [];
-      
-      // Check if we have top_gainers or top_losers in the response
-      if (apiData.top_gainers || apiData.top_losers) {
-        // Combine top gainers and losers
-        const allStocks = [
-          ...(apiData.top_gainers || []),
-          ...(apiData.top_losers || [])
-        ];
-        
-        // Transform each stock into the expected format
-        stocks = allStocks.map((stock, index) => ({
-          id: index + 1, // Generate a unique ID
-          symbol: stock.ticker_id || stock.ric || `STOCK${index}`,
-          company_name: stock.company_name || 'Unknown Company',
-          sector_name: stock.sector || stock.exchange_type || 'Various',
-          current_price: parseFloat(stock.price) || 0,
-          price_change_percentage: parseFloat(stock.percent_change) || 0
-        }));
-      } else if (Array.isArray(apiData)) {
-        // If the API returns an array directly
-        stocks = apiData.map((stock, index) => ({
-          id: stock.id || index + 1,
-          symbol: stock.symbol || stock.ticker_id || `STOCK${index}`,
-          company_name: stock.company_name || stock.name || 'Unknown Company',
-          sector_name: stock.sector_name || stock.sector || 'Various',
-          current_price: parseFloat(stock.current_price || stock.price) || 0,
-          price_change_percentage: parseFloat(stock.price_change_percentage || stock.percent_change) || 0
-        }));
-      }
-      
+      const stocks = await StocksAPI.getFeaturedStocks();
       return {
-        stocks
+        stocks: stocks.map((stock, index) => ({
+          id: index + 1, // Generate a unique ID
+          symbol: stock.symbol || `STOCK${index}`,
+          company_name: stock.company_name || stock.companyName || 'Unknown Company',
+          sector_name: stock.sector || 'Various',
+          current_price: stock.current_price || stock.price || 0,
+          price_change_percentage: stock.percent_change || stock.changePercent || 0
+        }))
       };
     } catch (error) {
       console.error('Error fetching featured stocks:', error);
-      
       // Return empty array on error so the UI can handle it gracefully
       return { stocks: [] };
     }
@@ -99,9 +77,9 @@ export const stockService = {
   // Get market overview
   getMarketOverview: async () => {
     try {
-      const response = await api.get('/market/indices');
+      const { indices } = await MarketAPI.getMarketOverview();
       return {
-        indices: response.data.data
+        indices
       };
     } catch (error) {
       console.error('Error fetching market overview:', error);
@@ -112,9 +90,9 @@ export const stockService = {
   // Get stock details
   getStockDetails: async (symbol: string) => {
     try {
-      const response = await api.get(`/stocks/${symbol}`);
+      const stock = await StocksAPI.getStockDetails(symbol);
       return {
-        stock: response.data.data
+        stock
       };
     } catch (error) {
       console.error(`Error fetching stock details for ${symbol}:`, error);
@@ -125,42 +103,28 @@ export const stockService = {
   // Get stock price history
   getStockPriceHistory: async (symbol: string, timeRange: string) => {
     try {
-      // Map frontend timeRange to backend dataAge parameter
-      let dataAge = 'ThirtyDaysAgo'; // Default
+      // Map frontend timeRange to backend period parameter
+      let period = '1m'; // Default
       switch (timeRange) {
         case '1W':
-          dataAge = 'OneWeekAgo';
+          period = '1w';
           break;
         case '3M':
-          dataAge = 'NinetyDaysAgo';
+          period = '3m';
           break;
         case '1Y':
-          dataAge = 'SixtyDaysAgo'; // Using 60 days to simulate a year since real API may not have full year data
+          period = '1yr';
           break;
         default:
-          dataAge = 'ThirtyDaysAgo';
+          period = '1m';
       }
       
-      const response = await api.get(`/stocks/${symbol}/historical?dataAge=${dataAge}`);
-      const apiData = response.data.data;
-      
-      // Transform API data to our expected format
-      const priceHistory = {
-        dates: apiData.dates || [],
-        prices: apiData.prices || [],
-        volumes: apiData.volumes || []
-      };
-      
-      // Format into the structure our frontend expects
-      const transformedData = priceHistory.dates.map((date: string, index: number) => ({
-        date,
-        price: priceHistory.prices[index]
-      }));
+      const priceHistory = await StocksAPI.getHistoricalData(symbol, period);
       
       return {
         symbol,
         timeRange,
-        priceHistory: transformedData
+        priceHistory
       };
     } catch (error) {
       console.error(`Error fetching price history for ${symbol}:`, error);
@@ -171,9 +135,10 @@ export const stockService = {
   // Get user watchlist
   getWatchlist: async () => {
     try {
-      const response = await api.get('/watchlist');
+      const client = getApiClient();
+      const watchlist = await client.get('/watchlist');
       return {
-        watchlist: response.data.data
+        watchlist
       };
     } catch (error) {
       console.error('Error fetching watchlist:', error);
@@ -184,8 +149,8 @@ export const stockService = {
   // Add stock to watchlist
   addToWatchlist: async (stockId: number) => {
     try {
-      const response = await api.post('/watchlist', { stockId });
-      return response.data;
+      const client = getApiClient();
+      return await client.post('/watchlist', { stockId });
     } catch (error) {
       console.error('Error adding to watchlist:', error);
       throw error;
@@ -195,8 +160,8 @@ export const stockService = {
   // Remove stock from watchlist
   removeFromWatchlist: async (stockId: number) => {
     try {
-      const response = await api.delete(`/watchlist/${stockId}`);
-      return response.data;
+      const client = getApiClient();
+      return await client.delete(`/watchlist/${stockId}`);
     } catch (error) {
       console.error('Error removing from watchlist:', error);
       throw error;
@@ -206,11 +171,7 @@ export const stockService = {
   // Search stocks
   searchStocks: async (query: string) => {
     try {
-      // Get all stocks from our API
-      const response = await api.get(`/stocks/search?query=${encodeURIComponent(query)}`);
-      return {
-        results: response.data.data || []
-      };
+      return await StocksAPI.searchStocks(query);
     } catch (error) {
       console.error('Error searching stocks:', error);
       throw error;
@@ -220,9 +181,9 @@ export const stockService = {
   // Get IPO data
   getIpoData: async () => {
     try {
-      const response = await api.get('/ipo');
+      const ipoData = await IpoAPI.getIpoData();
       return {
-        ipoData: response.data.data
+        ipoData
       };
     } catch (error) {
       console.error('Error fetching IPO data:', error);
@@ -233,9 +194,9 @@ export const stockService = {
   // Get market news
   getMarketNews: async () => {
     try {
-      const response = await api.get('/news');
+      const news = await NewsAPI.getMarketNews();
       return {
-        news: response.data.data
+        news
       };
     } catch (error) {
       console.error('Error fetching market news:', error);
@@ -247,21 +208,60 @@ export const stockService = {
 // Auth service
 export const authService = {
   login: async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data;
+    const client = getApiClient();
+    return await client.post('/auth/login', { email, password });
   },
   
   register: async (userData: any) => {
-    const response = await api.post('/auth/register', userData);
-    return response.data;
+    const client = getApiClient();
+    return await client.post('/auth/register', userData);
   },
   
   getCurrentUser: async () => {
-    const response = await api.get('/auth/me');
-    return response.data;
+    const client = getApiClient();
+    return await client.get('/auth/me');
+  },
+  
+  logout: () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+    }
+  },
+  
+  isAuthenticated: () => {
+    if (typeof window !== 'undefined') {
+      return !!localStorage.getItem('token');
+    }
+    return false;
   }
 };
 
-// Export the API_URL for use in other components
-export { API_URL };
-export default api; 
+// Export individual functions for direct imports
+export const searchStocks = StocksAPI.searchStocks;
+export const getStockDetails = StocksAPI.getStockDetails;
+export const getHistoricalData = StocksAPI.getHistoricalData;
+export const getCompanyLogo = StocksAPI.getCompanyLogo;
+export const getTopGainers = StocksAPI.getTopGainers;
+export const getTopLosers = StocksAPI.getTopLosers;
+export const get52WeekHighLow = StocksAPI.get52WeekHighLow;
+export const getStockTargetPrice = StocksAPI.getStockTargetPrice;
+export const getIpoData = IpoAPI.getIpoData;
+export const getUpcomingIpos = IpoAPI.getUpcomingIpos;
+export const getRecentIpos = IpoAPI.getRecentIpos;
+export const getMarketNews = NewsAPI.getMarketNews;
+export const getStockNews = NewsAPI.getStockNews;
+export const getSentimentNews = NewsAPI.getSentimentNews;
+export const getMarketOverview = MarketAPI.getMarketOverview;
+export const getMarketIndices = MarketAPI.getMarketIndices;
+export const getCommoditiesData = MarketAPI.getCommoditiesData;
+export const getBSEMostActiveStocks = MarketAPI.getBSEMostActiveStocks;
+export const getNSEMostActiveStocks = MarketAPI.getNSEMostActiveStocks;
+export const getPriceShockersData = MarketAPI.getPriceShockersData;
+export const searchIndustryData = MarketAPI.searchIndustryData;
+export const getUserPortfolios = PortfolioAPI.getUserPortfolios;
+export const createPortfolio = PortfolioAPI.createPortfolio;
+export const updatePortfolio = PortfolioAPI.updatePortfolio;
+export const deletePortfolio = PortfolioAPI.deletePortfolio;
+
+// Export default API client
+export default getApiClient; 

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ArrowUp, ArrowDown, Search } from 'lucide-react';
-import StockLogo from '@/app/components/StockLogo';
+import StockLogo from '@/components/stocks/StockLogo';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
 

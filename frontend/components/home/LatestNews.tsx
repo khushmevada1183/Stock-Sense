@@ -4,18 +4,23 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { format } from 'date-fns';
 import { stockService } from '@/services/api';
+import { NewsItem } from '@/types/news';
 
-interface NewsItem {
-  id: number;
-  title: string;
-  source: string;
-  date: string;
-  content?: string;
-  summary?: string;
-  url: string;
-  imageUrl?: string;
-  image_url?: string;
-}
+// Helper function to normalize news data
+const normalizeNewsItem = (item: any): NewsItem => {
+  return {
+    id: item.id || Math.random().toString(36).substr(2, 9),
+    title: item.title || '',
+    source: item.source || 'News Source',
+    date: item.date || item.published_at || new Date().toISOString(),
+    content: item.content || '',
+    summary: item.summary || item.content || '',
+    url: item.url || '#',
+    imageUrl: item.imageUrl || item.image_url || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80',
+    category: item.category || 'markets',
+    author: item.author || ''
+  };
+};
 
 export default function LatestNews() {
   const [news, setNews] = useState<NewsItem[]>([]);
@@ -32,16 +37,7 @@ export default function LatestNews() {
         
         if (response && response.news) {
           // Transform API data to match our component's expected format
-          const formattedNews = response.news.map((item: any) => ({
-            id: item.id,
-            title: item.title,
-            source: item.source,
-            date: item.date,
-            summary: item.content || item.summary,
-            url: item.url || '#',
-            imageUrl: item.image_url || 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80'
-          }));
-          
+          const formattedNews = response.news.map((item: any) => normalizeNewsItem(item));
           setNews(formattedNews);
         } else {
           setError('Invalid data format received from server');

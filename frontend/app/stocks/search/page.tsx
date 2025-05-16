@@ -3,15 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
 import { stockService } from '@/services/api';
-
-interface Stock {
-  id: number;
-  symbol: string;
-  company_name: string;
-  sector_name: string;
-  current_price: number;
-  price_change_percentage: number;
-}
+import { Stock } from '@/types/stocks';
 
 export default function StockSearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,7 +43,8 @@ export default function StockSearchPage() {
     
     try {
       const data = await stockService.searchStocks(searchQuery);
-      setSearchResults(data.results);
+      // Set the results directly
+      setSearchResults(data.results as Stock[]);
       
       if (data.results.length === 0) {
         setError('No stocks found matching your search criteria');
@@ -78,16 +71,22 @@ export default function StockSearchPage() {
           <p className="text-gray-600 dark:text-gray-400 text-sm">{stock.company_name}</p>
         </div>
         <span className={`text-sm font-semibold rounded-full px-2 py-1 ${
-          stock.price_change_percentage >= 0 
+          Number(stock.price_change_percentage) >= 0 
             ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
             : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
         }`}>
-          {stock.price_change_percentage >= 0 ? '+' : ''}
-          {stock.price_change_percentage.toFixed(2)}%
+          {Number(stock.price_change_percentage) >= 0 ? '+' : ''}
+          {typeof stock.price_change_percentage === 'number' 
+            ? stock.price_change_percentage.toFixed(2) 
+            : stock.price_change_percentage}%
         </span>
       </div>
       
-      <div className="text-2xl font-bold mb-2">₹{stock.current_price.toLocaleString()}</div>
+      <div className="text-2xl font-bold mb-2">
+        ₹{typeof stock.current_price === 'number' 
+            ? stock.current_price.toLocaleString() 
+            : stock.current_price || 'N/A'}
+      </div>
       
       <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
         {stock.sector_name}

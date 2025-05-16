@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import LoadingSpinner from '@/app/components/LoadingSpinner';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { apiHelpers } from '../../../utils/api';
-import DataSummaryCard, { defaultIcons } from '@/app/components/DataSummaryCard';
+import DataSummaryCard, { defaultIcons } from '@/components/stocks/DataSummaryCard';
 import { 
   TrendingUp, 
   ArrowUp, 

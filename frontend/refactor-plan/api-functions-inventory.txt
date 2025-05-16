@@ -1,0 +1,42 @@
+services/apiService.ts:  async searchStocks(query: string): Promise<{ results: SearchResult[] }> {
+services/apiService.ts:  async getStockDetails(symbol: string): Promise<StockDetails> {
+services/apiService.ts:  async getHistoricalData(
+services/apiService.ts:  async getIpoData(): Promise<IpoItem[]> {
+services/apiService.ts:  async getMarketNews(): Promise<NewsItem[]> {
+services/apiService.ts:  async getTopGainers(): Promise<StockDetails[]> {
+services/apiService.ts:  async getTopLosers(): Promise<StockDetails[]> {
+services/apiService.ts:  async getFeaturedStocks(): Promise<StockDetails[]> {
+services/apiService.ts:  async getMarketIndices(): Promise<any> {
+services/apiService.tsx:  async searchStocks(query: string): Promise<{ results: SearchResult[] }> {
+services/apiService.tsx:  async getStockDetails(symbol: string): Promise<StockDetails> {
+services/apiService.tsx:  async getHistoricalData(
+services/apiService.tsx:  async getIpoData(): Promise<IpoItem[]> {
+services/apiService.tsx:  async getMarketNews(): Promise<NewsItem[]> {
+services/apiService.tsx:  async getTopGainers(): Promise<StockDetails[]> {
+services/apiService.tsx:  async getTopLosers(): Promise<StockDetails[]> {
+services/apiService.tsx:  async getFeaturedStocks(): Promise<StockDetails[]> {
+services/apiService.tsx:  async getMarketIndices(): Promise<any> {
+services/indianApiService.ts:  async getIPOData(): Promise<IpoItem[]> {
+services/indianApiService.ts:  async getNewsData(): Promise<NewsItem[]> {
+services/indianApiService.ts:  async getStockDetails(stockName: string): Promise<StockDetails> {
+services/indianApiService.ts:  async getTrendingStocks(): Promise<StockDetails[]> {
+services/indianApiService.ts:  async getHistoricalData(
+services/indianApiService.ts:  async getCommoditiesData(): Promise<any> {
+services/indianApiService.ts:  async getMutualFundsData(): Promise<MutualFund[]> {
+services/indianApiService.ts:  async getBSEMostActiveStocks(): Promise<StockDetails[]> {
+services/indianApiService.ts:  async getNSEMostActiveStocks(): Promise<StockDetails[]> {
+services/indianApiService.ts:  async searchIndustryData(query: string): Promise<any> {
+services/indianApiService.ts:  async getPriceShockersData(): Promise<StockDetails[]> {
+services/indianApiService.ts:  async get52WeekHighLowData(): Promise<any> {
+services/indianApiService.ts:  async getCorporateActions(stockName: string): Promise<any> {
+services/indianApiService.ts:  async getRecentAnnouncements(stockName: string): Promise<any> {
+services/indianApiService.ts:  async getStockTargetPrice(stockId: string): Promise<any> {
+services/indianApiService.ts:  async searchMutualFunds(query: string): Promise<MutualFund[]> {
+services/indianApiService.ts:  async getMutualFundDetails(fundName: string): Promise<MutualFund> {
+services/indianApiService.ts:  async getHistoricalStats(stockName: string, stats: string): Promise<any> {
+services/indianApiService.ts:  async searchStocks(query: string): Promise<{results: StockDetails[]}> {
+services/stockApiService.js:  async searchStocks(query = '') {
+services/stockApiService.js:  async getStockBySymbol(symbol) {
+services/stockApiService.js:  async get52WeekHighLow() {
+services/stockApiService.js:  async getHistoricalData(symbol) {
+services/stockApiService.js:  async getCachedData(query = '') {

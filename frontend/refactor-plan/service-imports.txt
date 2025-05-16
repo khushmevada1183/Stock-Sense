@@ -1,0 +1,28 @@
+app/components/CommoditiesTable.tsx:import { getCommodities } from '@/services/stockService';
+app/components/HighLowTable.tsx:import { get52WeekHighLow } from '@/services/stockService';
+app/components/SearchBar.tsx:import apiService, { SearchResult } from '../../services/apiService';
+app/components/SearchBar.tsx:import indianApiService, { StockDetails } from '../../services/indianApiService';
+app/components/StockLogo.tsx:import { getCompanyLogo } from '@/services/stockService';
+app/components/StockSearch.jsx:import stockApiService from '../../services/stockApiService'; // Corrected import path
+app/components/TargetPriceAnalysis.tsx:import { getStockTargetPrice } from '@/services/stockService';
+app/ipo/page.tsx:import { stockService } from '@/services/api';
+app/market/page.tsx:import indianApiService from '../../services/indianApiService';
+app/stock-search/page.tsx:import { getStockByName } from '@/services/stockService';
+app/stocks/page.tsx:import { stockService } from '@/services/api';
+app/stocks/search/page.tsx:import { stockService } from '@/services/api';
+app/stocks/[symbol]/StockDetailsClient.tsx:import { getStockDetails, getHistoricalData } from '../../../services/stockService';
+components/dashboard/PortfolioList.tsx:import { getUserPortfolios, deletePortfolio } from '@/services/stockService';
+components/home/FeaturedStocks.tsx:import { stockService } from '@/services/api';
+components/home/IpoSection.tsx:import { stockService } from '@/services/api';
+components/home/LatestNews.tsx:import { stockService } from '@/services/api';
+components/home/MarketOverview.tsx:import { stockService } from '@/services/api';
+components/market/HighLowTable.tsx:import { getTopGainers, getTopLosers } from '@/services/stockService';
+components/News/MarketNews.tsx:import { getMarketNews } from '@/services/stockService';
+components/portfolio/PortfolioForm.tsx:import { createPortfolio, updatePortfolio, getStockDetails } from '@/services/stockService';
+components/portfolio/PortfolioList.tsx:import { getUserPortfolios, deletePortfolio } from '@/services/stockService';
+components/stocks/StockDetailView.tsx:import indianApiService from '../../services/indianApiService';
+components/stocks/StockDetailView.tsx:import { StockDetails, HistoricalDataPoint } from '../../services/indianApiService';
+components/stocks/StockLogo.tsx:import { getCompanyLogo } from '@/services/stockService';
+components/stocks/TargetPriceAnalysis.tsx:import { getStockTargetPrice } from '@/services/stockService';
+components/stocks/TrendingStocks.tsx:import indianApiService from '../../services/indianApiService';
+components/stocks/TrendingStocks.tsx:import { StockDetails } from '../../services/indianApiService';

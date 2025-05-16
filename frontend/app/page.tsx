@@ -1,3 +1,6 @@
+'use client';
+
+import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import HeroSection from '../components/home/HeroSection';
@@ -7,15 +10,48 @@ import AnalysisFeatures from '../components/home/AnalysisFeatures';
 import LatestNews from '../components/home/LatestNews';
 import IpoSection from '../components/home/IpoSection';
 import CtaSection from '../components/home/CtaSection';
+import { useAnimation } from '../animations/shared/AnimationContext';
+import { initHomePageAnimations } from '../animations/pages/homeAnimations';
 
 export default function Home() {
+  // Create refs for each section to animate
+  const heroRef = useRef<HTMLDivElement>(null);
+  const marketOverviewRef = useRef<HTMLElement>(null);
+  const featuredStocksRef = useRef<HTMLElement>(null);
+  const ipoSectionRef = useRef<HTMLElement>(null);
+  const latestNewsRef = useRef<HTMLElement>(null);
+  const analysisFeaturesRef = useRef<HTMLDivElement>(null);
+  const ctaSectionRef = useRef<HTMLDivElement>(null);
+  
+  // Get animation context
+  const { isAnimationEnabled } = useAnimation();
+  
+  // Initialize animations when component mounts
+  useEffect(() => {
+    if (isAnimationEnabled) {
+      const refs = {
+        heroRef,
+        marketOverviewRef,
+        featuredStocksRef,
+        ipoSectionRef,
+        latestNewsRef,
+        analysisFeaturesRef,
+        ctaSectionRef
+      };
+      
+      initHomePageAnimations(refs);
+    }
+  }, [isAnimationEnabled]);
+
   return (
     <div className="pb-16">
       {/* Hero Section */}
-      <HeroSection />
+      <div ref={heroRef}>
+        <HeroSection />
+      </div>
       
       {/* Market Overview */}
-      <section className="py-12 bg-gray-50 dark:bg-gray-900">
+      <section ref={marketOverviewRef} className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
             Market Overview
@@ -25,7 +61,7 @@ export default function Home() {
       </section>
       
       {/* Featured Stocks */}
-      <section className="py-12">
+      <section ref={featuredStocksRef} className="py-12">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-lg md:text-xl font-bold">
@@ -43,7 +79,7 @@ export default function Home() {
       </section>
       
       {/* IPO Section */}
-      <section className="py-12 bg-gray-50 dark:bg-gray-900">
+      <section ref={ipoSectionRef} className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-lg md:text-xl font-bold">
@@ -61,7 +97,7 @@ export default function Home() {
       </section>
       
       {/* Latest News */}
-      <section className="py-12">
+      <section ref={latestNewsRef} className="py-12">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-lg md:text-xl font-bold">
@@ -79,10 +115,14 @@ export default function Home() {
       </section>
       
       {/* Analysis Features */}
-      <AnalysisFeatures />
+      <div ref={analysisFeaturesRef}>
+        <AnalysisFeatures />
+      </div>
       
       {/* CTA Section */}
-      <CtaSection />
+      <div ref={ctaSectionRef}>
+        <CtaSection />
+      </div>
     </div>
   );
 }

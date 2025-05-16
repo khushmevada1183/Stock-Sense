@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { TrendingDown, TrendingUp } from 'lucide-react';
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Legend,
@@ -8,6 +8,8 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 import indianApiService from '../../services/indianApiService';
+import { useAnimation } from '@/animations/shared/AnimationContext';
+import { initMarketPageAnimations } from '@/animations/pages/marketAnimations';
 
 /**
  * Mock data for market dashboard
@@ -525,73 +527,124 @@ const HeatMap = ({ data }: HeatMapProps) => {
  */
 export default function MarketPage() {
   const [marketData, setMarketData] = useState(mockMarketData);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // In a real implementation, we would fetch data from an API
-  useEffect(() => {
-    const fetchMarketData = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Get real data if available (in the future)
-        // For now, we'll just use our mock data
-        
-        // Simulate loading delay
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
-      } catch (err) {
-        console.error('Error fetching market data:', err);
-        setIsLoading(false);
-      }
-    };
+  // Animation refs
+  const headerRef = useRef<HTMLDivElement>(null);
+  const indicesRef = useRef<HTMLDivElement>(null);
+  const sectorRef = useRef<HTMLDivElement>(null);
+  const breadthRef = useRef<HTMLDivElement>(null);
+  const moversRef = useRef<HTMLDivElement>(null);
+  const activeRef = useRef<HTMLDivElement>(null);
+  const heatMapRef = useRef<HTMLDivElement>(null);
+  const analysisRef = useRef<HTMLDivElement>(null);
+  
+  // Get animation context
+  const { isAnimationEnabled } = useAnimation();
 
+  const fetchMarketData = async () => {
+    try {
+      setLoading(true);
+      
+      // Try to fetch real market data
+      const data = await indianApiService.getMarketOverview();
+      
+      if (data && Object.keys(data).length > 0) {
+        setMarketData(data);
+      }
+      
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching market data:', err);
+      setError('Failed to load market data. Using fallback data instead.');
+      // Use mock data as fallback
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchMarketData();
   }, []);
   
+  // Initialize animations when data is loaded
+  useEffect(() => {
+    if (!loading && isAnimationEnabled) {
+      const refs = {
+        headerRef,
+        indicesRef,
+        sectorRef,
+        breadthRef,
+        moversRef,
+        activeRef,
+        heatMapRef,
+        analysisRef
+      };
+      
+      initMarketPageAnimations(refs);
+    }
+  }, [loading, isAnimationEnabled]);
+
   const currentDate = format(new Date(), 'dd MMM yyyy');
   
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-800 dark:text-gray-200">Market Overview</h1>
-        <div className="text-sm text-gray-500 dark:text-gray-400">Last Updated: {currentDate}</div>
+    <div className="container mx-auto px-4 py-8">
+      <div ref={headerRef} className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Indian Market Dashboard</h1>
+        <p className="text-gray-600 dark:text-gray-400">
+          Real-time overview of the Indian stock market and its key indicators
+        </p>
       </div>
       
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      {/* Market Indices */}
+      <div ref={indicesRef} className="mb-8">
+        <MarketIndices data={marketData.indices} />
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        {/* Sector Performance */}
+        <div ref={sectorRef}>
+          <SectorPerformance data={marketData.sectors} />
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          <div className="md:col-span-12">
-            <MarketIndices data={marketData.indices} />
-          </div>
-          
-          <div className="md:col-span-6 lg:col-span-4">
-            <MarketBreadth data={marketData.breadth} />
-          </div>
-          
-          <div className="md:col-span-6 lg:col-span-8">
-            <SectorPerformance data={marketData.sectors} />
-          </div>
-          
-          <div className="md:col-span-6">
-            <TopMovers 
-              gainers={marketData.topGainers} 
-              losers={marketData.topLosers} 
-            />
-          </div>
-          
-          <div className="md:col-span-6">
-            <MostActive data={marketData.mostActive} />
-          </div>
-          
-          <div className="md:col-span-12">
-            <HeatMap data={marketData.heatMap} />
-          </div>
+        
+        {/* Market Breadth */}
+        <div ref={breadthRef}>
+          <MarketBreadth data={marketData.breadth} />
         </div>
-      )}
+      </div>
+      
+      {/* Top Movers */}
+      <div ref={moversRef} className="mb-8">
+        <TopMovers gainers={marketData.topGainers} losers={marketData.topLosers} />
+      </div>
+      
+      {/* Most Active Stocks */}
+      <div ref={activeRef} className="mb-8">
+        <MostActive data={marketData.mostActive} />
+      </div>
+      
+      {/* Heat Map */}
+      <div ref={heatMapRef} className="mb-8">
+        <HeatMap data={marketData.heatMap} />
+      </div>
+      
+      {/* Market Analysis */}
+      <div ref={analysisRef} className="mb-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+          <h3 className="text-lg font-semibold mb-4 dark:text-gray-200">Market Analysis</h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-3">
+            Market remained buoyant today with broad-based buying interest across sectors.
+            Banking and metal stocks led the rally, while IT and pharma sectors witnessed
+            profit booking. Global cues were positive as US markets closed higher.
+          </p>
+          <p className="text-gray-600 dark:text-gray-400">
+            FIIs were net buyers today, injecting ₹1,200 crores, while DIIs bought
+            stocks worth ₹850 crores. Market breadth was positive with more advances
+            than declines, indicating healthy market sentiment.
+          </p>
+        </div>
+      </div>
     </div>
   );
 } 

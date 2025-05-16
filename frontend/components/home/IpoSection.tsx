@@ -5,24 +5,28 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { stockService } from '@/services/api';
+import { IpoItem } from '@/types/ipo';
 
-interface IpoItem {
-  id?: number;
-  company_name: string;
-  symbol?: string;
-  issue_size?: string;
-  price_range?: string;
-  issue_date?: string;
-  listing_date?: string;
-  subscription_status?: string;
-  gmp?: string; // Grey Market Premium
-  logo?: string; // Added logo field
-  issue_type?: string;
-  open?: string;
-  close?: string;
-  rhpLink?: string;
-  drhpLink?: string;
-}
+// Helper function to normalize IPO data
+const normalizeIpoData = (ipo: any): IpoItem => {
+  return {
+    id: ipo.id || 0,
+    company_name: ipo.company_name || '',
+    symbol: ipo.symbol || '',
+    issue_size: ipo.issue_size || 'TBA',
+    price_range: ipo.price_range || 'TBA',
+    issue_date: ipo.issue_date || 'TBA',
+    listing_date: ipo.listing_date || 'TBA',
+    subscription_status: ipo.subscription_status || 'Upcoming',
+    gmp: ipo.gmp || '',
+    logo: ipo.logo || '',
+    issue_type: ipo.issue_type || '',
+    open: ipo.open || '',
+    close: ipo.close || '',
+    rhpLink: ipo.rhpLink || '',
+    drhpLink: ipo.drhpLink || ''
+  };
+};
 
 export default function IpoSection() {
   const [ipoData, setIpoData] = useState<IpoItem[]>([]);
@@ -54,7 +58,8 @@ export default function IpoSection() {
         const response = await stockService.getIpoData();
         
         if (response && response.ipoData && response.ipoData.length > 0) {
-          setIpoData(response.ipoData);
+          const normalizedData = response.ipoData.map(normalizeIpoData);
+          setIpoData(normalizedData);
         } else {
           setError('No IPO data available');
           setIpoData([]);
