@@ -8,3 +8,5 @@ cd /d "%SCRIPT_DIR%"
 ECHO Starting Indian Stock Analyzer...
 node run.js
 PAUSE 
+
+npm install

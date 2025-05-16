@@ -31,15 +31,26 @@ stock-analyzer/
 │   │   └── api/              # API endpoint tests using Supertest
 │   │       └── api.test.js   # Example API test
 ├── frontend/
-│   ├── __tests__/
-│   │   ├── components/       # Component tests
-│   │   │   └── StockCard.test.jsx
-│   │   ├── pages/            # Page component tests
-│   │   └── utils/            # Utility function tests
-│   └── cypress/
-│       ├── e2e/              # End-to-end tests
-│       │   └── stock-search.cy.js
-│       └── support/          # Cypress support files
+│   ├── cypress/              # Cypress tests and configuration
+│   │   ├── e2e/              # End-to-end tests
+│   │   │   └── stock-search.cy.js
+│   │   ├── support/          # Cypress support files
+│   │   ├── reports/          # E2E test reports
+│   │   │   └── html/         # HTML test reports
+│   │   └── bugs/             # Bug tracking directory
+│   ├── tests/                # Jest tests
+│   │   ├── unit/             # Unit tests for components
+│   │   │   ├── components/   # Component-specific tests
+│   │   │   │   └── StockCard.test.jsx
+│   │   │   ├── pages/        # Page component tests
+│   │   │   └── utils/        # Utility function tests
+│   │   ├── api/              # API client tests
+│   │   ├── archive/          # Archived test files
+│   │   ├── utils/            # Test utility functions
+│   │   │   └── scripts/      # Test utility scripts
+│   │   └── reports/          # Test reports directory
+│   │       ├── coverage/     # Code coverage reports
+│   │       └── html/         # HTML test reports
 ├── performance/
 │   └── api-load-test.js      # k6 performance test script
 └── .github/workflows/
@@ -54,6 +65,12 @@ stock-analyzer/
 # Run all tests
 cd frontend
 npm test
+
+# Run only unit tests
+npm run test:unit
+
+# Run only API tests
+npm run test:api
 
 # Run tests in watch mode
 npm run test:watch
@@ -88,6 +105,12 @@ npm run cypress
 
 # Run Cypress tests headlessly
 npm run cypress:headless
+
+# Run E2E tests directly
+npm run test:e2e
+
+# Run E2E tests headlessly
+npm run test:e2e:headless
 
 # Run full E2E tests (build + start + cypress)
 npm run e2e
@@ -124,8 +147,9 @@ npm run generate:bug-report
 ```
 
 Reports are generated in:
-- Test report: `cypress/reports/html/index.html`
+- E2E test report: `cypress/reports/html/index.html`
 - Bug report: `cypress/bugs/bug-report.html`
+- Unit test coverage: `tests/reports/coverage/`
 
 ## Bug Tracking
 
