@@ -73,6 +73,17 @@ jobs:
       working-directory: ./backend
       run: npm ci
     
+    - name: Start backend server
+      working-directory: ./backend
+      run: npm run dev:simple &
+    
+    - name: Start frontend server
+      working-directory: ./frontend
+      run: npm run dev &
+    
+    - name: Wait for servers to start
+      run: sleep 15
+    
     - name: Run Cypress tests
       working-directory: ./frontend
       run: npm run cypress:headless
@@ -104,4 +115,4 @@ jobs:
       run: sleep 10
     
     - name: Run performance tests
-      run: k6 run performance/api-load-test.js 
+      run: k6 run ./performance/api-load-test.js 
