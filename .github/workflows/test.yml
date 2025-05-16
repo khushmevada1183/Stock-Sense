@@ -114,5 +114,8 @@ jobs:
     - name: Wait for server to start
       run: sleep 10
     
+    - name: Verify test file exists
+      run: ls -la ${{ github.workspace }}/performance/api-load-test.js
+    
     - name: Run performance tests
-      run: k6 run ./performance/api-load-test.js 
+      run: k6 run ${{ github.workspace }}/performance/api-load-test.js 
