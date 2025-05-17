@@ -47,35 +47,35 @@ export default function Dashboard() {
     <main className="p-4 md:p-6 max-w-7xl mx-auto">
       <div className="flex flex-col space-y-6">
         <div ref={headerRef}>
-          <h1 className="text-2xl font-bold mb-0 text-gray-900 dark:text-gray-100">
-            Indian Stock Market Dashboard
-          </h1>
-          <p className="text-gray-500 dark:text-gray-400 -mt-4">
-            Real-time insights and analytics for the Indian stock market
-          </p>
+        <h1 className="text-2xl font-bold mb-0 text-gray-900 dark:text-gray-100">
+          Indian Stock Market Dashboard
+        </h1>
+        <p className="text-gray-500 dark:text-gray-400 -mt-4">
+          Real-time insights and analytics for the Indian stock market
+        </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main content - 2/3 width on large screens */}
           <div className="lg:col-span-2 space-y-6">
             <div ref={stockListRef}>
-              <StockList onStockSelect={handleStockSelect} />
+            <StockList onStockSelect={handleStockSelect} />
             </div>
             <div ref={commoditiesRef}>
-              <CommoditiesTable />
+            <CommoditiesTable />
             </div>
             <div ref={ipoTableRef}>
-              <IPOTable />
+            <IPOTable />
             </div>
           </div>
 
           {/* Sidebar - 1/3 width on large screens */}
           <div className="space-y-6">
             <div ref={marketNewsRef}>
-              <MarketNews />
+            <MarketNews />
             </div>
             <div ref={highLowRef}>
-              <HighLowTable />
+            <HighLowTable />
             </div>
           </div>
         </div>

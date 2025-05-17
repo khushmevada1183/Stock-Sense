@@ -454,7 +454,7 @@ export const createHeaderScrollAnimation = (headerRef, options = {}) => {
     gsap.set(header, { clearProps: "all" });
   };
 };
-
+  
 /**
  * Create scroll progress indicator animation
  * 
@@ -475,7 +475,7 @@ export const createScrollProgressAnimation = (progressBarRef, options = {}) => {
   };
   
   const config = { ...defaults, ...options };
-  
+
   // Apply color if specified
   if (config.color) {
     gsap.set(progressElement, {

@@ -1,117 +1,191 @@
-#!/usr/bin/env node
-
 /**
- * Command-line script to run the API tests
+ * API Test Runner
+ * 
+ * This script runs various API tests for the Indian Stock Analyzer.
  */
 
-// Set up environment for tests
-process.env.NODE_ENV = 'test';
-
-// Use esbuild to transpile TypeScript and bundle the tests
-const esbuild = require('esbuild');
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 
-console.log('Building test bundle...');
+// Test configuration
+const config = {
+  testDir: path.join(__dirname, 'api'),
+  results: {
+    passed: 0,
+    failed: 0,
+    skipped: 0,
+    total: 0
+  },
+  testFiles: [
+    // Add your test files here
+    'ipo-api-test.js', // IPO API test
+  ]
+};
 
-// Define API URLs and keys from command line arguments
-const args = process.argv.slice(2);
-let stockSymbol = 'RELIANCE';
-let verbose = true;
-let testStandardAPI = true;
-let testIndianAPI = true;
-let apiRotationTest = true;
-let standardApiUrl = 'http://localhost:5002/api';
-let indianApiUrl = 'https://stock.indianapi.in';
-let standardApiKey = '';
-let indianApiKey = 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
+// Color codes for console output
+const COLORS = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m'
+};
 
-// Parse command line arguments
-args.forEach(arg => {
-  if (arg.startsWith('--symbol=')) {
-    stockSymbol = arg.split('=')[1];
-  } else if (arg === '--quiet') {
-    verbose = false;
-  } else if (arg === '--no-standard') {
-    testStandardAPI = false;
-  } else if (arg === '--no-indian') {
-    testIndianAPI = false;
-  } else if (arg === '--no-rotation') {
-    apiRotationTest = false;
-  } else if (arg.startsWith('--standard-url=')) {
-    standardApiUrl = arg.split('=')[1];
-  } else if (arg.startsWith('--indian-url=')) {
-    indianApiUrl = arg.split('=')[1];
-  } else if (arg.startsWith('--standard-key=')) {
-    standardApiKey = arg.split('=')[1];
-  } else if (arg.startsWith('--indian-key=')) {
-    indianApiKey = arg.split('=')[1];
-  } else if (arg === '--help') {
-    console.log('Usage: node run-api-tests.js [options]');
-    console.log('Options:');
-    console.log('  --symbol=SYMBOL        Stock symbol to use for tests (default: RELIANCE)');
-    console.log('  --quiet                Disable verbose logging');
-    console.log('  --no-standard          Skip standard API tests');
-    console.log('  --no-indian            Skip Indian API tests');
-    console.log('  --no-rotation          Skip API rotation tests');
-    console.log('  --standard-url=URL     URL for standard API');
-    console.log('  --indian-url=URL       URL for Indian API');
-    console.log('  --standard-key=KEY     API key for standard API');
-    console.log('  --indian-key=KEY       API key for Indian API');
-    console.log('  --help                 Show this help message');
-    process.exit(0);
-  } else {
-    console.warn(`Unknown argument: ${arg}`);
+/**
+ * Logs a message with color
+ * @param {string} message Message to log
+ * @param {string} color Color to use
+ */
+function colorLog(message, color = COLORS.reset) {
+  console.log(`${color}${message}${COLORS.reset}`);
+}
+
+/**
+ * Run a specific test file
+ * @param {string} testFile Path to test file
+ * @returns {Promise<boolean>} Success status
+ */
+async function runTest(testFile) {
+  const fullPath = path.join(config.testDir, testFile);
+  
+  // Check if file exists
+  if (!fs.existsSync(fullPath)) {
+    colorLog(`Test file not found: ${fullPath}`, COLORS.red);
+    config.results.skipped++;
+    return false;
   }
-});
+  
+  try {
+    colorLog(`\n🚀 Running test: ${testFile}`, COLORS.cyan);
+    colorLog('======================================', COLORS.cyan);
+    
+    // Try to get the exported test functions
+    const testModule = require(fullPath);
+    
+    // Check if the module exports a specific test function
+    if (typeof testModule.testIpoApi === 'function') {
+      await testModule.testIpoApi();
+    } else if (typeof testModule.test === 'function') {
+      await testModule.test();
+    } else if (typeof testModule.runTest === 'function') {
+      await testModule.runTest();
+  } else {
+      // If no specific test function found, assume the require itself runs the test
+      colorLog('No exported test function found, assuming tests run on require', COLORS.yellow);
+  }
+    
+    colorLog('======================================', COLORS.cyan);
+    colorLog(`✅ Test completed: ${testFile}`, COLORS.green);
+    config.results.passed++;
+    return true;
+  } catch (error) {
+    colorLog('======================================', COLORS.cyan);
+    colorLog(`❌ Test failed: ${testFile}`, COLORS.red);
+    colorLog(`Error: ${error.message}`, COLORS.red);
+    config.results.failed++;
+    return false;
+  }
+}
 
-// Override CONFIG for our tests
-process.env.TEST_CONFIG = JSON.stringify({
-  stockSymbol,
-  verbose,
-  testStandardAPI,
-  testIndianAPI,
-  apiRotationTest,
-  standardApiUrl,
-  indianApiUrl,
-  standardApiKey,
-  indianApiKey,
-  timeoutMs: 10000
-});
+/**
+ * Run the basic IPO API test
+ */
+async function runBasicIpoTest() {
+  try {
+    colorLog(`\n🚀 Running basic IPO API test`, COLORS.cyan);
+    colorLog('======================================', COLORS.cyan);
+    
+    const { testIpoEndpoint } = require('./ipo-api-test');
+    await testIpoEndpoint();
+    
+    colorLog('======================================', COLORS.cyan);
+    colorLog(`✅ Basic IPO API test completed`, COLORS.green);
+    config.results.passed++;
+    return true;
+  } catch (error) {
+    colorLog('======================================', COLORS.cyan);
+    colorLog(`❌ Basic IPO API test failed`, COLORS.red);
+    colorLog(`Error: ${error.message}`, COLORS.red);
+    config.results.failed++;
+    return false;
+  }
+}
 
-// Create a temporary test file with NODE_ENV adjustments
-const apiTestPath = path.resolve(__dirname, 'api-test.ts');
-const tempTestPath = path.resolve(__dirname, '.temp-test.js');
+/**
+ * Run all specified tests
+ */
+async function runAllTests() {
+  colorLog('\n📊 Indian Stock Analyzer API Tests', COLORS.magenta);
+  colorLog('======================================', COLORS.magenta);
+  
+  // Update total tests count (API tests + basic IPO test)
+  config.results.total = config.testFiles.length + 1;
+  
+  // Run the basic IPO test first
+  await runBasicIpoTest();
+  
+  // Run each API test sequentially
+  for (const testFile of config.testFiles) {
+    await runTest(testFile);
+  }
+  
+  // Print results
+  colorLog('\n📈 Test Results:', COLORS.magenta);
+  colorLog('======================================', COLORS.magenta);
+  colorLog(`Total tests: ${config.results.total}`, COLORS.white);
+  colorLog(`Passed: ${config.results.passed}`, COLORS.green);
+  colorLog(`Failed: ${config.results.failed}`, COLORS.red);
+  colorLog(`Skipped: ${config.results.skipped}`, COLORS.yellow);
+  colorLog('======================================', COLORS.magenta);
+  
+  if (config.results.failed > 0) {
+    colorLog('❌ Some tests failed!', COLORS.red);
+    process.exit(1);
+  } else {
+    colorLog('✅ All tests passed!', COLORS.green);
+  }
+}
 
-try {
-  // Build the test bundle
-  esbuild.buildSync({
-    entryPoints: [apiTestPath],
-    bundle: true,
-    platform: 'node',
-    outfile: tempTestPath,
-    format: 'cjs',
-    define: {
-      'process.env.NEXT_PUBLIC_API_URL': JSON.stringify(standardApiUrl),
-      'process.env.NEXT_PUBLIC_INDIAN_API_URL': JSON.stringify(indianApiUrl),
-      'process.env.NEXT_PUBLIC_API_KEY': JSON.stringify(standardApiKey),
-      'process.env.NEXT_PUBLIC_INDIAN_API_KEY': JSON.stringify(indianApiKey)
-    },
-    target: ['node14']
-  });
-  
-  console.log('Build successful. Running tests...');
-  console.log('-----------------------------------');
-  
-  // Run the tests
-  require(tempTestPath);
-  
-  // Clean up
-  setTimeout(() => {
-    fs.unlinkSync(tempTestPath);
-  }, 1000);
-  
-} catch (error) {
-  console.error('Error building or running tests:', error);
+// Check for specific test to run from command line arguments
+const specificTest = process.argv[2];
+if (specificTest) {
+  if (specificTest === 'ipo') {
+    // Use the specialized IPO test runner
+    colorLog(`Running IPO API tests using the specialized runner...`, COLORS.yellow);
+    const ipoTestRunner = path.join(__dirname, 'run-ipo-test.js');
+    
+    // Check if the runner exists
+    if (fs.existsSync(ipoTestRunner)) {
+      const args = process.argv.slice(3); // Get any additional arguments
+      require(ipoTestRunner);
+      process.exit(0);
+    } else {
+      colorLog(`IPO test runner not found. Falling back to standard runner.`, COLORS.yellow);
+      config.testFiles = ['ipo-api-test.js'];
+      runAllTests().catch(handleFatalError);
+    }
+  } else {
+    // Run specified test if it exists
+    const testFile = `${specificTest}.js`;
+    if (config.testFiles.includes(testFile)) {
+      config.testFiles = [testFile];
+      colorLog(`Running only: ${testFile}`, COLORS.yellow);
+      runAllTests().catch(handleFatalError);
+    } else {
+      colorLog(`Test not found: ${testFile}`, COLORS.red);
+      process.exit(1);
+    }
+  }
+} else {
+  // Run all tests
+  runAllTests().catch(handleFatalError);
+}
+
+function handleFatalError(error) {
+  colorLog(`\n❌ Fatal error: ${error.message}`, COLORS.red);
   process.exit(1);
 } 

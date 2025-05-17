@@ -1,0 +1,48 @@
+========== TESTING IPO CARD DATA HANDLING ==========
+
+=== Testing with standard IPO data ===
+✓ Company name should be parsed correctly
+✓ Symbol should be parsed correctly
+✓ IPO price should be formatted correctly
+✓ Listing price should be formatted correctly
+✓ Listing gain should be calculated correctly
+✓ Negative gain should have red color class
+✓ SME flag should be parsed correctly
+✓ Listing date should be formatted correctly
+
+=== Testing with alternative IPO data structure ===
+✓ Should fall back to company_name field
+✓ Status should be parsed correctly
+✓ Should use pre-formatted IPO price
+✓ Should use pre-formatted price range
+✓ SME flag should default to false if not specified as true
+
+=== Testing formatting utilities with various inputs ===
+✓ Number should be formatted with rupee symbol
+✓ Already formatted price should remain the same
+✓ Null price should return N/A
+✓ Zero price should be formatted correctly
+✓ ISO date should be formatted nicely
+✓ Empty date should return N/A
+✓ Invalid date should return original string
+
+=== Testing listing gain formatting and colors ===
+✓ Formatting Positive decimal gain
+✓ Color coding for Positive decimal gain
+✓ Formatting Negative decimal gain
+✓ Color coding for Negative decimal gain
+✓ Formatting Zero gain
+✓ Color coding for Zero gain
+✓ Formatting Pre-formatted positive gain
+✓ Color coding for Pre-formatted positive gain
+✓ Formatting Pre-formatted negative gain
+✓ Color coding for Pre-formatted negative gain
+✓ Formatting Pre-formatted zero gain
+✓ Color coding for Pre-formatted zero gain
+✓ Formatting Non-numeric gain
+✓ Color coding for Non-numeric gain
+✓ Formatting No gain field
+✓ Color coding for No gain field
+
+=== Test Summary ===
+Passed 36 of 36 tests

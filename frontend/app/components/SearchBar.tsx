@@ -239,7 +239,7 @@ const SearchBar: React.FC = () => {
   return (
     <div className="flex flex-col gap-6 w-full">
       <div className="relative w-full max-w-xl mx-auto" ref={searchRef} suppressHydrationWarning>
-        <form onSubmit={handleSearch} className="relative">
+        <form onSubmit={handleSearch} className="relative" data-testid="search-form">
           <input
             type="text"
             value={query}
@@ -248,6 +248,7 @@ const SearchBar: React.FC = () => {
             className="w-full py-3 pl-10 pr-4 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             onFocus={() => query.length >= 2 && setIsResultsVisible(true)}
             aria-label="Search stocks"
+            data-testid="search-input"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" suppressHydrationWarning>
             <Search className="w-5 h-5 text-gray-400" aria-hidden="true" />
@@ -255,6 +256,7 @@ const SearchBar: React.FC = () => {
           <button 
             type="submit" 
             className="absolute inset-y-0 right-0 flex items-center px-4 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-r-lg"
+            data-testid="search-button"
           >
             {isLoading ? (
               <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
@@ -269,6 +271,7 @@ const SearchBar: React.FC = () => {
             className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto" 
             suppressHydrationWarning
             role="listbox"
+            data-testid="search-results"
           >
             {searchMode === 'indian' && (
               <div className="px-3 py-1 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700">
@@ -284,6 +287,7 @@ const SearchBar: React.FC = () => {
                       onClick={() => handleResultClick(stock.symbol, stock.companyName)}
                       className="w-full text-left flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
                       role="option"
+                      data-testid="stock-card"
                     >
                       <div className="flex items-center" suppressHydrationWarning>
                         <StockLogo symbol={stock.symbol} size={32} className="mr-3" />
@@ -314,8 +318,8 @@ const SearchBar: React.FC = () => {
                 {error}
               </div>
             ) : (
-              <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                No results found. Try a different search term.
+              <div className="p-4 text-center text-gray-500 dark:text-gray-400" data-testid="no-results">
+                No stocks found matching your search
               </div>
             )}
           </div>

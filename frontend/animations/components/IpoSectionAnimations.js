@@ -66,16 +66,82 @@ export const initIpoSectionAnimations = (refs) => {
         ease: "power2.out"
       });
       
-      // Apply enhanced hover effect for IPO cards
-      const hoverCleanup = createCardHoverEffect(cards);
-      cleanupFunctions.push(hoverCleanup);
-      
-      // Add additional animation for card logos and content if needed
+      // Apply hover effects based on data completeness
       cards.forEach(card => {
+        const isMinimalData = card.getAttribute('data-minimal') === 'true';
         const logo = card.querySelector('img, .logo-placeholder');
         const title = card.querySelector('.font-semibold, .company-name');
         const details = card.querySelectorAll('.text-gray-500, .text-sm');
         
+        // Set up simple hover effect
+        card.addEventListener('mouseenter', () => {
+          // More subtle scale for cards with minimal data
+          const scaleAmount = isMinimalData ? 1.01 : 1.02;
+          const shadowIntensity = isMinimalData ? 
+            '0 4px 8px rgba(0, 0, 0, 0.08)' : 
+            '0 8px 16px rgba(0, 0, 0, 0.12)';
+          
+          gsap.to(card, {
+            scale: scaleAmount,
+            boxShadow: shadowIntensity,
+            duration: 0.3,
+            ease: 'power2.out',
+          });
+          
+          // Skip 3D effects for cards with minimal data
+          if (!isMinimalData) {
+            // Initial tilt to indicate 3D capability
+            gsap.to(card, {
+              rotationX: -2,
+              rotationY: 3,
+              duration: 0.4,
+              ease: 'power2.out',
+            });
+          }
+        });
+        
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, {
+            scale: 1,
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+            rotationX: 0,
+            rotationY: 0,
+            duration: 0.4,
+            ease: 'power2.out',
+          });
+        });
+        
+        card.addEventListener('mousemove', (e) => {
+          // Skip 3D effects for cards with minimal data
+          if (isMinimalData) return;
+          
+          const bounds = card.getBoundingClientRect();
+          const mouseX = e.clientX;
+          const mouseY = e.clientY;
+          const leftX = mouseX - bounds.x;
+          const topY = mouseY - bounds.y;
+          const center = {
+            x: leftX - bounds.width / 2,
+            y: topY - bounds.height / 2
+          };
+          
+          // Reduced rotation values to prevent blur
+          gsap.to(card, {
+            rotationX: -center.y / 30, // Reduced from /10
+            rotationY: center.x / 30, // Reduced from /10
+            duration: 0.5,
+            ease: 'power2.out',
+          });
+        });
+        
+        // Add to cleanup functions
+        cleanupFunctions.push(() => {
+          card.removeEventListener('mouseenter', () => {});
+          card.removeEventListener('mouseleave', () => {});
+          card.removeEventListener('mousemove', () => {});
+        });
+        
+        // Add additional animation for card logos and content if needed
         if (logo && title) {
           const cardTl = gsap.timeline({
             scrollTrigger: {

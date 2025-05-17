@@ -1,191 +1,140 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { getStockDetails, getHistoricalData } from '../../../services/stockService';
-import { Card, CardContent } from '../../../components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui/tabs';
-import LoadingSpinner from '../../../components/ui/LoadingSpinner';
-import StockLogo from '../../../components/stocks/StockLogo';
-import CompanyProfileCard from '../../../components/stocks/CompanyProfileCard';
-import ManagementTeamSection from '../../../components/stocks/ManagementTeamSection';
-import PeerComparisonTable from '../../../components/stocks/PeerComparisonTable';
-import StockTechnicalChart from '../../../components/stocks/StockTechnicalChart';
-import FinancialStatementsSection from '../../../components/stocks/FinancialStatementsSection';
-import { ArrowUp, ArrowDown, TrendingUp, LineChart, BarChart4, DollarSign, PieChart } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { gsap } from 'gsap';
+import { Chart, registerables } from 'chart.js';
+import { 
+  TrendingUp, 
+  ArrowUp, 
+  ArrowDown, 
+  DollarSign, 
+  LineChart, 
+  BarChart4, 
+  Scale,
+  Percent,
+  Info,
+  Building,
+  Users,
+  Tag
+} from 'lucide-react';
+import { apiHelpers } from '@/utils/api';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import FinancialStatements from '@/components/stocks/FinancialStatements';
+import StockNewsSection from '@/components/stocks/StockNewsSection';
+import FinancialHighlights from '@/components/stocks/FinancialHighlights';
+import ManagementInfo from '@/components/stocks/ManagementInfo';
 
-// Enhanced type definitions for stock data
-interface StockDetails {
-  tickerId: string;
-  companyName: string;
-  industry: string;
-  currentPrice: {
-    BSE: number;
-    NSE: number;
-  };
-  percentChange: number;
-  yearHigh: number;
-  yearLow: number;
-  marketCap: number;
-  pe: number;
-  eps: number;
-  dividendYield: number;
-  volume: number;
-  averageVolume: number;
-  companyProfile?: {
-    companyDescription?: string;
-    mgIndustry?: string;
-    isInId?: string;
-    exchangeCodeBse?: string;
-    exchangeCodeNse?: string;
-    officers?: {
-      officer: Array<{
-        firstName: string;
-        mI?: string;
-        lastName: string;
-        title: {
-          Value: string;
-          iD1?: string;
-          abbr1?: string;
-          iD2?: string;
-          abbr2?: string;
-        };
-        since?: string;
-        rank?: number;
-      }>;
-    };
-    peerCompanyList?: Array<{
-      companyName: string;
-      symbol?: string;
-      imageUrl?: string;
-      price?: number;
-      percentChange?: number;
-      netChange?: number;
-      marketCap?: number;
-      priceToBookValueRatio?: number;
-      priceToEarningsValueRatio?: number;
-      returnOnAverageEquity5YearAverage?: number;
-      returnOnAverageEquityTrailing12Month?: number;
-      ltDebtPerEquityMostRecentFiscalYear?: number;
-      netProfitMargin5YearAverage?: number;
-      netProfitMarginPercentTrailing12Month?: number;
-      dividendYieldIndicatedAnnualDividend?: number;
-      totalSharesOutstanding?: number;
-      overallRating?: string;
-      yhigh?: number;
-      ylow?: number;
-    }>;
-  };
-  stockTechnicalData?: Array<{
-    days: number;
-    bsePrice: number;
-    nsePrice: number;
-    date?: string;
-  }>;
-  financials?: Array<{
-    fiscalYear: string;
-    endDate: string;
-    type: 'Annual' | 'Quarterly';
-    statementDate: string;
-    fiscalPeriodNumber?: number;
-    stockFinancialMap?: {
-      CAS?: {
-        displayName: string;
+// Register Chart.js components
+Chart.register(...registerables);
+
+type MetricCardProps = {
+  title: string;
         value: string | number;
-        key?: string;
-        yqoQComp?: number;
-        qoQComp?: number;
-      }[];
-      BAL?: {
-        displayName: string;
-        value: string | number;
-        key?: string;
-        yqoQComp?: number;
-        qoQComp?: number;
-      }[];
-      INC?: {
-        displayName: string;
-        value: string | number;
-        key?: string;
-        yqoQComp?: number;
-        qoQComp?: number;
-      }[];
-    };
-  }>;
-}
+  change?: string | number;
+  isPositive?: boolean;
+  icon: React.ReactNode;
+  isAnimated?: boolean;
+  delay?: number;
+};
 
-interface HistoricalData {
-  dates: string[];
-  prices: number[];
-}
+// Reusable Metric Card Component
+const MetricCard: React.FC<MetricCardProps> = ({ 
+  title, value, change, isPositive, icon, isAnimated = true, delay = 0
+}) => {
+  const cardRef = useRef<HTMLDivElement>(null);
 
-// Stock details client component
-export default function StockDetailsClient({ symbol }: { symbol: string }) {
-  const [stockDetails, setStockDetails] = useState<StockDetails | null>(null);
-  const [historicalData, setHistoricalData] = useState<HistoricalData | null>(null);
+  useEffect(() => {
+    if (isAnimated && cardRef.current) {
+      gsap.from(cardRef.current, {
+        y: 20,
+        opacity: 0,
+        duration: 0.6,
+        delay: delay,
+        ease: "power3.out"
+      });
+    }
+  }, [isAnimated, delay]);
+
+  return (
+    <div ref={cardRef} className="metric-card bg-gray-800 border border-gray-700 rounded-xl overflow-hidden hover:bg-gray-700/50 transition-colors">
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-gray-400 font-medium text-sm">{title}</h3>
+          <div className={`p-2 rounded-lg ${
+            typeof isPositive === 'boolean' 
+              ? isPositive 
+                ? 'bg-green-500/20 text-green-400'
+                : 'bg-red-500/20 text-red-400'
+              : 'bg-indigo-500/20 text-indigo-400'
+          }`}>
+            {icon}
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <p className="text-2xl font-bold text-white">{value}</p>
+          {change && (
+            <div className={`flex items-center mt-1 text-sm ${
+              isPositive ? 'text-green-400' : 'text-red-400'
+            }`}>
+              {isPositive ? <ArrowUp className="w-3 h-3 mr-1" /> : <ArrowDown className="w-3 h-3 mr-1" />}
+              <span>{change}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function StockDetailsClient() {
+  const params = useParams();
+  const symbol = params?.symbol as string || '';
+
+  const [stockData, setStockData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  
+  // Refs for animations and charts
+  const headerRef = useRef<HTMLDivElement>(null);
+  const priceRef = useRef<HTMLDivElement>(null);
+  const rangeRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const sectorDistributionChartRef = useRef<HTMLCanvasElement>(null);
+  const performanceChartRef = useRef<HTMLCanvasElement>(null);
   
   useEffect(() => {
+    if (!symbol) {
+      setError('No symbol provided');
+      setLoading(false);
+      return;
+    }
+
+    // Function to fetch stock data using our improved apiHelpers
     const fetchStockData = async () => {
-      setLoading(true);
-      setError(null);
-      
       try {
-        console.log(`Fetching data for symbol: ${symbol}`);
+        setLoading(true);
+        console.log(`Fetching stock data for symbol: ${symbol}`);
         
-        // Uppercase the symbol for consistency
-        const upperSymbol = symbol.toUpperCase();
+        // Use the robust apiHelpers which will try multiple endpoints and formats
+        const data = await apiHelpers.getStockDetails(symbol);
         
-        // Fetch stock details
-        console.log(`Calling getStockDetails for ${upperSymbol}`);
-        const details = await getStockDetails(upperSymbol);
-        console.log('Stock details received:', details);
-        
-        if (!details) {
-          throw new Error(`No data found for symbol "${upperSymbol}"`);
-        }
-        
-        // Normalize the data structure if needed
-        const normalizedDetails = normalizeStockDetails(details, upperSymbol);
-        setStockDetails(normalizedDetails);
-        
-        // Fetch historical data
-        console.log(`Fetching historical data for ${upperSymbol}`);
-          const historical = await getHistoricalData(upperSymbol);
-          console.log('Historical data received:', historical);
-        
-        // Normalize the historical data structure
-        if (historical) {
-          // Check for different data formats and normalize
-          if (historical.dates && historical.prices && 
-              Array.isArray(historical.dates) && Array.isArray(historical.prices)) {
-          setHistoricalData(historical);
-          } else if (historical.datasets && Array.isArray(historical.datasets)) {
-            // Extract data from datasets format
-            const priceDataset = historical.datasets.find((d: any) => 
-              d.metric === 'Price' || d.name === 'Price' || d.type === 'price'
-            );
-            
-            if (priceDataset && Array.isArray(priceDataset.values)) {
-              // Convert from [[date, price], ...] format to {dates: [], prices: []}
-              const dates = priceDataset.values.map((point: any) => point[0]);
-              const prices = priceDataset.values.map((point: any) => point[1]);
-              setHistoricalData({ dates, prices });
-            }
-          }
+        if (data) {
+          console.log('Stock data received:', data);
+          setStockData(data);
         } else {
-          console.warn('Historical data not available');
+          setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
         }
       } catch (err: any) {
         console.error('Error fetching stock data:', err);
-        
-        // Set appropriate error message
-        if (err.response && err.response.status === 404) {
-          setError(`Stock "${symbol}" not found. Please check the symbol and try again.`);
-        } else {
-          setError(`Failed to load data for ${symbol}. ${err.message || 'Server error or network issue.'}`);
-        }
+        setError(
+          err.response?.status === 404
+            ? `Stock "${symbol}" not found. Please check the name or symbol and try again.`
+            : `Failed to fetch stock data: ${err.message || 'Unknown error'}. Please try again.`
+        );
       } finally {
         setLoading(false);
       }
@@ -194,414 +143,513 @@ export default function StockDetailsClient({ symbol }: { symbol: string }) {
     fetchStockData();
   }, [symbol]);
   
-  // Helper function to normalize stock details from different API formats
-  const normalizeStockDetails = (data: any, symbol: string): StockDetails => {
-    console.log('Normalizing data:', data);
+  // Initialize animations after data is loaded
+  useEffect(() => {
+    if (!loading && stockData && !error) {
+      const timeline = gsap.timeline();
+      
+      // Animate header
+      if (headerRef.current) {
+        timeline.from(headerRef.current, {
+          y: -20,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power3.out"
+        });
+      }
+      
+      // Animate price card
+      if (priceRef.current) {
+        timeline.from(priceRef.current, {
+          scale: 0.95,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power3.out"
+        }, "-=0.3");
+      }
+      
+      // Animate range slider
+      if (rangeRef.current) {
+        const rangeSlider = rangeRef.current.querySelector('.range-slider');
+        const rangeDot = rangeRef.current.querySelector('.range-dot');
+        
+        timeline.from(rangeRef.current, {
+          opacity: 0,
+          duration: 0.6,
+          ease: "power3.out"
+        }, "-=0.4");
+        
+        if (rangeSlider) {
+          timeline.from(rangeSlider, {
+            width: 0,
+            duration: 0.8,
+            ease: "power3.inOut"
+          }, "-=0.3");
+        }
+        
+        if (rangeDot) {
+          timeline.from(rangeDot, {
+            scale: 0,
+            duration: 0.5,
+            ease: "back.out(1.7)"
+          }, "-=0.4");
+        }
+      }
+      
+      // Animate about section
+      if (aboutRef.current) {
+        timeline.from(aboutRef.current, {
+          y: 30,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power3.out"
+        }, "-=0.3");
+      }
+      
+      // Initialize charts with animations
+      initializeCharts();
+    }
+  }, [loading, stockData, error]);
+  
+  // Initialize the charts
+  const initializeCharts = () => {
+    // Only proceed if we have data and chart refs
+    if (!stockData || !sectorDistributionChartRef.current || !performanceChartRef.current) return;
     
-    // If it's already in the expected format with required fields
-    if (data.tickerId && 
-        data.companyName && 
-        typeof data.currentPrice?.BSE === 'number' && 
-        typeof data.currentPrice?.NSE === 'number') {
-      console.log('Data already in expected format');
-      return data as StockDetails;
+    // Create dummy sector distribution data (replace with real data when available)
+    const sectorCtx = sectorDistributionChartRef.current.getContext('2d');
+    if (sectorCtx) {
+      const industry = stockData.industry || stockData.sector || '';
+      
+      // Sector distribution (dummy data - replace with real data)
+      const sectorData = {
+        labels: ['Financial Services', 'IT & Technology', 'Oil & Gas', 'Pharmaceuticals', 'FMCG', industry],
+        datasets: [{
+          data: [26.5, 22.3, 15.8, 12.9, 10.5, 8.7],
+          backgroundColor: [
+            'rgba(99, 102, 241, 0.8)',
+            'rgba(139, 92, 246, 0.8)',
+            'rgba(236, 72, 153, 0.8)',
+            'rgba(34, 211, 238, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+          ],
+          borderWidth: 0
+        }]
+      };
+      
+      new Chart(sectorCtx, {
+        type: 'doughnut',
+        data: sectorData,
+        options: {
+          responsive: true,
+          cutout: '70%',
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => `${context.label}: ${context.raw}%`
+              }
+            }
+          },
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
     }
     
-    // For API response, extract values using possible field names
-    const bsePrice = extractNumber(data, ['bse_price', 'current_price', 'price', 'latestPrice']);
-    const nsePrice = extractNumber(data, ['nse_price', 'current_price', 'price', 'latestPrice']);
-    
-    // Get all possible numeric values
-    const marketCap = extractNumber(data, ['market_cap', 'marketCap', 'mcap']);
-    const pe = extractNumber(data, ['pe_ratio', 'pe', 'pe_ttm']);
-    const eps = extractNumber(data, ['eps', 'eps_ttm']);
-    const dividendYield = extractNumber(data, ['dividend_yield', 'dividendYield', 'div_yield']);
-    const volume = extractNumber(data, ['volume', 'vol']);
-    const avgVolume = extractNumber(data, ['average_volume', 'averageVolume', 'avg_volume', 'avg_vol']);
-    const percentChange = extractNumber(data, ['percent_change', 'changePercent', 'price_change_percentage', 'change_percent']);
-    
-    // Extract high/low values
-    const yearHigh = extractNumber(data, ['year_high', 'yearHigh', 'high_52_week', '52_week_high', 'high52w']);
-    const yearLow = extractNumber(data, ['year_low', 'yearLow', 'low_52_week', '52_week_low', 'low52w']);
-    
-    // Extract company profile
-    const companyProfile = data.companyProfile || {};
-    
-    // Extract technical data for chart
-    const stockTechnicalData = data.stockTechnicalData || [];
-    
-    // Extract financial data
-    const financials = data.financials || [];
-    
-    // Process financial statements
-    const processedFinancials = financials.map((year: any) => {
-      const stockFinancialMap = year.stockFinancialMap || {};
+    // Performance over time chart (dummy data - replace with real data)
+    const performanceCtx = performanceChartRef.current.getContext('2d');
+    if (performanceCtx) {
+      // Create gradient
+      const gradient = performanceCtx.createLinearGradient(0, 0, 0, 200);
+      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
+      gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
       
-      // Create a properly formatted financial statements object
-      return {
-        fiscalYear: year.fiscalYear,
-        endDate: year.endDate,
-        type: year.type || 'Annual',
-        statementDate: year.statementDate,
-        fiscalPeriodNumber: year.fiscalPeriodNumber,
-        statements: {
-          cashFlow: stockFinancialMap.CAS ? { 
-            type: 'CAS', 
-            items: stockFinancialMap.CAS 
-          } : undefined,
-          balanceSheet: stockFinancialMap.BAL ? { 
-            type: 'BAL', 
-            items: stockFinancialMap.BAL 
-          } : undefined,
-          incomeStatement: stockFinancialMap.INC ? { 
-            type: 'INC', 
-            items: stockFinancialMap.INC 
-          } : undefined,
+      // Extract price from stock data (use price field or fallback to current_price)
+      const price = extractPrice();
+      const priceFloat = parseFloat(price.toString().replace(/[₹,]/g, '')) || 100;
+      
+      // Generate sample data points around the current price
+      const lastMonthData = Array.from({ length: 30 }, (_, i) => {
+        const variation = (Math.random() - 0.5) * 20;  // Random variation ±10%
+        return priceFloat * (1 + variation / 100); // Current price with variation
+      });
+      
+      const timeLabels = Array.from({ length: 30 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (30 - i - 1));
+        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      });
+      
+      new Chart(performanceCtx, {
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [{
+            label: 'Price (₹)',
+            data: lastMonthData,
+            borderColor: 'rgb(99, 102, 241)',
+            backgroundColor: gradient,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgb(129, 140, 248)'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(75, 85, 99, 0.1)'
+              },
+              ticks: {
+                maxTicksLimit: 6,
+                color: 'rgba(156, 163, 175, 0.8)'
+              }
+            },
+            y: {
+              grid: {
+                color: 'rgba(75, 85, 99, 0.1)'
+              },
+              ticks: {
+                callback: (value) => `₹${value.toLocaleString()}`,
+                color: 'rgba(156, 163, 175, 0.8)'
+              }
+            }
+          },
+          animation: {
+            duration: 2000,
+            easing: 'easeOutQuart'
+          }
         }
-      };
-    });
-    
-    // Normalize the data
-    return {
-      tickerId: extractString(data, ['symbol', 'ticker', 'tickerId', 'name']) || symbol,
-      companyName: extractString(data, ['company_name', 'companyName', 'name', 'full_name']) || `${symbol} Stock`,
-      industry: extractString(data, ['sector', 'industry', 'sector_name', 'category']) || 'N/A',
-      currentPrice: {
-        BSE: bsePrice,
-        NSE: nsePrice || bsePrice
-      },
-      percentChange: percentChange,
-      yearHigh: yearHigh,
-      yearLow: yearLow,
-      marketCap: marketCap,
-      pe: pe,
-      eps: eps,
-      dividendYield: dividendYield,
-      volume: volume,
-      averageVolume: avgVolume,
-      companyProfile: companyProfile,
-      stockTechnicalData: stockTechnicalData,
-      financials: processedFinancials
-    };
+      });
+    }
   };
   
-  // Helper to extract first available numeric value from different possible keys
-  function extractNumber(data: any, possibleKeys: string[]): number {
-    if (!data) return 0;
+  // Helper function to extract price
+  const extractPrice = () => {
+    if (!stockData) return 'N/A';
     
-    for (let i = 0; i < possibleKeys.length; i++) {
-      const key = possibleKeys[i];
-      if (data[key] !== undefined && data[key] !== null) {
-        const value = parseFloat(data[key]);
-            if (!isNaN(value)) {
-              return value;
-        }
-      }
+    // Try all possible price fields
+    if (stockData.latestPrice) return stockData.latestPrice;
+    if (stockData.price) return stockData.price;
+    if (stockData.current_price) return stockData.current_price;
+    if (stockData.currentPrice?.BSE) return stockData.currentPrice.BSE;
+    if (stockData.currentPrice?.NSE) return stockData.currentPrice.NSE;
+    if (stockData.stockTechnicalData?.[0]?.bsePrice) return stockData.stockTechnicalData[0].bsePrice;
+    
+    return 'N/A';
+  };
+
+  // Helper function to transform financial data from API response
+  const transformFinancialData = () => {
+    // If stockData has statements directly, process them
+    if (stockData.stockFinancialMap) {
+      return [{
+        stockFinancialMap: stockData.stockFinancialMap,
+        FiscalYear: stockData.FiscalYear || new Date().getFullYear().toString(),
+        EndDate: stockData.StatementDate || stockData.EndDate || new Date().toISOString().split('T')[0],
+        Type: stockData.Type || 'Interim',
+        StatementDate: stockData.StatementDate || new Date().toISOString().split('T')[0],
+        fiscalPeriodNumber: stockData.fiscalPeriodNumber || 0
+      }];
     }
-    
-    return 0;
-  }
-  
-  // Helper to extract first available string value from different possible keys
-  function extractString(data: any, possibleKeys: string[]): string | null {
-    if (!data) return null;
-    
-    for (let i = 0; i < possibleKeys.length; i++) {
-      const key = possibleKeys[i];
-      if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
-        return String(data[key]);
-      }
+
+    // Look for financial statements in fiscal periods array
+    if (Array.isArray(stockData.fiscalPeriods)) {
+      return stockData.fiscalPeriods;
     }
-    
-    return null;
-  }
+
+    // Check if financial statements are in a nested field
+    if (stockData.financials?.statements) {
+      return stockData.financials.statements.map((statement: any) => ({
+        stockFinancialMap: {
+          INC: statement.income || [],
+          BAL: statement.balance || [],
+          CAS: statement.cashflow || []
+        },
+        FiscalYear: statement.year || new Date().getFullYear().toString(),
+        EndDate: statement.date || new Date().toISOString().split('T')[0],
+        Type: statement.type || 'Interim',
+        StatementDate: statement.date || new Date().toISOString().split('T')[0],
+        fiscalPeriodNumber: statement.period || 0
+      }));
+    }
+
+    return [];
+  };
   
   if (loading) {
     return (
-      <div className="p-8 flex justify-center items-center min-h-[60vh]">
-        <LoadingSpinner />
+      <div className="flex flex-col items-center justify-center min-h-[500px] bg-gray-900 rounded-xl p-8">
+        <LoadingSpinner size="lg" />
+        <p className="mt-4 text-gray-400">Loading {symbol} data...</p>
       </div>
     );
   }
   
-  if (error || !stockDetails) {
+  if (error || !stockData) {
     return (
-      <div className="p-8">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 p-4 rounded-lg">
-          {error || `No data found for symbol "${symbol}"`}
-        </div>
-        <div className="mt-4">
-          <p className="text-gray-600 dark:text-gray-400">
-            Try searching for a different stock symbol or check if "{symbol}" is a valid stock symbol.
-          </p>
-          <div className="mt-2">
-            <p className="text-sm text-gray-500">Popular Indian stock symbols:</p>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {['RELIANCE', 'TCS', 'HDFC', 'INFY', 'ITC', 'SBIN'].map(stockSymbol => (
-                <a 
-                  key={stockSymbol}
-                  href={`/stocks/${stockSymbol}`}
-                  className="px-2 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded hover:bg-blue-200 dark:hover:bg-blue-800/40"
-                >
-                  {stockSymbol}
-                </a>
-              ))}
-            </div>
-          </div>
+      <div className="bg-red-900/30 border border-red-800 text-red-400 p-6 rounded-xl">
+        <div className="flex items-center">
+          <Info className="h-5 w-5 mr-2" />
+          <p>{error || `No data found for symbol "${symbol}"`}</p>
         </div>
       </div>
     );
   }
   
-  // Extract key information needed for display
-  const companyDesc = stockDetails.companyProfile?.companyDescription || 'No company description available.';
-  const isin = stockDetails.companyProfile?.isInId || 'INE154A01025';
-  const bseCode = stockDetails.companyProfile?.exchangeCodeBse || '500875';
-  const nseCode = stockDetails.companyProfile?.exchangeCodeNse || stockDetails.tickerId;
+  // Extract key information for display
+  const companyName = stockData.companyName || stockData.name || symbol;
+  const displaySymbol = stockData.symbol || symbol;
+  const industry = stockData.industry || stockData.sector || 'N/A';
+  const price = extractPrice();
   
-  // Extract management team
-  const officers = stockDetails.companyProfile?.officers?.officer || [];
+  // Percent change
+  const percentChange = stockData.percentChange || stockData.percent_change || 0;
+  const isPositive = parseFloat(percentChange) >= 0;
   
-  // Format technical data for chart
-  const technicalData = stockDetails.stockTechnicalData?.map(item => ({
-    day: item.days,
-    bsePrice: item.bsePrice,
-    nsePrice: item.nsePrice,
-    date: item.date
-  })) || [];
+  // 52-week range
+  const yearHigh = stockData.yearHigh || stockData.year_high;
+  const yearLow = stockData.yearLow || stockData.year_low;
   
-  // Format financial data
-  const financialData = stockDetails.financials || [];
+  // Key metrics
+  const marketCap = stockData.marketCap || stockData.market_cap;
+  const pe = stockData.pe || stockData.pe_ratio;
+  const eps = stockData.eps;
+  const debtToEquity = stockData.debtToEquity || stockData.debt_to_equity;
+  const dividendYield = stockData.dividendYield || stockData.dividend_yield;
+  const volume = stockData.volume;
+  const avgVolume = stockData.averageVolume || stockData.average_volume;
   
-  // Determine 52-week range values from the image
-  const weekLow = stockDetails.yearLow || 380.43;
-  const weekHigh = stockDetails.yearHigh || 498.94;
+  // Company description
+  const description = stockData.companyProfile?.companyDescription || stockData.description || 'No company description available.';
   
-  // Determine if price change is positive
-  const isPositiveChange = stockDetails.percentChange >= 0;
+  // Identifiers
+  const isin = stockData.companyProfile?.isInId;
+  const bseCode = stockData.companyProfile?.exchangeCodeBse;
+  const nseCode = stockData.companyProfile?.exchangeCodeNse;
   
-  // Calculate company initials for logo
-  const companyInitials = stockDetails.tickerId.substring(0, 2).toUpperCase();
+  // Management team
+  const officers = stockData.companyProfile?.officers?.officer || [];
+
+  // Financial data
+  const financialData = transformFinancialData();
+  
+  // Recent news
+  const recentNews = stockData.recentNews || [];
   
   return (
-    <div className="bg-[#0a0c15] text-white min-h-screen">
-      <div className="mx-auto px-4 py-6 max-w-7xl">
+    <div className="container mx-auto px-4 py-6">
         {/* Header Section */}
-        <div className="flex justify-between items-start mb-6">
-          <div className="flex items-center">
-            <div className="bg-blue-600 rounded-full w-12 h-12 flex items-center justify-center text-white text-xl font-bold mr-4">
-              {companyInitials}
-            </div>
+      <div ref={headerRef} className="mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-2xl font-bold">{stockDetails.companyName}</h1>
-              <div className="flex items-center text-gray-400 text-sm">
-                <span>{stockDetails.tickerId}</span>
-                <span className="mx-2">•</span>
-                <span>{stockDetails.industry}</span>
-              </div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-3xl font-bold text-white">{companyName}</h1>
+              <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm">{displaySymbol}</span>
             </div>
+            {industry && <p className="text-gray-400 mt-1">{industry}</p>}
           </div>
           
-          <div className="text-right">
-            <div className="flex items-center justify-end">
-              <span className="text-3xl font-bold">₹0</span>
-              <div className="ml-2 text-green-500 flex items-center">
-                <ArrowUp size={16} />
-                <span className="ml-1">+0.00%</span>
-              </div>
-            </div>
+          <div className="mt-4 md:mt-0 flex items-center gap-3">
+            <span className="text-sm text-gray-400">ISIN: {isin || 'N/A'}</span>
+            <span className="text-sm text-gray-400">BSE: {bseCode || 'N/A'}</span>
+            <span className="text-sm text-gray-400">NSE: {nseCode || 'N/A'}</span>
           </div>
         </div>
+      </div>
+      
+      {/* Price and Key Metrics Cards */}
+      <div ref={priceRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <MetricCard 
+          title="Current Price" 
+          value={`₹${price}`}
+          change={`${isPositive ? '+' : ''}${percentChange}% today`}
+          isPositive={isPositive}
+          icon={<DollarSign className="h-5 w-5" />}
+          delay={0.1}
+        />
         
-        {/* Tabs */}
-        <div className="mb-6">
-          <div className="bg-[#11131f] p-1 rounded-md inline-flex mb-6">
-            <button className="px-4 py-2 text-sm font-medium bg-[#0c0e16] text-white rounded-md">Overview</button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Analysis</button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Chart</button>
-            <button className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Financials</button>
-          </div>
-        </div>
+        <MetricCard 
+          title="Market Cap" 
+          value={marketCap ? `₹${marketCap}` : 'N/A'}
+          icon={<BarChart4 className="h-5 w-5" />}
+          delay={0.2}
+        />
         
-        {/* 52 Week Range Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">52 Week Range</h2>
-          <div className="flex justify-between items-center text-sm text-gray-400 mb-2">
-            <span>₹{weekLow}</span>
-            <div className="h-2 bg-[#1a1d2d] w-full mx-4 rounded-full relative">
-              <div className="absolute h-4 w-4 bg-blue-500 -top-1 rounded-full transform -translate-x-1/2"
+        <MetricCard 
+          title="P/E Ratio" 
+          value={pe || 'N/A'}
+          icon={<Scale className="h-5 w-5" />}
+          delay={0.3}
+        />
+        
+        <MetricCard 
+          title="EPS" 
+          value={eps ? `₹${eps}` : 'N/A'}
+          icon={<TrendingUp className="h-5 w-5" />}
+          delay={0.4}
+        />
+      </div>
+      
+      {/* 52 Week Range */}
+      {(yearHigh || yearLow) && (
+        <div ref={rangeRef} className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-8">
+          <h2 className="text-lg font-semibold text-white mb-4">52 Week Range</h2>
+          <div className="flex items-center justify-between">
+            <span className="text-gray-300">₹{yearLow || 'N/A'}</span>
+            <div className="h-2 bg-gray-700 rounded-full flex-grow mx-4 relative range-slider">
+              <div 
+                className="h-full bg-indigo-500 rounded-full" 
                 style={{ 
-                  left: `${Math.max(0, Math.min(100, ((stockDetails.currentPrice.NSE - weekLow) / (weekHigh - weekLow)) * 100))}%`
+                  width: `${Math.min(
+                    100, 
+                    Math.max(
+                      0, 
+                      ((parseFloat(price) - (yearLow || 0)) / 
+                       ((yearHigh || 0) - (yearLow || 0))) * 100
+                    )
+                  )}%` 
                 }}
-              ></div>
-              <div className="h-full bg-blue-600 rounded-full" 
+              />
+              <div 
+                className="absolute h-5 w-5 bg-indigo-600 -top-1.5 rounded-full transform -translate-x-1/2 shadow-lg range-dot"
                 style={{ 
-                  width: `${Math.max(0, Math.min(100, ((stockDetails.currentPrice.NSE - weekLow) / (weekHigh - weekLow)) * 100))}%` 
+                  left: `${Math.min(
+                    100, 
+                    Math.max(
+                      0, 
+                      ((parseFloat(price) - (yearLow || 0)) / 
+                       ((yearHigh || 0) - (yearLow || 0))) * 100
+                    )
+                  )}%` 
                 }}
-              ></div>
+              />
             </div>
-            <span>₹{weekHigh}</span>
+            <span className="text-gray-300">₹{yearHigh || 'N/A'}</span>
           </div>
         </div>
+      )}
         
-        {/* About Section */}
+      {/* Financial Highlights Section */}
+      {financialData && financialData.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">About</h2>
-          <p className="text-gray-300 mb-6">{companyDesc}</p>
+          <FinancialHighlights financialData={financialData} />
         </div>
-        
-        {/* Metrics Cards (Horizontal Row) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <div className="bg-[#141736] rounded-full w-8 h-8 flex items-center justify-center mr-3">
-                <TrendingUp size={16} className="text-blue-400" />
+      )}
+      
+      {/* Charts and About Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Performance Chart */}
+        <div ref={chartContainerRef} className="lg:col-span-2">
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">Price Performance</CardTitle>
+              <CardDescription className="text-gray-400">Last 30 days</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <canvas ref={performanceChartRef} />
               </div>
-              <span className="text-gray-400 text-sm">Market Cap</span>
-            </div>
-            <div className="font-bold">₹{(stockDetails.marketCap || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })} Cr</div>
+            </CardContent>
+          </Card>
           </div>
           
-          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <div className="bg-[#1e1339] rounded-full w-8 h-8 flex items-center justify-center mr-3">
-                <BarChart4 size={16} className="text-purple-400" />
+        {/* About Card */}
+        <div ref={aboutRef} className="lg:col-span-1">
+          <Card className="bg-gray-800 border-gray-700 h-full">
+            <CardHeader>
+              <CardTitle className="text-white">About</CardTitle>
+              <CardDescription className="text-gray-400">Company Overview</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-gray-300 text-sm overflow-y-auto max-h-[230px] pr-2">
+                {description}
               </div>
-              <span className="text-gray-400 text-sm">P/E Ratio</span>
-            </div>
-            <div className="font-bold">{(stockDetails.pe || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
-          </div>
-          
-          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <div className="bg-[#142619] rounded-full w-8 h-8 flex items-center justify-center mr-3">
-                <DollarSign size={16} className="text-green-400" />
-              </div>
-              <span className="text-gray-400 text-sm">EPS</span>
-            </div>
-            <div className="font-bold">₹{(stockDetails.eps || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
-          </div>
-          
-          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
-            <div className="flex items-center mb-2">
-              <div className="bg-[#261810] rounded-full w-8 h-8 flex items-center justify-center mr-3">
-                <PieChart size={16} className="text-orange-400" />
-              </div>
-              <span className="text-gray-400 text-sm">Div Yield</span>
-            </div>
-            <div className="font-bold">{(stockDetails.dividendYield || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}%</div>
+            </CardContent>
+          </Card>
           </div>
         </div>
 
-        {/* Stock Identifiers Section */}
+      {/* Financial Statements Section */}
+      {financialData && financialData.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Stock Identifiers</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <p className="text-gray-400 mb-1">ISIN</p>
-              <p className="font-medium text-lg">{isin}</p>
-            </div>
-            
-            <div>
-              <p className="text-gray-400 mb-1">BSE Code</p>
-              <p className="font-medium text-lg">{bseCode}</p>
-            </div>
-            
-            <div>
-              <p className="text-gray-400 mb-1">NSE Code</p>
-              <p className="font-medium text-lg">{nseCode}</p>
-            </div>
-          </div>
+          <FinancialStatements financialData={financialData} />
         </div>
-        
-        {/* BSE and NSE Prices */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
-            <div className="text-center">
-              <span className="text-blue-400 text-sm">BSE Price</span>
-              <div className="text-xl font-bold">₹{(stockDetails.currentPrice.BSE || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
-            </div>
-          </div>
-          
-          <div className="bg-[#11131f] border border-[#1a1d2d] rounded-lg p-4">
-            <div className="text-center">
-              <span className="text-blue-400 text-sm">NSE Price</span>
-              <div className="text-xl font-bold">₹{(stockDetails.currentPrice.NSE || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 })}</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Trading Information Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Trading Information</h2>
-          <p className="text-gray-400 text-sm mb-4">Volume and activity</p>
-          
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
+      )}
+
+      {/* News and Key Details Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        {/* Trading Info */}
+        <Card className="bg-gray-800 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <LineChart className="h-5 w-5 text-indigo-400" />
+              Trading Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between py-2 border-b border-gray-700">
               <span className="text-gray-400">Volume</span>
-              <span className="font-medium">{(stockDetails.volume || 0).toLocaleString()}</span>
+              <span className="text-white font-medium">{volume ? volume.toLocaleString() : 'N/A'}</span>
             </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Avg Volume</span>
-              <span className="font-medium">{(stockDetails.averageVolume || 0).toLocaleString()}</span>
+            <div className="flex justify-between py-2 border-b border-gray-700">
+              <span className="text-gray-400">Avg. Volume</span>
+              <span className="text-white font-medium">{avgVolume ? avgVolume.toLocaleString() : 'N/A'}</span>
             </div>
-            
-            <div className="flex justify-between items-center">
-              <span className="text-gray-400">Day Range</span>
-              <span className="font-medium">₹{(stockDetails.currentPrice.BSE * 0.995).toFixed(2)} - ₹{(stockDetails.currentPrice.BSE * 1.005).toFixed(2)}</span>
+            <div className="flex justify-between py-2 border-b border-gray-700">
+              <span className="text-gray-400">Dividend Yield</span>
+              <span className="text-white font-medium">{dividendYield ? `${dividendYield}%` : 'N/A'}</span>
             </div>
-          </div>
-        </div>
+            <div className="flex justify-between py-2">
+              <span className="text-gray-400">Debt to Equity</span>
+              <span className="text-white font-medium">{debtToEquity || 'N/A'}</span>
+            </div>
+          </CardContent>
+        </Card>
         
-        {/* Key Management Section */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">Key Management</h2>
-          
-          {officers.length > 0 ? (
-            <ManagementTeamSection officers={officers} />
-          ) : (
-            // If no officers data, convert example data to match Officer type and use the component
-            <ManagementTeamSection officers={[
-              {
-                firstName: "Sanjiv",
-                lastName: "Puri",
-                title: { Value: "Executive Chairman of the Board, Managing Director" },
-                since: "12/06/2015"
-              },
-              {
-                firstName: "Supratim",
-                lastName: "Dutta",
-                title: { Value: "Chief Financial Officer, Whole-Time Director" },
-                since: "09/05/2020"
-              },
-              {
-                firstName: "A. K.",
-                lastName: "Rajput",
-                title: { Value: "President - Corporate Affairs" }
-              },
-              {
-                firstName: "Rajendra Kumar",
-                lastName: "Singhi",
-                title: { Value: "Executive Vice President, Compliance Officer, Company Secretary" },
-                since: "02/04/2018"
-              },
-              {
-                firstName: "Sumant",
-                lastName: "Bhargavan",
-                title: { Value: "Wholetime Director" },
-                since: "04/01/2016"
-              },
-              {
-                firstName: "Hemant",
-                lastName: "Malik",
-                title: { Value: "Whole-time Director, Divisional Chief Executive - Foods Business Division" }
-              }
-            ]} />
-          )}
+        {/* Sector Distribution */}
+        <Card className="bg-gray-800 border-gray-700">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Building className="h-5 w-5 text-indigo-400" />
+              Sector Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[200px] flex items-center justify-center">
+              <canvas ref={sectorDistributionChartRef} />
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Key Management - Replaced with enhanced ManagementInfo component */}
+        <div className="lg:col-span-1">
+          <ManagementInfo officers={officers} />
         </div>
       </div>
+
+      {/* Recent News Section */}
+      {recentNews && recentNews.length > 0 && (
+        <div className="mb-8">
+          <StockNewsSection news={recentNews} />
+        </div>
+      )}
     </div>
   );
 }

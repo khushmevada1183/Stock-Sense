@@ -44,7 +44,7 @@ export default function StockSearchPage() {
     try {
       const data = await stockService.searchStocks(searchQuery);
       // Set the results directly
-      setSearchResults(data.results as Stock[]);
+      setSearchResults(data.results as unknown as Stock[]);
       
       if (data.results.length === 0) {
         setError('No stocks found matching your search criteria');

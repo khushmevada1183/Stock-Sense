@@ -47,7 +47,7 @@ export default function Home() {
     <div className="pb-16">
       {/* Hero Section */}
       <div ref={heroRef}>
-        <HeroSection />
+      <HeroSection />
       </div>
       
       {/* Market Overview */}
@@ -116,12 +116,12 @@ export default function Home() {
       
       {/* Analysis Features */}
       <div ref={analysisFeaturesRef}>
-        <AnalysisFeatures />
+      <AnalysisFeatures />
       </div>
       
       {/* CTA Section */}
       <div ref={ctaSectionRef}>
-        <CtaSection />
+      <CtaSection />
       </div>
     </div>
   );

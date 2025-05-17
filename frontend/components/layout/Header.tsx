@@ -40,6 +40,7 @@ const Header = () => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/stocks/${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
     }
   };
   

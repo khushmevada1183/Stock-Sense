@@ -1,6 +1,6 @@
 import { ApiClient } from './client';
 import { StockDetails, SearchResult, HistoricalDataPoint } from './types';
-import { getEndpointPattern, storeEndpointPattern } from '.';
+import { getEndpointPattern, storeEndpointPattern } from './index';
 
 // Get the standard API client
 function getApiClient(): ApiClient {

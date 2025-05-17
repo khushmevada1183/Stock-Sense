@@ -376,34 +376,45 @@ export const animateFaqAccordion = (faqRef) => {
 
   const faqContainer = faqRef.current;
   const title = faqContainer.querySelector('h2');
-  const description = faqContainer.querySelector('.text-gray-500');
-  const accordionItems = faqContainer.querySelectorAll('[data-state="closed"]');
+  const accordionItems = faqContainer.querySelectorAll('.accordion-item, [class*="AccordionItem"]');
 
-  // Create timeline for FAQ section
+  // Create timeline for FAQ section with more reliable trigger settings
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: faqContainer,
-      start: "top 75%",
+      start: "top 85%", // Adjust to trigger animation earlier
+      once: true, // Ensure the animation only runs once
+      toggleActions: "play none none none" // Simplify the toggle actions
     }
   });
 
+  // Animate the title with a simpler animation
   tl.from(title, {
     opacity: 0,
-    y: 20,
-    duration: 0.5
-  })
-  .from(description, {
+    y: 10, // Reduce the movement
+    duration: 0.4,
+    clearProps: "all" // Clear properties after animation to avoid conflicts
+  });
+
+  // Skip the description animation since we removed it
+  // .from(description, {
+  //   opacity: 0,
+  //   y: 10,
+  //   duration: 0.5
+  // }, "-=0.3")
+  
+  // Add a small delay before animating accordion items
+  if (accordionItems.length > 0) {
+    tl.from(accordionItems, {
     opacity: 0,
-    y: 10,
-    duration: 0.5
-  }, "-=0.3")
-  .from(accordionItems, {
-    opacity: 0,
-    y: 20,
-    stagger: 0.08,
-    duration: 0.5,
-    ease: "power2.out"
-  }, "-=0.2");
+      y: 10, // Reduce the movement
+      stagger: 0.05, // Reduce stagger time
+      duration: 0.3,
+      ease: "power1.out", // Use a simpler easing
+      clearProps: "all", // Clear properties after animation
+      delay: 0.1 // Add a small delay
+    });
+  }
 
   return tl;
 };

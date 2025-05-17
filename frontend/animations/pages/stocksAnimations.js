@@ -278,6 +278,204 @@ export const animateStockDetails = (refs) => {
   }
 };
 
+// Animation for the dashboard cards
+export const animateDashboardCards = (cardsRefs) => {
+  const cardsElements = document.querySelectorAll('.metric-card');
+  
+  if (cardsElements.length === 0) return;
+  
+  gsap.from(cardsElements, {
+    opacity: 0,
+    y: 30,
+    stagger: 0.08,
+    duration: 0.6,
+    ease: "power2.out"
+  });
+  
+  // Add hover effects
+  createCardHoverEffect(cardsElements);
+  
+  return;
+};
+
+// Animation for the chart containers
+export const animateChartContainers = () => {
+  const chartContainers = document.querySelectorAll('.chart-container');
+  
+  if (chartContainers.length === 0) return;
+  
+  gsap.from(chartContainers, {
+    opacity: 0,
+    scale: 0.95,
+    stagger: 0.15,
+    duration: 0.7,
+    ease: "power3.out"
+  });
+  
+  return;
+};
+
+// Animation for the stocks dashboard
+export const animateStocksDashboard = (refs) => {
+  const {
+    dashboardRef,
+    headerRef,
+    metricsRef,
+    sectorsRef,
+    stocksRef
+  } = refs;
+  
+  // Create main timeline
+  const masterTimeline = gsap.timeline();
+  
+  // Animate header
+  if (headerRef?.current) {
+    const header = headerRef.current;
+    const title = header.querySelector('h1');
+    const subtitle = header.querySelector('p');
+    const searchLink = header.querySelector('a');
+    
+    const headerTl = gsap.timeline();
+    
+    headerTl.from(title, {
+      opacity: 0,
+      y: -20,
+      duration: 0.7,
+      ease: "power2.out"
+    })
+    .from(subtitle, {
+      opacity: 0,
+      y: -15,
+      duration: 0.5,
+      ease: "power2.out"
+    }, "-=0.4")
+    .from(searchLink, {
+      opacity: 0,
+      scale: 0.95,
+      duration: 0.5,
+      ease: "power2.out"
+    }, "-=0.3");
+    
+    masterTimeline.add(headerTl);
+  }
+  
+  // Animate metric cards
+  if (metricsRef?.current) {
+    const metricCards = metricsRef.current.querySelectorAll('.metric-card');
+    
+    if (metricCards.length > 0) {
+      const metricsTl = gsap.timeline();
+      
+      metricsTl.from(metricCards, {
+        opacity: 0,
+        y: 30,
+        stagger: 0.08,
+        duration: 0.6,
+        ease: "power2.out"
+      });
+      
+      // Add card hover effects
+      createCardHoverEffect(metricCards);
+      
+      masterTimeline.add(metricsTl, "-=0.2");
+    }
+  }
+  
+  // Animate stocks table
+  if (stocksRef?.current) {
+    const stocksSection = stocksRef.current;
+    const stocksTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: stocksSection,
+        start: "top 80%",
+        toggleActions: "play none none none"
+      }
+    });
+    
+    stocksTl.from(stocksSection, {
+      opacity: 0,
+      y: 40,
+      duration: 0.7,
+      ease: "power2.out"
+    });
+    
+    // Animate table rows if they exist
+    const table = stocksSection.querySelector('table');
+    if (table) {
+      const rows = table.querySelectorAll('tbody tr');
+      
+      if (rows.length > 0) {
+        stocksTl.from(rows, {
+          opacity: 0,
+          y: 15,
+          stagger: 0.03,
+          duration: 0.4,
+          ease: "power1.out"
+        }, "-=0.3");
+        
+        // Add row hover effects
+        createTableRowHoverEffect(rows);
+      }
+    }
+    
+    // Animate chart containers if they exist
+    const chartContainers = stocksSection.querySelectorAll('.chart-container');
+    if (chartContainers.length > 0) {
+      stocksTl.from(chartContainers, {
+        opacity: 0,
+        scale: 0.95,
+        stagger: 0.1,
+        duration: 0.6,
+        ease: "power2.out"
+      }, "-=0.2");
+    }
+  }
+  
+  // Animate sectors section
+  if (sectorsRef?.current) {
+    const sectorSection = sectorsRef.current;
+    const sectorsTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: sectorSection,
+        start: "top 80%",
+        toggleActions: "play none none none"
+      }
+    });
+    
+    sectorsTl.from(sectorSection, {
+      opacity: 0,
+      y: 40,
+      duration: 0.7,
+      ease: "power2.out"
+    });
+    
+    // Animate chart containers if they exist
+    const chartContainers = sectorSection.querySelectorAll('.chart-container');
+    if (chartContainers.length > 0) {
+      sectorsTl.from(chartContainers, {
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.6,
+        ease: "power2.out"
+      }, "-=0.3");
+    }
+    
+    // Animate sector items if they exist
+    const sectorItems = sectorSection.querySelectorAll('.px-6');
+    if (sectorItems.length > 0) {
+      sectorsTl.from(sectorItems, {
+        opacity: 0,
+        y: 15,
+        stagger: 0.05,
+        duration: 0.5,
+        ease: "power1.out"
+      }, "-=0.2");
+    }
+  }
+  
+  return masterTimeline;
+};
+
 // Initialize all Stocks page animations
 export const initStocksPageAnimations = (refs) => {
   const {
@@ -314,5 +512,8 @@ export default {
   animateNoticeBox,
   animateStockCards,
   animateStockDetails,
-  initStocksPageAnimations
+  initStocksPageAnimations,
+  animateDashboardCards,
+  animateChartContainers,
+  animateStocksDashboard
 }; 

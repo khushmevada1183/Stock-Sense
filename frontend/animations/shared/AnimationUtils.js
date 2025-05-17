@@ -158,6 +158,16 @@ export const createTableRowHoverEffect = (rows) => {
  * @returns {Function} Cleanup function
  */
 export const createCardHoverEffect = (cards) => {
+  // Detect if we're in dark mode 
+  const isDarkMode = document.documentElement.classList.contains('dark') || 
+                     window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  if (isDarkMode) {
+    // Use dark mode hover effect
+    return createDarkCardHoverEffect(cards);
+  }
+  
+  // Light mode hover effect
   return createHoverEffect(
     cards,
     { 
@@ -168,6 +178,31 @@ export const createCardHoverEffect = (cards) => {
     { 
       y: 0, 
       boxShadow: '0 4px 6px rgba(0, 0, 0, 0.05)', 
+      duration: 0.3 
+    }
+  );
+};
+
+/**
+ * Creates a dark themed card hover effect with subtle glow and lift
+ * 
+ * @param {NodeList|Array} cards - Cards to add hover effect to
+ * @returns {Function} Cleanup function
+ */
+export const createDarkCardHoverEffect = (cards) => {
+  return createHoverEffect(
+    cards,
+    { 
+      y: -5, 
+      boxShadow: '0 8px 20px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.2), 0 0 15px rgba(99, 102, 241, 0.15)', 
+      backgroundColor: 'rgba(31, 41, 55, 0.5)', // Slightly lighter than gray-800
+      duration: 0.3,
+      ease: "power2.out"
+    },
+    { 
+      y: 0, 
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.25)', 
+      backgroundColor: 'rgba(31, 41, 55, 0)',
       duration: 0.3 
     }
   );

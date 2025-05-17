@@ -77,12 +77,20 @@ jobs:
       working-directory: ./backend
       run: npm run dev:simple &
     
+    - name: Build frontend
+      working-directory: ./frontend
+      run: npm run build
+    
     - name: Start frontend server
       working-directory: ./frontend
-      run: npm run dev &
+      run: npm start &
     
     - name: Wait for servers to start
-      run: sleep 15
+      run: |
+        echo "Waiting for servers to start..."
+        sleep 30
+        curl -s http://localhost:3001 || echo "Frontend not responding"
+        curl -s http://localhost:5000/api/health || echo "Backend not responding"
     
     - name: Run Cypress tests
       working-directory: ./frontend
@@ -112,10 +120,15 @@ jobs:
       run: npm run dev:simple &
       
     - name: Wait for server to start
-      run: sleep 10
+      run: |
+        echo "Waiting for backend server to start..."
+        sleep 20
+        curl -s http://localhost:5000/api/health || echo "Backend not responding"
     
     - name: Debug file existence
-      run: ls -la performance/
+      run: |
+        ls -la $GITHUB_WORKSPACE/performance/
+        cat $GITHUB_WORKSPACE/performance/api-load-test.js
     
     - name: Run performance tests
       run: k6 run $GITHUB_WORKSPACE/performance/api-load-test.js 

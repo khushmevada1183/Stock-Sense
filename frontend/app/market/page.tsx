@@ -543,26 +543,26 @@ export default function MarketPage() {
   // Get animation context
   const { isAnimationEnabled } = useAnimation();
 
-  const fetchMarketData = async () => {
-    try {
+    const fetchMarketData = async () => {
+      try {
       setLoading(true);
       
       // Try to fetch real market data
       const data = await indianApiService.getMarketOverview();
-      
+        
       if (data && Object.keys(data).length > 0) {
         setMarketData(data);
       }
-      
+        
       setError(null);
-    } catch (err) {
-      console.error('Error fetching market data:', err);
+      } catch (err) {
+        console.error('Error fetching market data:', err);
       setError('Failed to load market data. Using fallback data instead.');
       // Use mock data as fallback
     } finally {
       setLoading(false);
-    }
-  };
+      }
+    };
 
   useEffect(() => {
     fetchMarketData();
@@ -585,7 +585,7 @@ export default function MarketPage() {
       initMarketPageAnimations(refs);
     }
   }, [loading, isAnimationEnabled]);
-
+  
   const currentDate = format(new Date(), 'dd MMM yyyy');
   
   return (
@@ -599,15 +599,15 @@ export default function MarketPage() {
       
       {/* Market Indices */}
       <div ref={indicesRef} className="mb-8">
-        <MarketIndices data={marketData.indices} />
-      </div>
-      
+            <MarketIndices data={marketData.indices} />
+          </div>
+          
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         {/* Sector Performance */}
         <div ref={sectorRef}>
-          <SectorPerformance data={marketData.sectors} />
-        </div>
-        
+            <SectorPerformance data={marketData.sectors} />
+          </div>
+          
         {/* Market Breadth */}
         <div ref={breadthRef}>
           <MarketBreadth data={marketData.breadth} />
@@ -617,17 +617,17 @@ export default function MarketPage() {
       {/* Top Movers */}
       <div ref={moversRef} className="mb-8">
         <TopMovers gainers={marketData.topGainers} losers={marketData.topLosers} />
-      </div>
-      
+          </div>
+          
       {/* Most Active Stocks */}
       <div ref={activeRef} className="mb-8">
-        <MostActive data={marketData.mostActive} />
-      </div>
-      
+            <MostActive data={marketData.mostActive} />
+          </div>
+          
       {/* Heat Map */}
       <div ref={heatMapRef} className="mb-8">
-        <HeatMap data={marketData.heatMap} />
-      </div>
+            <HeatMap data={marketData.heatMap} />
+          </div>
       
       {/* Market Analysis */}
       <div ref={analysisRef} className="mb-8">
