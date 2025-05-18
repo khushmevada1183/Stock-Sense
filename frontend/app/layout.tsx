@@ -1,5 +1,5 @@
 import './globals.css';
-import { Inter } from 'next/font/google';
+import { Inter, Roboto_Mono, Lora, Montserrat } from 'next/font/google';
 import { ThemeProvider } from '../components/ui/ThemeProvider';
 import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
@@ -11,9 +11,12 @@ import ModalContainer from '../components/ui/ModalContainer';
 import ScrollProgressIndicator from '../components/layout/ScrollProgressIndicator';
 
 const inter = Inter({ subsets: ['latin'] });
+const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono' });
+const serif = Lora({ subsets: ['latin'], variable: '--font-serif' });
+const flex = Montserrat({ subsets: ['latin'], variable: '--font-flex' });
 
 export const metadata = {
-  title: 'Indian Stock Analyzer',
+  title: 'Indian Stock Sense',
   description: 'Analyze Indian stocks with real-time data and powerful tools',
 };
 
@@ -24,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen flex flex-col antialiased`}>
+      <body className={`${inter.className} ${robotoMono.variable} ${serif.variable} ${flex.variable} min-h-screen flex flex-col antialiased`}>
         <ThemeProvider 
           attribute="class"
           defaultTheme="system"

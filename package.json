@@ -1,5 +1,5 @@
 {
-  "name": "indian-stock-analyzer",
+  "name": "indian-stock-sense",
   "version": "1.0.0",
   "description": "Full stack application for analyzing Indian stock market data",
   "main": "run.js",

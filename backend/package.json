@@ -1,7 +1,7 @@
 {
-  "name": "indian-stock-analyzer-backend",
+  "name": "indian-stock-sense-backend",
   "version": "1.0.0",
-  "description": "Backend for Indian Stock Analyzer application",
+  "description": "Backend for Indian Stock Sense application",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",

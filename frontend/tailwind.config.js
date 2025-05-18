@@ -84,6 +84,9 @@ module.exports = {
           'Noto Sans',
           'sans-serif',
         ],
+        'mono': ['var(--font-roboto-mono)', 'monospace'],
+        'serif': ['var(--font-serif)', 'Georgia', 'Cambria', 'serif'],
+        'flex': ['var(--font-flex)', 'sans-serif'],
       },
       spacing: {
         '72': '18rem',

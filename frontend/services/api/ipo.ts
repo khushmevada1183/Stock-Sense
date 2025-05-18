@@ -1,5 +1,6 @@
 import { ApiClient } from './client';
 import { IpoItem } from './types';
+import { getMockIpoData } from '../mockHomeData';
 
 // Get the standard API client
 function getApiClient(): ApiClient {
@@ -41,12 +42,20 @@ function getIndianApiClient(): ApiClient {
  * Get upcoming and recent IPOs
  * @returns List of IPO items
  */
-export async function getIpoData(): Promise<IpoItem[]> {
+export async function getIpoData(): Promise<{ ipoData: IpoItem[] }> {
   try {
-    // First try standard API
+    // Use mock data first
+    const mockData = getMockIpoData();
+    if (mockData && mockData.ipoData && mockData.ipoData.length > 0) {
+      console.log('Using mock IPO data');
+      return mockData as { ipoData: IpoItem[] };
+    }
+    
+    // If mock data is empty, try standard API
     const standardClient = getApiClient();
     try {
-      return await standardClient.get<IpoItem[]>('/ipo');
+      const result = await standardClient.get<IpoItem[]>('/ipo');
+      return { ipoData: result };
     } catch (error) {
       console.error('Error fetching IPO data from standard API:', error);
       // Fall through to try Indian API
@@ -58,13 +67,13 @@ export async function getIpoData(): Promise<IpoItem[]> {
     
     // Normalize data structure if needed
     if (Array.isArray(result)) {
-      return result.map(item => normalizeIpoItem(item));
+      return { ipoData: result.map(item => normalizeIpoItem(item)) };
     }
     
-    return [];
+    return { ipoData: [] };
   } catch (error) {
     console.error('Error fetching IPO data:', error);
-    return [];
+    return { ipoData: [] };
   }
 }
 
@@ -126,7 +135,7 @@ export async function getUpcomingIpos(): Promise<IpoItem[]> {
     
     // If no specific endpoint for upcoming, filter from all IPOs
     const allIpos = await getIpoData();
-    return allIpos.filter(ipo => 
+    return allIpos.ipoData.filter(ipo => 
       ipo.status?.toLowerCase() === 'upcoming' || 
       (ipo.listing_date && new Date(ipo.listing_date) > new Date())
     );
@@ -165,7 +174,7 @@ export async function getRecentIpos(): Promise<IpoItem[]> {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     
-    return allIpos.filter(ipo => {
+    return allIpos.ipoData.filter(ipo => {
       if (!ipo.listing_date) return false;
       const listingDate = new Date(ipo.listing_date);
       return listingDate >= thirtyDaysAgo && listingDate <= new Date();

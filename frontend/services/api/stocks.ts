@@ -1,6 +1,7 @@
 import { ApiClient } from './client';
 import { StockDetails, SearchResult, HistoricalDataPoint } from './types';
 import { getEndpointPattern, storeEndpointPattern } from './index';
+import { getMockFeaturedStocks } from '../mockHomeData';
 
 // Get the standard API client
 function getApiClient(): ApiClient {
@@ -355,7 +356,14 @@ export async function getTopLosers(): Promise<StockDetails[]> {
  */
 export async function getFeaturedStocks(): Promise<StockDetails[]> {
   try {
-    // First try standard API
+    // Use mock data first
+    const mockData = getMockFeaturedStocks();
+    if (mockData && mockData.length > 0) {
+      console.log('Using mock featured stocks data');
+      return mockData;
+    }
+    
+    // If mock data is empty, try standard API
     const standardClient = getApiClient();
     try {
       return await standardClient.get<StockDetails[]>('/stocks/featured');

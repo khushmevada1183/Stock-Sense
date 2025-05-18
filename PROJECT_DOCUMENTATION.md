@@ -1,8 +1,8 @@
-# Indian Stock Analyzer - Project Documentation
+# Indian Stock Sense - Project Documentation
 
 ## Overview
 
-The Indian Stock Analyzer is a comprehensive web application for analyzing Indian stocks with real-time data, charts, and financial insights. This document consolidates all important project information, updates, and architectural decisions.
+The Indian Stock Sense is a comprehensive web application for analyzing Indian stocks with real-time data, charts, and financial insights. This document consolidates all important project information, updates, and architectural decisions.
 
 ## Table of Contents
 
@@ -37,7 +37,7 @@ The Indian Stock Analyzer is a comprehensive web application for analyzing India
 ## Project Structure
 
 ```
-stock-analyzer/
+stock-sense/
 ├── backend/                  # Backend server
 │   ├── src/                  # TypeScript source files
 │   ├── tests/                # Tests organized by type

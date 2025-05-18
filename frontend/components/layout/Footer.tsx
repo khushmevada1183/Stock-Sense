@@ -12,6 +12,7 @@ const Footer = () => {
         { name: 'Stocks', href: '/stocks' },
         { name: 'IPOs', href: '/ipo' },
         { name: 'Market News', href: '/news' },
+        { name: 'Portfolio', href: '/portfolio' },
         { name: 'Top Gainers', href: '/stocks/gainers' },
         { name: 'Top Losers', href: '/stocks/losers' },
       ]
@@ -65,7 +66,7 @@ const Footer = () => {
         {/* Copyright */}
         <div className="border-t border-gray-200 dark:border-gray-800 mt-4 pt-4 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            &copy; {currentYear} Indian Stock Analyzer. All rights reserved.
+            &copy; {currentYear} Indian Stock Sense. All rights reserved.
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
             This platform is for informational purposes only and does not constitute financial advice.

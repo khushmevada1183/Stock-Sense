@@ -1,5 +1,6 @@
 import { ApiClient } from './client';
 import { NewsItem } from './types';
+import { getMockNewsData } from '../mockHomeData';
 
 // Get the standard API client
 function getApiClient(): ApiClient {
@@ -42,12 +43,21 @@ function getIndianApiClient(): ApiClient {
  * @param limit Number of news items to return (default: 10)
  * @returns List of news items
  */
-export async function getMarketNews(limit: number = 10): Promise<NewsItem[]> {
+export async function getMarketNews(limit: number = 10): Promise<{ news: NewsItem[] }> {
   try {
-    // First try standard API
+    // Use mock data first
+    const mockData = getMockNewsData();
+    if (mockData && mockData.news && mockData.news.length > 0) {
+      console.log('Using mock news data');
+      // Force type assertion to match API types
+      return { news: mockData.news.slice(0, limit) as unknown as NewsItem[] };
+    }
+    
+    // If mock data is empty, try standard API
     const standardClient = getApiClient();
     try {
-      return await standardClient.get<NewsItem[]>('/news', { limit });
+      const result = await standardClient.get<NewsItem[]>('/news', { limit });
+      return { news: result };
     } catch (error) {
       console.error('Error fetching market news from standard API:', error);
       // Fall through to try Indian API
@@ -59,13 +69,13 @@ export async function getMarketNews(limit: number = 10): Promise<NewsItem[]> {
     
     // Normalize data
     if (Array.isArray(result)) {
-      return result.map(item => normalizeNewsItem(item)).slice(0, limit);
+      return { news: result.map(item => normalizeNewsItem(item)).slice(0, limit) };
     }
     
-    return [];
+    return { news: [] };
   } catch (error) {
     console.error('Error fetching market news:', error);
-    return [];
+    return { news: [] };
   }
 }
 
@@ -75,16 +85,17 @@ export async function getMarketNews(limit: number = 10): Promise<NewsItem[]> {
  * @param limit Number of news items to return (default: 5)
  * @returns List of news items
  */
-export async function getStockNews(symbol: string, limit: number = 5): Promise<NewsItem[]> {
+export async function getStockNews(symbol: string, limit: number = 5): Promise<{ news: NewsItem[] }> {
   if (!symbol) {
-    return [];
+    return { news: [] };
   }
   
   try {
     // First try standard API
     const standardClient = getApiClient();
     try {
-      return await standardClient.get<NewsItem[]>(`/stocks/${symbol}/news`, { limit });
+      const result = await standardClient.get<NewsItem[]>(`/stocks/${symbol}/news`, { limit });
+      return { news: result };
     } catch (error) {
       console.error(`Error fetching news for ${symbol} from standard API:`, error);
       // Fall through to try Indian API
@@ -96,13 +107,13 @@ export async function getStockNews(symbol: string, limit: number = 5): Promise<N
     
     // Normalize data
     if (Array.isArray(result)) {
-      return result.map(item => normalizeNewsItem(item)).slice(0, limit);
+      return { news: result.map(item => normalizeNewsItem(item)).slice(0, limit) };
     }
     
-    return [];
+    return { news: [] };
   } catch (error) {
     console.error(`Error fetching news for ${symbol}:`, error);
-    return [];
+    return { news: [] };
   }
 }
 
@@ -112,12 +123,13 @@ export async function getStockNews(symbol: string, limit: number = 5): Promise<N
  * @param limit Number of news items to return (default: 5)
  * @returns List of news items
  */
-export async function getSentimentNews(sentiment: 'bullish' | 'bearish', limit: number = 5): Promise<NewsItem[]> {
+export async function getSentimentNews(sentiment: 'bullish' | 'bearish', limit: number = 5): Promise<{ news: NewsItem[] }> {
   try {
     // First try standard API
     const standardClient = getApiClient();
     try {
-      return await standardClient.get<NewsItem[]>(`/news/sentiment/${sentiment}`, { limit });
+      const result = await standardClient.get<NewsItem[]>(`/news/sentiment/${sentiment}`, { limit });
+      return { news: result };
     } catch (error) {
       console.error(`Error fetching ${sentiment} news from standard API:`, error);
       // Fall through to try Indian API
@@ -130,7 +142,7 @@ export async function getSentimentNews(sentiment: 'bullish' | 'bearish', limit: 
       
       // Normalize data
       if (Array.isArray(result)) {
-        return result.map(item => normalizeNewsItem(item)).slice(0, limit);
+        return { news: result.map(item => normalizeNewsItem(item)).slice(0, limit) };
       }
     } catch (error) {
       console.error(`Error fetching ${sentiment} news from Indian API:`, error);
@@ -143,18 +155,18 @@ export async function getSentimentNews(sentiment: 'bullish' | 'bearish', limit: 
         : ['fall', 'drop', 'decline', 'plunge', 'slump', 'negative', 'bearish', 'downtrend'];
       
       // Simple sentiment filter based on keywords
-      return allNews
-        .filter(news => {
-          const text = (news.title + ' ' + news.description).toLowerCase();
-          return keywords.some(keyword => text.includes(keyword));
-        })
-        .slice(0, limit);
+      const filteredNews = allNews.news.filter(news => {
+        const text = (news.title + ' ' + (news.description || '')).toLowerCase();
+        return keywords.some(keyword => text.includes(keyword));
+      });
+      
+      return { news: filteredNews.slice(0, limit) };
     }
     
-    return [];
+    return { news: [] };
   } catch (error) {
     console.error(`Error fetching ${sentiment} news:`, error);
-    return [];
+    return { news: [] };
   }
 }
 
@@ -164,16 +176,17 @@ export async function getSentimentNews(sentiment: 'bullish' | 'bearish', limit: 
  * @param limit Number of news items to return (default: 10)
  * @returns List of news items
  */
-export async function searchNews(query: string, limit: number = 10): Promise<NewsItem[]> {
+export async function searchNews(query: string, limit: number = 10): Promise<{ news: NewsItem[] }> {
   if (!query || query.length < 2) {
-    return [];
+    return { news: [] };
   }
   
   try {
     // First try standard API
     const standardClient = getApiClient();
     try {
-      return await standardClient.get<NewsItem[]>('/news/search', { query, limit });
+      const result = await standardClient.get<NewsItem[]>('/news/search', { query, limit });
+      return { news: result };
     } catch (error) {
       console.error(`Error searching news for "${query}" from standard API:`, error);
       // Fall through to try Indian API
@@ -186,7 +199,7 @@ export async function searchNews(query: string, limit: number = 10): Promise<New
       
       // Normalize data
       if (Array.isArray(result)) {
-        return result.map(item => normalizeNewsItem(item)).slice(0, limit);
+        return { news: result.map(item => normalizeNewsItem(item)).slice(0, limit) };
       }
     } catch (error) {
       console.error(`Error searching news for "${query}" from Indian API:`, error);
@@ -194,18 +207,18 @@ export async function searchNews(query: string, limit: number = 10): Promise<New
       // Simple search through all news if specific endpoint not available
       const allNews = await getMarketNews(50); // Get more news to search through
       
-      return allNews
-        .filter(news => {
-          const text = (news.title + ' ' + news.description).toLowerCase();
-          return text.includes(query.toLowerCase());
-        })
-        .slice(0, limit);
+      const filteredNews = allNews.news.filter(news => {
+        const text = (news.title + ' ' + (news.description || '')).toLowerCase();
+        return text.includes(query.toLowerCase());
+      });
+      
+      return { news: filteredNews.slice(0, limit) };
     }
     
-    return [];
+    return { news: [] };
   } catch (error) {
     console.error(`Error searching news for "${query}":`, error);
-    return [];
+    return { news: [] };
   }
 }
 

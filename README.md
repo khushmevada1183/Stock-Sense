@@ -1,4 +1,4 @@
-# Indian Stock Analyzer
+# Indian Stock Sense
 
 A comprehensive web application for analyzing Indian stocks with real-time data, charts, and financial insights.
 
@@ -38,7 +38,7 @@ For complete documentation, please refer to:
 ## 📁 Project Structure
 
 ```
-stock-analyzer/
+stock-sense/
 ├── backend/                 # Backend server (Node.js/Express)
 ├── frontend/                # Frontend application (Next.js)
 ├── performance/             # Performance test files

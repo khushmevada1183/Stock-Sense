@@ -72,6 +72,20 @@ body {
   }
 }
 
+/* Hide scrollbar but allow scrolling */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Text shadow for text on images */
+.text-shadow {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
 /* Smooth scrolling for carousels */
 .overflow-x-auto {
   scrollbar-width: thin;
@@ -198,35 +212,73 @@ body {
 }
 
 /* Magnetic element helpers */
-.magnetic-element {
-  display: inline-block;
-  transition: transform 0.3s cubic-bezier(0.75, -0.5, 0, 1.75);
-}
-
-/* GSAP SVG path animations */
 .draw-path {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: draw 2s forwards;
 }
 
-/* Stagger animation base classes */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .stagger-item {
   opacity: 0;
+  transform: translateY(10px);
 }
 
-/* 3D card tilt effect */
 .card-3d {
   transform-style: preserve-3d;
-  transition: transform 0.3s ease;
+  perspective: 1000px;
 }
 
 .card-3d-content {
-  transform: translateZ(20px);
+  transform: translateZ(0);
+  transition: transform 0.3s ease;
 }
 
-/* Help enable hardware acceleration for smoother animations */
 .gpu-accelerated {
-  will-change: transform, opacity;
-  backface-visibility: hidden;
   transform: translateZ(0);
+  will-change: transform, opacity;
+}
+
+/* Stock cards and metrics styling */
+.stock-card {
+  transition: all 0.3s ease;
+}
+
+.stock-card:hover {
+  transform: translateY(-5px);
+}
+
+.price-bar-fill {
+  transform-origin: left;
+}
+
+/* IPO cards styling */
+.ipo-card {
+  transition: all 0.3s ease;
+}
+
+.ipo-card:hover {
+  transform: translateY(-5px);
+}
+
+/* News cards styling */
+.news-card {
+  transition: all 0.3s ease;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+}
+
+.news-card .news-image img {
+  transition: transform 0.5s ease;
+}
+
+.news-card:hover .news-image img {
+  transform: scale(1.05);
 }

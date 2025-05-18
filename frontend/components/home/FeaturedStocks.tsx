@@ -1,9 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { stockService } from '@/services/api';
 import { Stock } from '@/types/stocks';
+import { getMockFeaturedStocks } from '@/services/mockHomeData';
+import { gsap } from 'gsap';
+import { TrendingUp, TrendingDown, BarChart2, DollarSign } from 'lucide-react';
 
 // Helper function to normalize stock data across different formats
 const normalizeStock = (stock: any): Stock => {
@@ -24,10 +27,81 @@ export default function FeaturedStocks() {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  // Initialize animations
+  useEffect(() => {
+    if (!loading && stocks.length > 0 && sectionRef.current && cardsRef.current) {
+      // Animate the section
+      gsap.fromTo(
+        sectionRef.current,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+      );
+
+      // Animate each card with staggered effect
+      const cards = cardsRef.current.querySelectorAll('.stock-card');
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 15, scale: 0.95 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1, 
+          duration: 0.4, 
+          stagger: 0.1, 
+          ease: "back.out(1.2)" 
+        }
+      );
+
+      // Animate price elements
+      cards.forEach((card) => {
+        const priceElements = card.querySelectorAll('.price-element');
+        gsap.fromTo(
+          priceElements,
+          { opacity: 0, y: -10 },
+          { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.3, 
+            stagger: 0.1,
+            delay: 0.2,
+            ease: "power1.out" 
+          }
+        );
+
+        // Animate the horizontal bar
+        const bar = card.querySelector('.price-bar-fill');
+        if (bar) {
+          gsap.fromTo(
+            bar,
+            { scaleX: 0 },
+            { 
+              scaleX: 1, 
+              duration: 0.8, 
+              delay: 0.4,
+              ease: "power2.out" 
+            }
+          );
+        }
+      });
+    }
+  }, [loading, stocks]);
 
   useEffect(() => {
     const fetchFeaturedStocks = async () => {
       try {
+        // First try to use mock data directly
+        const mockStocks = getMockFeaturedStocks();
+        if (mockStocks && mockStocks.length > 0) {
+          console.log('Using mock featured stocks data');
+          setStocks(mockStocks);
+          setLoading(false);
+          return;
+        }
+        
+        // If no mock data, fetch from API
         const data = await stockService.getFeaturedStocks();
         console.log('Featured stocks data:', data);
         
@@ -69,13 +143,13 @@ export default function FeaturedStocks() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div ref={sectionRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 animate-pulse">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
-            <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/4 mb-6"></div>
-            <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div key={i} className="bg-gray-900 rounded-xl shadow-lg p-6 animate-pulse border border-gray-800">
+            <div className="h-4 bg-gray-800 rounded w-1/4 mb-2"></div>
+            <div className="h-6 bg-gray-800 rounded w-3/4 mb-4"></div>
+            <div className="h-4 bg-gray-800 rounded w-2/4 mb-6"></div>
+            <div className="h-10 bg-gray-800 rounded"></div>
           </div>
         ))}
       </div>
@@ -84,7 +158,7 @@ export default function FeaturedStocks() {
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
+      <div className="bg-red-900/30 border border-red-800 rounded-xl p-4 text-red-400">
         {error}
       </div>
     );
@@ -92,7 +166,7 @@ export default function FeaturedStocks() {
 
   if (stocks.length === 0) {
     return (
-      <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-yellow-600 dark:text-yellow-400 text-center">
+      <div className="bg-yellow-900/30 border border-yellow-800 rounded-xl p-4 text-yellow-400 text-center">
         No featured stocks available at this time.
       </div>
     );
@@ -121,51 +195,91 @@ export default function FeaturedStocks() {
     return true;
   };
 
+  // Calculate the max price for scaling the bars
+  const maxPrice = Math.max(...stocks.map(stock => 
+    typeof stock.current_price === 'number' 
+      ? stock.current_price 
+      : parseFloat(String(stock.current_price || 0))
+  ));
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {stocks.map((stock, index) => (
-        <div key={stock.id || stock.symbol || index} className="bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow">
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-semibold mb-1">
-                  <Link href={`/stocks/${stock.symbol}`} className="hover:text-blue-600 dark:hover:text-blue-400">
-                    {stock.symbol}
-                  </Link>
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
-                  {stock.company_name || 'N/A'}
-                </p>
-              </div>
-              <span className={`text-sm font-semibold rounded-full px-2 py-1 ${
-                isPositive(stock.price_change_percentage)
-                  ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
-                  : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-              }`}>
-                {isPositive(stock.price_change_percentage) ? '+' : ''}
-                {formatNumber(stock.price_change_percentage)}%
-              </span>
-            </div>
-            
-            <div className="text-2xl font-bold mb-2">
-              ₹{typeof stock.current_price === 'number' 
-                 ? stock.current_price.toLocaleString() 
-                 : parseFloat(String(stock.current_price || 0)).toLocaleString()}
-            </div>
-            
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-              {stock.sector_name || 'Various Sectors'}
-            </p>
-            
-            <Link 
-              href={`/stocks/${stock.symbol}`}
-              className="block text-center w-full py-2 border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-600 dark:hover:text-white rounded-md transition-colors"
+    <div ref={sectionRef} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div ref={cardsRef} className="contents">
+        {stocks.map((stock, index) => {
+          const currentPrice = typeof stock.current_price === 'number' 
+            ? stock.current_price 
+            : parseFloat(String(stock.current_price || 0));
+          
+          const percentOfMax = (currentPrice / maxPrice) * 100;
+          const positive = isPositive(stock.price_change_percentage);
+          
+          return (
+            <div 
+              key={stock.id || stock.symbol || index} 
+              className="stock-card bg-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-shadow border border-gray-800 hover:border-gray-700"
             >
-              View Analysis
-            </Link>
-          </div>
-        </div>
-      ))}
+              <div className="p-5">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-100 mb-1">
+                      <Link href={`/stocks/${stock.symbol}`} className="hover:text-blue-400">
+                        {stock.symbol}
+                      </Link>
+                    </h3>
+                    <p className="text-gray-400 text-sm">
+                      {stock.company_name || 'N/A'}
+                    </p>
+                  </div>
+                  <span className={`price-element text-sm font-semibold rounded-full px-3 py-1 flex items-center ${
+                    positive
+                      ? 'bg-green-900/40 text-green-400 border border-green-800' 
+                      : 'bg-red-900/40 text-red-400 border border-red-800'
+                  }`}>
+                    {positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                    {positive ? '+' : ''}
+                    {formatNumber(stock.price_change_percentage)}%
+                  </span>
+                </div>
+                
+                <div className="price-element text-2xl font-bold mb-3 text-gray-100">
+                  ₹{currentPrice.toLocaleString(undefined, {maximumFractionDigits: 2})}
+                </div>
+                
+                <div className="mb-4">
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-gray-400">Price vs. Category</span>
+                    <span className="text-gray-400">{Math.round(percentOfMax)}%</span>
+                  </div>
+                  <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <div 
+                      className={`price-bar-fill h-full ${positive ? 'bg-gradient-to-r from-green-600 to-green-400' : 'bg-gradient-to-r from-red-600 to-red-400'} rounded-full`}
+                      style={{ width: `${percentOfMax}%`, transformOrigin: 'left' }}
+                    ></div>
+                  </div>
+                </div>
+                
+                <div className="flex justify-between items-center text-sm mb-4">
+                  <div className="flex items-center text-gray-400">
+                    <BarChart2 size={14} className="mr-1" />
+                    <span>{stock.sector_name || 'Various Sectors'}</span>
+                  </div>
+                  <div className="flex items-center text-gray-400">
+                    <DollarSign size={14} className="mr-1" />
+                    <span>Volume: 2.3M</span>
+                  </div>
+                </div>
+                
+                <Link 
+                  href={`/stocks/${stock.symbol}`}
+                  className="block text-center w-full py-2 border border-blue-700 bg-blue-900/30 text-blue-400 hover:bg-blue-800 hover:text-blue-100 rounded-lg transition-colors"
+                >
+                  View Analysis
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 } 
