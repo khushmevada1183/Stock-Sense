@@ -5,16 +5,19 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow only one concurrent deployment
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
+  # Build job
   build:
     runs-on: ubuntu-latest
     steps:
@@ -30,9 +33,7 @@ jobs:
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        with:
-          static_site_generator: next
-          
+        
       - name: Install dependencies
         working-directory: ./frontend
         run: npm ci
@@ -56,6 +57,7 @@ jobs:
         with:
           path: ./frontend/out
 
+  # Deployment job
   deploy:
     environment:
       name: github-pages
