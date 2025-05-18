@@ -27,6 +27,7 @@ A comprehensive web application for analyzing Indian stocks with real-time data,
 - [Project Structure](#-project-structure)
 - [Installation & Setup](#-installation--setup)
 - [Quick Start](#-quick-start)
+- [GitHub Pages Deployment](#-github-pages-deployment)
 - [Documentation](#-documentation)
 - [Usage](#-usage)
 - [Testing](#-testing)
@@ -54,10 +55,23 @@ Indian Stock Sense is a powerful web application designed to provide comprehensi
 
 Check out our live demo:
 
-- 🔗 [Live Demo](https://indian-stock-sense.vercel.app)
+- 🔗 [Live Demo](https://khushmevada1183.github.io/Stock-Sense/)
+- 🔗 [Vercel Demo](https://indian-stock-sense.vercel.app)
 - 👤 Demo credentials:
   - Username: `demo@example.com`
   - Password: `demo123`
+
+## 🚀 GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages. The live version can be accessed at:
+
+- 🔗 [GitHub Pages Demo](https://khushmevada1183.github.io/Stock-Sense/)
+
+For detailed deployment instructions, see [GITHUB_PAGES_DEPLOYMENT.md](./GITHUB_PAGES_DEPLOYMENT.md).
+
+### Deployment Status
+
+[![Deploy to GitHub Pages](https://github.com/khushmevada1183/Stock-Sense/actions/workflows/deploy.yml/badge.svg)](https://github.com/khushmevada1183/Stock-Sense/actions/workflows/deploy.yml)
 
 ## 🛠️ Built With
 
