@@ -11,7 +11,8 @@ const envSchema = z.object({
   DATABASE_URL: z.string().default('postgresql://postgres:password@localhost:5432/stock_analyzer'),
   JWT_SECRET: z.string().default('development_jwt_secret_key_2025'),
   CORS_ORIGIN: z.string().default('http://localhost:3000'),
-  JWT_EXPIRES_IN: z.string().default('7d')
+  JWT_EXPIRES_IN: z.string().default('7d'),
+  API_KEY: z.string().default('sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67')
 });
 
 // Parse and validate the environment
@@ -21,7 +22,8 @@ const envParse = envSchema.safeParse({
   DATABASE_URL: process.env.DATABASE_URL,
   JWT_SECRET: process.env.JWT_SECRET,
   CORS_ORIGIN: process.env.CORS_ORIGIN,
-  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN
+  JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
+  API_KEY: process.env.API_KEY
 });
 
 // Handle validation errors

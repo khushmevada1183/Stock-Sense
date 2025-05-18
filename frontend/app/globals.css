@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', Arial, sans-serif;
 }
 
 @layer base {
@@ -36,30 +36,42 @@ body {
   }
  
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    /* New dark theme with neon green accents */
+    --background: 0 0% 2%; /* #050505 */
+    --background-secondary: 0 0% 7%; /* #121212 */
+    --foreground: 0 0% 100%; /* #FFFFFF */
+    --foreground-secondary: 0 0% 88%; /* #E0E0E0 */
+    
+    --card: 0 0% 7%; /* #121212 */
+    --card-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --popover: 0 0% 7%; /* #121212 */
+    --popover-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --primary: 114 100% 54%; /* #39FF14 - Neon Green */
+    --primary-foreground: 0 0% 0%; /* #000000 */
+    
+    --secondary: 183 100% 40%; /* #00C2CB - Cyan Blue */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --muted: 0 0% 15%; /* #262626 */
+    --muted-foreground: 0 0% 65%; /* #A6A6A6 */
+    
+    --accent: 114 100% 54%; /* #39FF14 - Neon Green */
+    --accent-foreground: 0 0% 0%; /* #000000 */
+    
+    --destructive: 0 84% 60%; /* #EF4444 */
+    --destructive-foreground: 0 0% 98%; /* #FAFAFA */
+    
+    --border: 0 0% 15%; /* #262626 */
+    --input: 0 0% 15%; /* #262626 */
+    --ring: 114 100% 54%; /* #39FF14 - Neon Green */
+    
+    --chart-1: 114 100% 54%; /* #39FF14 - Neon Green */
+    --chart-2: 183 100% 40%; /* #00C2CB - Cyan Blue */
+    --chart-3: 180 100% 50%; /* #00FFFF - Cyan */
+    --chart-4: 120 100% 40%; /* #00CC00 - Green */
+    --chart-5: 150 100% 45%; /* #00D48A - Teal */
   }
 }
 
@@ -70,11 +82,102 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  
+  .dark body {
+    background: linear-gradient(to bottom, #050505, #101010);
+  }
+}
+
+/* Noise texture for dark mode */
+.dark .noise-bg {
+  position: relative;
+}
+
+.dark .noise-bg::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.02;
+  z-index: 1;
 }
 
 /* Grid background pattern */
 .bg-grid-white\/\[0\.02\] {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.02)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+}
+
+/* Glass morphism */
+.glass {
+  background: rgba(18, 18, 18, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-premium {
+  background: rgba(18, 18, 18, 0.15);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(57, 255, 20, 0.1);
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.05);
+}
+
+/* Neon glow effects */
+.neon-glow {
+  box-shadow: 0 0 5px rgba(57, 255, 20, 0.5), 0 0 10px rgba(57, 255, 20, 0.3);
+}
+
+.neon-glow-text {
+  text-shadow: 0 0 5px rgba(57, 255, 20, 0.7);
+}
+
+.neon-border {
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  box-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
+}
+
+/* Gradient borders */
+.gradient-border {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(to bottom, #39FF14, #00C2CB);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Animated gradients */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animated-gradient {
+  background: linear-gradient(-45deg, #39FF14, #00C2CB, #007A87);
+  background-size: 200% 200%;
+  animation: gradient-shift 10s ease infinite;
 }
 
 /* Hide scrollbar but allow scrolling */
@@ -94,10 +197,10 @@ body {
 /* Smooth scrolling for carousels */
 .overflow-x-auto {
   scrollbar-width: thin;
-  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  scrollbar-color: rgba(57, 255, 20, 0.3) transparent;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  }
+}
   
 .overflow-x-auto::-webkit-scrollbar {
   height: 6px;
@@ -108,12 +211,12 @@ body {
 }
 
 .overflow-x-auto::-webkit-scrollbar-thumb {
-  background-color: rgba(156, 163, 175, 0.5);
+  background-color: rgba(57, 255, 20, 0.3);
   border-radius: 20px;
-  }
+}
   
 .dark .overflow-x-auto::-webkit-scrollbar-thumb {
-  background-color: rgba(75, 85, 99, 0.5);
+  background-color: rgba(57, 255, 20, 0.3);
 }
 
 /* Accordion animations */
@@ -144,6 +247,32 @@ body {
   }
 }
 
+/* Pulse animation for data */
+@keyframes pulse-neon {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.pulse-data {
+  animation: pulse-neon 2s infinite;
+}
+
+/* Hover animations */
+.hover-grow {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-grow:hover {
+  transform: scale(1.03);
+}
+
 /* GSAP Animation Utilities */
 
 /* Loading shimmer effect for skeletons */
@@ -162,10 +291,10 @@ body {
 .dark .shimmer {
   background-image: linear-gradient(
     to right,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.1) 20%,
-    rgba(255, 255, 255, 0.05) 40%,
-    rgba(255, 255, 255, 0.05) 100%
+    rgba(57, 255, 20, 0.02) 0%,
+    rgba(57, 255, 20, 0.08) 20%,
+    rgba(57, 255, 20, 0.02) 40%,
+    rgba(57, 255, 20, 0.02) 100%
   );
 }
 
@@ -176,7 +305,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #111827;
+  background-color: #050505;
   z-index: 9999;
   transform: translateY(100%);
   pointer-events: none;
@@ -206,7 +335,7 @@ body {
   height: 2px;
   bottom: -2px;
   left: 0;
-  background-color: currentColor;
+  background-color: #39FF14;
   transform-origin: bottom right;
   transition: transform 0.3s ease-out;
 }
@@ -251,11 +380,12 @@ body {
 
 /* Stock cards and metrics styling */
 .stock-card {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .stock-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.15);
 }
 
 .price-bar-fill {
@@ -264,20 +394,22 @@ body {
 
 /* IPO cards styling */
 .ipo-card {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .ipo-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.15);
 }
 
 /* News cards styling */
 .news-card {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .news-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.15);
 }
 
 .news-card .news-image img {
@@ -286,4 +418,16 @@ body {
 
 .news-card:hover .news-image img {
   transform: scale(1.05);
+}
+
+/* Particle animation */
+.particles-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
 }

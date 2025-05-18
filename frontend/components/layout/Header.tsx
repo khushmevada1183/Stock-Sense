@@ -46,12 +46,12 @@ const Header = () => {
   
   return (
     <header className="sticky top-2 sm:top-4 z-50 mx-auto w-[98%] sm:w-[95%] px-1 sm:px-2">
-      <div className="bg-gray-900/20 backdrop-blur-xl rounded-full shadow-lg border border-gray-800/30">
+      <div className="bg-gray-950/70 backdrop-blur-xl rounded-full shadow-lg border border-gray-800/30">
         <div className="flex items-center justify-between h-12 sm:h-14 px-3 sm:px-6">
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <div className="flex items-baseline">
-              <span className="font-mono text-lg sm:text-xl font-bold text-gray-200 dark:text-gray-200">
+              <span className="font-mono text-lg sm:text-xl font-bold text-neon-400 dark:text-neon-400 neon-glow-text">
                 Stock
               </span>
               <span className="font-flex text-lg sm:text-xl font-light text-gray-300 dark:text-gray-300 ml-1">
@@ -79,11 +79,11 @@ const Header = () => {
                       'font-flex font-medium text-sm'
                     } ${
                       active
-                        ? 'bg-gray-700/80 text-white shadow-lg'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700/40'
+                        ? 'bg-gray-850 text-neon-400 shadow-neon-sm'
+                        : 'text-gray-300 hover:text-neon-400 hover:bg-gray-850/40'
                     }`}
                   >
-                    <Icon size={16} className={`mr-1.5 ${active ? 'text-gray-200' : 'text-gray-400'}`} />
+                    <Icon size={16} className={`mr-1.5 ${active ? 'text-neon-400' : 'text-gray-400'}`} />
                 {item.name}
               </Link>
                 );
@@ -99,7 +99,7 @@ const Header = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search stocks (e.g., RELIANCE)"
-                className="w-full py-1.5 pl-9 pr-4 bg-gray-900/20 backdrop-blur-xl border border-gray-700/30 rounded-full focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent text-sm text-gray-200 placeholder-gray-400"
+                className="w-full py-1.5 pl-9 pr-4 bg-gray-850/50 backdrop-blur-xl border border-gray-700/30 rounded-full focus:outline-none focus:ring-1 focus:ring-neon-400 focus:border-transparent text-sm text-gray-200 placeholder-gray-400"
                 aria-label="Search stocks"
               />
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -107,7 +107,7 @@ const Header = () => {
               </div>
               <button 
                 type="submit"
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-300 hover:text-white font-mono"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-neon-400 hover:text-neon-300 font-mono"
               >
                 Go
               </button>
@@ -123,7 +123,7 @@ const Header = () => {
             <div className="flex lg:hidden">
               <button
                 type="button"
-                className="text-gray-400 hover:text-gray-200 p-1"
+                className="text-gray-400 hover:text-neon-400 p-1 transition-colors"
                 onClick={toggleMobileMenu}
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               >
@@ -139,7 +139,7 @@ const Header = () => {
         
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-x-0 top-[60px] mx-4 lg:hidden py-3 sm:py-4 bg-gray-900/90 backdrop-blur-xl rounded-xl shadow-lg px-3 sm:px-4 border border-gray-700/30">
+          <div className="fixed inset-x-0 top-[60px] mx-4 lg:hidden py-3 sm:py-4 bg-gray-950/90 backdrop-blur-xl rounded-xl shadow-lg px-3 sm:px-4 border border-gray-800/30 glass">
             <nav className="flex flex-col space-y-1 px-2">
               {navItems.map((item) => {
                 const active = isActive(item.href);
@@ -157,12 +157,12 @@ const Header = () => {
                       'font-flex font-medium text-sm'
                     } ${
                       active
-                        ? 'bg-gray-700/80 text-white'
-                        : 'text-gray-300 hover:text-white hover:bg-gray-700/40'
+                        ? 'bg-gray-850 text-neon-400 shadow-neon-sm'
+                        : 'text-gray-300 hover:text-neon-400 hover:bg-gray-850/40'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                    <Icon size={16} className={`mr-2 ${active ? 'text-gray-200' : 'text-gray-400'}`} />
+                    <Icon size={16} className={`mr-2 ${active ? 'text-neon-400' : 'text-gray-400'}`} />
                   {item.name}
                 </Link>
                 );
@@ -177,7 +177,7 @@ const Header = () => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search stocks (e.g., RELIANCE)"
-                  className="w-full py-1.5 sm:py-2 pl-8 sm:pl-10 pr-4 bg-gray-800/50 backdrop-blur-xl border border-gray-700/30 rounded-lg focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-transparent text-sm text-gray-200 placeholder-gray-400"
+                  className="w-full py-1.5 sm:py-2 pl-8 sm:pl-10 pr-4 bg-gray-850/50 backdrop-blur-xl border border-gray-700/30 rounded-lg focus:outline-none focus:ring-1 focus:ring-neon-400 focus:border-transparent text-sm text-gray-200 placeholder-gray-400"
                   aria-label="Search stocks"
                 />
                 <div className="absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3 pointer-events-none">
@@ -185,7 +185,7 @@ const Header = () => {
                 </div>
                 <button 
                   type="submit"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-300 hover:text-white font-mono"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-neon-400 hover:text-neon-300 font-mono"
                 >
                   Go
                 </button>

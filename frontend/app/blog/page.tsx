@@ -9,6 +9,7 @@ import {
   PieChart, Pie, Cell, AreaChart, Area, LineChart, Line
 } from 'recharts';
 import { BookOpen, Bookmark, TrendingUp, Clock, ChevronRight, Search, Filter, Calendar, Tag, User } from 'lucide-react';
+import PageBackground from '@/components/layout/PageBackground';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -161,13 +162,14 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <div ref={mainRef} className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
+    <PageBackground>
+      <div ref={mainRef} className="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
           Stock Sense Blog
         </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mb-8">
+          <p className="text-lg text-gray-300 max-w-3xl mb-8">
           Expert analysis, market insights, and trading strategies to help you make informed investment decisions in the Indian stock market.
         </p>
 
@@ -179,14 +181,14 @@ export default function BlogPage() {
             </div>
             <input
               type="text"
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-gray-100 focus:ring-neon-400 focus:border-neon-400"
               placeholder="Search articles..."
             />
           </div>
           <div className="flex gap-2">
             <div className="relative">
               <select 
-                className="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 pr-8 focus:ring-blue-500 focus:border-blue-500"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-800 text-gray-100 pr-8 focus:ring-neon-400 focus:border-neon-400"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
               >
@@ -204,11 +206,11 @@ export default function BlogPage() {
         {/* Featured Articles */}
         <div ref={cardsRef} className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-              <BookOpen size={24} className="text-blue-600 dark:text-blue-400" />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <BookOpen size={24} className="text-neon-400" />
               Featured Articles
             </h2>
-            <button className="text-blue-600 dark:text-blue-400 hover:underline flex items-center">
+              <button className="text-neon-400 hover:underline flex items-center">
               View All <ChevronRight size={18} />
             </button>
           </div>
@@ -468,5 +470,6 @@ export default function BlogPage() {
         </Card>
       </div>
     </div>
+    </PageBackground>
   );
 }

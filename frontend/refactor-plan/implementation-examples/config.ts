@@ -13,19 +13,10 @@ const API_URLS = {
   INDIAN: process.env.NEXT_PUBLIC_INDIAN_API_URL || 'https://stock.indianapi.in'
 };
 
-// API keys pool
-const INDIAN_API_KEYS = [
-  'sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67',
-  'sk-live-kQSxsVhWZyIk8sGy2gzXGBvi97RETSP88OOG2qt3',
-  'sk-live-QtygcAU1VLXuNtIHRAVNWnLrtoTpL0yctd2DEko5',
-  'sk-live-bi47a6KsAGkHsFAguG0sKBNzCf8VbTVFweOy1eFE',
-  'sk-live-uZup2KEHVqDo2zyAunRH0zp9aaRNpyGgxKU7GApI',
-  'sk-live-rB1W61qZPLlzufRlnRfS937jYQBEmM8D4TUPdpFh',
-  'sk-live-1jzFVqgbxWnQCwRgG9NynigeR72HtkbioKch1VaD',
-  'sk-live-2SrhjLseRYGxjv8JzfGFZ3D4ZyGOqZatL8ADODKL',
-  'sk-live-2cEMmBrNbaIP1v3OjVNwNMbRnO49hvCeOayo5jAA',
-  'sk-live-jtOlHh18hooTAJQmcLUz4mngn9gxSvY4uRyVUpGJ'
-];
+// API keys pool - load from environment variables
+const INDIAN_API_KEYS = process.env.NEXT_PUBLIC_INDIAN_API_KEYS ? 
+  process.env.NEXT_PUBLIC_INDIAN_API_KEYS.split(',') : 
+  [];
 
 /**
  * API Configuration

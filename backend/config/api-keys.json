@@ -1,11 +1,29 @@
 {
   "keys": [
     {
+      "key": "YOUR_API_KEY_1",
+      "rateLimitResetTimestamp": 1747594631939,
+      "isAvailable": false,
+      "usageCount": 0,
+      "monthlyUsage": 0,
+      "lastMonthReset": "2025-05",
+      "lastErrorTimestamp": 1747594626939
+    },
+    {
+      "key": "YOUR_API_KEY_2",
+      "rateLimitResetTimestamp": 0,
+      "isAvailable": true,
+      "usageCount": 0,
+      "monthlyUsage": 0,
+      "lastMonthReset": "2025-05",
+      "lastErrorTimestamp": 0
+    },
+    {
       "key": "sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67",
       "rateLimitResetTimestamp": 0,
       "isAvailable": true,
-      "usageCount": 51,
-      "monthlyUsage": 51,
+      "usageCount": 0,
+      "monthlyUsage": 0,
       "lastMonthReset": "2025-05",
       "lastErrorTimestamp": 0
     },
@@ -89,6 +107,16 @@
       "monthlyUsage": 0,
       "lastMonthReset": "2025-05",
       "lastErrorTimestamp": 0
+    },
+    {
+      "key": "sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht",
+      "rateLimitResetTimestamp": 0,
+      "isAvailable": false,
+      "usageCount": 0,
+      "monthlyUsage": 500,
+      "lastMonthReset": "2025-05",
+      "lastErrorTimestamp": 0,
+      "notes": "500/month limit hit"
     }
   ]
 }

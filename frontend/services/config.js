@@ -1,23 +1,11 @@
 // API Configuration
 export const API_CONFIG = {
-  BASE_URL: 'https://stock.indianapi.in',
-  API_KEY: 'sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67', // Updated to use a valid key
+  BASE_URL: process.env.NEXT_PUBLIC_INDIAN_API_URL || 'https://stock.indianapi.in',
+  API_KEY: process.env.NEXT_PUBLIC_INDIAN_API_KEY || '', // Use environment variable
   // API key rotation pool with all valid keys
-  API_KEYS: [
-    'sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67',
-    'sk-live-kQSxsVhWZyIk8sGy2gzXGBvi97RETSP88OOG2qt3',
-    'sk-live-QtygcAU1VLXuNtIHRAVNWnLrtoTpL0yctd2DEko5',
-    'sk-live-bi47a6KsAGkHsFAguG0sKBNzCf8VbTVFweOy1eFE',
-    'sk-live-uZup2KEHVqDo2zyAunRH0zp9aaRNpyGgxKU7GApI',
-    'sk-live-rB1W61qZPLlzufRlnRfS937jYQBEmM8D4TUPdpFh',
-    'sk-live-1jzFVqgbxWnQCwRgG9NynigeR72HtkbioKch1VaD',
-    'sk-live-2SrhjLseRYGxjv8JzfGFZ3D4ZyGOqZatL8ADODKL',
-    'sk-live-2cEMmBrNbaIP1v3OjVNwNMbRnO49hvCeOayo5jAA',
-    'sk-live-jtOlHh18hooTAJQmcLUz4mngn9gxSvY4uRyVUpGJ'
-    // Rate-limited keys (can be re-added after reset):
-    // 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq',
-    // 'sk-live-K4wtBGXesvkus7wdkmT3uQ1g9qnlaLuN8TqQoXht'
-  ],
+  API_KEYS: process.env.NEXT_PUBLIC_INDIAN_API_KEYS ? 
+    process.env.NEXT_PUBLIC_INDIAN_API_KEYS.split(',') : 
+    [], // Load from environment variable as comma-separated list
   TIMEOUT: 10000, // 10 seconds
   RETRY_ATTEMPTS: 3,
   CACHE_DURATION: 5 * 60 * 1000, // 5 minutes cache duration

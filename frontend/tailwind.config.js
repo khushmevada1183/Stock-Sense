@@ -10,6 +10,30 @@ module.exports = {
     extend: {
       colors: {
         // Custom color palette
+        'neon': {
+          50: '#E6FFDF',
+          100: '#CCFFBF',
+          200: '#99FF7F',
+          300: '#66FF3F',
+          400: '#39FF14', // Main neon green
+          500: '#2ECC11',
+          600: '#23990D',
+          700: '#196609',
+          800: '#0F3305',
+          900: '#071A02',
+        },
+        'cyan': {
+          50: '#E6FFFF',
+          100: '#B3FFFF',
+          200: '#80FFFF',
+          300: '#4DFFFF',
+          400: '#00FFFF',
+          500: '#00C2CB', // Main cyan accent
+          600: '#009999',
+          700: '#007A7A',
+          800: '#005252',
+          900: '#002929',
+        },
         'blue': {
           50: '#EFF6FF',
           100: '#DBEAFE',
@@ -33,7 +57,9 @@ module.exports = {
           700: '#374151',
           750: '#2A3441', // Custom intermediate shade
           800: '#1F2937',
+          850: '#121212', // Dark charcoal
           900: '#111827',
+          950: '#050505', // Rich black
         },
         // shadcn/ui theme
         border: "hsl(var(--border))",
@@ -112,6 +138,15 @@ module.exports = {
         '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
         none: 'none',
+        // Custom neon shadows
+        'neon-sm': '0 0 5px rgba(57, 255, 20, 0.5)',
+        'neon': '0 0 10px rgba(57, 255, 20, 0.5)',
+        'neon-lg': '0 0 15px rgba(57, 255, 20, 0.5), 0 0 30px rgba(57, 255, 20, 0.3)',
+        'neon-xl': '0 0 20px rgba(57, 255, 20, 0.5), 0 0 40px rgba(57, 255, 20, 0.3)',
+        'neon-2xl': '0 0 25px rgba(57, 255, 20, 0.5), 0 0 50px rgba(57, 255, 20, 0.3)',
+        'cyan-sm': '0 0 5px rgba(0, 194, 203, 0.5)',
+        'cyan': '0 0 10px rgba(0, 194, 203, 0.5)',
+        'cyan-lg': '0 0 15px rgba(0, 194, 203, 0.5), 0 0 30px rgba(0, 194, 203, 0.3)',
       },
       keyframes: {
         "accordion-down": {
@@ -122,10 +157,42 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
+        "pulse-neon": {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.7 },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "glow": {
+          "0%, 100%": { boxShadow: "0 0 5px rgba(57, 255, 20, 0.5), 0 0 10px rgba(57, 255, 20, 0.3)" },
+          "50%": { boxShadow: "0 0 10px rgba(57, 255, 20, 0.7), 0 0 20px rgba(57, 255, 20, 0.5)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "pulse-neon": "pulse-neon 2s infinite",
+        "float": "float 6s ease-in-out infinite",
+        "glow": "glow 3s ease-in-out infinite",
+      },
+      backdropBlur: {
+        xs: '2px',
+        sm: '4px',
+        DEFAULT: '8px',
+        md: '12px',
+        lg: '16px',
+        xl: '24px',
+        '2xl': '40px',
+        '3xl': '64px',
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-diagonal': 'linear-gradient(to bottom right, var(--tw-gradient-stops))',
+        'neon-glow-radial': 'radial-gradient(circle, rgba(57, 255, 20, 0.15) 0%, rgba(57, 255, 20, 0) 70%)',
+        'cyan-glow-radial': 'radial-gradient(circle, rgba(0, 194, 203, 0.15) 0%, rgba(0, 194, 203, 0) 70%)',
       },
     },
   },
@@ -135,6 +202,9 @@ module.exports = {
       backgroundColor: ['active', 'disabled'],
       textColor: ['active', 'disabled'],
       borderColor: ['active', 'disabled'],
+      boxShadow: ['hover', 'focus', 'active'],
+      transform: ['hover', 'focus', 'active'],
+      scale: ['hover', 'focus', 'active'],
     },
   },
   plugins: [

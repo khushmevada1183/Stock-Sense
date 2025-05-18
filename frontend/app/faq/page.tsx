@@ -10,6 +10,7 @@ import {
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend
 } from 'recharts';
+import PageBackground from '@/components/layout/PageBackground';
 
 // Import GSAP ScrollTrigger
 if (typeof window !== "undefined") {
@@ -229,62 +230,62 @@ export default function FaqPage() {
   });
 
   return (
+    <PageBackground>
     <main 
       ref={mainRef}
-      className="container mx-auto px-4 py-12 min-h-screen"
+        className="container mx-auto px-4 py-12"
     >
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
         Frequently Asked Questions
       </h1>
       
-      <p className="text-lg text-center text-gray-700 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
+        <p className="text-lg text-center text-gray-300 mb-12 max-w-3xl mx-auto">
         Find answers to common questions about Indian Stock Analyzer, its features, and how to make the most of our platform.
       </p>
 
-      {/* Search Bar */}
-      <div 
-        ref={addToSectionsRefs} 
-        className="max-w-2xl mx-auto mb-12 relative"
-      >
+        {/* Search and Categories */}
+        <div className="mb-12">
+          <div className="max-w-2xl mx-auto mb-8">
+            <div className="relative">
         <input
           type="text"
-          placeholder="Search FAQs..."
+                placeholder="Search for questions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-5 py-4 pr-12 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg"
+                className="w-full py-3 pl-12 pr-4 bg-white dark:bg-gray-850 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-neon-400 focus:border-transparent text-gray-900 dark:text-white"
         />
-        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <SearchIcon className="w-6 h-6" />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <SearchIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </div>
         </div>
       </div>
 
-      {/* Category Selection */}
-      <div 
-        ref={addToSectionsRefs}
-        className="mb-12 overflow-x-auto"
-      >
-        <div className="flex space-x-2 min-w-max pb-2">
+          {/* Categories */}
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
           <button
-            className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors ${
+              onClick={() => setActiveCategory('all')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               activeCategory === 'all' 
-              ? 'bg-blue-600 text-white' 
-              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ? 'bg-neon-400 text-black shadow-neon-sm' 
+                  : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
             }`}
-            onClick={() => setActiveCategory('all')}
           >
-            All Categories
+              All Questions
           </button>
+
           {faqCategories.map((category) => (
             <button
               key={category.id}
-              className={`px-4 py-2 rounded-full whitespace-nowrap transition-colors flex items-center ${
+                onClick={() => setActiveCategory(category.id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium flex items-center transition-colors ${
                 activeCategory === category.id 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-neon-400 text-black shadow-neon-sm' 
+                    : 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
-              onClick={() => setActiveCategory(category.id)}
             >
-              <span className="mr-2">{React.cloneElement(category.icon, { size: 16 })}</span>
+                <span className={`mr-2 ${activeCategory === category.id ? 'text-black' : 'text-gray-500 dark:text-gray-400'}`}>
+                  {React.cloneElement(category.icon, { size: 16 })}
+                </span>
               {category.name}
             </button>
           ))}
@@ -292,6 +293,80 @@ export default function FaqPage() {
       </div>
 
       {/* FAQ List */}
+        <div 
+          ref={addToSectionsRefs}
+          className="space-y-4 mb-12"
+        >
+          {filteredFaqs.map((faq) => (
+            <div 
+              key={faq.id} 
+              className="bg-white dark:bg-gray-850 glass rounded-lg shadow-sm border border-gray-200 dark:border-gray-800 overflow-hidden"
+            >
+              <button
+                className="w-full px-6 py-4 flex justify-between items-center text-left"
+                onClick={() => toggleFaq(faq.id)}
+                aria-expanded={expandedFaqs[faq.id]}
+                aria-controls={`faq-answer-${faq.id}`}
+              >
+                <h3 className="text-lg font-medium text-gray-900 dark:text-white pr-8">
+                  {faq.question}
+                </h3>
+                {expandedFaqs[faq.id] ? 
+                  <ChevronUp className="flex-shrink-0 w-5 h-5 text-gray-500 dark:text-gray-400" /> : 
+                  <ChevronDown className="flex-shrink-0 w-5 h-5 text-gray-500 dark:text-gray-400" />
+                }
+              </button>
+              
+              {expandedFaqs[faq.id] && (
+                <div 
+                  id={`faq-answer-${faq.id}`}
+                  className="px-6 pb-4"
+                >
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p className="text-gray-700 dark:text-gray-300">{faq.answer}</p>
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray-500 dark:text-gray-400 mr-2">
+                        Was this helpful?
+                      </span>
+                      <button 
+                        className={`p-1.5 rounded-full mr-2 ${
+                          helpfulFlags[faq.id] === 'yes' 
+                            ? 'bg-neon-400/20 text-neon-400' 
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                        }`}
+                        onClick={() => markHelpful(faq.id, 'yes')}
+                        disabled={helpfulFlags[faq.id] !== undefined}
+                        aria-label="Mark as helpful"
+                      >
+                        <ThumbsUp className="w-4 h-4" />
+                      </button>
+                      <button 
+                        className={`p-1.5 rounded-full ${
+                          helpfulFlags[faq.id] === 'no' 
+                            ? 'bg-red-400/20 text-red-400' 
+                            : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                        }`}
+                        onClick={() => markHelpful(faq.id, 'no')}
+                        disabled={helpfulFlags[faq.id] !== undefined}
+                        aria-label="Mark as not helpful"
+                      >
+                        <ThumbsDown className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400 flex items-center">
+                      <ThumbsUp className="w-3.5 h-3.5 mr-1 text-neon-400" />
+                      <span>{faq.helpfulCount}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
         <div className="lg:col-span-2">
           <section ref={addToSectionsRefs} className="mb-8">
@@ -460,5 +535,6 @@ export default function FaqPage() {
         </div>
       </div>
     </main>
+    </PageBackground>
   );
 }

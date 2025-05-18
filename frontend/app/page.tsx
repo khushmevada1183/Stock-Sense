@@ -44,32 +44,41 @@ export default function Home() {
   }, [isAnimationEnabled]);
 
   return (
-    <div className="pb-16">
+    <div className="pb-16 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg">
+      {/* Grid overlay for entire page */}
+      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
+      
       {/* Hero Section */}
       <div ref={heroRef}>
       <HeroSection />
       </div>
       
+      {/* Subtle divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      
       {/* Market Overview */}
-      <section ref={marketOverviewRef} className="py-12 bg-gray-50 dark:bg-gray-900">
+      <section ref={marketOverviewRef} className="py-12 relative z-10">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-white">
             Market Overview
           </h2>
           <MarketOverview />
         </div>
       </section>
       
+      {/* Subtle divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      
       {/* Featured Stocks */}
-      <section ref={featuredStocksRef} className="py-12">
+      <section ref={featuredStocksRef} className="py-12 relative z-10">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-lg md:text-xl font-bold">
+            <h2 className="text-lg md:text-xl font-bold text-white">
             Featured Stocks
           </h2>
             <Link 
               href="/stocks" 
-              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+              className="text-neon-400 hover:text-neon-300 font-medium"
             >
               View All Stocks
             </Link>
@@ -78,16 +87,19 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Subtle divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      
       {/* IPO Section */}
-      <section ref={ipoSectionRef} className="py-12 bg-gray-50 dark:bg-gray-900">
+      <section ref={ipoSectionRef} className="py-12 relative z-10">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-lg md:text-xl font-bold">
+            <h2 className="text-lg md:text-xl font-bold text-white">
               Upcoming IPOs
             </h2>
             <Link 
               href="/ipo" 
-              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+              className="text-neon-400 hover:text-neon-300 font-medium"
             >
               View All IPOs
             </Link>
@@ -96,16 +108,19 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Subtle divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      
       {/* Latest News */}
-      <section ref={latestNewsRef} className="py-12">
+      <section ref={latestNewsRef} className="py-12 relative z-10">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-lg md:text-xl font-bold">
+            <h2 className="text-lg md:text-xl font-bold text-white">
               Latest Market News
             </h2>
             <Link 
               href="/news" 
-              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
+              className="text-neon-400 hover:text-neon-300 font-medium"
             >
               View All News
             </Link>
@@ -114,14 +129,26 @@ export default function Home() {
         </div>
       </section>
       
+      {/* Subtle divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      
       {/* Analysis Features */}
-      <div ref={analysisFeaturesRef}>
+      <div ref={analysisFeaturesRef} className="relative z-10">
       <AnalysisFeatures />
       </div>
       
+      {/* Subtle divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      
       {/* CTA Section */}
-      <div ref={ctaSectionRef}>
+      <div ref={ctaSectionRef} className="relative z-10">
       <CtaSection />
+      </div>
+      
+      {/* Background glow effects */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute w-[800px] h-[800px] rounded-full bg-neon-400/5 blur-3xl top-1/3 -left-96"></div>
+        <div className="absolute w-[600px] h-[600px] rounded-full bg-cyan-500/5 blur-3xl top-2/3 -right-80"></div>
       </div>
     </div>
   );

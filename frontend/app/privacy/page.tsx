@@ -7,6 +7,7 @@ import {
   PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
 import { Shield, Lock, Eye, Server, User, Database, Clock, CheckCircle2 } from 'lucide-react';
+import PageBackground from '@/components/layout/PageBackground';
 
 // Mock data for visualizations
 const dataCategoryStats = [
@@ -88,15 +89,16 @@ export default function PrivacyPage() {
   };
 
   return (
+    <PageBackground>
     <main 
       ref={mainRef}
-      className="container mx-auto px-4 py-12 min-h-screen"
+        className="container mx-auto px-4 py-12"
     >
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
         Privacy Policy
       </h1>
       
-      <p className="text-lg text-center text-gray-700 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
+        <p className="text-lg text-center text-gray-300 mb-12 max-w-3xl mx-auto">
         Indian Stock Analyzer is committed to protecting your privacy and ensuring your data remains secure.
       </p>
 
@@ -105,32 +107,32 @@ export default function PrivacyPage() {
           { 
             title: "Data Protection", 
             description: "Your data is encrypted and protected", 
-            icon: <Shield className="w-8 h-8 text-blue-500" />,
-            color: "bg-blue-100 dark:bg-blue-900/30"
+              icon: <Shield className="w-8 h-8 text-neon-400" />,
+              color: "bg-gray-800/50"
           },
           { 
             title: "Transparency", 
             description: "Clear policies on data usage and rights", 
-            icon: <Eye className="w-8 h-8 text-green-500" />,
-            color: "bg-green-100 dark:bg-green-900/30"
+              icon: <Eye className="w-8 h-8 text-neon-400" />,
+              color: "bg-gray-800/50"
           },
           { 
             title: "User Control", 
             description: "Full control over your information", 
-            icon: <User className="w-8 h-8 text-purple-500" />,
-            color: "bg-purple-100 dark:bg-purple-900/30"
+              icon: <User className="w-8 h-8 text-neon-400" />,
+              color: "bg-gray-800/50"
           }
         ].map((item, index) => (
           <div 
             key={index}
             ref={addToSectionsRefs}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700"
+              className="bg-gray-800 rounded-xl shadow-md p-6 border border-gray-700 glass-premium"
           >
-            <div className={`rounded-full w-16 h-16 flex items-center justify-center ${item.color} mb-4 mx-auto`}>
+              <div className={`rounded-full w-16 h-16 flex items-center justify-center ${item.color} mb-4 mx-auto border border-neon-400/20`}>
               {item.icon}
             </div>
-            <h3 className="text-xl font-semibold text-center mb-2">{item.title}</h3>
-            <p className="text-gray-600 dark:text-gray-400 text-center">{item.description}</p>
+              <h3 className="text-xl font-semibold text-center mb-2 text-white">{item.title}</h3>
+              <p className="text-gray-300 text-center">{item.description}</p>
           </div>
         ))}
       </div>
@@ -419,5 +421,6 @@ export default function PrivacyPage() {
         </div>
       </section>
     </main>
+    </PageBackground>
   );
 }

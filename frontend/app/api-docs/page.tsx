@@ -3,29 +3,31 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import PageBackground from '@/components/layout/PageBackground';
 
 export default function ApiDocs() {
   const [activeTab, setActiveTab] = useState('overview');
 
   return (
+    <PageBackground>
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700 glass-premium">
+          <div className="p-6 border-b border-gray-700">
+            <h1 className="text-3xl font-bold text-white mb-2">
             Indian Stock API Documentation
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-300">
             Complete reference for the Indian Stock API used in this application
           </p>
         </div>
         
         {/* API Tabs */}
-        <div className="flex border-b border-gray-200 dark:border-gray-700">
+          <div className="flex border-b border-gray-700">
           <button
             className={`px-6 py-3 text-sm font-medium ${
               activeTab === 'overview'
-                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'text-neon-400 border-b-2 border-neon-400'
+                  : 'text-gray-400 hover:text-white'
             }`}
             onClick={() => setActiveTab('overview')}
           >
@@ -34,8 +36,8 @@ export default function ApiDocs() {
           <button
             className={`px-6 py-3 text-sm font-medium ${
               activeTab === 'authentication'
-                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'text-neon-400 border-b-2 border-neon-400'
+                  : 'text-gray-400 hover:text-white'
             }`}
             onClick={() => setActiveTab('authentication')}
           >
@@ -44,8 +46,8 @@ export default function ApiDocs() {
           <button
             className={`px-6 py-3 text-sm font-medium ${
               activeTab === 'endpoints'
-                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'text-neon-400 border-b-2 border-neon-400'
+                  : 'text-gray-400 hover:text-white'
             }`}
             onClick={() => setActiveTab('endpoints')}
           >
@@ -54,8 +56,8 @@ export default function ApiDocs() {
           <button
             className={`px-6 py-3 text-sm font-medium ${
               activeTab === 'models'
-                ? 'text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                  ? 'text-neon-400 border-b-2 border-neon-400'
+                  : 'text-gray-400 hover:text-white'
             }`}
             onClick={() => setActiveTab('models')}
           >
@@ -367,5 +369,6 @@ export default function ApiDocs() {
         </div>
       </div>
     </div>
+    </PageBackground>
   );
 } 

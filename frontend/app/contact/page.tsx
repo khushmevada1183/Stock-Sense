@@ -2,18 +2,14 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
-import { 
-  MapPin, Phone, Mail, Clock, Send, CheckCircle, AlertCircle,
-  Linkedin, Twitter, Facebook, Instagram, Github, Globe, User 
-} from 'lucide-react';
+import { Mail, Phone, MapPin, MessageSquare, Send, Clock, CheckCircle } from 'lucide-react';
+import PageBackground from '@/components/layout/PageBackground';
 
 export default function ContactPage() {
   const mainRef = useRef(null);
   const formRef = useRef(null);
-  const mapRef = useRef(null);
-  const cardsRef = useRef(null);
-  const founderSectionRef = useRef(null);
-  const [formStatus, setFormStatus] = useState({ submitted: false, error: false });
+  const sectionsRef = useRef([]);
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,7 +18,7 @@ export default function ContactPage() {
   });
 
   useEffect(() => {
-    // Main page animation
+    // Main entrance animation
     gsap.from(mainRef.current, {
       opacity: 0,
       y: 20,
@@ -30,43 +26,35 @@ export default function ContactPage() {
       ease: "power3.out"
     });
 
-    // Form animation
-    gsap.from(formRef.current, {
-      opacity: 0,
-      x: -30,
-      duration: 0.8,
-      delay: 0.3,
-      ease: "power2.out"
-    });
-
-    // Map animation
-    gsap.from(mapRef.current, {
-      opacity: 0,
-      x: 30,
-      duration: 0.8,
-      delay: 0.3,
-      ease: "power2.out"
-    });
-
-    // Contact cards animation with stagger
-    gsap.from(cardsRef.current?.children || [], {
-      opacity: 0,
-      y: 20,
-      stagger: 0.15,
-      duration: 0.6,
-      delay: 0.5,
-      ease: "back.out(1.2)"
-    });
-
-    // Founder section animation
-    gsap.from(founderSectionRef.current, {
+    // Staggered sections animation
+    gsap.from(sectionsRef.current, {
       opacity: 0,
       y: 30,
+      stagger: 0.2,
       duration: 0.8,
-      delay: 0.7,
-      ease: "back.out(1.2)"
+      ease: "back.out(1.2)",
+      delay: 0.3
     });
+
+    // Form fields animation
+    if (formRef.current) {
+      gsap.from(formRef.current.querySelectorAll('input, textarea, button'), {
+      opacity: 0,
+      y: 20,
+        stagger: 0.1,
+      duration: 0.6,
+        ease: "power3.out",
+        delay: 0.5
+    });
+    }
   }, []);
+
+  // Add sections to ref array for animations
+  const addToSectionsRefs = (el) => {
+    if (el && !sectionsRef.current.includes(el)) {
+      sectionsRef.current.push(el);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -78,184 +66,72 @@ export default function ContactPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate form submission
-    const success = Math.random() > 0.3; // 70% chance of success
+    // In a real app, you would send the form data to your backend here
+    console.log('Form submitted:', formData);
     
-    if (success) {
-      setFormStatus({ submitted: true, error: false });
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } else {
-      setFormStatus({ submitted: false, error: true });
-    }
+    // Show success message
+    setFormSubmitted(true);
     
-    // Animation for success/error message
-    gsap.fromTo(
-      "#form-message",
-      { opacity: 0, y: -20 },
-      { opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
-    );
+    // Reset form after submission
+    setFormData({
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
+    });
     
-    // Hide message after 5 seconds
-    setTimeout(() => {
-      if (success) {
-        gsap.to("#form-message", { 
+    // Animate success message
+    gsap.from('.success-message', {
           opacity: 0, 
+      y: -20,
           duration: 0.5,
-          onComplete: () => setFormStatus({ submitted: false, error: false })
-        });
-      } else {
-        setFormStatus({ submitted: false, error: false });
-      }
-    }, 5000);
-  };
-
-  // Office location data
-  const offices = [
-    {
-      city: "Mumbai",
-      address: "123 Financial District, Mumbai 400001",
-      phone: "+91 22-6789-0123",
-      email: "mumbai@indianstockanalyzer.com",
-      hours: "Mon-Fri: 9:00 AM - 6:00 PM"
-    },
-    {
-      city: "Delhi",
-      address: "456 Tech Park, New Delhi 110001",
-      phone: "+91 11-6789-0123",
-      email: "delhi@indianstockanalyzer.com",
-      hours: "Mon-Fri: 9:30 AM - 6:30 PM"
-    },
-    {
-      city: "Bangalore",
-      address: "789 Innovation Hub, Bangalore 560001",
-      phone: "+91 80-6789-0123",
-      email: "bangalore@indianstockanalyzer.com",
-      hours: "Mon-Fri: 9:00 AM - 6:00 PM"
-    }
-  ];
-
-  // Founder contact information
-  const founderContact = {
-    name: "Khush Mevada",
-    role: "Founder & CEO",
-    phone: "+91-8733033853",
-    email: "khushmevadal183@gmail.com",
-    linkedin: "linkedin.com/in/khush-mevada-a880a7222",
-    github: "github.com/khushmevadal183",
-    portfolio: "khushmevadal183.github.io/portfolio"
+      ease: "back.out(1.7)"
+    });
   };
 
   return (
+    <PageBackground>
     <main 
       ref={mainRef}
-      className="container mx-auto px-4 py-12 min-h-screen"
+        className="container mx-auto px-4 py-12"
     >
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
         Contact Us
       </h1>
       
-      <p className="text-lg text-center text-gray-700 dark:text-gray-300 mb-12 max-w-3xl mx-auto">
-        Have questions about our services? Want to learn more about how Indian Stock Analyzer can help you?
-        Our team is ready to assist you.
-      </p>
+        <p className="text-lg text-center text-gray-300 mb-12 max-w-3xl mx-auto">
+          Have questions or need assistance? Our team is here to help you with any inquiries about our platform.
+        </p>
 
-      {/* Founder Contact Section */}
-      <section 
-        ref={founderSectionRef}
-        className="mb-16 bg-gradient-to-r from-blue-600 to-indigo-700 rounded-xl shadow-xl overflow-hidden"
-      >
-        <div className="p-8 md:p-12 flex flex-col md:flex-row items-center md:items-start gap-8">
-          <div className="w-32 h-32 md:w-48 md:h-48 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0 border-4 border-white/30">
-            <User className="w-16 h-16 md:w-24 md:h-24 text-white" />
-          </div>
-          <div className="text-white text-center md:text-left">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Contact the Founder</h2>
-            <p className="text-xl font-medium text-blue-100 mb-6">{founderContact.name} — {founderContact.role}</p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+          <div 
+            ref={addToSectionsRefs}
+            className="lg:col-span-2 bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+          >
+            <h2 className="text-2xl font-bold mb-6 text-white flex items-center">
+              <MessageSquare className="mr-2 h-6 w-6 text-neon-400" />
+              Send Us a Message
+            </h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8 max-w-2xl">
-              <div className="flex items-center">
-                <Phone className="w-5 h-5 mr-3 flex-shrink-0" />
-                <a href={`tel:${founderContact.phone}`} className="hover:underline">
-                  {founderContact.phone}
-                </a>
-              </div>
-              
-              <div className="flex items-center">
-                <Mail className="w-5 h-5 mr-3 flex-shrink-0" />
-                <a href={`mailto:${founderContact.email}`} className="hover:underline">
-                  {founderContact.email}
-                </a>
-              </div>
-              
-              <div className="flex items-center">
-                <Linkedin className="w-5 h-5 mr-3 flex-shrink-0" />
-                <a href={`https://${founderContact.linkedin}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  LinkedIn Profile
-                </a>
-              </div>
-              
-              <div className="flex items-center">
-                <Github className="w-5 h-5 mr-3 flex-shrink-0" />
-                <a href={`https://${founderContact.github}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  GitHub Profile
-                </a>
-              </div>
-              
-              <div className="flex items-center md:col-span-2">
-                <Globe className="w-5 h-5 mr-3 flex-shrink-0" />
-                <a href={`https://${founderContact.portfolio}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                  Portfolio Website
-                </a>
-              </div>
-            </div>
-            
-            <p className="mt-6 text-blue-100 max-w-2xl">
-              Feel free to reach out directly for partnership opportunities, speaking engagements, 
-              or any strategic inquiries. For general support and customer service, please use the contact form below.
+            {formSubmitted ? (
+              <div className="success-message bg-neon-400/10 border border-neon-400 rounded-lg p-6 text-center">
+                <CheckCircle className="h-12 w-12 text-neon-400 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-white mb-2">Thank You!</h3>
+                <p className="text-gray-300">
+                  Your message has been sent successfully. We'll get back to you as soon as possible.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-        <div ref={formRef} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-2xl font-bold mb-6">Send Us a Message</h2>
-          
-          {/* Form status message */}
-          {(formStatus.submitted || formStatus.error) && (
-            <div 
-              id="form-message"
-              className={`p-4 mb-6 rounded-lg ${
-                formStatus.submitted 
-                  ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' 
-                  : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
-              }`}
-            >
-              <div className="flex items-start">
-                {formStatus.submitted ? (
-                  <CheckCircle className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
-                )}
-                <div>
-                  <p className="font-medium">
-                    {formStatus.submitted 
-                      ? 'Thank you for your message!' 
-                      : 'There was a problem submitting your message.'}
-                  </p>
-                  <p className="mt-1 text-sm">
-                    {formStatus.submitted 
-                      ? 'We\'ll get back to you as soon as possible.' 
-                      : 'Please try again or contact us directly via email.'}
-                  </p>
-                </div>
+                <button 
+                  onClick={() => setFormSubmitted(false)} 
+                  className="mt-4 px-4 py-2 bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon"
+                >
+                  Send Another Message
+                </button>
               </div>
-            </div>
-          )}
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
+            ) : (
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="name" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
                 Your Name
               </label>
               <input
@@ -264,14 +140,14 @@ export default function ContactPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
+                      className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                      placeholder="John Doe"
               />
             </div>
-            
             <div>
-              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                Your Email
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+                      Email Address
               </label>
               <input
                 type="email"
@@ -279,13 +155,15 @@ export default function ContactPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
+                      className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                      placeholder="john@example.com"
               />
+                  </div>
             </div>
             
             <div>
-              <label htmlFor="subject" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-1">
                 Subject
               </label>
               <input
@@ -294,13 +172,14 @@ export default function ContactPage() {
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
+                    className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                    placeholder="How can we help you?"
               />
             </div>
             
             <div>
-              <label htmlFor="message" className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">
                 Your Message
               </label>
               <textarea
@@ -308,96 +187,130 @@ export default function ContactPage() {
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                rows={5}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
+                    rows={6}
+                    className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                    placeholder="Please provide details about your inquiry..."
               ></textarea>
             </div>
             
+                <div>
             <button
               type="submit"
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm flex items-center justify-center transition-colors"
+                    className="px-6 py-3 bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon flex items-center justify-center"
             >
-              <Send className="w-4 h-4 mr-2" />
+                    <Send className="h-4 w-4 mr-2" />
               Send Message
             </button>
+                </div>
           </form>
+            )}
         </div>
         
-        <div ref={mapRef} className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-          <div className="h-96 bg-gray-100 dark:bg-gray-700 p-4 flex items-center justify-center">
-            <div className="text-center">
-              <MapPin className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-              <p className="text-gray-500 dark:text-gray-400">
-                Interactive map will be displayed here
-              </p>
+          <div ref={addToSectionsRefs}>
+            <div className="bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700 glass-premium mb-6">
+              <h2 className="text-xl font-bold mb-6 text-white">Contact Information</h2>
+              
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
+                    <Mail className="h-5 w-5 text-neon-400" />
             </div>
-          </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-300">Email</p>
+                    <p className="text-sm text-neon-400">support@indianstockanalyzer.com</p>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-6 text-center">Our Offices</h2>
-      <div 
-        ref={cardsRef}
-        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16"
-      >
-        {offices.map((office) => (
-          <div 
-            key={office.city}
-            className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6 border border-gray-200 dark:border-gray-700"
-          >
-            <div className="flex flex-col items-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-2">
-                <MapPin className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
+                    <Phone className="h-5 w-5 text-neon-400" />
               </div>
-              <h3 className="text-xl font-semibold">{office.city}</h3>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-300">Phone</p>
+                    <p className="text-sm text-neon-400">+91 22-6789-0123</p>
             </div>
-            
-            <div className="space-y-3 text-gray-700 dark:text-gray-300">
-              <div className="flex items-start">
-                <MapPin className="w-5 h-5 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                <span>{office.address}</span>
               </div>
               
               <div className="flex items-start">
-                <Phone className="w-5 h-5 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                <span>{office.phone}</span>
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
+                    <MapPin className="h-5 w-5 text-neon-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-300">Address</p>
+                    <p className="text-sm text-gray-400">
+                      123 Financial District<br />
+                      Mumbai, India 400001
+                    </p>
+                  </div>
               </div>
               
               <div className="flex items-start">
-                <Mail className="w-5 h-5 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                <span>{office.email}</span>
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
+                    <Clock className="h-5 w-5 text-neon-400" />
+                  </div>
+                  <div className="ml-3">
+                    <p className="text-sm font-medium text-gray-300">Business Hours</p>
+                    <p className="text-sm text-gray-400">
+                      Monday - Friday: 9:00 AM - 6:00 PM<br />
+                      Saturday: 10:00 AM - 2:00 PM<br />
+                      Sunday: Closed
+                    </p>
+                  </div>
+                </div>
+              </div>
               </div>
               
-              <div className="flex items-start">
-                <Clock className="w-5 h-5 text-gray-500 dark:text-gray-400 mr-2 flex-shrink-0 mt-0.5" />
-                <span>{office.hours}</span>
+            <div className="bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700 glass-premium">
+              <h2 className="text-xl font-bold mb-4 text-white">Connect With Us</h2>
+              <div className="flex space-x-4">
+                {['twitter', 'facebook', 'linkedin', 'instagram'].map((social) => (
+                  <a 
+                    key={social}
+                    href="#" 
+                    className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-neon-400/20 transition-colors"
+                  >
+                    <span className="text-neon-400 text-lg font-bold uppercase">{social.charAt(0)}</span>
+                  </a>
+                ))}
               </div>
             </div>
           </div>
-        ))}
       </div>
       
-      <div className="bg-[#1a2332] dark:bg-[#1a2332] rounded-xl shadow-lg p-8 border border-gray-700 mb-16">
-        <h2 className="text-2xl font-bold mb-8 text-center text-white">Connect With Us</h2>
-        <div className="flex justify-center space-x-6">
-          <a href={`https://${founderContact.linkedin}`} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-[#1e2c44] rounded-full flex items-center justify-center text-blue-400 hover:bg-[#263654] transition-colors">
-            <Linkedin className="w-7 h-7" />
-          </a>
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-[#1e2c44] rounded-full flex items-center justify-center text-blue-400 hover:bg-[#263654] transition-colors">
-            <Twitter className="w-7 h-7" />
-          </a>
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-[#1e2c44] rounded-full flex items-center justify-center text-blue-400 hover:bg-[#263654] transition-colors">
-            <Facebook className="w-7 h-7" />
-          </a>
-          <a href="https://www.instagram.com/khxsh.11/" target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-[#1e2c44] rounded-full flex items-center justify-center text-blue-400 hover:bg-[#263654] transition-colors">
-            <Instagram className="w-7 h-7" />
-          </a>
-          <a href={`https://${founderContact.github}`} target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-[#1e2c44] rounded-full flex items-center justify-center text-blue-400 hover:bg-[#263654] transition-colors">
-            <Github className="w-7 h-7" />
-          </a>
+        <div 
+          ref={addToSectionsRefs}
+          className="bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700 glass-premium mb-12"
+        >
+          <h2 className="text-2xl font-bold mb-6 text-white text-center">Frequently Asked Questions</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                question: "How quickly will I receive a response?",
+                answer: "We aim to respond to all inquiries within 24-48 business hours."
+              },
+              {
+                question: "Can I schedule a demo of the platform?",
+                answer: "Yes, you can request a personalized demo through the contact form above."
+              },
+              {
+                question: "Do you offer technical support?",
+                answer: "Yes, our technical support team is available Monday-Friday from 9 AM to 6 PM."
+              },
+              {
+                question: "How can I report a bug or issue?",
+                answer: "Please use the contact form and select 'Technical Issue' as the subject."
+              }
+            ].map((faq, index) => (
+              <div key={index} className="bg-gray-750 p-4 rounded-lg">
+                <h3 className="font-medium text-white mb-2">{faq.question}</h3>
+                <p className="text-gray-300 text-sm">{faq.answer}</p>
+          </div>
+        ))}
         </div>
       </div>
     </main>
+    </PageBackground>
   );
 }

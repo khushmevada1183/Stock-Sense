@@ -72,8 +72,8 @@ app.get('/api/health', (req, res) => {
 // Config endpoint - returns masked API key for display purposes
 app.get('/api/config', (req, res) => {
   // Only expose masked version of the API key for security
-  const apiKey = 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
-  const maskedKey = `sk-live-${'*'.repeat(apiKey.length - 15)}${apiKey.substring(apiKey.length - 4)}`;
+  const apiKey = process.env.STOCK_API_KEY || '';
+  const maskedKey = apiKey ? `sk-live-${'*'.repeat(apiKey.length - 15)}${apiKey.substring(apiKey.length - 4)}` : 'Not configured';
   
   res.status(200).json({
     apiKey: maskedKey,

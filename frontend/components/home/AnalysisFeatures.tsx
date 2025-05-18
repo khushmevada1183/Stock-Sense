@@ -18,11 +18,11 @@ export default function AnalysisFeatures() {
   }, []);
   
   return (
-    <section className="py-16 bg-blue-50 dark:bg-blue-900/10">
+    <section className="py-16">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Comprehensive Stock Analysis</h2>
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold mb-4 text-white">Comprehensive Stock Analysis</h2>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Our platform analyzes stocks across ten key dimensions to give you the most complete picture.
           </p>
         </div>
@@ -31,17 +31,17 @@ export default function AnalysisFeatures() {
           {features.map((feature, index) => (
             <div 
               key={index} 
-              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+              className="glass-premium p-6 rounded-lg shadow-neon-sm hover:shadow-neon transition-shadow border border-neon-400/10"
             >
-              <div className="text-blue-600 dark:text-blue-400 text-2xl mb-4">
+              <div className="text-neon-400 text-2xl mb-4">
                 {mounted ? (
                   React.cloneElement(feature.icon as React.ReactElement, { suppressHydrationWarning: true })
                 ) : (
                   <div className="h-8 w-8"></div>
                 )}
               </div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
+              <h3 className="text-lg font-semibold mb-2 text-white">{feature.title}</h3>
+              <p className="text-gray-300 text-sm">
                 {feature.description}
               </p>
             </div>

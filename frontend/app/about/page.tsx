@@ -111,17 +111,21 @@ export default function AboutPage() {
   };
 
   return (
+    <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
+      {/* Grid overlay for entire page */}
+      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
+      
     <main 
       ref={mainRef}
-      className="container mx-auto px-4 py-12 min-h-screen"
+        className="container mx-auto px-4 py-12 relative z-10"
     >
-      <h1 className="text-3xl md:text-4xl font-bold text-center mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
         About Indian Stock Analyzer
       </h1>
       
       <div className="max-w-3xl mx-auto mb-12">
-        <p className="text-lg text-gray-700 dark:text-gray-300 text-center leading-relaxed">
-          Founded in 2020 by <span className="font-semibold text-blue-600 dark:text-blue-400">Khush Mevada</span>, 
+          <p className="text-lg text-gray-300 text-center leading-relaxed">
+            Founded in 2020 by <span className="font-semibold text-neon-400">Khush Mevada</span>, 
           Indian Stock Analyzer has revolutionized how investors research and analyze 
           stocks from the Indian market by providing comprehensive, data-driven insights through an 
           intuitive platform. Our cutting-edge technology combines advanced algorithms with user-friendly 
@@ -131,27 +135,27 @@ export default function AboutPage() {
 
       {/* Founder's Section */}
       <section ref={founderSectionRef} className="mb-16">
-        <h2 className="text-2xl font-bold mb-6 text-center">Our Founder</h2>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-bold mb-6 text-center text-white">Our Founder</h2>
+          <div className="glass-premium rounded-xl shadow-lg p-6 border border-neon-400/10">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
-            <div className="w-48 h-48 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0 border-4 border-blue-200 dark:border-blue-800">
-              <Users className="w-24 h-24 text-blue-600 dark:text-blue-400" />
+              <div className="w-48 h-48 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 border-4 border-neon-400/20">
+                <Users className="w-24 h-24 text-neon-400" />
             </div>
             <div>
-              <h3 className="text-2xl font-bold mb-2 text-center md:text-left">Khush Mevada</h3>
-              <p className="text-blue-600 dark:text-blue-400 font-medium mb-4 text-center md:text-left">Founder & CEO</p>
-              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                <h3 className="text-2xl font-bold mb-2 text-center md:text-left text-white">Khush Mevada</h3>
+                <p className="text-neon-400 font-medium mb-4 text-center md:text-left">Founder & CEO</p>
+                <p className="text-gray-300 mb-4">
                 With a passion for financial markets and technology, Khush Mevada founded Indian Stock Analyzer 
                 with the vision of democratizing access to sophisticated stock analysis tools. His background in 
                 financial analysis and software development enabled him to create a platform that combines powerful 
                 analytical capabilities with user-friendly interfaces.
               </p>
-              <p className="text-gray-700 dark:text-gray-300 mb-4">
+                <p className="text-gray-300 mb-4">
                 Prior to founding Indian Stock Analyzer, Khush worked with leading financial institutions where he 
                 identified a significant gap in the market for retail investors seeking professional-grade analysis 
                 tools specifically tailored for Indian markets.
               </p>
-              <p className="text-gray-700 dark:text-gray-300">
+                <p className="text-gray-300">
                 Under his leadership, the company has grown from a small startup to a trusted platform used by 
                 thousands of investors across India, with plans for continued expansion and innovation.
               </p>
@@ -161,14 +165,14 @@ export default function AboutPage() {
       </section>
       
       <section className="mb-16">
-        <h2 className="text-2xl font-bold mb-6 text-center">Our Mission</h2>
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-bold mb-6 text-center text-white">Our Mission</h2>
+          <div className="glass-premium rounded-xl shadow-lg p-6 border border-neon-400/10">
           <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
-              <Target className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mb-4">
+                <Target className="w-8 h-8 text-neon-400" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Empowering Informed Investment</h3>
-            <p className="text-gray-700 dark:text-gray-300 max-w-3xl">
+              <h3 className="text-xl font-semibold mb-3 text-white">Empowering Informed Investment</h3>
+              <p className="text-gray-300 max-w-3xl">
               Our mission is to democratize access to sophisticated stock analysis for Indian 
               investors through cutting-edge technology and data analytics. We aim to empower 
               individuals to make informed investment decisions based on comprehensive, accurate, 
@@ -375,5 +379,6 @@ export default function AboutPage() {
         </div>
       </section>
     </main>
+    </div>
   );
 }

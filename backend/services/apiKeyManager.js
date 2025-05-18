@@ -35,7 +35,7 @@ class ApiKeyManager {
 
       // Create default config if it doesn't exist
       if (!fs.existsSync(this.configPath)) {
-        const defaultKey = process.env.INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
+        const defaultKey = process.env.INDIAN_API_KEY || '';
         const defaultConfig = {
           keys: [
             {
@@ -67,7 +67,7 @@ class ApiKeyManager {
       console.error('Error loading API keys:', error);
       
       // Initialize with environment variable as fallback
-      const defaultKey = process.env.INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
+      const defaultKey = process.env.INDIAN_API_KEY || '';
       this.keys = [
         {
           key: defaultKey,
@@ -142,7 +142,7 @@ class ApiKeyManager {
     
     // Make sure we always have at least one key
     if (this.keys.length === 0) {
-      const defaultKey = process.env.INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
+      const defaultKey = process.env.INDIAN_API_KEY || '';
       this.keys.push({
         key: defaultKey,
         rateLimitResetTimestamp: 0,

@@ -24,14 +24,13 @@ function getApiClient(): ApiClient {
 
 // Get the Indian API client
 function getIndianApiClient(): ApiClient {
-  const API_KEY = process.env.NEXT_PUBLIC_INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
-  const BASE_URL = process.env.NEXT_PUBLIC_INDIAN_API_URL || 'https://stock.indianapi.in';
+  // No API key needed here - it's handled by the backend
+  const BASE_URL = '/api/stock-data'; // Points to your backend proxy
   
   return new ApiClient({
     baseURL: BASE_URL,
-    apiKey: API_KEY,
     timeout: 10000,
-    cacheTTL: 5 * 60 * 1000 // 5 minutes
+    cacheTTL: 5 * 60 * 1000
   });
 }
 

@@ -20,10 +20,18 @@ const ThemeToggle = () => {
   return (
     <button
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="p-2 rounded-full text-gray-600 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-blue-400 dark:hover:bg-gray-800"
+      className={`p-2 rounded-full transition-all duration-300 ${
+        theme === 'dark' 
+          ? 'bg-gray-850/50 text-neon-400 hover:text-neon-300 hover:bg-gray-800/70 hover:shadow-neon-sm' 
+          : 'bg-gray-100 text-gray-600 hover:text-blue-600 hover:bg-gray-200'
+      }`}
       onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
-      {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+      {theme === 'dark' ? (
+        <Sun size={20} className="transition-transform hover:scale-110" />
+      ) : (
+        <Moon size={20} className="transition-transform hover:scale-110" />
+      )}
     </button>
   );
 };

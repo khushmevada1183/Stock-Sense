@@ -589,10 +589,14 @@ export default function MarketPage() {
   const currentDate = format(new Date(), 'dd MMM yyyy');
   
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
+      {/* Grid overlay for entire page */}
+      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
+      
+      <div className="container mx-auto px-4 py-8 relative z-10">
       <div ref={headerRef} className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Indian Market Dashboard</h1>
-        <p className="text-gray-600 dark:text-gray-400">
+          <h1 className="text-3xl font-bold text-white mb-2">Indian Market Dashboard</h1>
+          <p className="text-gray-300">
           Real-time overview of the Indian stock market and its key indicators
         </p>
       </div>
@@ -643,6 +647,7 @@ export default function MarketPage() {
             stocks worth ₹850 crores. Market breadth was positive with more advances
             than declines, indicating healthy market sentiment.
           </p>
+          </div>
         </div>
       </div>
     </div>
