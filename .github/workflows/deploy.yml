@@ -19,17 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
           
       - name: Setup Pages
-        uses: actions/configure-pages@v3
+        uses: actions/configure-pages@v4
         with:
           static_site_generator: next
           
@@ -37,14 +37,22 @@ jobs:
         working-directory: ./frontend
         run: npm ci
         
+      - name: Debug Next.js configuration
+        working-directory: ./frontend
+        run: cat next.config.js
+        
       - name: Build with Next.js
         working-directory: ./frontend
         env:
           NEXT_PUBLIC_BASE_PATH: '/Stock-Sense'
         run: npm run build
         
+      - name: List output directory
+        working-directory: ./frontend
+        run: ls -la out
+        
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./frontend/out
 
@@ -57,4 +65,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2 
+        uses: actions/deploy-pages@v4 
