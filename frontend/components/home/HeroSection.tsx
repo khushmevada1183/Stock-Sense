@@ -1,30 +1,277 @@
+"use client";
+
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { ArrowRight, TrendingUp, ChevronRight } from 'lucide-react';
 
 export default function HeroSection() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [stocksAnalyzed, setStocksAnalyzed] = useState(0);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const heroRef = useRef<HTMLDivElement>(null);
+  
+  // Testimonials data
+  const testimonials = [
+    { name: "Rajesh M.", position: "Portfolio Manager", text: "Gained 27% returns in just 3 months using Stock Sense's AI predictions" },
+    { name: "Priya S.", position: "Retail Investor", text: "The real-time alerts helped me avoid a 15% market drop last quarter" },
+    { name: "Vikram J.", position: "Financial Advisor", text: "My clients have seen an average 31% improvement in portfolio performance" }
+  ];
+  
+  // Track mouse movement for parallax effect
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        setMousePosition({
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top
+        });
+      }
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+  
+  // Animate stocks analyzed counter
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStocksAnalyzed(prev => {
+        if (prev < 247) {
+          return prev + 1;
+        }
+        clearInterval(interval);
+        return prev;
+      });
+    }, 20);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Rotate testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial(prev => (prev + 1) % testimonials.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Calculate parallax movement
+  const calcParallaxX = (depth = 1) => {
+    const centerX = heroRef.current ? heroRef.current.offsetWidth / 2 : 0;
+    const moveX = (mousePosition.x - centerX) / 50 * depth;
+    return moveX;
+  };
+  
+  const calcParallaxY = (depth = 1) => {
+    const centerY = heroRef.current ? heroRef.current.offsetHeight / 2 : 0;
+    const moveY = (mousePosition.y - centerY) / 50 * depth;
+    return moveY;
+  };
+
   return (
-    <section className="relative py-20 bg-gradient-to-b from-blue-700 to-blue-900 text-white">
-      <div className="container mx-auto px-4">
-        <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Comprehensive Analysis of Indian Stocks
-          </h1>
-          <p className="text-xl mb-8">
-            Make informed investment decisions with our in-depth analysis across ten key dimensions
-            including financials, management, industry trends and more.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Link
-              href="/auth/register"
-              className="px-6 py-3 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+    <section 
+      ref={heroRef}
+      className="relative py-24 overflow-hidden bg-gradient-to-br from-gray-900 via-blue-950 to-indigo-950 text-white"
+    >
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div 
+          className="absolute w-[800px] h-[800px] rounded-full bg-blue-700/10 blur-3xl"
+          style={{ 
+            left: `calc(10% + ${calcParallaxX(0.5)}px)`, 
+            top: `calc(30% + ${calcParallaxY(0.5)}px)` 
+          }}
+        />
+        <div 
+          className="absolute w-[600px] h-[600px] rounded-full bg-indigo-600/10 blur-3xl"
+          style={{ 
+            right: `calc(15% + ${calcParallaxX(-0.3)}px)`, 
+            top: `calc(20% + ${calcParallaxY(-0.3)}px)` 
+          }}
+        />
+        <div 
+          className="absolute w-[500px] h-[500px] rounded-full bg-purple-500/10 blur-3xl"
+          style={{ 
+            left: `calc(50% + ${calcParallaxX(0.2)}px)`, 
+            bottom: `calc(10% + ${calcParallaxY(0.2)}px)` 
+          }}
+        />
+      </div>
+      
+      {/* Grid overlay */}
+      <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:50px_50px]" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-7">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7 }}
             >
-              Get Started
-            </Link>
-            <Link
-              href="/stocks"
-              className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg border border-blue-500 hover:bg-blue-700 transition-colors"
+              <div className="inline-flex items-center px-3 py-1 rounded-full border border-blue-400/30 bg-blue-900/30 backdrop-blur-sm text-blue-300 text-sm mb-6">
+                <span className="animate-pulse mr-2 h-2 w-2 rounded-full bg-blue-400"></span>
+                Real-time market intelligence
+              </div>
+              
+              <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-300">
+                  Gain the Edge with 
+                </span>
+                <br />
+                <span className="relative">
+                  AI-Powered Insights
+                  <span className="absolute -bottom-2 left-0 w-full h-1 bg-blue-500/50 rounded-full"></span>
+                </span>
+              </h1>
+              
+              <p className="text-xl mb-8 text-gray-300 max-w-2xl">
+                Our advanced algorithms outperform traditional analysis by <span className="font-semibold text-blue-300">43%</span>, 
+                giving you the confidence to make smarter investment decisions in India's dynamic market.
+              </p>
+              
+              <div className="flex flex-wrap gap-4 mb-12">
+                <Link
+                  href="/auth/register"
+                  className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:scale-105"
+                >
+                  <span className="relative z-10 flex items-center">
+                    Get Started <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                </Link>
+                <Link
+                  href="/stocks"
+                  className="group px-8 py-4 bg-gray-800/50 backdrop-blur-md text-white font-medium rounded-lg border border-gray-700/50 hover:bg-gray-700/50 hover:border-gray-600/50 transition-all duration-300"
+                >
+                  Browse Stocks <ChevronRight className="inline-block ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+              
+              {/* Stats */}
+              <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm text-gray-400">
+                <div>
+                  <span className="block text-2xl font-bold text-white mb-1">{stocksAnalyzed}</span>
+                  <span>Stocks analyzed today</span>
+                </div>
+                <div>
+                  <span className="block text-2xl font-bold text-white mb-1">12.4M+</span>
+                  <span>Data points processed</span>
+                </div>
+                <div>
+                  <span className="block text-2xl font-bold text-white mb-1">94%</span>
+                  <span>Accuracy rate</span>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          <div className="lg:col-span-5">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              style={{ 
+                transform: `translate(${calcParallaxX(-0.5)}px, ${calcParallaxY(-0.5)}px)` 
+              }}
+              className="relative"
             >
-              Browse Stocks
-            </Link>
+              {/* 3D Chart Visualization */}
+              <div className="relative h-[400px] w-full bg-gray-900/40 backdrop-blur-xl rounded-2xl border border-gray-800/50 shadow-[0_0_50px_rgba(59,130,246,0.15)] overflow-hidden">
+                <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:30px_30px]"></div>
+                
+                {/* Chart elements */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none">
+                  {/* Chart background gradient */}
+                  <defs>
+                    <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.3" />
+                      <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  
+                  {/* Animated chart line */}
+                  <path 
+                    d="M0,150 C50,120 80,180 120,100 C160,30 200,90 240,70 C280,50 350,120 400,100" 
+                    fill="none" 
+                    stroke="rgb(59, 130, 246)" 
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    className="animate-pulse"
+                  />
+                  
+                  {/* Area under the chart */}
+                  <path 
+                    d="M0,150 C50,120 80,180 120,100 C160,30 200,90 240,70 C280,50 350,120 400,100 V200 H0 Z" 
+                    fill="url(#areaGradient)"
+                  />
+                  
+                  {/* Data points */}
+                  <circle cx="120" cy="100" r="4" fill="white" className="animate-ping" style={{animationDelay: "0s", animationDuration: "3s"}} />
+                  <circle cx="240" cy="70" r="4" fill="white" className="animate-ping" style={{animationDelay: "1s", animationDuration: "3s"}} />
+                  <circle cx="350" cy="120" r="4" fill="white" className="animate-ping" style={{animationDelay: "2s", animationDuration: "3s"}} />
+                </svg>
+                
+                {/* Live data indicators */}
+                <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
+                  <div className="text-xs font-mono bg-gray-800/70 backdrop-blur-sm px-3 py-1 rounded-full text-green-400 flex items-center">
+                    <span className="animate-pulse mr-1.5 h-1.5 w-1.5 rounded-full bg-green-500"></span>
+                    LIVE DATA
+                  </div>
+                  <div className="text-xs font-mono bg-gray-800/70 backdrop-blur-sm px-3 py-1 rounded-full text-blue-400">
+                    NIFTY 50: 19,200 <span className="text-green-400">+1.20%</span>
+                  </div>
+                </div>
+                
+                {/* Metrics */}
+                <div className="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2">
+                  <div className="bg-gray-800/50 backdrop-blur-sm p-2 rounded-lg">
+                    <div className="text-xs text-gray-400">SENSEX</div>
+                    <div className="text-sm font-semibold flex items-center">
+                      63,450 <TrendingUp className="ml-1 h-3 w-3 text-green-400" />
+                    </div>
+                  </div>
+                  <div className="bg-gray-800/50 backdrop-blur-sm p-2 rounded-lg">
+                    <div className="text-xs text-gray-400">BANK NIFTY</div>
+                    <div className="text-sm font-semibold">44,120</div>
+                  </div>
+                  <div className="bg-gray-800/50 backdrop-blur-sm p-2 rounded-lg">
+                    <div className="text-xs text-gray-400">IT INDEX</div>
+                    <div className="text-sm font-semibold">32,150</div>
+                  </div>
+                </div>
+                
+                {/* Glowing effect */}
+                <div className="absolute -bottom-20 -left-20 w-[250px] h-[250px] rounded-full bg-blue-500/20 blur-3xl"></div>
+                <div className="absolute -top-20 -right-20 w-[250px] h-[250px] rounded-full bg-indigo-500/20 blur-3xl"></div>
+              </div>
+              
+              {/* Testimonial card */}
+              <motion.div 
+                key={currentTestimonial}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="absolute -bottom-12 -right-12 w-64 bg-gray-900/80 backdrop-blur-xl rounded-lg border border-gray-800/50 p-4 shadow-lg"
+              >
+                <div className="flex items-start mb-3">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm">
+                    {testimonials[currentTestimonial].name.charAt(0)}
+                  </div>
+                  <div className="ml-3">
+                    <div className="text-sm font-semibold">{testimonials[currentTestimonial].name}</div>
+                    <div className="text-xs text-gray-400">{testimonials[currentTestimonial].position}</div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-300 italic">"{testimonials[currentTestimonial].text}"</p>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
