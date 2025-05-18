@@ -54,8 +54,20 @@ export class ApiClient {
       }
     }
     
+    // For GitHub Pages deployment, ensure we use HTTPS and the correct API URL
+    let baseURL = options.baseURL;
+    if (typeof window !== 'undefined' && window.location.hostname.includes('github.io')) {
+      // Force HTTPS for GitHub Pages
+      baseURL = baseURL.replace('http://', 'https://');
+      
+      // Use the deployed API URL if we're on GitHub Pages
+      if (!baseURL.includes('vercel.app') && !baseURL.includes('indianapi')) {
+        baseURL = 'https://stock-sense-api.vercel.app/api';
+      }
+    }
+    
     this.api = axios.create({
-      baseURL: options.baseURL,
+      baseURL,
       headers,
       timeout: options.timeout || 10000, // Default 10 second timeout
     });
@@ -76,6 +88,11 @@ export class ApiClient {
             if (token) {
               config.headers['Authorization'] = `Bearer ${token}`;
             }
+          }
+          
+          // Add CORS headers for GitHub Pages
+          if (window.location.hostname.includes('github.io')) {
+            config.headers['Access-Control-Allow-Origin'] = '*';
           }
         }
         

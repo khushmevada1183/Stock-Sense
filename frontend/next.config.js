@@ -5,19 +5,15 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  swcMinify: true,
-  output: 'export',
+  // Configure for GitHub Pages deployment
   basePath: process.env.NEXT_PUBLIC_BASE_PATH || '',
   assetPrefix: process.env.NEXT_PUBLIC_BASE_PATH || '',
-  trailingSlash: true,
   images: {
     unoptimized: true,
+    domains: ['stock-sense-api.vercel.app', 'khushmevada1183.github.io'],
   },
-  env: {
-    NEXT_PUBLIC_INDIAN_API_KEYS: process.env.NEXT_PUBLIC_INDIAN_API_KEYS,
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-    NEXT_PUBLIC_APP_ENV: process.env.NEXT_PUBLIC_APP_ENV
-  }
+  output: 'export',
+  trailingSlash: true,
 };
 
 module.exports = nextConfig; 

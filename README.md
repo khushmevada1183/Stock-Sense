@@ -27,7 +27,7 @@ A comprehensive web application for analyzing Indian stocks with real-time data,
 - [Project Structure](#-project-structure)
 - [Installation & Setup](#-installation--setup)
 - [Quick Start](#-quick-start)
-- [GitHub Pages Deployment](#-github-pages-deployment)
+- [Deployment](#-deployment)
 - [Documentation](#-documentation)
 - [Usage](#-usage)
 - [Testing](#-testing)
@@ -55,23 +55,11 @@ Indian Stock Sense is a powerful web application designed to provide comprehensi
 
 Check out our live demo:
 
-- 🔗 [Live Demo](https://khushmevada1183.github.io/Stock-Sense/)
-- 🔗 [Vercel Demo](https://indian-stock-sense.vercel.app)
+- 🔗 [Live Demo](https://indian-stock-sense.vercel.app)
+- 🔗 [GitHub Pages](https://khushmevada1183.github.io/Stock-Sense/)
 - 👤 Demo credentials:
   - Username: `demo@example.com`
   - Password: `demo123`
-
-## 🚀 GitHub Pages Deployment
-
-This project is configured for automatic deployment to GitHub Pages. The live version can be accessed at:
-
-- 🔗 [GitHub Pages Demo](https://khushmevada1183.github.io/Stock-Sense/)
-
-For detailed deployment instructions, see [GITHUB_PAGES_DEPLOYMENT.md](./GITHUB_PAGES_DEPLOYMENT.md).
-
-### Deployment Status
-
-[![Deploy to GitHub Pages](https://github.com/khushmevada1183/Stock-Sense/actions/workflows/deploy.yml/badge.svg)](https://github.com/khushmevada1183/Stock-Sense/actions/workflows/deploy.yml)
 
 ## 🛠️ Built With
 
@@ -158,10 +146,15 @@ indian-stock-sense/
 │   ├── utils/                # Utility functions
 │   └── cypress/              # E2E tests
 ├── docs/                     # Additional documentation
+├── .github/                  # GitHub configuration files
+│   ├── workflows/            # GitHub Actions workflows
+│   └── ISSUE_TEMPLATE/       # Issue templates
 ├── UPDATES.md                # Project updates and changelog
 ├── TESTING.md                # Testing documentation
 ├── fast-start.bat            # Quick start utility for Windows
-└── start.sh                  # Quick start utility for Unix/macOS
+├── start.sh                  # Quick start utility for Unix/macOS
+├── deploy-to-github.bat      # GitHub Pages deployment utility for Windows
+└── deploy-to-github.sh       # GitHub Pages deployment utility for Unix/macOS
 ```
 
 ## 🔧 Installation & Setup
@@ -212,27 +205,39 @@ NEXT_PUBLIC_APP_ENV=development
    # Install backend dependencies
    cd backend
    npm install
-
-   # Install frontend dependencies
-   cd ../frontend
-   npm install
    ```
 
-4. **Start the application manually**
+## 🚀 Deployment
+
+### GitHub Pages Deployment
+
+To deploy the application to GitHub Pages:
+
+1. **Update your repository settings**
+   - Go to your GitHub repository settings
+   - Navigate to "Pages" section
+   - Set source to "GitHub Actions"
+
+2. **Use the deployment utility**
    ```bash
-   # Using the start script
-   ./start.bat    # Windows
-   ./start.sh     # Unix/macOS
+   # On Windows
+   deploy-to-github.bat
    
-   # OR manually start each service
-   cd backend && npm run dev      # Terminal 1
-   cd frontend && npm run dev     # Terminal 2
+   # On Unix/macOS
+   ./deploy-to-github.sh
    ```
 
-5. **Access the application**
-   - Frontend: http://localhost:3001
-   - Backend API: http://localhost:5002/api
-   - API Documentation: http://localhost:5002/api-docs
+3. **Or deploy manually**
+   ```bash
+   # Push your changes to GitHub
+   git add .
+   git commit -m "Update for GitHub Pages deployment"
+   git push origin main
+   ```
+
+4. **Access your deployed site**
+   - Your site will be available at `https://[your-username].github.io/Stock-Sense/`
+   - For example: https://khushmevada1183.github.io/Stock-Sense/
 
 ## 📚 Documentation
 

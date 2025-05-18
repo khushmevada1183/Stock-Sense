@@ -1,0 +1,99 @@
+name: Dependency Scanning
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Run every Monday at 8:00 AM
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  scan-frontend:
+    name: Scan Frontend Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+      
+      - name: Run npm audit
+        working-directory: ./frontend
+        run: npm audit --json > frontend-audit.json || true
+      
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --all-projects --sarif-file-output=snyk-frontend.sarif
+          command: test
+          json: true
+      
+      - name: Upload scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-frontend.sarif
+          category: frontend-dependencies
+      
+      - name: Upload npm audit results
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-audit-results
+          path: frontend-audit.json
+          retention-days: 30
+
+  scan-backend:
+    name: Scan Backend Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+      
+      - name: Run npm audit
+        working-directory: ./backend
+        run: npm audit --json > backend-audit.json || true
+      
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --file=backend/package.json --sarif-file-output=snyk-backend.sarif
+          command: test
+          json: true
+      
+      - name: Upload scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: snyk-backend.sarif
+          category: backend-dependencies
+      
+      - name: Upload npm audit results
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-audit-results
+          path: backend-audit.json
+          retention-days: 30 
