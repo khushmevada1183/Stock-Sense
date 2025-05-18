@@ -195,7 +195,7 @@ export default function IpoSection() {
       <div className="bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-800">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold text-gray-100">Upcoming IPOs</h3>
-        </div>
+            </div>
         <div className="flex justify-center py-10">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -263,19 +263,19 @@ export default function IpoSection() {
                   data-minimal={ipo.hasMinimalData ? 'true' : 'false'}
                 >
                   <div className="flex items-center mb-4">
-                    {ipo.logo ? (
+                  {ipo.logo ? (
                       <div className="w-12 h-12 rounded-lg bg-gray-700 flex items-center justify-center overflow-hidden mr-3">
-                        <Image 
-                          src={ipo.logo} 
-                          alt={`${ipo.company_name} logo`} 
-                          width={48} 
-                          height={48} 
-                          className="object-contain" 
-                        />
-                      </div>
-                    ) : (
+                      <Image 
+                        src={ipo.logo} 
+                        alt={`${ipo.company_name} logo`} 
+                        width={48} 
+                        height={48} 
+                        className="object-contain" 
+                      />
+                    </div>
+                  ) : (
                       <div className="w-12 h-12 flex items-center justify-center bg-gray-700 rounded-lg mr-3 text-gray-200 font-bold text-xl">
-                        {ipo.symbol?.substring(0, 2) || ipo.company_name?.substring(0, 2) || 'IP'}
+                      {ipo.symbol?.substring(0, 2) || ipo.company_name?.substring(0, 2) || 'IP'}
                       </div>
                     )}
                     <div>
