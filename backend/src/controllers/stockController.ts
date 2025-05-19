@@ -30,7 +30,37 @@ export const stockController = {
         return res.json(createApiResponse('success', { results: [] }));
       }
       
-      const searchResults = await stockApiService.searchStocks(query);
+      // Use uppercase for better results with the API
+      const formattedQuery = query.toUpperCase();
+      console.log(`Searching for stock: ${formattedQuery}`);
+      
+      try {
+        // Try to get stock details directly
+        const stock = await stockApiService.getStockBySymbol(formattedQuery);
+        
+        if (stock) {
+          // Format the response as expected by the frontend
+          const formattedResult = {
+            results: [{
+              symbol: stock.symbol || formattedQuery,
+              companyName: stock.companyName || 'Unknown',
+              latestPrice: stock.currentPrice?.BSE || stock.currentPrice?.NSE || 0,
+              change: stock.percentChange?.change || 0,
+              changePercent: stock.percentChange?.percent_change || 0,
+              sector: stock.industry || stock.sector || ''
+            }]
+          };
+          
+          console.log(`Found stock data for ${formattedQuery}`);
+          return res.json(createApiResponse('success', formattedResult));
+        }
+      } catch (directError: any) {
+        console.error(`Error getting direct stock data for ${formattedQuery}:`, directError.message);
+        // Continue to search if direct lookup fails
+      }
+      
+      // Fall back to search API
+      const searchResults = await stockApiService.searchStocks(formattedQuery);
       return res.json(createApiResponse('success', searchResults));
     } catch (error) {
       return handleApiError(res, error, 'Failed to search stocks');

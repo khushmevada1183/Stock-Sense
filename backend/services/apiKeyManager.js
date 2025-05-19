@@ -18,7 +18,7 @@ class ApiKeyManager {
   constructor(configPath) {
     this.configPath = configPath || path.join(__dirname, '../config/api-keys.json');
     this.keys = [];
-    this.currentKeyIndex = 0;
+    this.currentKeyIndex = 2; // Start with the working key (index 2)
     this.loadKeys();
   }
 
@@ -62,6 +62,14 @@ class ApiKeyManager {
       // Check if we need to reset monthly counters
       this._checkMonthlyReset();
       
+      // Make sure the current key index is valid
+      if (this.currentKeyIndex >= this.keys.length) {
+        this.currentKeyIndex = 0;
+      }
+      
+      // Ensure we're starting with a working key
+      this._ensureWorkingKey();
+      
       console.log(`Loaded ${this.keys.length} API keys from config`);
     } catch (error) {
       console.error('Error loading API keys:', error);
@@ -79,6 +87,17 @@ class ApiKeyManager {
           lastErrorTimestamp: 0
         }
       ];
+    }
+  }
+
+  /**
+   * Ensure we're starting with a working key
+   * Try to use key at index 2 first, then rotate if needed
+   */
+  _ensureWorkingKey() {
+    // If the current key is not available, try to find an available one
+    if (!this.keys[this.currentKeyIndex] || !this.keys[this.currentKeyIndex].isAvailable) {
+      this.rotateToNextAvailableKey();
     }
   }
 

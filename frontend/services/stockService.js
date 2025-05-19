@@ -415,15 +415,30 @@ export const getPortfolioPerformance = async (portfolioId) => {
 // Get details for a specific stock using the direct API endpoint format
 export const getStockByName = async (name) => {
   try {
-    console.log(`Making API request to ${API_URL}/stock/${name}`);
-    // Use the API endpoint format that matches the documentation
-    const response = await axios.get(`${API_URL}/stock/${name}`);
+    console.log(`Making API request to ${API_URL}/stocks/search?query=${encodeURIComponent(name)}`);
+    // Use the correct API endpoint format
+    const response = await axios.get(`${API_URL}/stocks/search?query=${encodeURIComponent(name)}`);
     
     console.log('API Response status:', response.status);
     console.log('API Response data:', response.data);
     
     if (response.status === 200) {
-      return response.data.data || response.data;
+      // Check if we have data in the expected format
+      const responseData = response.data;
+      
+      if (responseData.data && Array.isArray(responseData.data) && responseData.data.length > 0) {
+        // Return the first match
+        return responseData.data[0];
+      } else if (responseData.results && Array.isArray(responseData.results) && responseData.results.length > 0) {
+        // Alternative format
+        return responseData.results[0];
+      } else if (Array.isArray(responseData) && responseData.length > 0) {
+        // Direct array format
+        return responseData[0];
+      } else {
+        // Return whatever we got
+        return responseData.data || responseData;
+      }
     } else {
       throw new Error(`Failed to fetch data for ${name}: ${response.statusText}`);
     }
