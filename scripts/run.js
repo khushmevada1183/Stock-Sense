@@ -38,7 +38,7 @@ function getLocalIpAddress() {
 // Configuration
 const config = {
   backend: {
-    dir: path.join(__dirname, 'backend'),
+    dir: path.join(__dirname, '..', 'backend'),
     command: 'npm',
     args: ['run', 'dev:simple'],
     name: 'BACKEND',
@@ -50,7 +50,7 @@ const config = {
     }
   },
   frontend: {
-    dir: path.join(__dirname, 'frontend'),
+    dir: path.join(__dirname, '..', 'frontend'),
     command: 'npm',
     args: ['run', 'dev', '--', '-p', frontendPort],
     name: 'FRONTEND',
@@ -163,4 +163,4 @@ setTimeout(() => {
   console.log(`${config.frontend.color}Frontend (Network)${resetColor}: http://${localIP}:${config.frontend.port}`);
   console.log(`${config.backend.color}Backend API${resetColor}: http://localhost:${config.backend.port}/api/health`);
   console.log('\nPress Ctrl+C to stop all services.\n');
-}, 3000); 
+}, 3000);

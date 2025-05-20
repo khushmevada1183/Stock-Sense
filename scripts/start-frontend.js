@@ -7,12 +7,14 @@ console.log('Using API URL:', process.env.NEXT_PUBLIC_API_URL);
 
 // Launch Next.js dev server with proper port
 const { spawn } = require('child_process');
-const nextProcess = spawn('npx', ['next', 'dev', '-p', '3005'], {
-  cwd: './frontend',
+const path = require('path');
+
+const nextProcess = spawn('npx', ['next', 'dev', '-p', process.env.PORT], {
+  cwd: path.join(__dirname, '..', 'frontend'),
   stdio: 'inherit',
   env: {
     ...process.env,
-    NEXT_PUBLIC_API_URL: 'http://localhost:5005/api'
+    NEXT_PUBLIC_API_URL: config.backend.env.CORS_ORIGIN + '/api'
   }
 });
 

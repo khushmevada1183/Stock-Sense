@@ -1,29 +1,11 @@
 {
   "keys": [
     {
-      "key": "YOUR_API_KEY_1",
-      "rateLimitResetTimestamp": 0,
-      "isAvailable": true,
-      "usageCount": 0,
-      "monthlyUsage": 0,
-      "lastMonthReset": "2025-05",
-      "lastErrorTimestamp": 1747594626939
-    },
-    {
-      "key": "YOUR_API_KEY_2",
-      "rateLimitResetTimestamp": 0,
-      "isAvailable": true,
-      "usageCount": 0,
-      "monthlyUsage": 0,
-      "lastMonthReset": "2025-05",
-      "lastErrorTimestamp": 0
-    },
-    {
       "key": "sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67",
       "rateLimitResetTimestamp": 0,
       "isAvailable": true,
-      "usageCount": 17,
-      "monthlyUsage": 17,
+      "usageCount": 23,
+      "monthlyUsage": 23,
       "lastMonthReset": "2025-05",
       "lastErrorTimestamp": 0
     },

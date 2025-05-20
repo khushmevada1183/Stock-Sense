@@ -2,8 +2,10 @@
   "name": "indian-stock-sense",
   "version": "1.0.0",
   "description": "Full stack application for analyzing Indian stock market data",
-  "main": "run.js",  "scripts": {
-    "start": "node run.js",
+  "main": "scripts/run.js",
+  "scripts": {
+    "start": "node scripts/run.js",
+    "dev": "npm run backend & npm run frontend",
     "backend": "cd backend && npm run dev:simple",
     "frontend": "cd frontend && npm run dev",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
