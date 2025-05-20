@@ -10,6 +10,10 @@ const ScrollProgressIndicator = () => {
   const { isAnimationEnabled } = useAnimation();
   
   useEffect(() => {
+    console.log('ScrollProgressIndicator is rendering');
+  }, []);
+  
+  useEffect(() => {
     if (!isAnimationEnabled || !progressBarRef.current) return;
     
     // Setup scroll progress animation with enhanced options

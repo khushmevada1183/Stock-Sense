@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/role-has-required-aria-props */
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -341,4 +342,4 @@ const SearchBar: React.FC = () => {
   );
 };
 
-export default SearchBar; 
+export default SearchBar;

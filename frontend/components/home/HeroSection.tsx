@@ -13,7 +13,7 @@ export default function HeroSection() {
   
   // Testimonials data
   const testimonials = [
-    { name: "Rajesh M.", position: "Portfolio Manager", text: "Gained 27% returns in just 3 months using Stock Sense's AI predictions" },
+    { name: "Rajesh M.", position: "Portfolio Manager", text: "Gained 27% returns in just 3 months using Stock Sense&apos;s AI predictions" },
     { name: "Priya S.", position: "Retail Investor", text: "The real-time alerts helped me avoid a 15% market drop last quarter" },
     { name: "Vikram J.", position: "Financial Advisor", text: "My clients have seen an average 31% improvement in portfolio performance" }
   ];
@@ -277,4 +277,4 @@ export default function HeroSection() {
       </div>
     </section>
   );
-} 
+}

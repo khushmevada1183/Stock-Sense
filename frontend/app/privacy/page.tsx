@@ -201,7 +201,7 @@ export default function PrivacyPage() {
             </p>
             <div className="flex items-center justify-center mb-4">
               <Clock className="w-5 h-5 mr-2 text-amber-500" />
-              <span className="text-sm text-amber-500">All retention periods start from last account activity</span>
+              <span className="text-sm text-amber-500">All retention periods start from last account activity.</span>
             </div>
           </div>
           <div className="h-72">

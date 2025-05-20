@@ -1,6 +1,42 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
 import { ApiResponse } from './types';
 
+// Import API config for key rotation
+import { API_CONFIG } from '../config';
+
+// API Key rotation state
+let currentKeyIndex = 0;
+let consecutiveFailures = 0;
+let lastKeyRotation = Date.now();
+
+// Get current API key from the rotation pool
+const getCurrentApiKey = (): string => {
+  if (!API_CONFIG.API_KEYS || API_CONFIG.API_KEYS.length === 0) {
+    return API_CONFIG.API_KEY; // Fallback to single key if no pool
+  }
+  return API_CONFIG.API_KEYS[currentKeyIndex];
+};
+
+// Rotate to the next API key in the pool
+const rotateApiKey = (reason = 'manual'): boolean => {
+  if (!API_CONFIG.API_KEYS || API_CONFIG.API_KEYS.length <= 1) {
+    console.warn('API key rotation not possible: Insufficient keys in pool');
+    return false;
+  }
+  
+  const oldIndex = currentKeyIndex;
+  
+  // Move to next key in rotation
+  currentKeyIndex = (currentKeyIndex + 1) % API_CONFIG.API_KEYS.length;
+  
+  // Reset consecutive failures counter
+  consecutiveFailures = 0;
+  lastKeyRotation = Date.now();
+  
+  console.log(`API key rotated (reason: ${reason}). Key index changed from ${oldIndex} to ${currentKeyIndex}`);
+  return true;
+};
+
 /**
  * Cache item interface
  */
@@ -48,7 +84,8 @@ export class ApiClient {
     // Add API key to headers if provided
     if (options.apiKey) {
       if (this.isIndianApi) {
-        headers['X-Api-Key'] = options.apiKey;
+        // Use key rotation system for Indian API
+        headers['X-Api-Key'] = getCurrentApiKey();
       } else {
         headers['Authorization'] = `Bearer ${options.apiKey}`;
       }
@@ -104,11 +141,35 @@ export class ApiClient {
       }
     );
     
-    // Add response interceptor for error handling
+    // Add response interceptor for error handling and key rotation
     this.api.interceptors.response.use(
       (response) => response,
       (error) => {
         this.handleApiError(error);
+        
+        // Handle rate limiting with automatic key rotation
+        if (error.response && error.response.status === 429 && this.isIndianApi) {
+          // Try to rotate to the next API key
+          const rotated = rotateApiKey('rate_limit');
+          if (rotated) {
+            console.log('Rotating API key due to rate limit (429)');
+            
+            // Update the API key in the headers
+            this.api.defaults.headers['X-Api-Key'] = getCurrentApiKey();
+            
+            // Clone the original request with the new API key
+            const originalRequest = error.config;
+            originalRequest.headers['X-Api-Key'] = getCurrentApiKey();
+            
+            // Return a new promise to retry the request
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve(this.api(originalRequest));
+              }, 1000); // 1 second delay before retry
+            });
+          }
+        }
+        
         return Promise.reject(error);
       }
     );

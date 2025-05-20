@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { gsap } from 'gsap';

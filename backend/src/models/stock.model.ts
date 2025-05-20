@@ -137,12 +137,12 @@ class StockModel {
     // Add search filter if provided
     if (searchQuery) {
       query += ` AND (
-        s.symbol ILIKE $${paramIndex} OR
-        s.company_name ILIKE $${paramIndex}
+        LOWER(s.symbol) LIKE LOWER($${paramIndex}) OR
+        LOWER(s.company_name) LIKE LOWER($${paramIndex})
       )`;
       countQuery += ` AND (
-        s.symbol ILIKE $${paramIndex} OR
-        s.company_name ILIKE $${paramIndex}
+        LOWER(s.symbol) LIKE LOWER($${paramIndex}) OR
+        LOWER(s.company_name) LIKE LOWER($${paramIndex})
       )`;
       values.push(`%${searchQuery}%`);
       paramIndex++;
@@ -237,7 +237,7 @@ class StockModel {
   async delete(id: number): Promise<boolean> {
     const query = 'DELETE FROM stocks WHERE id = $1';
     const result = await pool.query(query, [id]);
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 }
 

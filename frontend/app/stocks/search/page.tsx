@@ -177,10 +177,10 @@ export default function StockSearchPage() {
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-4">No Results Found</h2>
           <p className="text-gray-600 dark:text-gray-400">
-            We couldn't find any stocks matching "{searchQuery}". Please try a different search term.
+            We couldn&apos;t find any stocks matching &quot;{searchQuery}&quot;. Please try a different search term.
           </p>
         </div>
       )}
     </div>
   );
-} 
+}

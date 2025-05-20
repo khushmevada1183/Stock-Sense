@@ -16,8 +16,9 @@ function parseArgs() {
 }
 
 const cmdArgs = parseArgs();
-const backendPort = cmdArgs['backend-port'] || 5002;
-const frontendPort = cmdArgs['frontend-port'] || 3001;
+// Use different ports to avoid conflicts
+const backendPort = cmdArgs['backend-port'] || 5005; // Using port 5005 for backend
+const frontendPort = cmdArgs['frontend-port'] || 3005; // Using port 3005 for frontend
 
 // Get the local IP address
 function getLocalIpAddress() {
@@ -41,8 +42,12 @@ const config = {
     command: 'npm',
     args: ['run', 'dev:simple'],
     name: 'BACKEND',
-    color: '\x1b[36m', // Cyan
-    port: backendPort
+    color: '\x1b[36m', // Cyan    port: backendPort,
+    env: {
+      PORT: backendPort,
+      CORS_ORIGIN: `http://localhost:${frontendPort}`,
+      STOCK_API_KEY: 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq'
+    }
   },
   frontend: {
     dir: path.join(__dirname, 'frontend'),

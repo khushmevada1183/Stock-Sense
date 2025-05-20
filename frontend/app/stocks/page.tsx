@@ -477,7 +477,7 @@ export default function StocksIndexPage() {
             <Card className="bg-gray-800 border-gray-700">
               <CardHeader className="pb-2">
                 <CardTitle className="text-white">Gainers vs Losers</CardTitle>
-                <CardDescription className="text-gray-400">Today's market movement</CardDescription>
+                <CardDescription className="text-gray-400">Today&apos;s market movement</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="chart-container h-44">

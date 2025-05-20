@@ -18,7 +18,7 @@ try {
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 5002;
+const PORT = process.env.PORT || 5005; // Changed default to 5005
 
 // Log port value for debugging
 console.log(`Server configured to use port: ${PORT}`);

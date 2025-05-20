@@ -9,15 +9,14 @@ import * as PortfolioAPI from './api/portfolio';
 import { ApiClient } from './api/client';
 
 // Get primary API client (for backward compatibility)
-function getApiClient(): ApiClient {
-  // Get API URL from environment variables or localStorage
+function getApiClient(): ApiClient {  // Get API URL from environment variables or localStorage
   let apiUrl = '';
   
   if (typeof window !== 'undefined') {
     apiUrl = localStorage.getItem('api_url') || 
-            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+            process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005/api';
   } else {
-    apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+    apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005/api';
   }
 
   return new ApiClient({

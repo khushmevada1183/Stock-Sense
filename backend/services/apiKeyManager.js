@@ -18,7 +18,7 @@ class ApiKeyManager {
   constructor(configPath) {
     this.configPath = configPath || path.join(__dirname, '../config/api-keys.json');
     this.keys = [];
-    this.currentKeyIndex = 2; // Start with the working key (index 2)
+    this.currentKeyIndex = 0; // Start with the first key and find a working one
     this.loadKeys();
   }
 
@@ -56,6 +56,26 @@ class ApiKeyManager {
       const config = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
       this.keys = config.keys;
 
+      // Filter out placeholder keys that start with "YOUR_API_KEY"
+      this.keys = this.keys.filter(k => !k.key.startsWith('YOUR_API_KEY'));
+      
+      // Check if we have any keys left
+      if (this.keys.length === 0) {
+        console.warn('No valid API keys found in config. Using environment variable as fallback.');
+        const defaultKey = process.env.INDIAN_API_KEY || '';
+        this.keys = [
+          {
+            key: defaultKey,
+            rateLimitResetTimestamp: 0,
+            isAvailable: true,
+            usageCount: 0,
+            monthlyUsage: 0,
+            lastMonthReset: new Date().toISOString().substring(0, 7),
+            lastErrorTimestamp: 0
+          }
+        ];
+      }
+
       // Update availability status based on current time
       this._refreshKeyAvailability();
       
@@ -67,10 +87,12 @@ class ApiKeyManager {
         this.currentKeyIndex = 0;
       }
       
+      // Log available keys count
+      console.log(`Loaded ${this.keys.length} API keys from config`);
+      console.log(`${this.keys.filter(k => k.isAvailable && k.monthlyUsage < MONTHLY_REQUEST_LIMIT).length} keys are available for use`);
+      
       // Ensure we're starting with a working key
       this._ensureWorkingKey();
-      
-      console.log(`Loaded ${this.keys.length} API keys from config`);
     } catch (error) {
       console.error('Error loading API keys:', error);
       

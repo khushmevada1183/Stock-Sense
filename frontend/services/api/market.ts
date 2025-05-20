@@ -1,5 +1,6 @@
 import { ApiClient } from './client';
 import { MarketIndex, StockDetails } from './types';
+import { API_CONFIG } from '../config';
 
 // Get the standard API client
 function getApiClient(): ApiClient {
@@ -22,14 +23,15 @@ function getApiClient(): ApiClient {
 
 // Get the Indian API client
 function getIndianApiClient(): ApiClient {
-  const API_KEY = process.env.NEXT_PUBLIC_INDIAN_API_KEY || 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq';
-  const BASE_URL = process.env.NEXT_PUBLIC_INDIAN_API_URL || 'https://stock.indianapi.in';
+  // Use the API_CONFIG instead of hardcoded values
+  const API_KEY = API_CONFIG.API_KEY;
+  const BASE_URL = API_CONFIG.BASE_URL || 'https://stock.indianapi.in';
   
   return new ApiClient({
     baseURL: BASE_URL,
-    apiKey: API_KEY,
-    timeout: 10000,
-    cacheTTL: 5 * 60 * 1000 // 5 minutes
+    apiKey: API_KEY, // This will use the API key rotation system via client.ts
+    timeout: API_CONFIG.TIMEOUT || 10000,
+    cacheTTL: API_CONFIG.CACHE_DURATION || 5 * 60 * 1000 // 5 minutes
   });
 }
 

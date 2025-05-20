@@ -512,4 +512,6 @@ export default {
   createPageTransitions,
   createHeaderScrollAnimation,
   createScrollProgressAnimation
-}; 
+};
+
+// No need to re-export - the function is already exported above 

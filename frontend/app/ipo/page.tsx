@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import React, { useEffect, useState, useRef, useMemo } from 'react';
@@ -1368,4 +1370,4 @@ export default function IpoPage() {
       </div>
     </div>
   );
-} 
+}

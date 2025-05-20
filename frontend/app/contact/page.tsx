@@ -118,7 +118,7 @@ export default function ContactPage() {
                 <CheckCircle className="h-12 w-12 text-neon-400 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-white mb-2">Thank You!</h3>
                 <p className="text-gray-300">
-                  Your message has been sent successfully. We'll get back to you as soon as possible.
+                  Your message has been sent successfully. We&apos;ll get back to you as soon as possible.
             </p>
                 <button 
                   onClick={() => setFormSubmitted(false)} 

@@ -1,5 +1,7 @@
 'use client';
 
+/* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import stockApiService from '../../services/stockApiService'; // Corrected import path

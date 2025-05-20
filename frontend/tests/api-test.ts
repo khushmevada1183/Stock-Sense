@@ -232,9 +232,9 @@ async function testIpoApi(): Promise<void> {
     logInfo('Testing getIpoData...');
     try {
       const ipos = await IpoAPI.getIpoData();
-      logSuccess(`getIpoData returned ${ipos.length} IPOs`);
-      if (CONFIG.verbose && ipos.length > 0) {
-        console.log('First IPO:', ipos[0]);
+      logSuccess(`getIpoData returned ${ipos.ipoData.length} IPOs`);
+      if (CONFIG.verbose && ipos.ipoData.length > 0) {
+        console.log('First IPO:', ipos.ipoData[0]);
       }
     } catch (error) {
       logError('getIpoData failed', error);
@@ -268,9 +268,9 @@ async function testNewsApi(): Promise<void> {
     logInfo('Testing getMarketNews...');
     try {
       const news = await NewsAPI.getMarketNews(5);
-      logSuccess(`getMarketNews returned ${news.length} news items`);
-      if (CONFIG.verbose && news.length > 0) {
-        console.log('First news item:', news[0]);
+      logSuccess(`getMarketNews returned ${news.news.length} news items`);
+      if (CONFIG.verbose && news.news.length > 0) {
+        console.log('First news item:', news.news[0]);
       }
     } catch (error) {
       logError('getMarketNews failed', error);
@@ -280,9 +280,9 @@ async function testNewsApi(): Promise<void> {
     logInfo('Testing getStockNews...');
     try {
       const stockNews = await NewsAPI.getStockNews(CONFIG.stockSymbol, 3);
-      logSuccess(`getStockNews for ${CONFIG.stockSymbol} returned ${stockNews.length} news items`);
-      if (CONFIG.verbose && stockNews.length > 0) {
-        console.log('First stock news item:', stockNews[0]);
+      logSuccess(`getStockNews for ${CONFIG.stockSymbol} returned ${stockNews.news.length} news items`);
+      if (CONFIG.verbose && stockNews.news.length > 0) {
+        console.log('First stock news item:', stockNews.news[0]);
       }
     } catch (error) {
       logError(`getStockNews for ${CONFIG.stockSymbol} failed`, error);
@@ -292,9 +292,9 @@ async function testNewsApi(): Promise<void> {
     logInfo('Testing searchNews...');
     try {
       const searchResults = await NewsAPI.searchNews('market');
-      logSuccess(`searchNews returned ${searchResults.length} results`);
-      if (CONFIG.verbose && searchResults.length > 0) {
-        console.log('First search result:', searchResults[0]);
+      logSuccess(`searchNews returned ${searchResults.news.length} results`);
+      if (CONFIG.verbose && searchResults.news.length > 0) {
+        console.log('First search result:', searchResults.news[0]);
       }
     } catch (error) {
       logError('searchNews failed', error);

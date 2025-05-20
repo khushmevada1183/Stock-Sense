@@ -41,7 +41,7 @@ export default function MarketsNewsPageClient() {
           <section>
             <h2 className="text-xl font-bold mb-4 flex items-center">
               <span className="inline-block w-1.5 h-6 bg-green-500 rounded-sm mr-2"></span>
-              Today's Market Updates
+              Today&apos;s Market Updates
             </h2>
             <MarketNews />
           </section>

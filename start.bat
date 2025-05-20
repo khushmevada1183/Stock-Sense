@@ -12,14 +12,18 @@ ECHO.
 ECHO Starting application from: %CD%
 ECHO.
 
-REM Stop any existing processes using ports 5002 and 3001
+REM Stop any existing processes using ports
 ECHO Stopping any existing processes on ports...
-FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :5001') DO (
-    ECHO Stopping process on port 5001 (PID: %%P)
+FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :3005') DO (
+    ECHO Stopping process on port 3005 (frontend) (PID: %%P)
     taskkill /F /PID %%P 2>NUL
 )
-FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :5002') DO (
-    ECHO Stopping process on port 5002 (PID: %%P)
+FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :5005') DO (
+    ECHO Stopping process on port 5005 (backend) (PID: %%P)
+    taskkill /F /PID %%P 2>NUL
+)
+FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :5005') DO (
+    ECHO Stopping process on port 5005 (PID: %%P)
     taskkill /F /PID %%P 2>NUL
 )
 FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :3000') DO (
@@ -28,6 +32,18 @@ FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :3000') DO (
 )
 FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :3001') DO (
     ECHO Stopping process on port 3001 (PID: %%P)
+    taskkill /F /PID %%P 2>NUL
+)
+FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :3002') DO (
+    ECHO Stopping process on port 3002 (PID: %%P)
+    taskkill /F /PID %%P 2>NUL
+)
+FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :3003') DO (
+    ECHO Stopping process on port 3003 (PID: %%P)
+    taskkill /F /PID %%P 2>NUL
+)
+FOR /F "tokens=5" %%P IN ('netstat -ano ^| findstr :3005') DO (
+    ECHO Stopping process on port 3005 (PID: %%P)
     taskkill /F /PID %%P 2>NUL
 )
 
@@ -44,16 +60,29 @@ REM Return to root directory
 cd /d "%SCRIPT_DIR%"
 
 REM Set environment variables for different ports
-set PORT=5002
-set FRONTEND_PORT=3001
-set NEXT_PUBLIC_API_URL=http://localhost:5002/api
+set PORT=5005
+set FRONTEND_PORT=3005
+set STOCK_API_KEY=sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq
+set NEXT_PUBLIC_API_URL=http://localhost:5005/api
 
 ECHO Running application with:
 ECHO - Backend on port %PORT%
 ECHO - Frontend on port %FRONTEND_PORT%
 ECHO.
 
-REM Run the application with custom ports
-node run.js --backend-port=%PORT% --frontend-port=%FRONTEND_PORT%
+ECHO ======================================
+ECHO STOCK-SENSE STARTER
+ECHO ======================================
+ECHO Starting backend server...
+start cmd /k "cd %~dp0 && set PORT=5005 && set STOCK_API_KEY=sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq && node start-backend.js"
+ECHO Starting frontend server...
+timeout /t 3 /nobreak > nul
+start cmd /k "cd %~dp0 && set NEXT_PUBLIC_API_URL=http://localhost:5005/api && node start-frontend.js"
 
-PAUSE 
+ECHO.
+ECHO Backend: http://localhost:5005/api/health
+ECHO Frontend: http://localhost:3005
+ECHO.
+ECHO Press Ctrl+C in the server windows to stop.
+
+PAUSE

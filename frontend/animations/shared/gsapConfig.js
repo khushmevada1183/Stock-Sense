@@ -100,9 +100,14 @@ export const cleanupGSAP = (component) => {
 // Initialize GSAP 
 export const initGSAP = () => {
   // Reset ScrollTrigger on window resize for responsive support
-  ScrollTrigger.addEventListener("refreshInit", () => {
-    ScrollTrigger.refresh();
-  });
+  // Ensure ScrollTrigger is initialized before calling refresh
+  if (ScrollTrigger) {
+    ScrollTrigger.addEventListener("refreshInit", () => {
+      ScrollTrigger.refresh();
+    });
+  } else {
+    console.warn("ScrollTrigger is not initialized. Skipping refresh.");
+  }
 
   // Setup any global GSAP defaults here
   gsap.defaults({
@@ -182,4 +187,4 @@ export default {
   cleanupGSAP,
   initGSAP,
   createMagneticEffect
-}; 
+};

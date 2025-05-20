@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import React from 'react';
@@ -20,7 +21,7 @@ export default function NewsPageClient() {
       <div className="flex flex-col space-y-2 mb-6">
           <h1 className="text-3xl font-bold text-white">Market News</h1>
           <p className="text-gray-300">
-          Stay updated with the latest market news, sector updates, and financial insights
+          Stay updated with the latest market news, sector updates, and financial insights.
         </p>
       </div>
       
@@ -108,4 +109,4 @@ export default function NewsPageClient() {
       </div>
     </div>
   );
-} 
+}

@@ -73,7 +73,7 @@ const WatchlistSection = ({ watchlist, loading }: WatchlistSectionProps) => {
       
       {watchlist.length === 0 ? (
         <div className="py-8 text-center">
-          <p className="text-gray-500 dark:text-gray-400 mb-4">You haven't added any stocks to your watchlist yet.</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">You haven&apos;t added any stocks to your watchlist yet.</p>
           <Link
             href="/stocks"
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
@@ -141,4 +141,4 @@ const WatchlistSection = ({ watchlist, loading }: WatchlistSectionProps) => {
   );
 };
 
-export default WatchlistSection; 
+export default WatchlistSection;
