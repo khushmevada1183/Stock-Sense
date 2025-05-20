@@ -42,7 +42,8 @@ const config = {
     command: 'npm',
     args: ['run', 'dev:simple'],
     name: 'BACKEND',
-    color: '\x1b[36m', // Cyan    port: backendPort,
+    color: '\x1b[36m', // Cyan
+    port: backendPort,
     env: {
       PORT: backendPort,
       CORS_ORIGIN: `http://localhost:${frontendPort}`,
