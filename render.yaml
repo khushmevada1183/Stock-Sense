@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: stock-sense
+    env: node
+    buildCommand: npm install && node build.js
+    startCommand: chmod +x deploy.sh && ./deploy.sh
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BACKEND_PORT
+        value: 5005
+      - key: FRONTEND_PORT
+        value: 3000
+      - key: CORS_ORIGIN
+        value: "*"
+      - key: STOCK_API_KEY
+        sync: false # This requires you to manually set it in the Render dashboard 

@@ -8,6 +8,7 @@ const stockApiService = require('./services/stockApi');
 const indianApiRoutes = require('./routes/indianApiRoutes');
 const apiKeyRoutes = require('./routes/apiKeyRoutes');
 const apiKeyManager = require('./services/apiKeyManager');
+const fs = require('fs');
 
 // Load environment variables if .env exists
 try {
@@ -682,8 +683,60 @@ app.use('/api/indian', indianApiRoutes);
 
 // Serve the frontend static export
 app.use(express.static(path.join(__dirname, '../frontend/out')));
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/out/index.html'));
+app.get('*', (req, res, next) => {
+  try {
+    // First check if the file exists in the frontend/out directory
+    const indexPath = path.join(__dirname, '../frontend/out/index.html');
+    if (fs.existsSync(indexPath)) {
+      return res.sendFile(indexPath);
+    }
+    
+    // Fall back to serving the API
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    
+    // For other routes, return a simple HTML response as a fallback
+    return res.send(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Stock Sense API</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 40px;
+              line-height: 1.6;
+              color: #333;
+            }
+            h1 {
+              color: #0070f3;
+            }
+            .container {
+              max-width: 800px;
+              margin: 0 auto;
+            }
+            code {
+              background: #f4f4f4;
+              padding: 2px 4px;
+              border-radius: 4px;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Stock Sense API</h1>
+            <p>The API is up and running. Frontend may still be building.</p>
+            <p>API endpoints available at <code>/api/...</code></p>
+            <p>Health check: <a href="/api/health">/api/health</a></p>
+          </div>
+        </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Error serving static files:', err);
+    next();
+  }
 });
 
 // Error handling middleware

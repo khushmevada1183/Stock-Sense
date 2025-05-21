@@ -16,9 +16,26 @@ function parseArgs() {
 }
 
 const cmdArgs = parseArgs();
+
+// For cloud deployments like Render, respect their PORT environment variable
+const isCloudDeployment = process.env.RENDER || process.env.VERCEL || process.env.HEROKU;
+
 // Determine ports: use flags, then environment, then defaults
-const backendPort = parseInt(cmdArgs['backend-port'], 10) || parseInt(process.env.BACKEND_PORT, 10) || 5005;
-const frontendPort = parseInt(cmdArgs['frontend-port'], 10) || parseInt(process.env.PORT, 10) || 3005;
+// For cloud deployments, prefer the provider's PORT for the backend
+let backendPort, frontendPort;
+
+if (isCloudDeployment) {
+  // In cloud environments, the provider's PORT should be used for the backend
+  backendPort = parseInt(process.env.PORT, 10) || 5005;
+  // For frontend in development mode only (usually not used in cloud)
+  frontendPort = parseInt(process.env.FRONTEND_PORT, 10) || 10000;
+} else {
+  // Local development
+  backendPort = parseInt(cmdArgs['backend-port'], 10) || parseInt(process.env.BACKEND_PORT, 10) || 5005;
+  frontendPort = parseInt(cmdArgs['frontend-port'], 10) || parseInt(process.env.FRONTEND_PORT, 10) || 3005;
+}
+
+console.log(`Using backend port: ${backendPort}, frontend port: ${frontendPort}`);
 
 // Get the local IP address
 function getLocalIpAddress() {
