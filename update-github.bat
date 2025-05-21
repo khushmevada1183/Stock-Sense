@@ -9,14 +9,14 @@ git add .
 
 REM Commit changes with a meaningful message
 echo Committing changes...
-git commit -m "Fix API key rotation system and improve server reliability
+git commit -m "Fix deployment and Docker configuration issues
 
-- Enhanced API key rotation system to handle rate limiting properly
-- Added diagnostics endpoint for API key status monitoring
-- Updated server.js to use apiKeyManager for all API calls
-- Added testing script for API key rotation verification
-- Improved error handling for Missing API key errors
-- Added Docker and deployment configurations"
+- Fixed case sensitivity in NavigationAnimations imports
+- Updated render.yaml for monolithic deployment
+- Enhanced run.js to better handle frontend builds
+- Fixed API URL configuration for frontend-backend communication
+- Updated Docker configuration for reliable builds
+- Added comprehensive deployment documentation"
 
 REM Push to GitHub
 echo Pushing changes to GitHub...
