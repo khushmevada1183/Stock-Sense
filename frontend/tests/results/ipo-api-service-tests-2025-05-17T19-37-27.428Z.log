@@ -1,0 +1,37 @@
+Loaded API config successfully
+======================================
+IPO API SERVICE INTEGRATION TEST
+======================================
+
+=== Testing API Connection ===
+Using API key: sk-live-...lW67
+Connecting to API...
+Using mock IPO service
+✓ API should return data
+✓ Response should be an object
+✓ Response should have statistics object
+✓ Statistics should have upcoming count
+✓ Statistics should have active count
+✓ Statistics should have recentlyListed count
+✓ Response should have upcomingIPOs array
+✓ Response should have activeIPOs array
+✓ Response should have recentlyListedIPOs array
+Validating sample IPO item: MOCKIPO
+✓ IPO item should have symbol or name
+✓ IPO should have valid listing gain format
+  Listing gain value: 0.15
+  Formatted gain: 15.00%
+Statistics:
+        - Upcoming IPOs: 5
+        - Active IPOs: 3
+        - Recently Listed IPOs: 10
+      
+
+=== Skipping Rate Limit Tests ===
+Set TEST_RATE_LIMITS=true to enable this test
+
+=== Test Summary ===
+API connection test: PASSED
+Rate limit test: SKIPPED
+Overall: PASSED
+Could not load IPO service, using mock implementation: Cannot find module 'C:\Users\khush\Desktop\extra\New folder (2)\stock-analyzer\frontend\services\config' imported from C:\Users\khush\Desktop\extra\New folder (2)\stock-analyzer\frontend\services\api\ipoService.js

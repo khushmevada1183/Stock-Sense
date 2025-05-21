@@ -1,0 +1,31 @@
+# These owners will be the default owners for everything in the repo.
+# Unless a later match takes precedence, they will be requested for
+# review when someone opens a pull request.
+* @khushmevada
+
+# Frontend code ownership
+/frontend/ @khushmevada
+/frontend/components/ @khushmevada
+/frontend/app/ @khushmevada
+
+# Backend code ownership
+/backend/ @khushmevada
+/backend/src/ @khushmevada
+/backend/src/controllers/ @khushmevada
+/backend/src/services/ @khushmevada
+
+# API routes
+/backend/src/routes/ @khushmevada
+/frontend/app/api/ @khushmevada
+
+# Documentation
+/docs/ @khushmevada
+*.md @khushmevada
+
+# Testing
+/frontend/tests/ @khushmevada
+/backend/tests/ @khushmevada
+/frontend/cypress/ @khushmevada
+
+# GitHub Actions workflows
+/.github/workflows/ @khushmevada 
