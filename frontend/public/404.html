@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Stock Sense - Page Not Found</title>
+  <script>
+    // Single Page App Redirect for GitHub Pages
+    // Handles client-side routing with Next.js
+    (function() {
+      // Check if on GitHub Pages
+      var isGitHubPages = window.location.hostname.includes('github.io');
+      var path = window.location.pathname;
+      var repo = '/stock-sense-build';
+
+      if (isGitHubPages && path.indexOf(repo) === 0) {
+        // Strip the repo name from the path
+        path = path.replace(repo, '');
+      }
+
+      var redirectTo = window.location.protocol + '//' + 
+                      window.location.hostname + 
+                      (isGitHubPages ? repo : '') + '/' +
+                      '?path=' + encodeURIComponent(path);
+
+      window.location.replace(redirectTo);
+    })();
+  </script>
+</head>
+<body>
+  <h1>404 - Page Not Found</h1>
+  <p>The page you're looking for doesn't exist or has been moved.</p>
+  <p>Redirecting you to the homepage...</p>
+</body>
+</html> 

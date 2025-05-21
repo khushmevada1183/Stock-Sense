@@ -5,66 +5,44 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
 jobs:
-  build:
-    name: Build Frontend
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: "18"
+          node-version: 18
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      
-      - name: Install dependencies
-        working-directory: ./frontend
-        run: npm ci
-      
-      - name: Build with Next.js
-        working-directory: ./frontend
-        run: npm run build
-        env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'https://stock-sense-api.vercel.app' }}
-          NEXT_PUBLIC_BASE_PATH: '/Stock-Sense'
-      
-      - name: Static HTML export with Next.js
-        working-directory: ./frontend
-        run: npx next export
-      
-      - name: Add .nojekyll file
-        run: touch ./frontend/out/.nojekyll
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./frontend/out
+          cache-dependency-path: '**/package-lock.json'
 
-  deploy:
-    name: Deploy to GitHub Pages
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
+      - name: Install frontend dependencies
+        run: cd frontend && npm ci
+
+      - name: Set GitHub Pages environment
+        run: |
+          echo "NEXT_PUBLIC_API_URL=https://stock-sense.onrender.com/api" >> $GITHUB_ENV
+          echo "NODE_ENV=production" >> $GITHUB_ENV
+
+      - name: Build and export static files
+        run: cd frontend && npm run build:static
+
+      - name: Add .nojekyll file to prevent Jekyll processing
+        run: touch frontend/out/.nojekyll
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v3
+
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2 
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: frontend/out
+          branch: gh-pages 

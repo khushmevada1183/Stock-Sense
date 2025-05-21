@@ -15,6 +15,9 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  // Support GitHub Pages
+  basePath: process.env.NODE_ENV === 'production' ? '/stock-sense-build' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/stock-sense-build/' : '',
   // Using optimized webpack configuration for builds
   webpack: (config, { isServer }) => {
     // Optimize for memory efficiency
