@@ -68,13 +68,13 @@ export default function PrivacyPage() {
       if (section instanceof HTMLElement) {
         const children = Array.from(section.children);
         gsap.from(children, {
-          opacity: 0,
-          y: 15,
-          stagger: 0.1,
+        opacity: 0,
+        y: 15,
+        stagger: 0.1,
           duration: 0.7,
           ease: "power2.out",
           delay: 0.2 + (index * 0.1)
-        });
+      });
       }
     });
   }, []);

@@ -29,9 +29,9 @@ export default function ContactPage() {
     // Staggered sections animation
     sectionsRef.current.forEach((section, index) => {
       gsap.from(section, {
-        opacity: 0,
-        y: 30,
-        duration: 0.8,
+      opacity: 0,
+      y: 30,
+      duration: 0.8,
         delay: index * 0.2,
         ease: "power2.out"
       });
@@ -41,12 +41,12 @@ export default function ContactPage() {
     if (formRef.current) {
       const elements = formRef.current.querySelectorAll('input, textarea, button');
       gsap.from(elements, {
-        opacity: 0,
-        y: 20,
+      opacity: 0,
+      y: 20,
         stagger: 0.1,
-        duration: 0.6,
+      duration: 0.6,
         ease: "power2.out"
-      });
+    });
     }
   }, []);
 

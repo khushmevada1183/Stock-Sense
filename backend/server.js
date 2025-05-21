@@ -442,8 +442,8 @@ app.get('/api/stock/:symbol', async (req, res) => {
             console.warn('API key error detected. Marking as unavailable.');
             apiKeyManager.markCurrentKeyRateLimited(60);
           }
-        }
-        
+    }
+    
         // Handle invalid API keys (401)
         if (error.response.status === 401) {
           console.warn('Invalid API key. Marking as unavailable.');
@@ -452,7 +452,7 @@ app.get('/api/stock/:symbol', async (req, res) => {
       }
       
       console.error(`Error fetching stock ${cleanSymbol} from API:`, error.message);
-      
+        
       // Try our service function as fallback (which has its own caching)
       try {
         const stockData = await stockApiService.getStockBySymbol(cleanSymbol);
@@ -870,11 +870,11 @@ app.listen(PORT, () => {
   // Validate API connection on startup
   validateApiConnection().then(isValid => {
     if (isValid) {
-      console.log('✅ API connection validated successfully');
-    } else {
+    console.log('✅ API connection validated successfully');
+  } else {
       console.warn('⚠️ API connection validation failed. Some features may not work correctly.');
-    }
-  }); 
+  }
+}); 
 });
 
 // Export the app for testing

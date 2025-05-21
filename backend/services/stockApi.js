@@ -24,34 +24,34 @@ const createApiClient = (customHeaders = {}) => {
       let retries = 0;
       
       while (retries <= MAX_RETRIES) {
-        try {
+      try {
           // Get the current API key from the manager
           const API_KEY = apiKeyManager.getCurrentKey();
           
           // Debug log to see which API key is being used
           console.log(`Using API key: ${API_KEY.substring(0, 10)}... for request to ${endpoint}`);
         
-          console.log(`Making API request to: ${API_BASE_URL}${endpoint}`);
+        console.log(`Making API request to: ${API_BASE_URL}${endpoint}`);
         
-          // Set up request headers with API key
-          const headers = {
-            'Content-Type': 'application/json',
+        // Set up request headers with API key
+        const headers = {
+          'Content-Type': 'application/json',
             'X-Api-Key': API_KEY,
-            ...customHeaders
-          };
+          ...customHeaders
+        };
         
-          // Make the request with timeout
-          const response = await axios.get(`${API_BASE_URL}${endpoint}`, {
-            ...options,
-            headers,
-            timeout: 10000 // 10 second timeout
-          });
+        // Make the request with timeout
+        const response = await axios.get(`${API_BASE_URL}${endpoint}`, {
+          ...options,
+          headers,
+          timeout: 10000 // 10 second timeout
+        });
           
           // If successful, record the successful use
           apiKeyManager.recordSuccessfulUse();
         
-          return response;
-        } catch (error) {
+        return response;
+      } catch (error) {
           console.error(`API request failed for ${endpoint}:`, error.message);
           
           // Check if this is a rate limit error (HTTP 429)
@@ -87,9 +87,9 @@ const createApiClient = (customHeaders = {}) => {
             
             if (retries <= MAX_RETRIES) {
               await new Promise(resolve => setTimeout(resolve, 500));
-              continue;
-            }
-            
+            continue;
+          }
+          
             throw error; // Throw after max retries
           } else if (error.response && error.response.status === 400) {
             // Better handling for "Missing API key" error which is returned as 400 Bad Request
@@ -125,7 +125,7 @@ const createApiClient = (customHeaders = {}) => {
             console.error('Error response status:', error.response.status);
             console.error('Error response data:', JSON.stringify(error.response.data));
           }
-          throw error;
+        throw error;
         }
       }
     }

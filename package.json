@@ -14,7 +14,7 @@
     "build:backend": "cd backend && npm install && npm run build",
     "build:frontend": "cd frontend && npm install && npm run build",
     "export": "cd frontend && npm run export || echo 'Export not supported in newer Next.js versions'",
-    "build:all": "npm run build:frontend && npm run build:backend",
+    "build:all": "npm run build:backend && npm run build:frontend",
     "clean": "cd frontend && npm run clean && cd ../backend && rm -rf dist",
     "install:submodules": "cd backend && npm install && cd ../frontend && npm install",
     "postinstall": "npm run install:submodules",

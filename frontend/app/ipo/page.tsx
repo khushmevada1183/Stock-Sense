@@ -116,7 +116,7 @@ const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
   useEffect(() => {
     // Simplified hover effect without 3D transform
     const card = cardRef.current;
-    
+
     const mouseEnter = () => {
       if (!card) return;
       gsap.to(card, {
@@ -138,14 +138,14 @@ const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
     };
 
     if (card) {
-      card.addEventListener('mouseenter', mouseEnter);
-      card.addEventListener('mouseleave', mouseLeave);
+    card.addEventListener('mouseenter', mouseEnter);
+    card.addEventListener('mouseleave', mouseLeave);
     }
 
     return () => {
       if (card) {
-        card.removeEventListener('mouseenter', mouseEnter);
-        card.removeEventListener('mouseleave', mouseLeave);
+      card.removeEventListener('mouseenter', mouseEnter);
+      card.removeEventListener('mouseleave', mouseLeave);
       }
     };
   }, []);
@@ -161,29 +161,29 @@ const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
   };
 
   return (
-    <div
+    <div 
       ref={cardRef}
       className="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700"
     >
       <h3 className="text-xl font-semibold mb-4">{normalizedData.companyName}</h3>
       
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
+            <div>
           <p className="text-sm text-gray-400">Issue Size</p>
           <p className="font-medium">₹{normalizedData.issueSize.toLocaleString()}</p>
-        </div>
-        <div>
+            </div>
+            <div>
           <p className="text-sm text-gray-400">Issue Price</p>
           <p className="font-medium">₹{normalizedData.issuePrice}</p>
-        </div>
-      </div>
+            </div>
+            </div>
       
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <div>
+            <div>
           <p className="text-sm text-gray-400">Listing Date</p>
           <p className="font-medium">{normalizedData.listingDate}</p>
-        </div>
-        <div>
+            </div>
+            <div>
           <p className="text-sm text-gray-400">Listing Gain</p>
           <p className={`font-medium ${
             normalizedData.listingGainValue && normalizedData.listingGainValue > 0 
@@ -197,8 +197,8 @@ const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
               : 'N/A'
             }
           </p>
-        </div>
-      </div>
+              </div>
+            </div>
       
       <div className="mb-4">
         <p className="text-sm text-gray-400">Subscription Rate</p>
@@ -208,9 +208,9 @@ const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
               style={{ width: `${Math.min(normalizedData.subscriptionRate, 100)}%` }}
               className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
             ></div>
-          </div>
+            </div>
           <p className="text-sm mt-1">{normalizedData.subscriptionRate}x</p>
-        </div>
+            </div>
       </div>
       
       <div className="flex justify-between items-center">
@@ -373,49 +373,49 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
       </div>
     </div>
   );
-};
+  };
 
-// Convert API response data to IpoItem format
-const mapToIpoItem = (ipo: any): IpoItem => {
-  // Process and validate the IPO data to ensure it has all required fields
-  // Make sure we're working with a copy to avoid modifying the original
-  
-  // Validate that we have at least some basic data to work with
-  if (!ipo || (typeof ipo !== 'object')) {
-    console.warn('Received invalid IPO data, using fallback structure');
-    // Return a minimal valid structure with all required fields
-    return {
-      company_name: 'Data Unavailable',
-      symbol: 'N/A',
-      logo: null,
-      subscription_status: 'upcoming',
-      status: 'upcoming',
-      price_range: 'Price TBA',
-      issue_size: 'Size TBA',
-      issue_type: 'Book Built',
+  // Convert API response data to IpoItem format
+  const mapToIpoItem = (ipo: any): IpoItem => {
+    // Process and validate the IPO data to ensure it has all required fields
+    // Make sure we're working with a copy to avoid modifying the original
+    
+    // Validate that we have at least some basic data to work with
+    if (!ipo || (typeof ipo !== 'object')) {
+      console.warn('Received invalid IPO data, using fallback structure');
+      // Return a minimal valid structure with all required fields
+      return {
+        company_name: 'Data Unavailable',
+        symbol: 'N/A',
+        logo: null,
+        subscription_status: 'upcoming',
+        status: 'upcoming',
+        price_range: 'Price TBA',
+        issue_size: 'Size TBA',
+        issue_type: 'Book Built',
       min_price: undefined,
       max_price: undefined,
       open: undefined,
       close: undefined,
       listing_date: undefined,
-      is_sme: false,
+        is_sme: false,
       ipo_price: undefined,
       listing_price: undefined,
-      listing_gain: 'N/A',
+        listing_gain: 'N/A',
       listing_gains: undefined,
       document_url: undefined,
       rhpLink: undefined,
       drhpLink: undefined,
       additional_text: undefined
-    };
-  }
-  
-  // Helper function to format listing gain as percentage
-  const formatListingGain = (gain: any): string => {
-    if (gain === null || gain === undefined) return 'N/A';
+      };
+    }
     
-    // If it's already a formatted string with % sign
-    if (typeof gain === 'string' && gain.includes('%')) {
+    // Helper function to format listing gain as percentage
+    const formatListingGain = (gain: any): string => {
+      if (gain === null || gain === undefined) return 'N/A';
+      
+      // If it's already a formatted string with % sign
+      if (typeof gain === 'string' && gain.includes('%')) {
       // Extract the numeric value and format it to 3 decimal places
       const match = gain.match(/([-+]?)(\d+\.?\d*)/);
       if (match) {
@@ -423,120 +423,120 @@ const mapToIpoItem = (ipo: any): IpoItem => {
         const value = parseFloat(match[2]);
         return `${sign}${value.toFixed(3)}%`;
       }
-      return gain;
-    }
-    
-    // If it's a decimal value (API usually returns like -0.09 for -9%)
-    if (typeof gain === 'number') {
+        return gain;
+      }
+      
+      // If it's a decimal value (API usually returns like -0.09 for -9%)
+      if (typeof gain === 'number') {
       return `${(gain * 100).toFixed(3)}%`;
-    }
-    
-    // If it's a string number without % sign
-    if (typeof gain === 'string') {
-      const parsedValue = parseFloat(gain);
-      if (!isNaN(parsedValue)) {
-        // Check if it's already percentage or decimal
-        if (parsedValue > -1 && parsedValue < 1) {
-          // Decimal value (convert to percentage)
+      }
+      
+      // If it's a string number without % sign
+      if (typeof gain === 'string') {
+        const parsedValue = parseFloat(gain);
+        if (!isNaN(parsedValue)) {
+          // Check if it's already percentage or decimal
+          if (parsedValue > -1 && parsedValue < 1) {
+            // Decimal value (convert to percentage)
           return `${(parsedValue * 100).toFixed(3)}%`;
-        } else {
-          // Already percentage value
+          } else {
+            // Already percentage value
           return `${parsedValue.toFixed(3)}%`;
+          }
         }
       }
-    }
+      
+      return String(gain);
+    };
     
-    return String(gain);
-  };
-  
   // Update the processNumber function to return undefined instead of null
   const processNumber = (value: any): number | undefined => {
     if (value === null || value === undefined) return undefined;
-    
-    if (typeof value === 'number') return value;
-    
-    if (typeof value === 'string') {
-      // Remove currency symbols and commas
-      const cleanValue = value.replace(/[₹,]/g, '');
-      const parsed = parseFloat(cleanValue);
-      if (!isNaN(parsed)) return parsed;
-    }
-    
+      
+      if (typeof value === 'number') return value;
+      
+      if (typeof value === 'string') {
+        // Remove currency symbols and commas
+        const cleanValue = value.replace(/[₹,]/g, '');
+        const parsed = parseFloat(cleanValue);
+        if (!isNaN(parsed)) return parsed;
+      }
+      
     return undefined;
-  };
-  
-  // Format price range to ensure it's not just zeros
-  const formatPriceRange = (min: any, max: any, existing: any): string => {
-    if (existing) return existing;
+    };
     
-    const minPrice = processNumber(min);
-    const maxPrice = processNumber(max);
-    
+    // Format price range to ensure it's not just zeros
+    const formatPriceRange = (min: any, max: any, existing: any): string => {
+      if (existing) return existing;
+      
+      const minPrice = processNumber(min);
+      const maxPrice = processNumber(max);
+      
     if (minPrice !== undefined && maxPrice !== undefined) {
-      if (minPrice === 0 && maxPrice === 0) return 'Price TBA';
-      if (minPrice > 0 && maxPrice > 0) return `₹${minPrice} - ₹${maxPrice}`;
-    }
+        if (minPrice === 0 && maxPrice === 0) return 'Price TBA';
+        if (minPrice > 0 && maxPrice > 0) return `₹${minPrice} - ₹${maxPrice}`;
+      }
+      
+      return 'Price TBA';
+    };
     
-    return 'Price TBA';
-  };
-  
-  const processedIpo: IpoItem = {
-    // Basic fields - API uses 'name' instead of 'company_name'
-    company_name: ipo.company_name || ipo.name || 'Unknown Company',
-    name: ipo.name || ipo.company_name, // Keep original name field
-    
-    // Symbol is required
-    symbol: ipo.symbol || 'N/A',
-    
-    // Logo is optional
-    logo: ipo.logo || null,
-    
-    // Status fields - critical for UI display
-    subscription_status: ipo.subscription_status || ipo.status || 'upcoming',
-    status: ipo.status || ipo.subscription_status || 'upcoming',
-    
-    // Price fields - ensure we have valid numbers or clear indicators
-    price_range: formatPriceRange(ipo.min_price, ipo.max_price, ipo.price_range),
-    ipo_price: ipo.ipo_price || (processNumber(ipo.issue_price) ? `₹${ipo.issue_price}` : undefined),
-    issue_price: processNumber(ipo.issue_price), // Keep as number for calculations
-    
-    // Listing data - API uses 'listing_gains' as decimal (like -0.09 for -9%)
-    listing_price: processNumber(ipo.listing_price),
-    listing_gain: ipo.listing_gain || formatListingGain(ipo.listing_gains),
-    listing_gains: ipo.listing_gains, // Keep original decimal value
-    
-    // Date fields - ensure we have clear indicators for missing dates
+    const processedIpo: IpoItem = {
+      // Basic fields - API uses 'name' instead of 'company_name'
+      company_name: ipo.company_name || ipo.name || 'Unknown Company',
+      name: ipo.name || ipo.company_name, // Keep original name field
+      
+      // Symbol is required
+      symbol: ipo.symbol || 'N/A',
+      
+      // Logo is optional
+      logo: ipo.logo || null,
+      
+      // Status fields - critical for UI display
+      subscription_status: ipo.subscription_status || ipo.status || 'upcoming',
+      status: ipo.status || ipo.subscription_status || 'upcoming',
+      
+      // Price fields - ensure we have valid numbers or clear indicators
+      price_range: formatPriceRange(ipo.min_price, ipo.max_price, ipo.price_range),
+      ipo_price: ipo.ipo_price || (processNumber(ipo.issue_price) ? `₹${ipo.issue_price}` : undefined),
+      issue_price: processNumber(ipo.issue_price), // Keep as number for calculations
+      
+      // Listing data - API uses 'listing_gains' as decimal (like -0.09 for -9%)
+      listing_price: processNumber(ipo.listing_price),
+      listing_gain: ipo.listing_gain || formatListingGain(ipo.listing_gains),
+      listing_gains: ipo.listing_gains, // Keep original decimal value
+      
+      // Date fields - ensure we have clear indicators for missing dates
     listing_date: ipo.listing_date || undefined,
     open: ipo.open || ipo.bidding_start_date || undefined,
     close: ipo.close || ipo.bidding_end_date || undefined,
     bidding_start_date: ipo.bidding_start_date || ipo.open || undefined,
     bidding_end_date: ipo.bidding_end_date || ipo.close || undefined,
-    
-    // Size and type - validate issue size isn't empty or zero
-    issue_size: ipo.issue_size && ipo.issue_size !== '0' ? ipo.issue_size : 'Size TBA',
-    issue_type: ipo.issue_type || (ipo.is_sme ? 'SME IPO' : 'Book Built'),
-    
-    // Price ranges - validate they're not zeros
-    min_price: processNumber(ipo.min_price),
-    max_price: processNumber(ipo.max_price),
-    
-    // Document links
+      
+      // Size and type - validate issue size isn't empty or zero
+      issue_size: ipo.issue_size && ipo.issue_size !== '0' ? ipo.issue_size : 'Size TBA',
+      issue_type: ipo.issue_type || (ipo.is_sme ? 'SME IPO' : 'Book Built'),
+      
+      // Price ranges - validate they're not zeros
+      min_price: processNumber(ipo.min_price),
+      max_price: processNumber(ipo.max_price),
+      
+      // Document links
     document_url: ipo.document_url || undefined,
     rhpLink: ipo.rhpLink || undefined,
     drhpLink: ipo.drhpLink || undefined,
-    
-    // Additional fields
+      
+      // Additional fields
     additional_text: ipo.additional_text || undefined,
-    is_sme: ipo.is_sme === true,
-    lot_size: ipo.lot_size
-  };
-  
-  // For debugging - log only the first few IPOs to avoid console spam
-  if (Math.random() < 0.05) {
-    console.log('Sample processed IPO item:', processedIpo);
-  }
-  
-  return processedIpo;
+      is_sme: ipo.is_sme === true,
+      lot_size: ipo.lot_size
+    };
+    
+    // For debugging - log only the first few IPOs to avoid console spam
+    if (Math.random() < 0.05) {
+      console.log('Sample processed IPO item:', processedIpo);
+    }
+    
+    return processedIpo;
 };
 
 export default function IpoPage() {
@@ -584,10 +584,10 @@ export default function IpoPage() {
   };
 
   // Function to fetch IPO data
-  const fetchIpoData = async () => {
-    try {
+    const fetchIpoData = async () => {
+      try {
       console.log('Starting to fetch IPO data...');
-      setLoading(true);
+        setLoading(true);
       if (isRetrying) {
         setError(null);
       }
@@ -667,9 +667,9 @@ export default function IpoPage() {
         
         // Log data load success
         console.log('IPO data loaded successfully');
-      }
-    } catch (err: any) {
-      console.error('Error fetching IPO data:', err);
+        }
+      } catch (err: any) {
+        console.error('Error fetching IPO data:', err);
       setError(err.message || 'Failed to fetch IPO data');
       setIsRetrying(false);
       
@@ -682,10 +682,10 @@ export default function IpoPage() {
         active: 0,
         recentlyListed: 0
       });
-    } finally {
-      setLoading(false);
-    }
-  };
+      } finally {
+        setLoading(false);
+      }
+    };
 
   // Function to retry API call
   const handleRetry = () => {
@@ -963,18 +963,18 @@ export default function IpoPage() {
             {/* Upcoming IPOs Section */}
             <div className="glass-premium rounded-lg shadow-md overflow-hidden border border-neon-400/10">
               <div className="p-6 border-b border-gray-700 flex justify-between items-center">
-                <h2 className="font-semibold text-xl text-white">Upcoming IPOs</h2>
-                <Link 
-                  href="/ipo?filter=upcoming"
+          <h2 className="font-semibold text-xl text-white">Upcoming IPOs</h2>
+          <Link 
+            href="/ipo?filter=upcoming"
                   className="px-3 py-1 bg-neon-400 hover:bg-neon-300 text-black rounded-md text-sm font-medium transition-colors shadow-neon-sm hover:shadow-neon"
-                >
-                  View All
-                </Link>
-              </div>
-              
+          >
+            View All
+          </Link>
+        </div>
+        
               <div className="relative">
-                <div 
-                  ref={upcomingCarouselRef}
+          <div 
+            ref={upcomingCarouselRef}
                   className="overflow-x-auto pb-6 relative"
                   style={{ minHeight: upcomingIpos.length === 0 ? '120px' : '350px' }} 
                 >
@@ -983,8 +983,8 @@ export default function IpoPage() {
                       <div className="text-center">
                         <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
                         <p className="mt-4">Loading upcoming IPO data...</p>
-                      </div>
-                    </div>
+                          </div>
+                        </div>
                   ) : upcomingIpos.length === 0 ? (
                     <div className="flex items-center justify-center w-full py-12 text-gray-500 dark:text-gray-400">
                       <div className="text-center">
@@ -997,43 +997,43 @@ export default function IpoPage() {
                         </button>
                       </div>
                     </div>
-                  ) : (
+                    ) : (
                     <div className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
                       {upcomingIpos.map((ipo, index) => (
                         <div key={`ipo-upcoming-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
                           <IPOCard key={index} data={normalizeIpoData(ipo)} />
-                        </div>
+            </div>
                       ))}
                     </div>
                   )}
                   
-                  {/* Fade effect for scrolling indication */}
+            {/* Fade effect for scrolling indication */}
                   {upcomingIpos.length > 0 && (
-                    <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
+                  <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
                   )}
-                </div>
-                
-                {/* Carousel navigation buttons */}
-                {upcomingIpos.length > 3 && (
+          </div>
+          
+          {/* Carousel navigation buttons */}
+          {upcomingIpos.length > 3 && (
                   <div className="flex justify-end px-6 pb-4 gap-2">
-                    <button 
-                      onClick={() => scrollCarousel(upcomingCarouselRef, 'left')}
+              <button 
+                onClick={() => scrollCarousel(upcomingCarouselRef, 'left')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                      aria-label="Scroll left"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <button 
-                      onClick={() => scrollCarousel(upcomingCarouselRef, 'right')}
+                aria-label="Scroll left"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button 
+                onClick={() => scrollCarousel(upcomingCarouselRef, 'right')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                      aria-label="Scroll right"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-                )}
-              </div>
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={18} />
+              </button>
             </div>
+          )}
+        </div>
+        </div>
 
             {/* Active IPOs Section - Added new section for active IPOs */}
             {activeIpos.length > 0 && (
@@ -1092,17 +1092,17 @@ export default function IpoPage() {
                   Recently Listed IPOs 
                   <span className="ml-2 text-sm text-gray-500">({newListedIpos.length} found)</span>
                 </h2>
-                <Link 
-                  href="/ipo?filter=listed"
+          <Link 
+            href="/ipo?filter=listed"
                   className="px-3 py-1 bg-neon-400 hover:bg-neon-300 text-black rounded-md text-sm font-medium transition-colors shadow-neon-sm hover:shadow-neon"
-                >
-                  View All
-                </Link>
-              </div>
-              
+          >
+            View All
+          </Link>
+        </div>
+        
               <div className="relative">
-                <div
-                  ref={newListedCarouselRef}
+          <div
+            ref={newListedCarouselRef}
                   className="overflow-x-auto pb-6 relative"
                   style={{ minHeight: newListedIpos.length === 0 ? '120px' : '350px' }} 
                 >
@@ -1125,42 +1125,42 @@ export default function IpoPage() {
                           Retry
                         </button>
                       </div>
-                    </div>
-                  ) : (
+                      </div>
+                    ) : (
                     <div className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
                       {newListedIpos.map((ipo, index) => (
                         <div key={`ipo-listed-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
                           <IPOCard data={normalizeIpoData(ipo)} />
-                        </div>
+            </div>
                       ))}
                     </div>
                   )}
                   
-                  {/* Fade effect for scrolling indication */}
+            {/* Fade effect for scrolling indication */}
                   {newListedIpos.length > 0 && (
-                    <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
+                  <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
                   )}
-                </div>
-                
+          </div>
+          
                 {/* Carousel navigation buttons - only show if we have enough cards */}
-                {newListedIpos.length > 3 && (
+          {newListedIpos.length > 3 && (
                   <div className="flex justify-end px-6 pb-4 gap-2">
-                    <button 
-                      onClick={() => scrollCarousel(newListedCarouselRef, 'left')}
+              <button 
+                onClick={() => scrollCarousel(newListedCarouselRef, 'left')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                      aria-label="Scroll left"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-                    <button 
-                      onClick={() => scrollCarousel(newListedCarouselRef, 'right')}
+                aria-label="Scroll left"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button 
+                onClick={() => scrollCarousel(newListedCarouselRef, 'right')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                      aria-label="Scroll right"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-                )}
+                aria-label="Scroll right"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
               </div>
             </div>
 
@@ -1305,8 +1305,8 @@ export default function IpoPage() {
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
-                ))}
-              </Accordion>
+            ))}
+          </Accordion>
             </div>
           </div>
         </div>

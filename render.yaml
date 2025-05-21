@@ -1,9 +1,9 @@
 services:
-  # Backend API service
+  # Combined service (monolithic deployment)
   - type: web
-    name: stock-sense-backend
+    name: stock-sense
     env: node
-    buildCommand: npm install
+    buildCommand: npm install && npm run build:all
     startCommand: node run.js
     healthCheckPath: /api/health
     envVars:
@@ -11,24 +11,11 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: FRONTEND_PORT
+        value: 10001
       - key: STOCK_API_KEY
         sync: false
-      - key: CORS_ORIGIN
-        value: https://stock-sense-frontend.onrender.com
-
-  # Frontend Next.js service
-  - type: web
-    name: stock-sense-frontend
-    env: node
-    buildCommand: cd frontend && npm install && npm run build
-    startCommand: cd frontend && npm start
-    healthCheckPath: /api/health
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 10001
-      - key: NEXT_PUBLIC_API_URL
-        value: https://stock-sense-backend.onrender.com/api
+      - key: NEXT_PUBLIC_API_URL 
+        value: http://localhost:10000/api
       - key: NEXT_PUBLIC_APP_ENV
         value: production 

@@ -238,7 +238,7 @@ export default function StockDetailsClient() {
       
       // Initialize charts with animations
       setTimeout(() => {
-        initializeCharts();
+      initializeCharts();
       }, 100);
     }
   }, [loading, stockData, error]);
@@ -257,141 +257,141 @@ export default function StockDetailsClient() {
         console.log('Canvas elements not available yet');
         return;
       }
-      
-      // Create dummy sector distribution data (replace with real data when available)
-      const sectorCtx = sectorDistributionChartRef.current.getContext('2d');
-      if (sectorCtx) {
+    
+    // Create dummy sector distribution data (replace with real data when available)
+    const sectorCtx = sectorDistributionChartRef.current.getContext('2d');
+    if (sectorCtx) {
         try {
-          const industry = stockData.industry || stockData.sector || '';
-          
-          // Sector distribution (dummy data - replace with real data)
-          const sectorData = {
-            labels: ['Financial Services', 'IT & Technology', 'Oil & Gas', 'Pharmaceuticals', 'FMCG', industry],
-            datasets: [{
-              data: [26.5, 22.3, 15.8, 12.9, 10.5, 8.7],
-              backgroundColor: [
-                'rgba(99, 102, 241, 0.8)',
-                'rgba(139, 92, 246, 0.8)',
-                'rgba(236, 72, 153, 0.8)',
-                'rgba(34, 211, 238, 0.8)',
-                'rgba(16, 185, 129, 0.8)',
-                'rgba(245, 158, 11, 0.8)',
-              ],
-              borderWidth: 0
-            }]
-          };
-          
+      const industry = stockData.industry || stockData.sector || '';
+      
+      // Sector distribution (dummy data - replace with real data)
+      const sectorData = {
+        labels: ['Financial Services', 'IT & Technology', 'Oil & Gas', 'Pharmaceuticals', 'FMCG', industry],
+        datasets: [{
+          data: [26.5, 22.3, 15.8, 12.9, 10.5, 8.7],
+          backgroundColor: [
+            'rgba(99, 102, 241, 0.8)',
+            'rgba(139, 92, 246, 0.8)',
+            'rgba(236, 72, 153, 0.8)',
+            'rgba(34, 211, 238, 0.8)',
+            'rgba(16, 185, 129, 0.8)',
+            'rgba(245, 158, 11, 0.8)',
+          ],
+          borderWidth: 0
+        }]
+      };
+      
           // Create and store the chart instance
           sectorChartInstanceRef.current = new Chart(sectorCtx, {
-            type: 'doughnut',
-            data: sectorData,
-            options: {
-              responsive: true,
+        type: 'doughnut',
+        data: sectorData,
+        options: {
+          responsive: true,
               maintainAspectRatio: false,
-              cutout: '70%',
-              plugins: {
-                legend: {
-                  display: false
-                },
-                tooltip: {
-                  callbacks: {
-                    label: (context) => `${context.label}: ${context.raw}%`
-                  }
-                }
-              },
-              animation: {
-                animateRotate: true,
-                animateScale: true,
-                duration: 1500,
-                easing: 'easeOutQuart'
+          cutout: '70%',
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => `${context.label}: ${context.raw}%`
               }
             }
-          });
+          },
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+            duration: 1500,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
         } catch (error) {
           console.error('Error creating sector chart:', error);
         }
-      }
-      
-      // Performance over time chart (dummy data - replace with real data)
-      const performanceCtx = performanceChartRef.current.getContext('2d');
-      if (performanceCtx) {
+    }
+    
+    // Performance over time chart (dummy data - replace with real data)
+    const performanceCtx = performanceChartRef.current.getContext('2d');
+    if (performanceCtx) {
         try {
-          // Create gradient
-          const gradient = performanceCtx.createLinearGradient(0, 0, 0, 200);
-          gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
-          gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
-          
-          // Extract price from stock data (use price field or fallback to current_price)
-          const price = extractPrice();
-          const priceFloat = parseFloat(price.toString().replace(/[₹,]/g, '')) || 100;
-          
-          // Generate sample data points around the current price
-          const lastMonthData = Array.from({ length: 30 }, (_, i) => {
-            const variation = (Math.random() - 0.5) * 20;  // Random variation ±10%
-            return priceFloat * (1 + variation / 100); // Current price with variation
-          });
-          
-          const timeLabels = Array.from({ length: 30 }, (_, i) => {
-            const date = new Date();
-            date.setDate(date.getDate() - (30 - i - 1));
-            return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-          });
-          
+      // Create gradient
+      const gradient = performanceCtx.createLinearGradient(0, 0, 0, 200);
+      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
+      gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+      
+      // Extract price from stock data (use price field or fallback to current_price)
+      const price = extractPrice();
+      const priceFloat = parseFloat(price.toString().replace(/[₹,]/g, '')) || 100;
+      
+      // Generate sample data points around the current price
+      const lastMonthData = Array.from({ length: 30 }, (_, i) => {
+        const variation = (Math.random() - 0.5) * 20;  // Random variation ±10%
+        return priceFloat * (1 + variation / 100); // Current price with variation
+      });
+      
+      const timeLabels = Array.from({ length: 30 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (30 - i - 1));
+        return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      });
+      
           // Create and store the chart instance
           performanceChartInstanceRef.current = new Chart(performanceCtx, {
-            type: 'line',
-            data: {
-              labels: timeLabels,
-              datasets: [{
-                label: 'Price (₹)',
-                data: lastMonthData,
-                borderColor: 'rgb(99, 102, 241)',
-                backgroundColor: gradient,
-                tension: 0.3,
-                fill: true,
-                pointRadius: 0,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: 'rgb(129, 140, 248)'
-              }]
-            },
-            options: {
-              responsive: true,
+        type: 'line',
+        data: {
+          labels: timeLabels,
+          datasets: [{
+            label: 'Price (₹)',
+            data: lastMonthData,
+            borderColor: 'rgb(99, 102, 241)',
+            backgroundColor: gradient,
+            tension: 0.3,
+            fill: true,
+            pointRadius: 0,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: 'rgb(129, 140, 248)'
+          }]
+        },
+        options: {
+          responsive: true,
               maintainAspectRatio: false,
-              plugins: {
-                legend: {
-                  display: false
-                }
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(75, 85, 99, 0.1)'
               },
-              scales: {
-                x: {
-                  grid: {
-                    color: 'rgba(75, 85, 99, 0.1)'
-                  },
-                  ticks: {
-                    maxTicksLimit: 6,
-                    color: 'rgba(156, 163, 175, 0.8)'
-                  }
-                },
-                y: {
-                  grid: {
-                    color: 'rgba(75, 85, 99, 0.1)'
-                  },
-                  ticks: {
-                    callback: (value) => `₹${value.toLocaleString()}`,
-                    color: 'rgba(156, 163, 175, 0.8)'
-                  }
-                }
+              ticks: {
+                maxTicksLimit: 6,
+                color: 'rgba(156, 163, 175, 0.8)'
+              }
+            },
+            y: {
+              grid: {
+                color: 'rgba(75, 85, 99, 0.1)'
               },
-              animation: {
-                duration: 2000,
-                easing: 'easeOutQuart'
+              ticks: {
+                callback: (value) => `₹${value.toLocaleString()}`,
+                color: 'rgba(156, 163, 175, 0.8)'
               }
             }
-          });
+          },
+          animation: {
+            duration: 2000,
+            easing: 'easeOutQuart'
+          }
+        }
+      });
         } catch (error) {
           console.error('Error creating performance chart:', error);
         }
-      }
+    }
     }, 300); // Slightly longer delay to ensure DOM is ready
   };
   

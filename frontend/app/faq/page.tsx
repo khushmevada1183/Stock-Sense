@@ -169,7 +169,7 @@ export default function FAQ() {
   // Filter FAQs based on search query
   const filteredFaqs = faqs.filter(faq => {
     return faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
-           faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
+                        faq.answer.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   return (

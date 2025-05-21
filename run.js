@@ -56,27 +56,74 @@ function spawnProcess(command, args, options = {}) {
 // Start backend
 const backend = spawnProcess('node', ['backend/server.js'], { isBackend: true });
 
-// Check if standalone server.js exists
+// Check for different possible frontend build locations
 const standaloneServerPath = path.join(__dirname, 'frontend', '.next', 'standalone', 'server.js');
-const frontendStartCommand = fs.existsSync(standaloneServerPath) ? 
-  { cmd: 'node', args: ['.next/standalone/server.js'] } : 
-  { cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', args: ['run', 'start'] };
+const nextBuildPath = path.join(__dirname, 'frontend', '.next');
+
+let frontendStartCommand;
+
+// Determine the best way to start the frontend
+if (fs.existsSync(standaloneServerPath)) {
+  console.log('Found standalone build, using it for frontend');
+  frontendStartCommand = { cmd: 'node', args: ['.next/standalone/server.js'] };
+} else if (fs.existsSync(nextBuildPath)) {
+  console.log('Found Next.js build directory, using npm start');
+  frontendStartCommand = { 
+    cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', 
+    args: ['run', 'start'] 
+  };
+} else {
+  console.error('No Next.js build found! Try running "npm run build:frontend" first');
+  console.log('Attempting to build the frontend now...');
+  
+  // Try to build the frontend if it doesn't exist
+  const buildCmd = os.platform() === 'win32' ? 'npm.cmd' : 'npm';
+  const buildProc = spawn(buildCmd, ['run', 'build'], {
+    cwd: path.join(__dirname, 'frontend'),
+    stdio: 'inherit',
+  });
+  
+  buildProc.on('close', (code) => {
+    if (code !== 0) {
+      console.error(`Frontend build failed with code ${code}`);
+      process.exit(1);
+    }
+    
+    console.log('Frontend build completed, starting frontend');
+    frontendStartCommand = { 
+      cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', 
+      args: ['run', 'start'] 
+    };
+    
+    startFrontend();
+  });
+  
+  // Return early to avoid starting frontend before build completes
+  return;
+}
 
 console.log(`Starting frontend with: ${frontendStartCommand.cmd} ${frontendStartCommand.args.join(' ')}`);
 
 // Start frontend
-const frontend = spawnProcess(
-  frontendStartCommand.cmd, 
-  frontendStartCommand.args, 
-  {
-    cwd: path.join(__dirname, 'frontend'),
-  }
-);
+function startFrontend() {
+  const frontend = spawnProcess(
+    frontendStartCommand.cmd, 
+    frontendStartCommand.args, 
+    {
+      cwd: path.join(__dirname, 'frontend'),
+    }
+  );
+}
+
+// Start frontend if we didn't need to build it
+if (frontendStartCommand) {
+  startFrontend();
+}
 
 // Handle process termination
 process.on('SIGINT', () => {
   console.log('\nShutting down services...');
   backend.kill();
-  frontend.kill();
+  if (frontend) frontend.kill();
   process.exit(0);
 }); 

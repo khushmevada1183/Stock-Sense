@@ -30,12 +30,12 @@ const nextConfig = {
   experimental: {
     largePageDataBytes: 512 * 1000, // 512KB
   },
-  // Configure for dynamic rendering
+  // Configure for dynamic rendering with standalone output
   output: 'standalone',
   // Configure image handling
   images: {
     domains: ['avatars.githubusercontent.com', 'images.unsplash.com', 'localhost'],
-    unoptimized: false
+    unoptimized: process.env.NODE_ENV === 'production'
   },
   // Environment variables
   env: {
@@ -44,10 +44,13 @@ const nextConfig = {
   },
   // Proper API routing
   async rewrites() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
+    console.log(`Configuring API rewrites to: ${apiUrl}`);
+    
     return [
       {
         source: '/api/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api'}/:path*`
+        destination: `${apiUrl}/:path*`
       }
     ];
   }
