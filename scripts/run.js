@@ -16,9 +16,9 @@ function parseArgs() {
 }
 
 const cmdArgs = parseArgs();
-// Use different ports to avoid conflicts; defaults are important if args aren't passed
-const backendPort = parseInt(cmdArgs['backend-port'], 10) || 5005;
-const frontendPort = parseInt(cmdArgs['frontend-port'], 10) || 3005;
+// Determine ports: use flags, then environment, then defaults
+const backendPort = parseInt(cmdArgs['backend-port'], 10) || parseInt(process.env.BACKEND_PORT, 10) || 5005;
+const frontendPort = parseInt(cmdArgs['frontend-port'], 10) || parseInt(process.env.PORT, 10) || 3005;
 
 // Get the local IP address
 function getLocalIpAddress() {
@@ -97,38 +97,73 @@ function startProcess(processConfig) {
   
   console.log(`${color}Starting ${name}...${resetColor}`);
   
-  const processEnv = { ...process.env, ...env }; // Merge current env with specified env
-    
-  const childProcess = spawn(command, args, {
-    cwd: dir,
-    shell: true, // shell: true can have nuances with PATH and finding executables like 'next'
-    stdio: 'pipe',
-    env: processEnv
-  });
-  
-  childProcess.stdout.on('data', (data) => {
-    data.toString().split('\n').forEach(line => {
-      if (line.trim()) {
-        console.log(`${color}[${name}]${resetColor} ${line}`);
+  // Check if node_modules exists and install if not
+  if (name === 'FRONTEND' || name === 'BACKEND') {
+    const nodeModulesPath = path.join(dir, 'node_modules');
+    if (!fs.existsSync(nodeModulesPath)) {
+      console.log(`${color}[${name}]${resetColor} Installing dependencies...`);
+      try {
+        const installProcess = spawn('npm', ['install'], {
+          cwd: dir,
+          shell: true,
+          stdio: 'inherit'
+        });
+        
+        // Wait for npm install to complete before starting the app
+        installProcess.on('close', (code) => {
+          if (code !== 0) {
+            console.error(`${color}[${name}]${resetColor} Failed to install dependencies. Exit code: ${code}`);
+            process.exit(1);
+          } else {
+            console.log(`${color}[${name}]${resetColor} Dependencies installed successfully.`);
+            startActualProcess();
+          }
+        });
+        return; // Exit this function, we'll start the process after npm install completes
+      } catch (error) {
+        console.error(`${color}[${name}]${resetColor} Error installing dependencies:`, error);
+        process.exit(1);
       }
-    });
-  });
-  
-  childProcess.stderr.on('data', (data) => {
-    data.toString().split('\n').forEach(line => {
-      if (line.trim() && !line.includes('DeprecationWarning')) { // Filter out common warnings if noisy
-        console.log(`${color}[${name} ERROR]${resetColor} ${line}`);
-      }
-    });
-  });
-  
-  childProcess.on('close', (code) => {
-    if (code !== 0) {
-      console.log(`${color}[${name}]${resetColor} Process exited with code ${code}`);
     }
-  });
+  }
   
-  return childProcess;
+  // Start the actual process
+  return startActualProcess();
+  
+  function startActualProcess() {
+    const processEnv = { ...process.env, ...env }; // Merge current env with specified env
+    
+    const childProcess = spawn(command, args, {
+      cwd: dir,
+      shell: true, // shell: true can have nuances with PATH and finding executables like 'next'
+      stdio: 'pipe',
+      env: processEnv
+    });
+    
+    childProcess.stdout.on('data', (data) => {
+      data.toString().split('\n').forEach(line => {
+        if (line.trim()) {
+          console.log(`${color}[${name}]${resetColor} ${line}`);
+        }
+      });
+    });
+    
+    childProcess.stderr.on('data', (data) => {
+      data.toString().split('\n').forEach(line => {
+        if (line.trim() && !line.includes('DeprecationWarning')) { // Filter out common warnings if noisy
+          console.log(`${color}[${name} ERROR]${resetColor} ${line}`);
+        }
+      });
+    });
+    
+    childProcess.on('close', (code) => {
+      if (code !== 0) {
+        console.log(`${color}[${name}]${resetColor} Process exited with code ${code}`);
+      }
+    });
+    
+    return childProcess;
+  }
 }
 
 // Start both processes

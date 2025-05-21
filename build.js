@@ -5,7 +5,7 @@
  * with proper error handling and verbose logging.
  */
 
-const { spawn } = require('child_process');
+const { spawn, execSync } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -20,71 +20,62 @@ const colors = {
   magenta: '\x1b[35m'
 };
 
-console.log(`${colors.bright}${colors.cyan}==================================${colors.reset}`);
-console.log(`${colors.bright}${colors.cyan}  STOCK-SENSE BUILD PROCESS${colors.reset}`);
-console.log(`${colors.bright}${colors.cyan}==================================${colors.reset}\n`);
+console.log('=======================================');
+console.log('🚀 INDIAN STOCK ANALYZER - BUILD SCRIPT');
+console.log('=======================================\n');
 
-// Function to run a command in a specific directory
-function runCommand(command, args, cwd) {
-  return new Promise((resolve, reject) => {
-    console.log(`${colors.yellow}> Running: ${command} ${args.join(' ')}${colors.reset}`);
-    
-    const child = spawn(command, args, {
-      cwd,
-      stdio: 'inherit',
-      shell: true
-    });
-
-    child.on('exit', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`Command failed with exit code ${code}`));
-      }
-    });
-
-    child.on('error', (error) => {
-      reject(error);
-    });
-  });
+// Ensure .env file exists
+if (!fs.existsSync(path.join(__dirname, '.env'))) {
+  console.log('Creating default .env file...');
+  fs.writeFileSync(
+    path.join(__dirname, '.env'),
+    'PORT=5005\nBACKEND_PORT=5005\nFRONTEND_PORT=3005\nNODE_ENV=production\nCORS_ORIGIN=*\n'
+  );
 }
 
-async function buildProject() {
-  try {
-    const rootDir = path.resolve(__dirname);
-    const backendDir = path.join(rootDir, 'backend');
-    const frontendDir = path.join(rootDir, 'frontend');
-
-    // Check for the existence of project directories
-    if (!fs.existsSync(backendDir)) {
-      throw new Error(`Backend directory not found at: ${backendDir}`);
-    }
-
-    if (!fs.existsSync(frontendDir)) {
-      throw new Error(`Frontend directory not found at: ${frontendDir}`);
-    }
-
-    // Build the backend (TypeScript)
-    console.log(`\n${colors.bright}${colors.magenta}Building backend...${colors.reset}`);
-    await runCommand('npm', ['run', 'build'], backendDir);
-    console.log(`${colors.bright}${colors.green}✓ Backend built successfully!${colors.reset}\n`);
-
-    // Build the frontend (Next.js)
-    console.log(`${colors.bright}${colors.magenta}Building frontend...${colors.reset}`);
-    await runCommand('npm', ['run', 'build'], frontendDir);
-    console.log(`${colors.bright}${colors.green}✓ Frontend built successfully!${colors.reset}\n`);
-
-    console.log(`${colors.bright}${colors.green}==================================${colors.reset}`);
-    console.log(`${colors.bright}${colors.green}  BUILD SUCCESSFUL${colors.reset}`);
-    console.log(`${colors.bright}${colors.green}==================================${colors.reset}\n`);
-
-  } catch (error) {
-    console.error(`\n${colors.bright}${colors.red}==================================${colors.reset}`);
-    console.error(`${colors.bright}${colors.red}  BUILD FAILED${colors.reset}`);
-    console.error(`${colors.bright}${colors.red}==================================${colors.reset}`);
-    console.error(`\n${colors.red}Error: ${error.message}${colors.reset}\n`);
-    process.exit(1);
-  }
+// Install root dependencies
+console.log('Installing root dependencies...');
+try {
+  execSync('npm install', { stdio: 'inherit' });
+} catch (error) {
+  console.error('Error installing root dependencies:', error);
+  process.exit(1);
 }
 
-buildProject();
+// Install backend dependencies
+console.log('\nInstalling backend dependencies...');
+try {
+  execSync('cd backend && npm install', { stdio: 'inherit' });
+} catch (error) {
+  console.error('Error installing backend dependencies:', error);
+  process.exit(1);
+}
+
+// Install frontend dependencies
+console.log('\nInstalling frontend dependencies...');
+try {
+  execSync('cd frontend && npm install', { stdio: 'inherit' });
+} catch (error) {
+  console.error('Error installing frontend dependencies:', error);
+  process.exit(1);
+}
+
+// Build frontend
+console.log('\nBuilding frontend...');
+try {
+  execSync('cd frontend && npm run build', { stdio: 'inherit' });
+} catch (error) {
+  console.error('Error building frontend:', error);
+  process.exit(1);
+}
+
+// Build backend (if needed)
+console.log('\nBackend is JavaScript - no build required');
+
+console.log('\n=======================================');
+console.log('✅ BUILD COMPLETED SUCCESSFULLY');
+console.log('=======================================');
+console.log('You can now start the application with:');
+console.log('  npm start\n');
+console.log('Or run the development servers with:');
+console.log('  node scripts/run.js\n');

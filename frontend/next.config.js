@@ -4,7 +4,7 @@ const nextConfig = {
     ignoreDuringBuilds: true,
   },
   /* config options here */
-  reactStrictMode: false,
+  reactStrictMode: true,
   compiler: {
     styledComponents: true,
   },
@@ -28,6 +28,14 @@ const nextConfig = {
     maxInactiveAge: 60 * 60 * 1000, // 1 hour
     pagesBufferLength: 5,
   },
+  output: 'standalone',
+  images: {
+    domains: ['avatars.githubusercontent.com', 'images.unsplash.com'],
+    unoptimized: true
+  },
+  env: {
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005'
+  }
 };
 
 module.exports = nextConfig;

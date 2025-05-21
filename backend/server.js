@@ -680,6 +680,12 @@ app.get('/api/stocks/top-losers', async (req, res) => {
 // Indian API routes
 app.use('/api/indian', indianApiRoutes);
 
+// Serve the frontend static export
+app.use(express.static(path.join(__dirname, '../frontend/out')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/out/index.html'));
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
@@ -702,4 +708,4 @@ app.listen(PORT, () => {
 });
 
 // Export the app for testing
-module.exports = app; 
+module.exports = app;
