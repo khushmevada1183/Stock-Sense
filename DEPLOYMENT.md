@@ -22,7 +22,7 @@ Use the following settings:
 - **Region**: Choose the region closest to your target audience
 - **Branch**: `main` (or your preferred branch)
 - **Build Command**: `npm install && node build.js`
-- **Start Command**: `npm run start:prod`
+- **Start Command**: `bash deploy.sh`
 - **Instance Type**: Free (or other as needed)
 
 ### Step 3: Set Environment Variables
@@ -39,19 +39,38 @@ Click "Create Web Service" to start the deployment process.
 
 ### How This Deployment Works
 
-1. The `build.js` script installs dependencies and builds the frontend
-2. The `deploy.sh` script runs in production mode and:
-   - Sets necessary environment variables
-   - Detects cloud environment 
-   - Runs only the backend server in production
-   - The frontend is served as static files by the backend
+1. The build process:
+   - Installs all dependencies (root, backend, frontend)
+   - Builds the frontend as static files (using Next.js export)
+   
+2. The deployment process:
+   - The `deploy.sh` script runs in production mode
+   - It prints diagnostic information to help with troubleshooting
+   - It installs dependencies if needed
+   - The frontend is built and exported to static files
+   - Only the backend server is started (not the development servers)
+   - The backend serves the static frontend files
+
+3. Handling requests:
+   - API requests are handled by the Express backend
+   - Frontend routes are served from the static files in `/frontend/out`
+   - If static files aren't found, a helpful fallback page is shown
 
 ### Common Issues and Solutions
 
-#### Port Conflicts
-The application is now configured to automatically manage ports in cloud environments:
-- Backend uses the PORT provided by Render
-- Frontend (if run in development mode) uses a different port to avoid conflicts
+#### Rate Limiting Errors
+The application now uses a proper configuration for rate limiting in proxy environments:
+- Uses trusted proxies instead of trusting all proxies
+- Proper IP detection from X-Forwarded-For headers
+
+#### Static File Issues
+If frontend files are not loading:
+1. Check the build logs to ensure the frontend is successfully built
+2. Verify the frontend/out directory exists and contains files
+3. The app will show a helpful fallback page if static files aren't found
+
+#### Port Configuration
+The application will use the port provided by Render and automatically configure itself.
 
 #### Missing API Key
 If you see "Missing API key" errors in the logs, make sure you've set one of these environment variables:
@@ -59,17 +78,12 @@ If you see "Missing API key" errors in the logs, make sure you've set one of the
 - `STOCKAPI_KEY`
 - `INDIAN_STOCK_API_KEY`
 
-#### Static Files Not Found
-If you see "ENOENT: no such file or directory, stat 'frontend/out/index.html'" errors:
-- This is handled gracefully in the latest version
-- The backend will show a fallback API page until the frontend is built
-
 #### Troubleshooting
 If you continue to experience issues:
 1. Check the Render logs for specific error messages
-2. Ensure all environment variables are set correctly
-3. Verify that your API key is valid
-4. Consider temporarily enabling the "Debug" option in Render settings
+2. Review the diagnostic output from the deploy.sh script
+3. Ensure the frontend is building properly
+4. Verify API key and environment variables are set correctly
 
 ## Required Environment Variables
 
