@@ -22,14 +22,14 @@ Use the following settings:
 - **Region**: Choose the region closest to your target audience
 - **Branch**: `main` (or your preferred branch)
 - **Build Command**: `npm install && node build.js`
-- **Start Command**: `chmod +x deploy.sh && ./deploy.sh`
+- **Start Command**: `npm run start:prod`
 - **Instance Type**: Free (or other as needed)
 
 ### Step 3: Set Environment Variables
 
 Add these environment variables in the Render dashboard:
 - `NODE_ENV`: `production`
-- `PORT`: `5005` (Render will override this with its own PORT)
+- `RENDER`: `true`
 - `STOCK_API_KEY`: Your Indian Stock API key
 - `CORS_ORIGIN`: `*`
 
@@ -37,13 +37,27 @@ Add these environment variables in the Render dashboard:
 
 Click "Create Web Service" to start the deployment process.
 
+### How This Deployment Works
+
+1. The `build.js` script installs dependencies and builds the frontend
+2. The `deploy.sh` script runs in production mode and:
+   - Sets necessary environment variables
+   - Detects cloud environment 
+   - Runs only the backend server in production
+   - The frontend is served as static files by the backend
+
 ### Common Issues and Solutions
 
-#### Missing API Key
-If you see "Missing API key" errors in the logs, make sure you've set the `STOCK_API_KEY` environment variable in the Render dashboard.
+#### Port Conflicts
+The application is now configured to automatically manage ports in cloud environments:
+- Backend uses the PORT provided by Render
+- Frontend (if run in development mode) uses a different port to avoid conflicts
 
-#### Port Configuration
-Render assigns its own PORT which your application must use. The application is configured to automatically detect and use Render's PORT.
+#### Missing API Key
+If you see "Missing API key" errors in the logs, make sure you've set one of these environment variables:
+- `STOCK_API_KEY` (preferred)
+- `STOCKAPI_KEY`
+- `INDIAN_STOCK_API_KEY`
 
 #### Static Files Not Found
 If you see "ENOENT: no such file or directory, stat 'frontend/out/index.html'" errors:
@@ -61,13 +75,13 @@ If you continue to experience issues:
 
 ```
 # Server Configuration
-PORT=5005                      # Default port, will be overridden by Render
-BACKEND_PORT=5005              # Backend port
-FRONTEND_PORT=3000             # Frontend port
 NODE_ENV=production            # Environment
 
 # API Keys
 STOCK_API_KEY=your_api_key_here  # Your Indian Stock API key
+
+# Cloud Detection
+RENDER=true                    # Helps the app detect it's running on Render
 
 # CORS Configuration
 CORS_ORIGIN=*                  # Cross-Origin Resource Sharing setting
