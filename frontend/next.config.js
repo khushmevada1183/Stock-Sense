@@ -58,8 +58,6 @@ const nextConfig = {
     unoptimized: process.env.NODE_ENV === 'production',
     minimumCacheTTL: 3600, // 1 hour to reduce builds
   },
-  // Reduce build frequency
-  swcMinify: true,
   // Environment variables
   env: {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api',

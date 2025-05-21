@@ -27,7 +27,7 @@
     "test:e2e:report": "cypress run --reporter cypress-mochawesome-reporter",
     "generate:bug-report": "node tests/utils/scripts/generate-bug-report.js",
     "export": "next export || echo 'Export included in build with Next.js 13+'",
-    "build:static": "cross-env NODE_OPTIONS=--max_old_space_size=384 next build && next export",
+    "build:static": "cross-env NODE_OPTIONS=--max_old_space_size=1024 next build && next export",
     "predeploy": "npm run build:static",
     "deploy": "gh-pages -d out"
   },
