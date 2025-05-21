@@ -1,1 +1,1 @@
-web: npm run install:all && node backend/server.js
+web: npm run install:all && node scripts/run.js
