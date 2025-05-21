@@ -21,7 +21,7 @@ import MarketOverviewAnimations from './components/MarketOverviewAnimations';
 import NewsAnimations from './components/NewsAnimations';
 
 // Layout animations
-import NavigationAnimations from './layout/navigationAnimations';
+import navigationAnimations from './layout/navigationAnimations';
 
 // Export page animations
 export const pages = {
@@ -43,7 +43,7 @@ export const components = {
 
 // Export layout animations
 export const layout = {
-  Navigation: NavigationAnimations
+  Navigation: navigationAnimations
 };
 
 // Default export of all animations
