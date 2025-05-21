@@ -142,10 +142,29 @@ class ApiKeyManager {
     this._refreshKeyAvailability();
     this._checkMonthlyReset();
     
-    // If current key has hit monthly limit, try to rotate
-    if (this.keys[this.currentKeyIndex].monthlyUsage >= MONTHLY_REQUEST_LIMIT) {
-      console.warn(`Current API key has reached its monthly limit of ${MONTHLY_REQUEST_LIMIT} requests`);
-      this.rotateToNextAvailableKey();
+    // Debug logs to track key rotation
+    console.log(`Current key index: ${this.currentKeyIndex} of ${this.keys.length} total keys`);
+    
+    // Make sure current key index is valid
+    if (this.currentKeyIndex >= this.keys.length) {
+      console.warn('Current key index is out of bounds, resetting to 0');
+      this.currentKeyIndex = 0;
+    }
+    
+    const currentKey = this.keys[this.currentKeyIndex];
+    console.log(`Current key: ${currentKey.key.substring(0, 10)}... (Monthly usage: ${currentKey.monthlyUsage}/${MONTHLY_REQUEST_LIMIT})`);
+    console.log(`Available keys: ${this.keys.filter(k => k.isAvailable && k.monthlyUsage < MONTHLY_REQUEST_LIMIT).length}`);
+    
+    // If current key is not available or has hit monthly limit, try to rotate
+    if (!currentKey.isAvailable || currentKey.monthlyUsage >= MONTHLY_REQUEST_LIMIT) {
+      console.warn(`Current API key is unavailable or has reached its monthly limit`);
+      const rotated = this.rotateToNextAvailableKey();
+      console.log(`Key rotation attempted: ${rotated ? 'Success' : 'Failed'}`);
+      if (rotated) {
+        console.log(`Rotated to new key: ${this.keys[this.currentKeyIndex].key.substring(0, 10)}...`);
+      } else {
+        console.warn('Could not rotate to a new key, staying with current key');
+      }
     }
     
     return this.keys[this.currentKeyIndex].key;
@@ -245,10 +264,16 @@ class ApiKeyManager {
     this._refreshKeyAvailability();
     this._checkMonthlyReset();
     
+    // Debug log - current key status
+    const currentKey = this.keys[this.currentKeyIndex];
+    console.log(`Current key status - Key: ${currentKey.key.substring(0, 10)}..., Available: ${currentKey.isAvailable}, MonthlyUsage: ${currentKey.monthlyUsage}/${MONTHLY_REQUEST_LIMIT}`);
+    
     // Find any available key that hasn't hit monthly limits
     const availableKeys = this.keys.filter(k => 
       k.isAvailable && k.monthlyUsage < MONTHLY_REQUEST_LIMIT
     );
+    
+    console.log(`Found ${availableKeys.length} available keys out of ${this.keys.length} total keys`);
     
     if (availableKeys.length === 0) {
       console.warn('No available API keys! All keys are rate limited or have reached monthly quotas.');
@@ -259,6 +284,7 @@ class ApiKeyManager {
       );
       
       if (rateLimitedKeys.length > 0) {
+        console.log(`Found ${rateLimitedKeys.length} rate-limited keys that haven't reached monthly quota`);
         // Find the key that will become available the soonest
         const nextAvailableKey = rateLimitedKeys.reduce((earliest, current) => {
           if (!earliest) return current;
@@ -276,27 +302,38 @@ class ApiKeyManager {
       return false;
     }
     
-    // Find the index of the next available key
-    let foundNextKey = false;
-    let startSearchIndex = (this.currentKeyIndex + 1) % this.keys.length;
-    let nextKeyIndex = startSearchIndex;
+    // Find the index of the next available key - improved algorithm
+    // Start searching from the next key after the current one
+    const startIndex = (this.currentKeyIndex + 1) % this.keys.length;
+    let nextKeyIndex = null;
     
-    do {
-      if (this.keys[nextKeyIndex].isAvailable && 
-          this.keys[nextKeyIndex].monthlyUsage < MONTHLY_REQUEST_LIMIT) {
-        foundNextKey = true;
+    // Log debugging info
+    console.log(`Starting search for next key at index ${startIndex}`);
+    
+    // First try: look for available keys starting from startIndex
+    for (let i = 0; i < this.keys.length; i++) {
+      const checkIndex = (startIndex + i) % this.keys.length;
+      const keyToCheck = this.keys[checkIndex];
+      
+      console.log(`Checking key at index ${checkIndex}: ${keyToCheck.key.substring(0, 10)}..., Available: ${keyToCheck.isAvailable}, MonthlyUsage: ${keyToCheck.monthlyUsage}`);
+      
+      if (keyToCheck.isAvailable && keyToCheck.monthlyUsage < MONTHLY_REQUEST_LIMIT) {
+        nextKeyIndex = checkIndex;
+        console.log(`Found available key at index ${nextKeyIndex}`);
         break;
       }
-      nextKeyIndex = (nextKeyIndex + 1) % this.keys.length;
-    } while (nextKeyIndex !== startSearchIndex);
-    
-    if (foundNextKey) {
-      this.currentKeyIndex = nextKeyIndex;
-      console.log(`Rotated to next available API key: ${this.keys[this.currentKeyIndex].key.substring(0, 10)}...`);
-      return true;
     }
     
-    return false;
+    // If we found a key, update the current index
+    if (nextKeyIndex !== null) {
+      const oldIndex = this.currentKeyIndex;
+      this.currentKeyIndex = nextKeyIndex;
+      console.log(`Rotated from key index ${oldIndex} to ${nextKeyIndex}: ${this.keys[this.currentKeyIndex].key.substring(0, 10)}...`);
+      return true;
+    } else {
+      console.log(`Could not find an available key after full rotation. Staying with current key index ${this.currentKeyIndex}`);
+      return false;
+    }
   }
 
   /**

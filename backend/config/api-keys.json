@@ -2,19 +2,19 @@
   "keys": [
     {
       "key": "sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67",
-      "rateLimitResetTimestamp": 0,
-      "isAvailable": true,
-      "usageCount": 23,
-      "monthlyUsage": 23,
+      "rateLimitResetTimestamp": 1747839308043,
+      "isAvailable": false,
+      "usageCount": 0,
+      "monthlyUsage": 0,
       "lastMonthReset": "2025-05",
-      "lastErrorTimestamp": 0
+      "lastErrorTimestamp": 1747839307043
     },
     {
       "key": "sk-live-kQSxsVhWZyIk8sGy2gzXGBvi97RETSP88OOG2qt3",
       "rateLimitResetTimestamp": 0,
       "isAvailable": true,
-      "usageCount": 0,
-      "monthlyUsage": 0,
+      "usageCount": 1,
+      "monthlyUsage": 1,
       "lastMonthReset": "2025-05",
       "lastErrorTimestamp": 0
     },
@@ -29,19 +29,19 @@
     },
     {
       "key": "sk-live-bi47a6KsAGkHsFAguG0sKBNzCf8VbTVFweOy1eFE",
-      "rateLimitResetTimestamp": 0,
+      "rateLimitResetTimestamp": 1747832916437,
       "isAvailable": true,
-      "usageCount": 0,
-      "monthlyUsage": 0,
+      "usageCount": 29,
+      "monthlyUsage": 29,
       "lastMonthReset": "2025-05",
-      "lastErrorTimestamp": 0
+      "lastErrorTimestamp": 1747832915437
     },
     {
       "key": "sk-live-uZup2KEHVqDo2zyAunRH0zp9aaRNpyGgxKU7GApI",
       "rateLimitResetTimestamp": 0,
       "isAvailable": true,
-      "usageCount": 0,
-      "monthlyUsage": 0,
+      "usageCount": 12,
+      "monthlyUsage": 12,
       "lastMonthReset": "2025-05",
       "lastErrorTimestamp": 0
     },

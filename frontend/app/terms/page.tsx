@@ -6,8 +6,8 @@ import { Shield, FileText, AlertTriangle, CheckCircle2, Scale } from 'lucide-rea
 import PageBackground from '@/components/layout/PageBackground';
 
 export default function TermsPage() {
-  const mainRef = useRef(null);
-  const sectionsRef = useRef([]);
+  const mainRef = useRef<HTMLElement | null>(null);
+  const sectionsRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
     // Main entrance animation
@@ -30,7 +30,7 @@ export default function TermsPage() {
   }, []);
 
   // Add sections to ref array for animations
-  const addToSectionsRefs = (el) => {
+  const addToSectionsRefs = (el: HTMLElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el);
     }

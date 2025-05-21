@@ -7,6 +7,7 @@ const { spawn } = require('child_process');
 const path = require('path');
 const dotenv = require('dotenv');
 const fs = require('fs');
+const os = require('os');
 
 // Load environment variables
 dotenv.config();
@@ -24,6 +25,8 @@ if (!process.env.STOCK_API_KEY) {
 
 // Helper to spawn process with error handling
 function spawnProcess(command, args, options = {}) {
+  console.log(`Executing: ${command} ${args.join(' ')}`);
+  
   const proc = spawn(command, args, {
     ...options,
     stdio: 'pipe',
@@ -43,16 +46,32 @@ function spawnProcess(command, args, options = {}) {
     console.error(`${prefix} ERROR] ${data.toString().trim()}`);
   });
 
+  proc.on('error', (err) => {
+    console.error(`${prefix} Process error: ${err.message}`);
+  });
+
   return proc;
 }
 
 // Start backend
 const backend = spawnProcess('node', ['backend/server.js'], { isBackend: true });
 
+// Check if standalone server.js exists
+const standaloneServerPath = path.join(__dirname, 'frontend', '.next', 'standalone', 'server.js');
+const frontendStartCommand = fs.existsSync(standaloneServerPath) ? 
+  { cmd: 'node', args: ['.next/standalone/server.js'] } : 
+  { cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', args: ['run', 'start'] };
+
+console.log(`Starting frontend with: ${frontendStartCommand.cmd} ${frontendStartCommand.args.join(' ')}`);
+
 // Start frontend
-const frontend = spawnProcess('npm', ['run', 'dev', '--', '-p', FRONTEND_PORT], {
-  cwd: path.join(__dirname, 'frontend'),
-});
+const frontend = spawnProcess(
+  frontendStartCommand.cmd, 
+  frontendStartCommand.args, 
+  {
+    cwd: path.join(__dirname, 'frontend'),
+  }
+);
 
 // Handle process termination
 process.on('SIGINT', () => {

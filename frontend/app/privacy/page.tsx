@@ -38,9 +38,11 @@ const securityMeasures = [
 const COLORS = ['#3b82f6', '#10b981', '#6366f1', '#f59e0b', '#ef4444'];
 
 export default function PrivacyPage() {
-  const mainRef = useRef(null);
-  const sectionsRef = useRef([]);
-  const sectionContentsRef = useRef([]);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const sectionsRef = useRef<HTMLElement[]>([]);
+  const sectionHeadingsRef = useRef<HTMLElement[]>([]);
+  const sectionContentsRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
     // Main entrance animation
@@ -63,26 +65,36 @@ export default function PrivacyPage() {
 
     // Content reveals with stagger
     sectionContentsRef.current.forEach((section, index) => {
-      gsap.from(section?.children || [], {
-        opacity: 0,
-        y: 15,
-        stagger: 0.1,
-        duration: 0.6,
-        delay: 0.5 + (index * 0.2),
-        ease: "power2.out"
-      });
+      if (section instanceof HTMLElement) {
+        const children = Array.from(section.children);
+        gsap.from(children, {
+          opacity: 0,
+          y: 15,
+          stagger: 0.1,
+          duration: 0.7,
+          ease: "power2.out",
+          delay: 0.2 + (index * 0.1)
+        });
+      }
     });
   }, []);
 
-  // Add sections to ref array for animations
-  const addToSectionsRefs = (el) => {
+  // Function to add to section refs
+  const addToSectionsRef = (el: HTMLElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el);
     }
   };
 
-  // Add section contents to ref array for animations
-  const addToContentRefs = (el) => {
+  // Function to add to section headings refs
+  const addToSectionHeadingsRef = (el: HTMLElement | null) => {
+    if (el && !sectionHeadingsRef.current.includes(el)) {
+      sectionHeadingsRef.current.push(el);
+    }
+  };
+
+  // Function to add to section contents refs
+  const addToSectionContentsRef = (el: HTMLElement | null) => {
     if (el && !sectionContentsRef.current.includes(el)) {
       sectionContentsRef.current.push(el);
     }
@@ -125,7 +137,7 @@ export default function PrivacyPage() {
         ].map((item, index) => (
           <div 
             key={index}
-            ref={addToSectionsRefs}
+            ref={addToSectionsRef}
               className="bg-gray-800 rounded-xl shadow-md p-6 border border-gray-700 glass-premium"
           >
               <div className={`rounded-full w-16 h-16 flex items-center justify-center ${item.color} mb-4 mx-auto border border-neon-400/20`}>
@@ -138,12 +150,12 @@ export default function PrivacyPage() {
       </div>
 
       <section 
-        ref={addToSectionsRefs}
+        ref={addToSectionsRef}
         className="mb-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
       >
         <h2 className="text-2xl font-bold mb-6">1. Data We Collect</h2>
         <div 
-          ref={addToContentRefs} 
+          ref={addToSectionContentsRef} 
           className="space-y-4 text-gray-700 dark:text-gray-300"
         >
           <p>
@@ -187,17 +199,17 @@ export default function PrivacyPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <section 
-          ref={addToSectionsRefs}
+          ref={addToSectionsRef}
           className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
         >
           <h2 className="text-2xl font-bold mb-6">2. Data Retention</h2>
           <div 
-            ref={addToContentRefs}
+            ref={addToSectionContentsRef}
             className="space-y-4 text-gray-700 dark:text-gray-300 mb-6"
           >
             <p>
               We retain different types of data for varying periods as required by regulations
-              and as necessary to provide our services. Here's our retention schedule:
+              and as necessary to provide our services. Here&apos;s our retention schedule:
             </p>
             <div className="flex items-center justify-center mb-4">
               <Clock className="w-5 h-5 mr-2 text-amber-500" />
@@ -229,12 +241,12 @@ export default function PrivacyPage() {
         </section>
 
         <section 
-          ref={addToSectionsRefs}
+          ref={addToSectionsRef}
           className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
         >
           <h2 className="text-2xl font-bold mb-6">3. Security Measures</h2>
           <div 
-            ref={addToContentRefs}
+            ref={addToSectionContentsRef}
             className="space-y-4 text-gray-700 dark:text-gray-300 mb-6"
           >
             <p>
@@ -271,12 +283,12 @@ export default function PrivacyPage() {
       </div>
 
       <section 
-        ref={addToSectionsRefs}
+        ref={addToSectionsRef}
         className="mb-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
       >
         <h2 className="text-2xl font-bold mb-6">4. Your Rights</h2>
         <div 
-          ref={addToContentRefs}
+          ref={addToSectionContentsRef}
           className="space-y-4 text-gray-700 dark:text-gray-300"
         >
           <p>
@@ -334,12 +346,12 @@ export default function PrivacyPage() {
       </section>
 
       <section 
-        ref={addToSectionsRefs}
+        ref={addToSectionsRef}
         className="mb-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
       >
         <h2 className="text-2xl font-bold mb-6">5. Cookies & Tracking</h2>
         <div 
-          ref={addToContentRefs}
+          ref={addToSectionContentsRef}
           className="space-y-4 text-gray-700 dark:text-gray-300"
         >
           <p>
@@ -372,12 +384,12 @@ export default function PrivacyPage() {
       </section>
 
       <section 
-        ref={addToSectionsRefs}
+        ref={addToSectionsRef}
         className="mb-12 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
       >
         <h2 className="text-2xl font-bold mb-6">6. Changes to This Policy</h2>
         <div 
-          ref={addToContentRefs}
+          ref={addToSectionContentsRef}
           className="space-y-4 text-gray-700 dark:text-gray-300"
         >
           <p>
@@ -387,7 +399,7 @@ export default function PrivacyPage() {
             <li>Posting the new Privacy Policy on this page</li>
             <li>Sending an email to registered users</li>
             <li>Displaying a notification within the application</li>
-            <li>Updating the "last updated" date at the top of this Privacy Policy</li>
+            <li>Updating the &quot;last updated&quot; date at the top of this Privacy Policy</li>
           </ul>
           <div className="bg-amber-100 dark:bg-amber-900/20 rounded-lg p-4 text-amber-800 dark:text-amber-500 flex items-start mt-4">
             <Clock className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
@@ -400,12 +412,12 @@ export default function PrivacyPage() {
       </section>
 
       <section 
-        ref={addToSectionsRefs}
+        ref={addToSectionsRef}
         className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
       >
         <h2 className="text-2xl font-bold mb-6">7. Contact Us</h2>
         <div 
-          ref={addToContentRefs}
+          ref={addToSectionContentsRef}
           className="space-y-4 text-gray-700 dark:text-gray-300"
         >
           <p>

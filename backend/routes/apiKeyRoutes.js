@@ -23,7 +23,38 @@ const authMiddleware = (req, res, next) => {
   next();
 };
 
-// Apply auth middleware to all routes
+// Get all API keys with status (add before the authMiddleware to make it publicly accessible)
+router.get('/status', async (req, res) => {
+  try {
+    const keys = apiKeyManager.getAllKeys();
+    const currentKey = apiKeyManager.getCurrentKey();
+    
+    // Add diagnostic information
+    const diagnosticInfo = {
+      totalKeys: keys.length,
+      availableKeys: keys.filter(k => k.isAvailable && k.monthlyRemaining > 0).length,
+      rateLimitedKeys: keys.filter(k => !k.isAvailable && k.monthlyRemaining > 0).length,
+      monthlyLimitKeys: keys.filter(k => k.monthlyRemaining <= 0).length,
+      currentKeyIndex: keys.findIndex(k => k.isCurrent),
+      currentKey: currentKey ? `${currentKey.substring(0, 10)}...` : 'None'
+    };
+    
+    res.json({
+      status: 'success',
+      keys,
+      diagnosticInfo
+    });
+  } catch (error) {
+    console.error('Error fetching API key status:', error);
+    res.status(500).json({ 
+      status: 'error', 
+      message: 'Failed to fetch API key status',
+      error: error.message
+    });
+  }
+});
+
+// Apply auth middleware to all routes except /status
 router.use(authMiddleware);
 
 // Get all API keys (with masked values for security)

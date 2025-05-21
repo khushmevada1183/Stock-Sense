@@ -25,17 +25,15 @@ app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
 // Log port value for debugging
 console.log(`Server configured to use port: ${PORT}`);
 
-// Look for API key in multiple places
-const STOCK_API_KEY = process.env.STOCK_API_KEY || 
-                      process.env.STOCKAPI_KEY || 
-                      process.env.INDIAN_STOCK_API_KEY || 
-                      '';
+// Get API key information from apiKeyManager
+const availableKeys = apiKeyManager.getAllKeys();
+const availableKeyCount = availableKeys.filter(k => k.isAvailable && k.monthlyUsage < 500).length;
 
-// Log API key status (without revealing the key)
-if (STOCK_API_KEY) {
-  console.log(`✅ API key found with length: ${STOCK_API_KEY.length}`);
+// Log API key status
+if (availableKeyCount > 0) {
+  console.log(`✅ Using API key manager with ${availableKeyCount} available keys out of ${availableKeys.length} total keys`);
 } else {
-  console.log(`⚠️ No API key found. Set STOCK_API_KEY environment variable for full functionality.`);
+  console.log(`⚠️ No available API keys in apiKeyManager. API endpoints may not function correctly.`);
 }
 
 // Apply security middleware with CSP adjusted for Render
@@ -98,18 +96,50 @@ function createApiClient() {
   return {
     get: async (url, options = {}) => {
       try {
+        // Get API key from apiKeyManager
+        const API_KEY = apiKeyManager.getCurrentKey();
+        
+        console.log(`Using API key from manager: ${API_KEY.substring(0, 10)}... for request to ${url}`);
+        
         const response = await axios.get(`https://stock.indianapi.in${url}`, {
           ...options,
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': STOCK_API_KEY,
+            'X-Api-Key': API_KEY,
             ...(options.headers || {})
           },
           timeout: 10000 // 10 second timeout
         });
+        
+        // Record successful use
+        apiKeyManager.recordSuccessfulUse();
+        
         return response;
       } catch (error) {
         console.error(`API request failed: ${url}`, error.message);
+        
+        // Handle rate limit errors (429) automatically
+        if (error.response && error.response.status === 429) {
+          console.warn(`Rate limit hit. Marking key as limited.`);
+          apiKeyManager.markCurrentKeyRateLimited(1); // 1 second cooldown
+        }
+        
+        // Handle missing API key errors (400)
+        if (error.response && error.response.status === 400) {
+          const errorData = error.response.data;
+          if (errorData === "Missing API key" || 
+              (typeof errorData === 'string' && errorData.includes('API key'))) {
+            console.warn(`API reported "Missing API key" error. Marking key as invalid.`);
+            apiKeyManager.markCurrentKeyRateLimited(60); // 60 second cooldown
+          }
+        }
+        
+        // Handle invalid API key (401)
+        if (error.response && error.response.status === 401) {
+          console.warn(`Invalid API key detected. Marking key as invalid.`);
+          apiKeyManager.markCurrentKeyRateLimited(3600); // 1 hour cooldown
+        }
+        
         throw error;
       }
     }
@@ -119,12 +149,67 @@ function createApiClient() {
 // Function to validate API connection
 async function validateApiConnection() {
   try {
-    // Create a test client with the correct header configuration
-    const apiClient = createApiClient();
+    // Use apiKeyManager to get the current API key instead of relying on environment variable
+    const API_KEY = apiKeyManager.getCurrentKey();
+    
+    if (!API_KEY) {
+      console.error('No API key available from apiKeyManager');
+      return false;
+    }
+    
+    console.log(`Using API key from manager: ${API_KEY.substring(0, 10)}...`);
+    
+    // Create a test client with API key from apiKeyManager
+    const testClient = {
+      get: async (url, options = {}) => {
+        try {
+          const response = await axios.get(`https://stock.indianapi.in${url}`, {
+            ...options,
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Api-Key': API_KEY,
+              ...(options.headers || {})
+            },
+            timeout: 10000 // 10 second timeout
+          });
+          
+          // Record successful use of the API key
+          apiKeyManager.recordSuccessfulUse();
+          
+          return response;
+        } catch (error) {
+          console.error(`API request failed: ${url}`, error.message);
+          
+          // Handle rate limit errors (429) automatically
+          if (error.response && error.response.status === 429) {
+            console.warn(`Rate limit hit during validation. Marking key as limited.`);
+            apiKeyManager.markCurrentKeyRateLimited(1); // 1 second cooldown
+          }
+          
+          // Handle missing API key errors (400)
+          if (error.response && error.response.status === 400) {
+            const errorData = error.response.data;
+            if (errorData === "Missing API key" || 
+                (typeof errorData === 'string' && errorData.includes('API key'))) {
+              console.warn(`API reported "Missing API key" error. Marking key as invalid.`);
+              apiKeyManager.markCurrentKeyRateLimited(60); // 60 second cooldown
+            }
+          }
+          
+          // Handle invalid API key (401)
+          if (error.response && error.response.status === 401) {
+            console.warn(`Invalid API key detected. Marking key as invalid.`);
+            apiKeyManager.markCurrentKeyRateLimited(3600); // 1 hour cooldown
+          }
+          
+          throw error;
+        }
+      }
+    };
 
     // Try the /stock endpoint with a sample name
     try {
-      const stockResponse = await apiClient.get('/stock', {
+      const stockResponse = await testClient.get('/stock', {
         params: { name: 'Reliance' }
       });
       console.log(`✅ SUCCESS for /stock endpoint: ${stockResponse.status}`);
@@ -135,11 +220,16 @@ async function validateApiConnection() {
         console.log(`  Status: ${stockError.response.status}`);
         console.log(`  Data: ${JSON.stringify(stockError.response.data)}`);
       }
+      
+      // Try with another key if available
+      if (apiKeyManager.rotateToNextAvailableKey()) {
+        console.log(`Rotating to next key for second validation attempt...`);
+      }
     }
 
     // Try the /trending endpoint
     try {
-      const trendingResponse = await apiClient.get('/trending');
+      const trendingResponse = await testClient.get('/trending');
       console.log(`✅ SUCCESS for /trending endpoint: ${trendingResponse.status}`);
       return true;
     } catch (trendingError) {
@@ -177,11 +267,11 @@ function handleApiError(res, error, defaultMessage = 'An error occurred') {
   return res.status(statusCode).json(createApiResponse('error', null, errorMessage));
 }
 
-// API key validation middleware
+// API key validation middleware - Update to use apiKeyManager
 const validateApiKey = (req, res, next) => {
-  const apiKey = process.env.STOCK_API_KEY;
+  const apiKey = apiKeyManager.getCurrentKey();
   if (!apiKey) {
-    console.warn('⚠️ No API key found in environment variables');
+    console.warn('⚠️ No API key available from API key manager');
     return res.status(500).json({ error: 'API key not configured' });
   }
   next();
@@ -198,12 +288,20 @@ app.get('/api/health', (req, res) => {
 
 // Config endpoint - returns masked API key for display purposes
 app.get('/api/config', (req, res) => {
-  // Only expose masked version of the API key for security
-  const apiKey = STOCK_API_KEY;
-  const maskedKey = `sk-live-${'*'.repeat(apiKey.length - 15)}${apiKey.substring(apiKey.length - 4)}`;
+  // Get API key information from apiKeyManager
+  const availableKeys = apiKeyManager.getAllKeys();
+  const currentKey = apiKeyManager.getCurrentKey();
+  const maskedKeys = availableKeys.map(k => {
+    return {
+      key: `sk-live-${'*'.repeat(8)}${k.key.substring(k.key.length - 4)}`,
+      isAvailable: k.isAvailable,
+      monthlyUsage: k.monthlyUsage,
+      isCurrent: k.key === currentKey
+    };
+  });
   
   res.status(200).json(createApiResponse('success', {
-    apiKey: maskedKey,
+    keys: maskedKeys,
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development'
   }));
@@ -299,6 +397,9 @@ app.get('/api/stock/:symbol', async (req, res) => {
         }
       });
       
+      // Record successful use
+      apiKeyManager.recordSuccessfulUse();
+      
       // Process the API response
       let stockData = response.data;
       
@@ -324,30 +425,43 @@ app.get('/api/stock/:symbol', async (req, res) => {
       
       // Return the data
       res.json(createApiResponse('success', stockData));
-    } catch (apiError) {
-      console.error(`Error calling external API for ${cleanSymbol}:`, apiError.message);
-      
-      // Fall back to our service if direct API call fails
-      try {
-        const stock = await stockApiService.getStockBySymbol(cleanSymbol);
-    
-    if (!stock) {
-          console.log(`No stock data found for ${cleanSymbol}`);
-          return res.status(404).json(createApiResponse('error', null, `Stock ${cleanSymbol} not found`));
-    }
-    
-        // Log successful response
-        console.log(`Successfully retrieved data for ${cleanSymbol} from service`);
+    } catch (error) {
+      // Handle API errors with proper key rotation
+      if (error.response) {
+        // Handle rate limits (429)
+        if (error.response.status === 429) {
+          console.warn('Rate limit exceeded for current API key');
+          apiKeyManager.markCurrentKeyRateLimited(1);
+        }
         
-        // Ensure we return data in a consistent format
-    res.json(createApiResponse('success', stock));
+        // Handle missing API key errors (400)
+        if (error.response.status === 400) {
+          const errorData = error.response.data;
+          if (errorData === "Missing API key" || 
+              (typeof errorData === 'string' && errorData.includes('API key'))) {
+            console.warn('API key error detected. Marking as unavailable.');
+            apiKeyManager.markCurrentKeyRateLimited(60);
+          }
+        }
+        
+        // Handle invalid API keys (401)
+        if (error.response.status === 401) {
+          console.warn('Invalid API key. Marking as unavailable.');
+          apiKeyManager.markCurrentKeyRateLimited(3600);
+        }
+      }
+      
+      console.error(`Error fetching stock ${cleanSymbol} from API:`, error.message);
+      
+      // Try our service function as fallback (which has its own caching)
+      try {
+        const stockData = await stockApiService.getStockBySymbol(cleanSymbol);
+        return res.json(createApiResponse('success', stockData));
       } catch (serviceError) {
-        console.error(`Service fallback also failed for ${cleanSymbol}:`, serviceError.message);
-        return res.status(500).json(createApiResponse('error', null, `Failed to fetch stock data for ${cleanSymbol}`));
+        return handleApiError(res, serviceError, `Failed to fetch stock data for ${cleanSymbol}`);
       }
     }
   } catch (error) {
-    console.error(`Error fetching stock data for ${req.params.symbol}:`, error.message);
     handleApiError(res, error, `Failed to fetch stock data for ${req.params.symbol}`);
   }
 });

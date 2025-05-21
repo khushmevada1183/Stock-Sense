@@ -58,11 +58,13 @@ export default function Home() {
       
       {/* Market Overview */}
       <section ref={marketOverviewRef} className="py-12 relative z-10">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 max-w-[1440px] overflow-x-visible">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-white">
             Market Overview
           </h2>
-          <MarketOverview />
+          <div className="overflow-x-auto pb-2">
+            <MarketOverview />
+          </div>
         </div>
       </section>
       

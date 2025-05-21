@@ -82,4 +82,56 @@ This API connects to the Indian Stock API service, which provides comprehensive 
 - TypeScript
 - PostgreSQL for user data
 - JWT for authentication
-- Axios for API requests 
+- Axios for API requests
+
+## API Key Rotation System
+
+The application uses an API key rotation system to handle rate limits and ensure continuous API access. The system automatically rotates between multiple API keys when:
+
+1. A key hits its rate limit (HTTP 429 response)
+2. A key becomes invalid (HTTP 401 response)
+3. The API reports a "Missing API key" error (HTTP 400 response)
+4. A key reaches its monthly usage quota (500 requests per month)
+
+### How it works
+
+The API key manager (`services/apiKeyManager.js`) maintains a pool of API keys and automatically selects the next available key when needed. The system:
+
+- Tracks each key's usage count and availability status
+- Temporarily disables keys that hit rate limits with appropriate cooldown periods
+- Monitors monthly usage quotas for each key
+- Provides detailed logging of key rotation events
+
+### Testing the key rotation
+
+You can test the API key rotation using the included test script:
+
+```bash
+cd backend
+node test-api-keys.js
+```
+
+This script makes multiple API calls in succession to verify that the system properly rotates keys when needed.
+
+### API Key Status Endpoint
+
+The system provides a status endpoint to monitor the health of your API keys:
+
+```
+GET /api/keys/status
+```
+
+This returns information about all keys in the system, including:
+- Total number of keys
+- Number of available keys
+- Number of rate-limited keys
+- Number of keys that have reached monthly quotas
+- Current active key
+
+### Troubleshooting
+
+If you encounter "Missing API key" errors despite having multiple keys configured:
+1. Check the key configuration in `config/api-keys.json`
+2. Verify that the keys are correctly formatted
+3. Review server logs for key rotation events
+4. Add more API keys if all existing keys have reached their rate limits or monthly quotas 

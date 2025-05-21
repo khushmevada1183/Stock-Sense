@@ -16,8 +16,9 @@ export default function TestPage() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005/api'}/health`);
         const data = await response.json();
         setBackendStatus(`Connected! Status: ${JSON.stringify(data)}`);
-      } catch (err) {
-        setBackendStatus(`Error connecting to backend: ${err.message}`);
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+        setBackendStatus(`Error connecting to backend: ${errorMessage}`);
       }
     };
     

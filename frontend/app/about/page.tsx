@@ -3,11 +3,14 @@
 import React, { useEffect, useRef } from 'react';
 import { Card } from '../../components/ui/card';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
 import { Users, TrendingUp, Award, Target, Globe, Code, Zap, Shield, BookOpen } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Mock data for metrics
 const companyStats = [
@@ -36,7 +39,7 @@ const COLORS = ['#3b82f6', '#10b981', '#6366f1', '#f59e0b'];
 
 export default function AboutPage() {
   const mainRef = useRef(null);
-  const cardsRef = useRef(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
   const statsRef = useRef<HTMLDivElement[]>([]);
   const founderSectionRef = useRef(null);
   const visionSectionRef = useRef(null);
@@ -50,14 +53,21 @@ export default function AboutPage() {
       ease: "power3.out" 
     });
 
+    // Ensure the ref is available
+    if (!cardsRef.current) return;
+
     // Animate cards with stagger
-    gsap.from(cardsRef.current?.children || [], {
+    const cards = Array.from(cardsRef.current.children);
+    gsap.from(cards, {
       opacity: 0,
       y: 30,
       stagger: 0.15,
       duration: 0.8,
-      ease: "back.out(1.2)",
-      delay: 0.3
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: cardsRef.current,
+        start: "top 80%",
+      }
     });
 
     // Animate founder section

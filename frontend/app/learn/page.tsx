@@ -79,8 +79,8 @@ const resources = [
 ];
 
 export default function LearnPage() {
-  const mainRef = useRef(null);
-  const sectionsRef = useRef([]);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const sectionsRef = useRef<HTMLElement[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   
@@ -105,7 +105,7 @@ export default function LearnPage() {
   }, []);
 
   // Add sections to ref array for animations
-  const addToSectionsRefs = (el) => {
+  const addToSectionsRefs = (el: HTMLElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el);
     }

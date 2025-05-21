@@ -132,7 +132,7 @@ export default function HeroSection() {
               
               <p className="text-xl mb-8 text-gray-300 max-w-2xl">
                 Our advanced algorithms outperform traditional analysis by <span className="font-semibold text-neon-400">43%</span>, 
-                giving you the confidence to make smarter investment decisions in India's dynamic market.
+                giving you the confidence to make smarter investment decisions in India&apos;s dynamic market.
               </p>
               
               <div className="flex flex-wrap gap-4 mb-12">

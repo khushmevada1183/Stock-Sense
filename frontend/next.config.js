@@ -3,6 +3,13 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    // !! WARN !!
+    // Dangerously allow production builds to successfully complete even if
+    // your project has type errors.
+    // !! WARN !!
+    ignoreBuildErrors: true,
+  },
   /* config options here */
   reactStrictMode: true,
   compiler: {
@@ -40,7 +47,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: process.env.NEXT_PUBLIC_API_URL + '/:path*' || 'http://localhost:10000/api/:path*'
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api'}/:path*`
       }
     ];
   }

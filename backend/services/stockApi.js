@@ -24,34 +24,39 @@ const createApiClient = (customHeaders = {}) => {
       let retries = 0;
       
       while (retries <= MAX_RETRIES) {
-      try {
+        try {
           // Get the current API key from the manager
           const API_KEY = apiKeyManager.getCurrentKey();
           
-        console.log(`Making API request to: ${API_BASE_URL}${endpoint}`);
+          // Debug log to see which API key is being used
+          console.log(`Using API key: ${API_KEY.substring(0, 10)}... for request to ${endpoint}`);
         
-        // Set up request headers with API key
-        const headers = {
-          'Content-Type': 'application/json',
+          console.log(`Making API request to: ${API_BASE_URL}${endpoint}`);
+        
+          // Set up request headers with API key
+          const headers = {
+            'Content-Type': 'application/json',
             'X-Api-Key': API_KEY,
-          ...customHeaders
-        };
+            ...customHeaders
+          };
         
-        // Make the request with timeout
-        const response = await axios.get(`${API_BASE_URL}${endpoint}`, {
-          ...options,
-          headers,
-          timeout: 10000 // 10 second timeout
-        });
+          // Make the request with timeout
+          const response = await axios.get(`${API_BASE_URL}${endpoint}`, {
+            ...options,
+            headers,
+            timeout: 10000 // 10 second timeout
+          });
           
           // If successful, record the successful use
           apiKeyManager.recordSuccessfulUse();
         
-        return response;
-      } catch (error) {
+          return response;
+        } catch (error) {
+          console.error(`API request failed for ${endpoint}:`, error.message);
+          
           // Check if this is a rate limit error (HTTP 429)
           if (error.response && error.response.status === 429) {
-            console.warn('Rate limit exceeded for current API key');
+            console.warn(`Rate limit exceeded for current API key on ${endpoint} request`);
             
             // Set cooldown to 1 second per the API plan (1 request/second limit)
             const resetTimeInSeconds = 1;
@@ -75,11 +80,52 @@ const createApiClient = (customHeaders = {}) => {
             
             // Continue to next iteration (which will use the next available key)
             continue;
+          } else if (error.response && error.response.status === 401) {
+            console.error('Invalid API key. Marking as unavailable and trying another key.');
+            apiKeyManager.markCurrentKeyRateLimited(3600); // Invalidate this key for an hour
+            retries++;
+            
+            if (retries <= MAX_RETRIES) {
+              await new Promise(resolve => setTimeout(resolve, 500));
+              continue;
+            }
+            
+            throw error; // Throw after max retries
+          } else if (error.response && error.response.status === 400) {
+            // Better handling for "Missing API key" error which is returned as 400 Bad Request
+            const errorData = error.response.data;
+            const isMissingKeyError = 
+              errorData === "Missing API key" || 
+              (typeof errorData === 'string' && errorData.includes('API key')) ||
+              (errorData && errorData.message && errorData.message.includes('API key'));
+            
+            if (isMissingKeyError) {
+              console.error('API reported "Missing API key" error. Current key might be invalid.');
+              console.log(`Current key being used: ${apiKeyManager.getCurrentKey().substring(0, 10)}...`);
+              
+              // Mark current key as rate limited for a minute
+              apiKeyManager.markCurrentKeyRateLimited(60);
+              
+              // Force rotation to next available key
+              const rotated = apiKeyManager.rotateToNextAvailableKey();
+              console.log(`Key rotation after Missing API Key error: ${rotated ? 'Success' : 'Failed'}`);
+              
+              retries++;
+              
+              if (retries <= MAX_RETRIES) {
+                console.log(`Retrying with new API key (attempt ${retries}/${MAX_RETRIES})...`);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                continue;
+              }
+            }
           }
           
-          // For other errors, log and rethrow
-        console.error(`API request failed for ${endpoint}:`, error.message);
-        throw error;
+          // Log error details for debugging
+          if (error.response) {
+            console.error('Error response status:', error.response.status);
+            console.error('Error response data:', JSON.stringify(error.response.data));
+          }
+          throw error;
         }
       }
     }
@@ -673,30 +719,32 @@ const stockApiService = {
         
         // Construct a market overview object
         const marketOverview = {
-          indices: {
-            // Hardcoded major indices as placeholders since we can't get real-time data
-            'NIFTY 50': {
+          indices: [
+            { 
               name: 'NIFTY 50',
-              value: '19,200.00',
-              change: '37.80',
-              percentChange: '0.20%',
-              isUp: true
+              value: 22654.50,
+              change: 37.80,
+              percent_change: 0.20
             },
-            'BSE SENSEX': {
+            { 
               name: 'BSE SENSEX',
-              value: '63,450.00',
-              change: '125.30',
-              percentChange: '0.18%',
-              isUp: true
+              value: 74683.70,
+              change: 125.30,
+              percent_change: 0.18
             },
-            'NIFTY BANK': {
+            { 
               name: 'NIFTY BANK',
-              value: '44,120.00',
-              change: '-12.50',
-              percentChange: '-0.03%',
-              isUp: false
+              value: 48521.60,
+              change: -12.50,
+              percent_change: -0.03
+            },
+            {
+              name: 'NIFTY IT',
+              value: 34892.80,
+              change: 412.95,
+              percent_change: 1.20
             }
-          },
+          ],
           topGainers: trendingData.top_gainers || [],
           topLosers: trendingData.top_losers || [],
           bseMostActive: bseMostActive || [],

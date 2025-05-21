@@ -49,7 +49,7 @@ export default function StockSearchPage() {
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-6">Stock Search</h1>
       <p className="text-gray-600 mb-6">
-        Search for a stock using the direct API endpoint format. Try searching for stocks like "ITC", "Reliance", "TCS", etc.
+        Search for a stock using the direct API endpoint format. Try searching for stocks like &quot;ITC&quot;, &quot;Reliance&quot;, &quot;TCS&quot;, etc.
       </p>
 
       <form onSubmit={handleSearch} className="flex gap-2 mb-8">

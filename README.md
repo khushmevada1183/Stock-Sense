@@ -33,6 +33,7 @@ A comprehensive web application for analyzing Indian stocks with real-time data,
 - [Testing](#-testing)
 - [Contributing](#-contributing)
 - [License](#-license)
+- [API Key Rotation System](#-api-key-rotation-system)
 
 ## 🔍 Overview
 
@@ -294,6 +295,31 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔑 API Key Rotation System
+
+Stock-Sense implements a robust API key rotation system for reliable data access:
+
+- **Multiple API Keys**: Manages a pool of API keys to handle concurrent requests
+- **Automatic Rotation**: Seamlessly switches between keys when rate limits are encountered
+- **Rate Limit Handling**: Detects rate limit errors (HTTP 429) and rotates to the next available key
+- **Error Recovery**: Identifies "Missing API key" errors (HTTP 400) and invalid key errors (HTTP 401)
+- **Usage Tracking**: Monitors monthly usage for each key to prevent quota exhaustion
+- **Diagnostics**: Provides a status endpoint to monitor health of all API keys
+- **Cooldown Periods**: Implements temporary key disabling with appropriate cooldown durations
+
+This system ensures continuous data access even when individual keys reach their rate limits.
+
+### Testing the API Key Rotation
+
+You can test the API key rotation system using the included test script:
+
+```bash
+cd backend
+node test-api-keys.js
+```
+
+This script makes multiple API calls in succession to verify that the system properly rotates keys when needed.
 
 ---
 

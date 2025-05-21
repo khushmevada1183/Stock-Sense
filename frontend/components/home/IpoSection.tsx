@@ -12,8 +12,8 @@ import { gsap } from 'gsap';
 // Helper function to normalize IPO data
 const normalizeIpoData = (ipo: any): IpoItem => {
   // Process numbers and ensure they're valid
-  const processNumber = (value: any): number | null => {
-    if (value === null || value === undefined) return null;
+  const processNumber = (value: any): number | undefined => {
+    if (value === null || value === undefined) return undefined;
     
     if (typeof value === 'number') return value;
     
@@ -24,7 +24,7 @@ const normalizeIpoData = (ipo: any): IpoItem => {
       if (!isNaN(parsed)) return parsed;
     }
     
-    return null;
+    return undefined;
   };
   
   // Format price range to ensure it's not just zeros
@@ -34,12 +34,43 @@ const normalizeIpoData = (ipo: any): IpoItem => {
     const minPrice = processNumber(min);
     const maxPrice = processNumber(max);
     
-    if (minPrice !== null && maxPrice !== null) {
+    if (minPrice !== undefined && maxPrice !== undefined) {
       if (minPrice === 0 && maxPrice === 0) return 'Price TBA';
       if (minPrice > 0 && maxPrice > 0) return `₹${minPrice} - ₹${maxPrice}`;
     }
     
     return 'Price TBA';
+  };
+
+  // Format listing gain to ensure consistent decimal places
+  const formatListingGain = (gain: any): string => {
+    if (gain === null || gain === undefined) return '';
+    
+    // If it's a decimal value (API usually returns like -0.09 for -9%)
+    if (typeof gain === 'number') {
+      return `${(gain * 100).toFixed(3)}%`;
+    }
+    
+    // If it's a string with percentage
+    if (typeof gain === 'string' && gain.includes('%')) {
+      // Extract the numeric value and format it
+      const match = gain.match(/([-+]?)(\d+\.?\d*)/);
+      if (match) {
+        const sign = match[1];
+        const value = parseFloat(match[2]);
+        return `${sign}${value.toFixed(3)}%`;
+      }
+    }
+    
+    // If it's a string number without % sign
+    if (typeof gain === 'string') {
+      const parsedValue = parseFloat(gain);
+      if (!isNaN(parsedValue)) {
+        return `${parsedValue.toFixed(3)}%`;
+      }
+    }
+    
+    return String(gain);
   };
   
   // Check if this IPO has minimal data (used for disabling animations)
@@ -67,7 +98,11 @@ const normalizeIpoData = (ipo: any): IpoItem => {
     drhpLink: ipo.drhpLink || '',
     min_price: processNumber(ipo.min_price),
     max_price: processNumber(ipo.max_price),
-    is_sme: ipo.is_sme === true
+    is_sme: ipo.is_sme === true,
+    listing_gain: ipo.listing_gain ? formatListingGain(ipo.listing_gain) : undefined,
+    listing_gains: ipo.listing_gains !== undefined ? 
+      typeof ipo.listing_gains === 'number' ? ipo.listing_gains : String(ipo.listing_gains) : 
+      undefined
   };
   
   // Add non-interface property for animations - we'll handle this separately

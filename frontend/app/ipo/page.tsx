@@ -41,279 +41,219 @@ const FAQS = [
   { question: "What is the difference between RHP and DRHP?", answer: "DRHP (Draft Red Herring Prospectus) is the preliminary document filed with SEBI, while RHP (Red Herring Prospectus) is the final offer document with all details before the IPO opens." }
 ];
 
-// IPO card component
-const IpoCard = ({ ipo, type = 'upcoming' }: { ipo: IpoItem, type?: 'upcoming' | 'listed' }) => {
-  const cardRef = useRef(null);
-  const logoRef = useRef(null);
-  const contentRef = useRef(null);
-  const { isAnimationEnabled } = useAnimation();
+interface IPO {
+  company_name: string;
+  symbol: string;
+  issue_size: string | number;
+  issue_price?: number;
+  listing_price?: number;
+  listing_gains?: number;
+  listing_gain?: string;
+  min_price?: number | undefined;
+  max_price?: number | undefined;
+  listing_date?: string | undefined;
+  open?: string | undefined;
+  close?: string | undefined;
+  bidding_start_date?: string | undefined;
+  bidding_end_date?: string | undefined;
+  document_url?: string | undefined;
+  rhpLink?: string | undefined;
+  drhpLink?: string | undefined;
+  issue_type?: string;
+  is_sme?: boolean;
+  additional_text?: string | undefined;
+  subscription_status?: string;
+  status?: string;
+  logo?: string;
+  name?: string;
+  lot_size?: number;
+}
 
-  // Normalize data fields - ensure we handle all possible field names
-  const normalizedData = useMemo(() => {
-    // Format listing gain as percentage with appropriate color
-    let formattedListingGain = 'N/A';
-    let gainValue = null;
-    
-    // Check for listing_gains (number) or listing_gain (string)
-    if (typeof ipo.listing_gains === 'number') {
-      // API returns decimal value (e.g., 0.15 for 15%)
-      gainValue = ipo.listing_gains;
-      formattedListingGain = `${(gainValue * 100).toFixed(2)}%`;
-    } else if (ipo.listing_gain) {
-      // Try to parse if it's a string that might contain a number
-      const gainMatch = String(ipo.listing_gain).match(/([-+]?\d+\.?\d*)%?/);
-      if (gainMatch) {
-        const parsedGain = parseFloat(gainMatch[1]);
-        if (!isNaN(parsedGain)) {
-          // Check if the value already includes percentage conversion
-          gainValue = parsedGain > -1 && parsedGain < 1 ? parsedGain : parsedGain / 100;
-          formattedListingGain = `${parsedGain.toFixed(2)}%`;
-        } else {
-          formattedListingGain = ipo.listing_gain;
-        }
-      } else {
-        formattedListingGain = ipo.listing_gain;
-      }
-    }
-    
-    // Determine if this is an SME IPO
-    const isSME = ipo.is_sme === true;
-    
-    // Format listing date properly
-    let formattedListingDate = ipo.listing_date || 'N/A';
-    if (formattedListingDate && formattedListingDate !== 'N/A') {
-      try {
-        const date = new Date(formattedListingDate);
-        if (!isNaN(date.getTime())) {
-          formattedListingDate = date.toLocaleDateString('en-IN', {
-            day: 'numeric',
-            month: 'short',
-            year: 'numeric'
-          });
-        }
-      } catch (e) {
-        // If date parsing fails, keep the original format
-      }
-    }
+interface IPOCardProps {
+  data: {
+    companyName: string;
+    issueSize: number;
+    issuePrice: number;
+    listingDate: string;
+    listingGainValue: number | null;
+    subscriptionRate: number;
+    status: string;
+  };
+}
 
-    // Check if price range is just zeros and replace with TBA
-    const priceRangeText = ipo.price_range || 
-      (ipo.min_price && ipo.max_price ? 
-        (ipo.min_price === 0 && ipo.max_price === 0 ? 
-          'Price TBA' : 
-          `₹${ipo.min_price} - ₹${ipo.max_price}`) : 
-        'Price TBA');
-    
-    // Check if issue size is valid
-    const issueSizeText = ipo.issue_size && ipo.issue_size !== '0' ? ipo.issue_size : 'Size TBA';
-    
-    return {
-      name: ipo.company_name || ipo.name || 'Unknown Company',
-      symbol: ipo.symbol || 'N/A',
-      status: ipo.subscription_status || ipo.status || type,
-      ipoPrice: ipo.ipo_price || (ipo.issue_price ? `₹${ipo.issue_price}` : 'Price TBA'),
-      listingPrice: ipo.listing_price ? `₹${ipo.listing_price}` : 'N/A',
-      listingGain: formattedListingGain,
-      listingGainValue: gainValue, // Store the numeric value for color styling
-      minPrice: ipo.min_price ? (ipo.min_price > 0 ? `₹${ipo.min_price}` : 'TBA') : 'TBA',
-      maxPrice: ipo.max_price ? (ipo.max_price > 0 ? `₹${ipo.max_price}` : 'TBA') : 'TBA',
-      listingDate: formattedListingDate,
-      openDate: ipo.open || ipo.bidding_start_date || 'TBA',
-      closeDate: ipo.close || ipo.bidding_end_date || 'TBA',
-      documentUrl: ipo.document_url || null,
-      rhpLink: ipo.rhpLink || null,
-      drhpLink: ipo.drhpLink || null,
-      priceRange: priceRangeText,
-      issueSize: issueSizeText,
-      issueType: ipo.issue_type || (isSME ? 'SME IPO' : 'Book Built'),
-      isSME: isSME,
-      additionalText: ipo.additional_text || null,
-      // Flag to detect if this IPO has minimal data
-      hasMinimalData: !ipo.min_price || !ipo.max_price || (ipo.min_price === 0 && ipo.max_price === 0)
-    };
-  }, [ipo, type]);
+interface APIResponse {
+  statistics: {
+    upcoming: number;
+    active: number;
+    recentlyListed: number;
+  };
+  upcomingIPOs: any[];
+  activeIPOs: any[];
+  recentlyListedIPOs: any[];
+}
 
-  // Set up card animations when it mounts
+const defaultIpo: IPO = {
+  company_name: 'Unknown Company',
+  symbol: 'N/A',
+  issue_size: 'Size TBA',
+  issue_type: 'Book Built',
+  min_price: undefined,
+  max_price: undefined,
+  open: undefined,
+  close: undefined,
+  listing_date: undefined,
+  document_url: undefined,
+  rhpLink: undefined,
+  drhpLink: undefined,
+  additional_text: undefined,
+  subscription_status: undefined,
+  status: undefined
+};
+
+const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (!isAnimationEnabled || !cardRef.current) return;
-
-    // Create a 3D tilt effect for the card
+    // Simplified hover effect without 3D transform
     const card = cardRef.current;
-    let bounds;
-
-    const mouseEnter = (e) => {
-      bounds = card.getBoundingClientRect();
+    
+    const mouseEnter = () => {
+      if (!card) return;
       gsap.to(card, {
-        scale: 1.02, // Reduced from 1.03 for less extreme effect
-        boxShadow: '0 0 15px rgba(57, 255, 20, 0.2)', // Changed to neon green shadow
         duration: 0.3,
-        ease: 'power2.out',
+        y: -5,
+        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+        ease: "power2.out"
       });
     };
 
     const mouseLeave = () => {
+      if (!card) return;
       gsap.to(card, {
-        scale: 1,
-        boxShadow: '0 0 5px rgba(57, 255, 20, 0.1)', // Changed to subtle neon green shadow
-        rotationX: 0,
-        rotationY: 0,
-        duration: 0.4,
-        ease: 'power2.out',
+        duration: 0.3,
+        y: 0,
+        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+        ease: "power2.out"
       });
     };
 
-    const mouseMove = (e) => {
-      // Skip 3D effects for cards with minimal data to prevent blur
-      if (!bounds || normalizedData.hasMinimalData) return;
-      
-      const mouseX = e.clientX;
-      const mouseY = e.clientY;
-      const leftX = mouseX - bounds.x;
-      const topY = mouseY - bounds.y;
-      const center = {
-        x: leftX - bounds.width / 2,
-        y: topY - bounds.height / 2
-      };
-      
-      // Reduced rotation values to prevent blur
-      gsap.to(card, {
-        rotationX: -center.y / 30, // Reduced from /10
-        rotationY: center.x / 30, // Reduced from /10
-        duration: 0.5,
-        ease: 'power2.out',
-      });
-    };
-
-    // Add event listeners
-    card.addEventListener('mouseenter', mouseEnter);
-    card.addEventListener('mouseleave', mouseLeave);
-    card.addEventListener('mousemove', mouseMove);
-
-    // Clean up event listeners when component unmounts
-    return () => {
-      card.removeEventListener('mouseenter', mouseEnter);
-      card.removeEventListener('mouseleave', mouseLeave);
-      card.removeEventListener('mousemove', mouseMove);
-    };
-  }, [isAnimationEnabled, normalizedData.hasMinimalData]);
-
-  // Determine status color based on subscription status
-  const getStatusColor = () => {
-    if (!normalizedData.status) return 'bg-gray-700 text-gray-300';
-    
-    const status = normalizedData.status.toLowerCase();
-    if (status.includes('open') || status.includes('active')) {
-      return 'bg-neon-400 text-black';
-    } else if (status.includes('upcoming') || status.includes('announced')) {
-      return 'bg-cyan-500 text-white';
-    } else if (status.includes('closed')) {
-      return 'bg-amber-500 text-black';
-    } else if (status.includes('listed')) {
-      return 'bg-purple-500 text-white';
-    } else {
-      return 'bg-gray-700 text-gray-300';
+    if (card) {
+      card.addEventListener('mouseenter', mouseEnter);
+      card.addEventListener('mouseleave', mouseLeave);
     }
+
+    return () => {
+      if (card) {
+        card.removeEventListener('mouseenter', mouseEnter);
+        card.removeEventListener('mouseleave', mouseLeave);
+      }
+    };
+  }, []);
+
+  const normalizedData = {
+    companyName: data.companyName,
+    issueSize: data.issueSize,
+    issuePrice: data.issuePrice,
+    listingDate: data.listingDate,
+    listingGainValue: data.listingGainValue,
+    subscriptionRate: data.subscriptionRate,
+    status: data.status
   };
 
   return (
-    <div 
+    <div
       ref={cardRef}
-      className="glass-premium rounded-lg shadow-neon-sm overflow-hidden min-w-[280px] md:min-w-[320px] w-[320px] flex flex-col h-full ipo-card transform transition-all duration-300 gpu-accelerated relative z-10 border border-neon-400/10"
-      style={{flex: '0 0 auto'}}
+      className="bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-700"
     >
-      {/* Card Header with Logo and Status */}
-      <div className="p-4 flex items-center justify-between border-b border-gray-700">
-        <div className="flex items-center">
-          <div ref={logoRef} className="mr-3">
-            {ipo.logo ? (
-              <img src={ipo.logo} alt={`${normalizedData.name} logo`} className="w-10 h-10 object-contain rounded-lg bg-gray-700" />
-            ) : (
-              <div className="w-10 h-10 flex items-center justify-center bg-gray-700 rounded-lg text-neon-400 font-bold">
-                {normalizedData.symbol.substring(0, 2) || normalizedData.name.substring(0, 2) || 'IP'}
-              </div>
-            )}
-          </div>
-          <div>
-            <h3 className="font-semibold text-white text-base">{normalizedData.name}</h3>
-            <div className="text-gray-400 text-xs">{normalizedData.symbol}</div>
-          </div>
+      <h3 className="text-xl font-semibold mb-4">{normalizedData.companyName}</h3>
+      
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <p className="text-sm text-gray-400">Issue Size</p>
+          <p className="font-medium">₹{normalizedData.issueSize.toLocaleString()}</p>
         </div>
-        <div className={`text-xs font-medium px-2 py-1 rounded-full ${getStatusColor()}`}>
+        <div>
+          <p className="text-sm text-gray-400">Issue Price</p>
+          <p className="font-medium">₹{normalizedData.issuePrice}</p>
+        </div>
+      </div>
+      
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <p className="text-sm text-gray-400">Listing Date</p>
+          <p className="font-medium">{normalizedData.listingDate}</p>
+        </div>
+        <div>
+          <p className="text-sm text-gray-400">Listing Gain</p>
+          <p className={`font-medium ${
+            normalizedData.listingGainValue && normalizedData.listingGainValue > 0 
+              ? 'text-green-400' 
+              : normalizedData.listingGainValue && normalizedData.listingGainValue < 0 
+                ? 'text-red-400' 
+                : ''
+          }`}>
+            {normalizedData.listingGainValue 
+              ? `${normalizedData.listingGainValue > 0 ? '+' : ''}${Number(normalizedData.listingGainValue).toFixed(3)}%` 
+              : 'N/A'
+            }
+          </p>
+        </div>
+      </div>
+      
+      <div className="mb-4">
+        <p className="text-sm text-gray-400">Subscription Rate</p>
+        <div className="relative pt-1">
+          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-700">
+            <div
+              style={{ width: `${Math.min(normalizedData.subscriptionRate, 100)}%` }}
+              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
+            ></div>
+          </div>
+          <p className="text-sm mt-1">{normalizedData.subscriptionRate}x</p>
+        </div>
+      </div>
+      
+      <div className="flex justify-between items-center">
+        <span className={`px-3 py-1 rounded-full text-sm ${
+          normalizedData.status === 'Open' 
+            ? 'bg-green-900/30 text-green-400' 
+            : normalizedData.status === 'Upcoming' 
+              ? 'bg-blue-900/30 text-blue-400'
+              : 'bg-gray-900/30 text-gray-400'
+        }`}>
           {normalizedData.status}
-          {normalizedData.isSME && <span className="ml-1 text-xs">SME</span>}
-        </div>
-      </div>
-      
-      {/* Card Content */}
-      <div ref={contentRef} className="p-4 flex-grow">
-        {type === 'upcoming' ? (
-          <div className="grid grid-cols-2 gap-y-3 gap-x-2">
-            <div className="col-span-2">
-              <div className="text-xs text-gray-400">Issue Size</div>
-              <div className="text-sm font-medium text-white">{normalizedData.issueSize}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Price Range</div>
-              <div className="text-sm font-medium text-white">{normalizedData.priceRange}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Issue Type</div>
-              <div className="text-sm font-medium text-white">{normalizedData.issueType}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Open Date</div>
-              <div className="text-sm font-medium text-white">{normalizedData.openDate}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Close Date</div>
-              <div className="text-sm font-medium text-white">{normalizedData.closeDate}</div>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-y-3 gap-x-2">
-            <div>
-              <div className="text-xs text-gray-400">IPO Price</div>
-              <div className="text-sm font-medium text-white">{normalizedData.ipoPrice}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Listing Price</div>
-              <div className="text-sm font-medium text-white">{normalizedData.listingPrice}</div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Listing Gain</div>
-              <div className={`text-sm font-medium ${
-                normalizedData.listingGainValue > 0 
-                  ? 'text-neon-400' 
-                  : normalizedData.listingGainValue < 0
-                    ? 'text-red-500'
-                  : 'text-gray-400'
-              }`}>
-                {normalizedData.listingGain}
-              </div>
-            </div>
-            <div>
-              <div className="text-xs text-gray-400">Listing Date</div>
-              <div className="text-sm font-medium text-white">{normalizedData.listingDate}</div>
-            </div>
-            <div className="col-span-2">
-              <div className="text-xs text-gray-400">Issue Size</div>
-              <div className="text-sm font-medium text-white">{normalizedData.issueSize}</div>
-            </div>
-          </div>
-        )}
-      </div>
-      
-      {/* Card Footer */}
-      <div className="p-4 border-t border-gray-700 flex justify-center">
-        <Link 
-          href={`/ipo/${normalizedData.symbol}`}
-          className="w-full text-center py-2 bg-gray-750 hover:bg-gray-700 text-white text-sm rounded-md transition-colors border border-neon-400/20 hover:border-neon-400/40 hover:shadow-neon-sm"
-        >
-          View Details
-        </Link>
+        </span>
+        <button className="text-blue-400 hover:text-blue-300 transition-colors">
+          View Details →
+        </button>
       </div>
     </div>
   );
+};
+
+// Convert API response to normalized data
+const normalizeIpoData = (ipo: IpoItem): IPOCardProps['data'] => {
+  // Ensure that listingGainValue is a number or null
+  let listingGainValue: number | null = null;
+  
+  if (typeof ipo.listing_gains === 'number') {
+    listingGainValue = ipo.listing_gains;
+  } else if (ipo.listing_gains !== undefined) {
+    const parsedValue = parseFloat(String(ipo.listing_gains));
+    if (!isNaN(parsedValue)) {
+      listingGainValue = parsedValue;
+    }
+  }
+  
+  return {
+    companyName: ipo.company_name || '',
+    issueSize: typeof ipo.issue_size === 'number' ? ipo.issue_size : 0,
+    issuePrice: ipo.issue_price || 0,
+    listingDate: ipo.listing_date || 'TBA',
+    listingGainValue: listingGainValue,
+    subscriptionRate: 0,
+    status: ipo.status || 'Unknown'
+  };
 };
 
 // Simple IPO card component for Recently Listed IPOs (direct API data display)
@@ -342,19 +282,26 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
     if (!ipo.listing_gain && !ipo.listing_gains) return "N/A";
     
     if (typeof ipo.listing_gains === 'number') {
-      return `${ipo.listing_gains > 0 ? '+' : ''}${(ipo.listing_gains * 100).toFixed(2)}%`;
+      return `${ipo.listing_gains > 0 ? '+' : ''}${(ipo.listing_gains * 100).toFixed(3)}%`;
     }
     
     if (ipo.listing_gain) {
       // Check if it already has a sign
       if (ipo.listing_gain.startsWith('+') || ipo.listing_gain.startsWith('-')) {
+        // Extract the numeric value and format it to 3 decimal places
+        const match = ipo.listing_gain.match(/([-+]?)(\d+\.?\d*)/);
+        if (match) {
+          const sign = match[1];
+          const value = parseFloat(match[2]);
+          return `${sign}${value.toFixed(3)}%`;
+        }
         return ipo.listing_gain;
       }
       
       const gainMatch = String(ipo.listing_gain).match(/([-+]?\d+\.?\d*)%?/);
       if (gainMatch) {
         const value = parseFloat(gainMatch[1]);
-        return `${value > 0 ? '+' : ''}${value}%`;
+        return `${value > 0 ? '+' : ''}${value.toFixed(3)}%`;
       }
     }
     
@@ -428,6 +375,170 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
   );
 };
 
+// Convert API response data to IpoItem format
+const mapToIpoItem = (ipo: any): IpoItem => {
+  // Process and validate the IPO data to ensure it has all required fields
+  // Make sure we're working with a copy to avoid modifying the original
+  
+  // Validate that we have at least some basic data to work with
+  if (!ipo || (typeof ipo !== 'object')) {
+    console.warn('Received invalid IPO data, using fallback structure');
+    // Return a minimal valid structure with all required fields
+    return {
+      company_name: 'Data Unavailable',
+      symbol: 'N/A',
+      logo: null,
+      subscription_status: 'upcoming',
+      status: 'upcoming',
+      price_range: 'Price TBA',
+      issue_size: 'Size TBA',
+      issue_type: 'Book Built',
+      min_price: undefined,
+      max_price: undefined,
+      open: undefined,
+      close: undefined,
+      listing_date: undefined,
+      is_sme: false,
+      ipo_price: undefined,
+      listing_price: undefined,
+      listing_gain: 'N/A',
+      listing_gains: undefined,
+      document_url: undefined,
+      rhpLink: undefined,
+      drhpLink: undefined,
+      additional_text: undefined
+    };
+  }
+  
+  // Helper function to format listing gain as percentage
+  const formatListingGain = (gain: any): string => {
+    if (gain === null || gain === undefined) return 'N/A';
+    
+    // If it's already a formatted string with % sign
+    if (typeof gain === 'string' && gain.includes('%')) {
+      // Extract the numeric value and format it to 3 decimal places
+      const match = gain.match(/([-+]?)(\d+\.?\d*)/);
+      if (match) {
+        const sign = match[1];
+        const value = parseFloat(match[2]);
+        return `${sign}${value.toFixed(3)}%`;
+      }
+      return gain;
+    }
+    
+    // If it's a decimal value (API usually returns like -0.09 for -9%)
+    if (typeof gain === 'number') {
+      return `${(gain * 100).toFixed(3)}%`;
+    }
+    
+    // If it's a string number without % sign
+    if (typeof gain === 'string') {
+      const parsedValue = parseFloat(gain);
+      if (!isNaN(parsedValue)) {
+        // Check if it's already percentage or decimal
+        if (parsedValue > -1 && parsedValue < 1) {
+          // Decimal value (convert to percentage)
+          return `${(parsedValue * 100).toFixed(3)}%`;
+        } else {
+          // Already percentage value
+          return `${parsedValue.toFixed(3)}%`;
+        }
+      }
+    }
+    
+    return String(gain);
+  };
+  
+  // Update the processNumber function to return undefined instead of null
+  const processNumber = (value: any): number | undefined => {
+    if (value === null || value === undefined) return undefined;
+    
+    if (typeof value === 'number') return value;
+    
+    if (typeof value === 'string') {
+      // Remove currency symbols and commas
+      const cleanValue = value.replace(/[₹,]/g, '');
+      const parsed = parseFloat(cleanValue);
+      if (!isNaN(parsed)) return parsed;
+    }
+    
+    return undefined;
+  };
+  
+  // Format price range to ensure it's not just zeros
+  const formatPriceRange = (min: any, max: any, existing: any): string => {
+    if (existing) return existing;
+    
+    const minPrice = processNumber(min);
+    const maxPrice = processNumber(max);
+    
+    if (minPrice !== undefined && maxPrice !== undefined) {
+      if (minPrice === 0 && maxPrice === 0) return 'Price TBA';
+      if (minPrice > 0 && maxPrice > 0) return `₹${minPrice} - ₹${maxPrice}`;
+    }
+    
+    return 'Price TBA';
+  };
+  
+  const processedIpo: IpoItem = {
+    // Basic fields - API uses 'name' instead of 'company_name'
+    company_name: ipo.company_name || ipo.name || 'Unknown Company',
+    name: ipo.name || ipo.company_name, // Keep original name field
+    
+    // Symbol is required
+    symbol: ipo.symbol || 'N/A',
+    
+    // Logo is optional
+    logo: ipo.logo || null,
+    
+    // Status fields - critical for UI display
+    subscription_status: ipo.subscription_status || ipo.status || 'upcoming',
+    status: ipo.status || ipo.subscription_status || 'upcoming',
+    
+    // Price fields - ensure we have valid numbers or clear indicators
+    price_range: formatPriceRange(ipo.min_price, ipo.max_price, ipo.price_range),
+    ipo_price: ipo.ipo_price || (processNumber(ipo.issue_price) ? `₹${ipo.issue_price}` : undefined),
+    issue_price: processNumber(ipo.issue_price), // Keep as number for calculations
+    
+    // Listing data - API uses 'listing_gains' as decimal (like -0.09 for -9%)
+    listing_price: processNumber(ipo.listing_price),
+    listing_gain: ipo.listing_gain || formatListingGain(ipo.listing_gains),
+    listing_gains: ipo.listing_gains, // Keep original decimal value
+    
+    // Date fields - ensure we have clear indicators for missing dates
+    listing_date: ipo.listing_date || undefined,
+    open: ipo.open || ipo.bidding_start_date || undefined,
+    close: ipo.close || ipo.bidding_end_date || undefined,
+    bidding_start_date: ipo.bidding_start_date || ipo.open || undefined,
+    bidding_end_date: ipo.bidding_end_date || ipo.close || undefined,
+    
+    // Size and type - validate issue size isn't empty or zero
+    issue_size: ipo.issue_size && ipo.issue_size !== '0' ? ipo.issue_size : 'Size TBA',
+    issue_type: ipo.issue_type || (ipo.is_sme ? 'SME IPO' : 'Book Built'),
+    
+    // Price ranges - validate they're not zeros
+    min_price: processNumber(ipo.min_price),
+    max_price: processNumber(ipo.max_price),
+    
+    // Document links
+    document_url: ipo.document_url || undefined,
+    rhpLink: ipo.rhpLink || undefined,
+    drhpLink: ipo.drhpLink || undefined,
+    
+    // Additional fields
+    additional_text: ipo.additional_text || undefined,
+    is_sme: ipo.is_sme === true,
+    lot_size: ipo.lot_size
+  };
+  
+  // For debugging - log only the first few IPOs to avoid console spam
+  if (Math.random() < 0.05) {
+    console.log('Sample processed IPO item:', processedIpo);
+  }
+  
+  return processedIpo;
+};
+
 export default function IpoPage() {
   const [upcomingIpos, setUpcomingIpos] = useState<IpoItem[]>([]);
   const [newListedIpos, setNewListedIpos] = useState<IpoItem[]>([]);
@@ -447,6 +558,7 @@ export default function IpoPage() {
   const promoBoxRef = useRef<HTMLDivElement>(null);
   const dematButtonRef = useRef<HTMLAnchorElement>(null);
   const upcomingCarouselRef = useRef<HTMLDivElement>(null);
+  const activeCarouselRef = useRef<HTMLDivElement>(null);
   const newListedCarouselRef = useRef<HTMLDivElement>(null);
   const faqSectionRef = useRef<HTMLDivElement>(null);
   const newsSectionRef = useRef<HTMLDivElement>(null);
@@ -471,175 +583,18 @@ export default function IpoPage() {
     });
   };
 
-  // Convert API response data to IpoItem format
-  const mapToIpoItem = (ipo: any): IpoItem => {
-    // Process and validate the IPO data to ensure it has all required fields
-    // Make sure we're working with a copy to avoid modifying the original
-    
-    // Validate that we have at least some basic data to work with
-    if (!ipo || (typeof ipo !== 'object')) {
-      console.warn('Received invalid IPO data, using fallback structure');
-      // Return a minimal valid structure with all required fields
-      return {
-        company_name: 'Data Unavailable',
-        symbol: 'N/A',
-        logo: null,
-        subscription_status: 'upcoming',
-        status: 'upcoming',
-        price_range: 'Price TBA',
-        issue_size: 'Size TBA',
-        issue_type: 'Book Built',
-        min_price: null,
-        max_price: null,
-        open: null,
-        close: null,
-        listing_date: null,
-        is_sme: false,
-        ipo_price: null,
-        listing_price: null,
-        listing_gain: 'N/A',
-        listing_gains: null,
-        document_url: null,
-        rhpLink: null,
-        drhpLink: null,
-        additional_text: null
-      };
-    }
-    
-    // Helper function to format listing gain as percentage
-    const formatListingGain = (gain: any): string => {
-      if (gain === null || gain === undefined) return 'N/A';
-      
-      // If it's already a formatted string with % sign
-      if (typeof gain === 'string' && gain.includes('%')) {
-        return gain;
-      }
-      
-      // If it's a decimal value (API usually returns like -0.09 for -9%)
-      if (typeof gain === 'number') {
-        return `${(gain * 100).toFixed(2)}%`;
-      }
-      
-      // If it's a string number without % sign
-      if (typeof gain === 'string') {
-        const parsedValue = parseFloat(gain);
-        if (!isNaN(parsedValue)) {
-          // Check if it's already percentage or decimal
-          if (parsedValue > -1 && parsedValue < 1) {
-            // Decimal value (convert to percentage)
-            return `${(parsedValue * 100).toFixed(2)}%`;
-          } else {
-            // Already percentage value
-            return `${parsedValue.toFixed(2)}%`;
-          }
-        }
-      }
-      
-      return String(gain);
-    };
-    
-    // Process numbers and ensure they're valid
-    const processNumber = (value: any): number | null => {
-      if (value === null || value === undefined) return null;
-      
-      if (typeof value === 'number') return value;
-      
-      if (typeof value === 'string') {
-        // Remove currency symbols and commas
-        const cleanValue = value.replace(/[₹,]/g, '');
-        const parsed = parseFloat(cleanValue);
-        if (!isNaN(parsed)) return parsed;
-      }
-      
-      return null;
-    };
-    
-    // Format price range to ensure it's not just zeros
-    const formatPriceRange = (min: any, max: any, existing: any): string => {
-      if (existing) return existing;
-      
-      const minPrice = processNumber(min);
-      const maxPrice = processNumber(max);
-      
-      if (minPrice !== null && maxPrice !== null) {
-        if (minPrice === 0 && maxPrice === 0) return 'Price TBA';
-        if (minPrice > 0 && maxPrice > 0) return `₹${minPrice} - ₹${maxPrice}`;
-      }
-      
-      return 'Price TBA';
-    };
-    
-    const processedIpo: IpoItem = {
-      // Basic fields - API uses 'name' instead of 'company_name'
-      company_name: ipo.company_name || ipo.name || 'Unknown Company',
-      name: ipo.name || ipo.company_name, // Keep original name field
-      
-      // Symbol is required
-      symbol: ipo.symbol || 'N/A',
-      
-      // Logo is optional
-      logo: ipo.logo || null,
-      
-      // Status fields - critical for UI display
-      subscription_status: ipo.subscription_status || ipo.status || 'upcoming',
-      status: ipo.status || ipo.subscription_status || 'upcoming',
-      
-      // Price fields - ensure we have valid numbers or clear indicators
-      price_range: formatPriceRange(ipo.min_price, ipo.max_price, ipo.price_range),
-      ipo_price: ipo.ipo_price || (processNumber(ipo.issue_price) ? `₹${ipo.issue_price}` : undefined),
-      issue_price: processNumber(ipo.issue_price), // Keep as number for calculations
-      
-      // Listing data - API uses 'listing_gains' as decimal (like -0.09 for -9%)
-      listing_price: processNumber(ipo.listing_price),
-      listing_gain: ipo.listing_gain || formatListingGain(ipo.listing_gains),
-      listing_gains: ipo.listing_gains, // Keep original decimal value
-      
-      // Date fields - ensure we have clear indicators for missing dates
-      listing_date: ipo.listing_date || null,
-      open: ipo.open || ipo.bidding_start_date || null,
-      close: ipo.close || ipo.bidding_end_date || null,
-      bidding_start_date: ipo.bidding_start_date || ipo.open || null,
-      bidding_end_date: ipo.bidding_end_date || ipo.close || null,
-      
-      // Size and type - validate issue size isn't empty or zero
-      issue_size: ipo.issue_size && ipo.issue_size !== '0' ? ipo.issue_size : 'Size TBA',
-      issue_type: ipo.issue_type || (ipo.is_sme ? 'SME IPO' : 'Book Built'),
-      
-      // Price ranges - validate they're not zeros
-      min_price: processNumber(ipo.min_price),
-      max_price: processNumber(ipo.max_price),
-      
-      // Document links
-      document_url: ipo.document_url || null,
-      rhpLink: ipo.rhpLink || null,
-      drhpLink: ipo.drhpLink || null,
-      
-      // Additional fields
-      additional_text: ipo.additional_text || null,
-      is_sme: ipo.is_sme === true,
-      lot_size: ipo.lot_size
-    };
-    
-    // For debugging - log only the first few IPOs to avoid console spam
-    if (Math.random() < 0.05) {
-      console.log('Sample processed IPO item:', processedIpo);
-    }
-    
-    return processedIpo;
-  };
-
   // Function to fetch IPO data
-    const fetchIpoData = async () => {
-      try {
+  const fetchIpoData = async () => {
+    try {
       console.log('Starting to fetch IPO data...');
-        setLoading(true);
+      setLoading(true);
       if (isRetrying) {
         setError(null);
       }
         
       // Fetch IPO data from our API
       console.log('Calling ipoService.fetchIPOData()');
-      const response = await ipoService.fetchIPOData();
+      const response = await ipoService.fetchIPOData() as APIResponse;
         
       if (response) {
         // Set statistics
@@ -712,9 +667,9 @@ export default function IpoPage() {
         
         // Log data load success
         console.log('IPO data loaded successfully');
-        }
-      } catch (err: any) {
-        console.error('Error fetching IPO data:', err);
+      }
+    } catch (err: any) {
+      console.error('Error fetching IPO data:', err);
       setError(err.message || 'Failed to fetch IPO data');
       setIsRetrying(false);
       
@@ -727,10 +682,10 @@ export default function IpoPage() {
         active: 0,
         recentlyListed: 0
       });
-      } finally {
-        setLoading(false);
-      }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Function to retry API call
   const handleRetry = () => {
@@ -1008,65 +963,77 @@ export default function IpoPage() {
             {/* Upcoming IPOs Section */}
             <div className="glass-premium rounded-lg shadow-md overflow-hidden border border-neon-400/10">
               <div className="p-6 border-b border-gray-700 flex justify-between items-center">
-          <h2 className="font-semibold text-xl text-white">Upcoming IPOs</h2>
-          <Link 
-            href="/ipo?filter=upcoming"
+                <h2 className="font-semibold text-xl text-white">Upcoming IPOs</h2>
+                <Link 
+                  href="/ipo?filter=upcoming"
                   className="px-3 py-1 bg-neon-400 hover:bg-neon-300 text-black rounded-md text-sm font-medium transition-colors shadow-neon-sm hover:shadow-neon"
-          >
-            View All
-          </Link>
-        </div>
-        
+                >
+                  View All
+                </Link>
+              </div>
+              
               <div className="relative">
-          <div 
-            ref={upcomingCarouselRef}
+                <div 
+                  ref={upcomingCarouselRef}
                   className="overflow-x-auto pb-6 relative"
-          >
-                  <div className="flex gap-4 p-4 min-w-full">
-              {upcomingIpos.length === 0 ? (
-                      loading ? (
-                        <div className="flex items-center justify-center w-full p-6 text-gray-500 dark:text-gray-400">
-                          <div className="flex flex-col items-center">
-                            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent align-[-0.125em]"></div>
-                            <span className="mt-4">Loading upcoming IPO data...</span>
-                          </div>
-                        </div>
-                      ) : (
-                      <div className="flex items-center justify-center w-full p-6 text-gray-500 dark:text-gray-400">
-                        <span>No upcoming IPO data available at this time.</span>
+                  style={{ minHeight: upcomingIpos.length === 0 ? '120px' : '350px' }} 
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center w-full py-12 text-gray-500 dark:text-gray-400">
+                      <div className="text-center">
+                        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
+                        <p className="mt-4">Loading upcoming IPO data...</p>
                       </div>
-                      )
-                    ) : (
-                      upcomingIpos.map((ipo, index) => (
-                        <IpoCard key={index} ipo={ipo} type="upcoming" />
-                ))
-              )}
-            </div>
-            {/* Fade effect for scrolling indication */}
-                  <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
-          </div>
-          
-          {/* Carousel navigation buttons */}
-          {upcomingIpos.length > 3 && (
+                    </div>
+                  ) : upcomingIpos.length === 0 ? (
+                    <div className="flex items-center justify-center w-full py-12 text-gray-500 dark:text-gray-400">
+                      <div className="text-center">
+                        <p>No upcoming IPO data available.</p>
+                        <button
+                          onClick={handleRetry}
+                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Retry
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
+                      {upcomingIpos.map((ipo, index) => (
+                        <div key={`ipo-upcoming-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
+                          <IPOCard key={index} data={normalizeIpoData(ipo)} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  {/* Fade effect for scrolling indication */}
+                  {upcomingIpos.length > 0 && (
+                    <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
+                  )}
+                </div>
+                
+                {/* Carousel navigation buttons */}
+                {upcomingIpos.length > 3 && (
                   <div className="flex justify-end px-6 pb-4 gap-2">
-              <button 
-                onClick={() => scrollCarousel(upcomingCarouselRef, 'left')}
+                    <button 
+                      onClick={() => scrollCarousel(upcomingCarouselRef, 'left')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button 
-                onClick={() => scrollCarousel(upcomingCarouselRef, 'right')}
+                      aria-label="Scroll left"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button 
+                      onClick={() => scrollCarousel(upcomingCarouselRef, 'right')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Scroll right"
-              >
-                <ChevronRight size={18} />
-              </button>
+                      aria-label="Scroll right"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-        </div>
 
             {/* Active IPOs Section - Added new section for active IPOs */}
             {activeIpos.length > 0 && (
@@ -1082,10 +1049,13 @@ export default function IpoPage() {
                 </div>
                 
                 <div className="relative">
-                  <div className="overflow-x-auto pb-6 relative">
-                    <div className="flex gap-4 p-4 min-w-full">
+                  <div className="overflow-x-auto pb-6 relative"
+                        style={{ minHeight: activeIpos.length === 0 ? '120px' : '350px' }}>
+                    <div ref={activeCarouselRef} className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
                       {activeIpos.map((ipo, index) => (
-                        <IpoCard key={index} ipo={ipo} type="upcoming" />
+                        <div key={`ipo-active-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
+                          <IPOCard key={index} data={normalizeIpoData(ipo)} />
+                        </div>
                       ))}
                     </div>
                     {/* Fade effect for scrolling indication */}
@@ -1096,14 +1066,14 @@ export default function IpoPage() {
                   {activeIpos.length > 3 && (
                     <div className="flex justify-end px-6 pb-4 gap-2">
                       <button 
-                        onClick={() => scrollCarousel(upcomingCarouselRef, 'left')}
+                        onClick={() => scrollCarousel(activeCarouselRef, 'left')}
                         className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                         aria-label="Scroll left"
                       >
                         <ChevronLeft size={18} />
                       </button>
                       <button 
-                        onClick={() => scrollCarousel(upcomingCarouselRef, 'right')}
+                        onClick={() => scrollCarousel(activeCarouselRef, 'right')}
                         className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                         aria-label="Scroll right"
                       >
@@ -1122,42 +1092,17 @@ export default function IpoPage() {
                   Recently Listed IPOs 
                   <span className="ml-2 text-sm text-gray-500">({newListedIpos.length} found)</span>
                 </h2>
-          <Link 
-            href="/ipo?filter=listed"
+                <Link 
+                  href="/ipo?filter=listed"
                   className="px-3 py-1 bg-neon-400 hover:bg-neon-300 text-black rounded-md text-sm font-medium transition-colors shadow-neon-sm hover:shadow-neon"
-          >
-            View All
-          </Link>
-        </div>
-              
-              {/* Direct debug info - visible in all environments */}
-              <div className="p-2 bg-blue-50 dark:bg-blue-900/30 border-b border-blue-100 text-xs flex justify-between items-center">
-                <div>
-                  <span className="font-medium">IPO Data Status:</span> 
-                  <span className="ml-1">{loading ? 'Loading...' : dataFetched ? 'Data loaded' : 'No data'}</span>
-                  <span className="mx-2">|</span>
-                  <span className="font-medium">Recently Listed IPOs:</span> 
-                  <span className="ml-1">{newListedIpos.length}</span>
-                  <span className="mx-2">|</span>
-                  <span className="font-medium">Statistics count:</span> 
-                  <span className="ml-1">{statistics.recentlyListed}</span>
-                </div>
-                {/* Clear cache button */}
-                <button 
-                  onClick={() => {
-                    // Force a refresh by setting timestamp to 0
-                    console.log('Forcing data refresh...');
-                    handleRetry();
-                  }}
-                  className="px-2 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600"
                 >
-                  Refresh Data
-                </button>
-        </div>
-        
+                  View All
+                </Link>
+              </div>
+              
               <div className="relative">
-          <div
-            ref={newListedCarouselRef}
+                <div
+                  ref={newListedCarouselRef}
                   className="overflow-x-auto pb-6 relative"
                   style={{ minHeight: newListedIpos.length === 0 ? '120px' : '350px' }} 
                 >
@@ -1180,44 +1125,42 @@ export default function IpoPage() {
                           Retry
                         </button>
                       </div>
-                      </div>
-                    ) : (
+                    </div>
+                  ) : (
                     <div className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
-                      {/* Directly map IPO data to a simpler card component */}
                       {newListedIpos.map((ipo, index) => (
-                        <div key={`ipo-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
-                          {/* Use the main IpoCard component */}
-                          <SimpleIpoCard ipo={ipo} />
-            </div>
+                        <div key={`ipo-listed-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
+                          <IPOCard data={normalizeIpoData(ipo)} />
+                        </div>
                       ))}
                     </div>
                   )}
                   
-            {/* Fade effect for scrolling indication */}
+                  {/* Fade effect for scrolling indication */}
                   {newListedIpos.length > 0 && (
-                  <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
+                    <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
                   )}
-          </div>
-          
+                </div>
+                
                 {/* Carousel navigation buttons - only show if we have enough cards */}
-          {newListedIpos.length > 3 && (
+                {newListedIpos.length > 3 && (
                   <div className="flex justify-end px-6 pb-4 gap-2">
-              <button 
-                onClick={() => scrollCarousel(newListedCarouselRef, 'left')}
+                    <button 
+                      onClick={() => scrollCarousel(newListedCarouselRef, 'left')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button 
-                onClick={() => scrollCarousel(newListedCarouselRef, 'right')}
+                      aria-label="Scroll left"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button 
+                      onClick={() => scrollCarousel(newListedCarouselRef, 'right')}
                       className="p-2 rounded-full bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Scroll right"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          )}
+                      aria-label="Scroll right"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1362,8 +1305,8 @@ export default function IpoPage() {
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
-            ))}
-          </Accordion>
+                ))}
+              </Accordion>
             </div>
           </div>
         </div>

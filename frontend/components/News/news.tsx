@@ -33,7 +33,7 @@ const generateMockStockData = () => {
   };
 
   // Generate price for a stock/index
-  const generatePrice = (code) => {
+  const generatePrice = (code: string) => {
     let basePrice;
     
     // Set realistic base prices for major indices and stocks
@@ -62,7 +62,7 @@ const generateMockStockData = () => {
   };
 
   // Generate historical data points for charts
-  const generateHistoricalData = (code) => {
+  const generateHistoricalData = (code: string) => {
     const basePrice = parseFloat(generatePrice(code));
     const points = [];
     for (let i = 0; i < 15; i++) {
@@ -205,7 +205,7 @@ const generateMockStockData = () => {
 };
 
 // Format numbers with commas for Indian number system
-const formatIndianNumber = (num) => {
+const formatIndianNumber = (num: number | string) => {
   if (num === undefined || num === null) return "";
   const numStr = num.toString();
   let result = "";
@@ -240,8 +240,13 @@ const formatIndianNumber = (num) => {
   return formattedInt + decimal;
 };
 
-// Component for a metric card with standard styling
-const MetricCard = ({ title, children, className = "" }) => {
+interface MetricCardProps {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}
+
+const MetricCard = ({ title, children, className = "" }: MetricCardProps) => {
   const cardRef = useRef(null);
   
   useEffect(() => {
@@ -265,8 +270,12 @@ const MetricCard = ({ title, children, className = "" }) => {
   );
 };
 
-// Price change component with appropriate coloring
-const PriceChange = ({ change, percentChange }) => {
+interface PriceChangeProps {
+  change: string | number;
+  percentChange: string | number;
+}
+
+const PriceChange = ({ change, percentChange }: PriceChangeProps) => {
   const isPositive = parseFloat(change) >= 0;
   const color = isPositive ? "text-green-500" : "text-red-500";
   const Arrow = isPositive ? ArrowUpRight : ArrowDownRight;
@@ -279,8 +288,11 @@ const PriceChange = ({ change, percentChange }) => {
   );
 };
 
-// Simplified placeholder components for charts
-const StockPriceChart = ({ data }) => {
+interface ChartProps {
+  data: any; // Using any for now, ideally should be more specific
+}
+
+const StockPriceChart = ({ data }: ChartProps) => {
   return (
     <div className="h-full flex items-center justify-center">
       <div className="text-gray-400">Chart visualization would appear here</div>
@@ -288,7 +300,7 @@ const StockPriceChart = ({ data }) => {
   );
 };
 
-const MarketBreadthChart = ({ data }) => {
+const MarketBreadthChart = ({ data }: ChartProps) => {
   return (
     <div className="h-full flex items-center justify-center">
       <div className="text-gray-400">Market breadth chart would appear here</div>
@@ -296,7 +308,11 @@ const MarketBreadthChart = ({ data }) => {
   );
 };
 
-const SectorPerformanceChart = ({ sectors }) => {
+interface SectorChartProps {
+  sectors: Array<{ name: string; change: string | number }>;
+}
+
+const SectorPerformanceChart = ({ sectors }: SectorChartProps) => {
   return (
     <div className="h-full flex items-center justify-center">
       <div className="text-gray-400">Sector performance chart would appear here</div>
@@ -304,8 +320,18 @@ const SectorPerformanceChart = ({ sectors }) => {
   );
 };
 
-// Enhanced news item component with better styling
-const NewsItem = ({ item }) => {
+interface NewsItemProps {
+  item: {
+    headline: string;
+    content: string;
+    time: string;
+    source: string;
+    image: string;
+    category: string;
+  };
+}
+
+const NewsItem = ({ item }: NewsItemProps) => {
   const categoryColors = {
     "Markets": "bg-blue-500",
     "Economy": "bg-green-500",

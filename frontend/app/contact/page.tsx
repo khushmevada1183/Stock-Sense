@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, FormEvent, ChangeEvent } from 'react';
 import { gsap } from 'gsap';
 import { Mail, Phone, MapPin, MessageSquare, Send, Clock, CheckCircle } from 'lucide-react';
 import PageBackground from '@/components/layout/PageBackground';
 
 export default function ContactPage() {
   const mainRef = useRef(null);
-  const formRef = useRef(null);
-  const sectionsRef = useRef([]);
+  const formRef = useRef<HTMLFormElement>(null);
+  const sectionsRef = useRef<HTMLElement[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -27,36 +27,37 @@ export default function ContactPage() {
     });
 
     // Staggered sections animation
-    gsap.from(sectionsRef.current, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: "back.out(1.2)",
-      delay: 0.3
+    sectionsRef.current.forEach((section, index) => {
+      gsap.from(section, {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        delay: index * 0.2,
+        ease: "power2.out"
+      });
     });
 
     // Form fields animation
     if (formRef.current) {
-      gsap.from(formRef.current.querySelectorAll('input, textarea, button'), {
-      opacity: 0,
-      y: 20,
+      const elements = formRef.current.querySelectorAll('input, textarea, button');
+      gsap.from(elements, {
+        opacity: 0,
+        y: 20,
         stagger: 0.1,
-      duration: 0.6,
-        ease: "power3.out",
-        delay: 0.5
-    });
+        duration: 0.6,
+        ease: "power2.out"
+      });
     }
   }, []);
 
   // Add sections to ref array for animations
-  const addToSectionsRefs = (el) => {
+  const addToSectionsRefs = (el: HTMLElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el);
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -64,7 +65,7 @@ export default function ContactPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // In a real app, you would send the form data to your backend here
     console.log('Form submitted:', formData);
