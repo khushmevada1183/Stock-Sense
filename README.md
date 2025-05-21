@@ -3,7 +3,7 @@
 A comprehensive web application for analyzing Indian stocks with real-time data, interactive charts, and financial insights.
 
 <p align="center">
-  <img src="https://via.placeholder.com/1200x600?text=Indian+Stock+Sense+Dashboard" alt="Indian Stock Sense Dashboard" width="800"/>
+  <img src="docs/images/home_dashboard.png" alt="Indian Stock Sense Dashboard" width="800"/>
 </p>
 
 <p align="center">
@@ -111,13 +111,13 @@ Check out our live demo:
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="https://via.placeholder.com/400x225?text=Dashboard" alt="Dashboard" width="400"/>
-  <img src="https://via.placeholder.com/400x225?text=Stock+Detail" alt="Stock Detail" width="400"/>
+  <img src="docs/images/home_dashboard.png" alt="Home Dashboard" width="400"/>
+  <img src="docs/images/portfolio_view.png" alt="Portfolio Dashboard" width="400"/>
 </p>
 
 <p align="center">
-  <img src="https://via.placeholder.com/400x225?text=Portfolio+View" alt="Portfolio" width="400"/>
-  <img src="https://via.placeholder.com/400x225?text=News+Feed" alt="News" width="400"/>
+  <img src="docs/images/ipo_section.png" alt="IPO Section" width="400"/>
+  <img src="docs/images/learning_resources.png" alt="Learning Resources" width="400"/>
 </p>
 
 ## 📁 Project Structure
