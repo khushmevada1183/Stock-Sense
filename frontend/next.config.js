@@ -29,8 +29,9 @@ const nextConfig = {
   // Increase build memory limit
   experimental: {
     largePageDataBytes: 512 * 1000, // 512KB
-    transpilePackages: ['@radix-ui/react-accordion'],
   },
+  // Moved from experimental to top level as required by Next.js 15.3.2
+  transpilePackages: ['@radix-ui/react-accordion'],
   // Configure for dynamic rendering with standalone output
   output: 'standalone',
   // Configure image handling
