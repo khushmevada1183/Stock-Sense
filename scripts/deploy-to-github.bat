@@ -5,7 +5,7 @@ echo ===== Stock-Sense GitHub Pages Deployment =====
 echo This script will commit and push changes to your GitHub repository
 
 REM Set variables
-set GITHUB_REPO=https://github.com/khushmevada1183/Stock-Sense.git
+set GITHUB_REPO=https://github.com/khushmevada5005/stock-sense-build.git
 set BRANCH=main
 
 REM Check if git is installed

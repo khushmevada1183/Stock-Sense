@@ -3,7 +3,7 @@
 # Deploy Stock-Sense to GitHub Pages
 
 # Set variables
-GITHUB_REPO="https://github.com/khushmevada1183/Stock-Sense.git"
+GITHUB_REPO="https://github.com/khushmevada5005/stock-sense-build.git"
 BRANCH="main"
 
 echo "===== Stock-Sense GitHub Pages Deployment ====="
