@@ -16,9 +16,9 @@ function parseArgs() {
 }
 
 const cmdArgs = parseArgs();
-// Use different ports to avoid conflicts
-const backendPort = cmdArgs['backend-port'] || process.env.PORT || 5005; // Use Render $PORT or default
-const frontendPort = cmdArgs['frontend-port'] || 3005; // Using port 3005 for frontend
+// Use different ports to avoid conflicts; defaults are important if args aren't passed
+const backendPort = parseInt(cmdArgs['backend-port'], 10) || 5005;
+const frontendPort = parseInt(cmdArgs['frontend-port'], 10) || 3005;
 
 // Get the local IP address
 function getLocalIpAddress() {
@@ -40,29 +40,27 @@ const config = {
   backend: {
     dir: path.join(__dirname, '..', 'backend'),
     command: 'npm',
-    args: ['run', 'start'],
+    args: ['run', 'dev:simple'], // This script in backend/package.json should use process.env.PORT
     name: 'BACKEND',
     color: '\x1b[36m', // Cyan
-    port: backendPort,
+    port: backendPort, // Crucial for the banner and NEXT_PUBLIC_API_URL
     env: {
-      PORT: backendPort,
-      CORS_ORIGIN: `http://localhost:${frontendPort}`,
-      STOCK_API_KEY: 'sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq'
+      PORT: backendPort.toString(), // Ensure this is passed as env to the backend process
+      CORS_ORIGIN: `http://localhost:${frontendPort}`
+      // STOCK_API_KEYS (plural) should be set in Render's environment, not here.
     }
   },
   frontend: {
     dir: path.join(__dirname, '..', 'frontend'),
     command: 'npm',
-    args: ['run', 'start', '--', '-p', frontendPort],
+    args: ['run', 'dev', '--', '-p', frontendPort.toString()],
     name: 'FRONTEND',
     color: '\x1b[35m', // Magenta
-    port: frontendPort,
+    port: frontendPort, // Crucial for the banner
     env: {
-      // Add Next.js specific environment variables
       HOSTNAME: '0.0.0.0',
-      PORT: frontendPort,
-      // Ensure correct backend API URL
-      NEXT_PUBLIC_API_URL: `http://localhost:${backendPort}`
+      PORT: frontendPort.toString(), // Passed as env to the frontend process
+      NEXT_PUBLIC_API_URL: `http://localhost:${backendPort}` // For the Next.js app to call the backend
     }
   }
 };
@@ -86,10 +84,10 @@ console.log('\n\x1b[1m=======================================');
 console.log('🚀 INDIAN STOCK ANALYZER - ALL-IN-ONE STARTER');
 console.log('=======================================\x1b[0m\n');
 console.log('This script will start both backend and frontend servers.\n');
+// These console logs depend on config.backend.port and config.frontend.port being correctly set
 console.log(`${config.backend.color}Backend${resetColor}: Using JavaScript server on port ${config.backend.port}`);
 console.log(`${config.frontend.color}Frontend${resetColor}: Next.js app on port ${config.frontend.port}\n`);
 
-// Check for compatibility between frontend API calls and backend server
 console.log('🔍 Checking for application compatibility...');
 console.log('✅ Using the JavaScript server (server.js) which has all required endpoints.\n');
 
@@ -99,20 +97,15 @@ function startProcess(processConfig) {
   
   console.log(`${color}Starting ${name}...${resetColor}`);
   
-  // Prepare environment variables
-  const processEnv = { ...process.env };
-  if (env) {
-    Object.assign(processEnv, env);
-  }
-  
+  const processEnv = { ...process.env, ...env }; // Merge current env with specified env
+    
   const childProcess = spawn(command, args, {
     cwd: dir,
-    shell: true,
+    shell: true, // shell: true can have nuances with PATH and finding executables like 'next'
     stdio: 'pipe',
     env: processEnv
   });
   
-  // Handle stdout
   childProcess.stdout.on('data', (data) => {
     data.toString().split('\n').forEach(line => {
       if (line.trim()) {
@@ -121,16 +114,14 @@ function startProcess(processConfig) {
     });
   });
   
-  // Handle stderr
   childProcess.stderr.on('data', (data) => {
     data.toString().split('\n').forEach(line => {
-      if (line.trim() && !line.includes('DeprecationWarning')) {
+      if (line.trim() && !line.includes('DeprecationWarning')) { // Filter out common warnings if noisy
         console.log(`${color}[${name} ERROR]${resetColor} ${line}`);
       }
     });
   });
   
-  // Handle process exit
   childProcess.on('close', (code) => {
     if (code !== 0) {
       console.log(`${color}[${name}]${resetColor} Process exited with code ${code}`);
@@ -145,15 +136,13 @@ console.log('Starting services...\n');
 const backendProcess = startProcess(config.backend);
 const frontendProcess = startProcess(config.frontend);
 
-// Handle graceful shutdown
 process.on('SIGINT', () => {
   console.log('\n\nShutting down services...');
-  backendProcess.kill();
-  frontendProcess.kill();
+  if (backendProcess) backendProcess.kill();
+  if (frontendProcess) frontendProcess.kill();
   process.exit(0);
 });
 
-// Display access URLs after a short delay
 setTimeout(() => {
   const localIP = getLocalIpAddress();
   
@@ -164,4 +153,4 @@ setTimeout(() => {
   console.log(`${config.frontend.color}Frontend (Network)${resetColor}: http://${localIP}:${config.frontend.port}`);
   console.log(`${config.backend.color}Backend API${resetColor}: http://localhost:${config.backend.port}/api/health`);
   console.log('\nPress Ctrl+C to stop all services.\n');
-}, 3000);
+}, 5000); // Increased delay slightly to allow services more time to start before printing
