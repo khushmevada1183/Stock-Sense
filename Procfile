@@ -1,1 +1,1 @@
-web: npm run install:all && node scripts/run.js
+web: chmod +x deploy.sh && ./deploy.sh
