@@ -1,0 +1,52 @@
+# Add 'frontend' label to any changes in the frontend directory
+frontend:
+  - frontend/**/*
+
+# Add 'backend' label to any changes in the backend directory
+backend:
+  - backend/**/*
+
+# Add 'documentation' label to any changes in the docs directory or README files
+documentation:
+  - docs/**/*
+  - '**/*.md'
+  - '**/*.mdx'
+
+# Add 'dependencies' label to any changes in package files
+dependencies:
+  - '**/package.json'
+  - '**/package-lock.json'
+  - '**/yarn.lock'
+
+# Add 'github-actions' label to any changes in the .github directory
+github-actions:
+  - .github/**/*
+
+# Add 'tests' label to any changes in test files
+tests:
+  - '**/tests/**/*'
+  - '**/*.test.js'
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.js'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
+  - '**/cypress/**/*'
+
+# Add 'ui' label to any changes in UI components
+ui:
+  - 'frontend/components/**/*'
+  - 'frontend/app/**/*.tsx'
+  - 'frontend/app/**/*.css'
+
+# Add 'api' label to any changes in API routes
+api:
+  - 'backend/src/routes/**/*'
+  - 'backend/src/controllers/**/*'
+  - 'frontend/app/api/**/*'
+
+# Add 'security' label to any changes in security-related files
+security:
+  - 'backend/src/middleware/auth*'
+  - 'backend/src/utils/validation*'
+  - '**/security/**/*' 

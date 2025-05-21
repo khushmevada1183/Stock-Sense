@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Analyzer API Tests</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .card {
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    #configSection {
+      margin-bottom: 20px;
+    }
+    #configSection label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    #configSection input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    #configSection input[type="checkbox"] {
+      margin-right: 5px;
+    }
+    #output {
+      background-color: #f8f8f8;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+      overflow-x: auto;
+      font-family: monospace;
+      white-space: pre-wrap;
+      height: 500px;
+      overflow-y: auto;
+    }
+    .success { color: #27ae60; }
+    .error { color: #e74c3c; }
+    .info { color: #3498db; }
+    .heading { color: #f39c12; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stock Analyzer API Tests</h1>
+    <p>Test runner for the refactored API services infrastructure</p>
+  </header>
+
+  <div class="card" id="configSection">
+    <h2>Configuration</h2>
+    <div>
+      <label>
+        <input type="checkbox" id="testStandardAPI" checked> 
+        Test Standard API
+      </label>
+    </div>
+    <div>
+      <label>
+        <input type="checkbox" id="testIndianAPI" checked> 
+        Test Indian API
+      </label>
+    </div>
+    <div>
+      <label>
+        <input type="checkbox" id="apiRotationTest" checked> 
+        Test API Rotation/Failover
+      </label>
+    </div>
+    <div>
+      <label>
+        <input type="checkbox" id="verboseLogging" checked> 
+        Verbose Logging
+      </label>
+    </div>
+    <div>
+      <label for="standardApiUrl">Standard API URL:</label>
+      <input type="text" id="standardApiUrl" value="http://localhost:5002/api">
+    </div>
+    <div>
+      <label for="standardApiKey">Standard API Key (if required):</label>
+      <input type="text" id="standardApiKey" value="">
+    </div>
+    <div>
+      <label for="indianApiUrl">Indian API URL:</label>
+      <input type="text" id="indianApiUrl" value="https://stock.indianapi.in">
+    </div>
+    <div>
+      <label for="indianApiKey">Indian API Key:</label>
+      <input type="text" id="indianApiKey" value="sk-live-0KwlkkkbLj6KxWuyNimN0gkigsRck7mYP1CTq3Zq">
+    </div>
+    <div>
+      <label for="stockSymbol">Test Stock Symbol:</label>
+      <input type="text" id="stockSymbol" value="RELIANCE">
+    </div>
+  </div>
+
+  <button id="runTests">Run API Tests</button>
+  <button id="clearOutput">Clear Output</button>
+
+  <div class="card">
+    <h2>Test Output</h2>
+    <div id="output"></div>
+  </div>
+
+  <script type="module">
+    // We'll load the script dynamically to ensure we get the latest version
+    const script = document.createElement('script');
+    script.type = 'module';
+    script.src = 'api-test.js';
+    document.head.appendChild(script);
+
+    // Wait for script to load
+    script.onload = () => {
+      console.log('Test script loaded');
+      
+      // Get DOM elements
+      const runTestsButton = document.getElementById('runTests');
+      const clearOutputButton = document.getElementById('clearOutput');
+      const outputDiv = document.getElementById('output');
+      
+      // Override console methods to display in our output div
+      const originalConsoleLog = console.log;
+      const originalConsoleError = console.error;
+      
+      console.log = function(...args) {
+        originalConsoleLog.apply(console, args);
+        
+        const line = args.map(arg => {
+          if (typeof arg === 'object') {
+            return JSON.stringify(arg, null, 2);
+          }
+          return String(arg);
+        }).join(' ');
+        
+        const div = document.createElement('div');
+        
+        // Apply styling based on content
+        if (line.includes('✓')) {
+          div.className = 'success';
+        } else if (line.includes('✗')) {
+          div.className = 'error';
+        } else if (line.includes('ℹ')) {
+          div.className = 'info';
+        } else if (line.includes('===')) {
+          div.className = 'heading';
+        }
+        
+        div.textContent = line;
+        outputDiv.appendChild(div);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+      };
+      
+      console.error = function(...args) {
+        originalConsoleError.apply(console, args);
+        
+        const line = args.map(arg => {
+          if (typeof arg === 'object') {
+            return JSON.stringify(arg, null, 2);
+          }
+          return String(arg);
+        }).join(' ');
+        
+        const div = document.createElement('div');
+        div.className = 'error';
+        div.textContent = line;
+        outputDiv.appendChild(div);
+        outputDiv.scrollTop = outputDiv.scrollHeight;
+      };
+      
+      // Run tests when button is clicked
+      runTestsButton.addEventListener('click', () => {
+        // Update configuration from form
+        window.CONFIG = {
+          testStandardAPI: document.getElementById('testStandardAPI').checked,
+          testIndianAPI: document.getElementById('testIndianAPI').checked,
+          standardApiKey: document.getElementById('standardApiKey').value,
+          standardApiUrl: document.getElementById('standardApiUrl').value,
+          indianApiKey: document.getElementById('indianApiKey').value,
+          indianApiUrl: document.getElementById('indianApiUrl').value,
+          stockSymbol: document.getElementById('stockSymbol').value,
+          apiRotationTest: document.getElementById('apiRotationTest').checked,
+          verbose: document.getElementById('verboseLogging').checked,
+          timeoutMs: 10000
+        };
+        
+        // Run tests
+        window.runApiTests();
+      });
+      
+      // Clear output when button is clicked
+      clearOutputButton.addEventListener('click', () => {
+        outputDiv.innerHTML = '';
+      });
+    };
+    
+    script.onerror = (error) => {
+      console.error('Error loading test script:', error);
+      document.getElementById('output').textContent = 'Error loading test script. Make sure api-test.js exists and is valid.';
+    };
+  </script>
+</body>
+</html> 

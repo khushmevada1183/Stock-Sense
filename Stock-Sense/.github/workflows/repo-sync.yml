@@ -1,0 +1,74 @@
+name: Sync to GitHub Repository
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to sync'
+        required: true
+        default: 'main'
+        type: string
+  schedule:
+    - cron: '0 0 * * 0'  # Run every Sunday at midnight
+
+jobs:
+  sync:
+    name: Sync to GitHub Repository
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.branch || 'main' }}
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+      
+      - name: Setup GitHub CLI
+        run: |
+          gh auth setup-git
+          gh auth status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Check for repository changes
+        id: changes
+        run: |
+          git remote update
+          UPSTREAM=${1:-'@{u}'}
+          LOCAL=$(git rev-parse @)
+          REMOTE=$(git rev-parse "$UPSTREAM")
+          if [ $LOCAL = $REMOTE ]; then
+            echo "status=up-to-date" >> $GITHUB_OUTPUT
+          else
+            echo "status=needs-sync" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Sync repository
+        if: steps.changes.outputs.status == 'needs-sync'
+        run: |
+          # Pull latest changes
+          git pull origin ${{ github.event.inputs.branch || 'main' }}
+          
+          # Push to GitHub repository
+          git push https://${{ secrets.REPO_ACCESS_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.branch || 'main' }}
+      
+      - name: Create sync report
+        run: |
+          echo "# Repository Sync Report" > sync-report.md
+          echo "## Status: ${{ steps.changes.outputs.status }}" >> sync-report.md
+          echo "## Date: $(date)" >> sync-report.md
+          echo "## Branch: ${{ github.event.inputs.branch || 'main' }}" >> sync-report.md
+          echo "## Latest commits:" >> sync-report.md
+          git log -n 5 --pretty=format:"* %h - %s (%an, %ar)" >> sync-report.md
+      
+      - name: Upload sync report
+        uses: actions/upload-artifact@v3
+        with:
+          name: sync-report
+          path: sync-report.md
+          retention-days: 7 
