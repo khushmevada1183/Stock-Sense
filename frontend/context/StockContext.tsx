@@ -263,35 +263,19 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setMarketDataError(null);
     
     try {
-      // Fetch from both APIs and combine results
-      const [globalGainers, globalLosers, indianTrending] = await Promise.all([
+      // Fetch top gainers and losers
+      const [globalGainers, globalLosers] = await Promise.all([
         apiService.getTopGainers(),
-        apiService.getTopLosers(),
-        indianApiService.getTrendingStocks().catch(() => [])
+        apiService.getTopLosers()
       ]);
       
-      // Convert to unified format
-      const gainersWithSource = globalGainers.map(convertGlobalToUnified);
-      const losersWithSource = globalLosers.map(convertGlobalToUnified);
-      
-      // Process Indian trending stocks into gainers and losers
-      const indianGainers = indianTrending
-        .filter(stock => stock.percent_change && stock.percent_change > 0)
-        .map(convertIndianToUnified);
-      
-      const indianLosers = indianTrending
-        .filter(stock => stock.percent_change && stock.percent_change < 0)
-        .map(convertIndianToUnified);
-      
-      // Combine and sort the results
-      const combinedGainers = [...gainersWithSource, ...indianGainers]
-        .sort((a, b) => ((b.changePercent || b.percent_change || 0) - (a.changePercent || a.percent_change || 0)));
-      
-      const combinedLosers = [...losersWithSource, ...indianLosers]
-        .sort((a, b) => ((a.changePercent || a.percent_change || 0) - (b.changePercent || b.percent_change || 0)));
-      
-      setTopGainers(combinedGainers);
-      setTopLosers(combinedLosers);
+      // Convert to unified format and sort
+      const gainersWithSource = globalGainers.map(convertGlobalToUnified)
+        .sort((a, b) => (b.changePercent || b.percent_change || 0) - (a.changePercent || a.percent_change || 0));
+      const losersWithSource = globalLosers.map(convertGlobalToUnified)
+        .sort((a, b) => (a.changePercent || a.percent_change || 0) - (b.changePercent || b.percent_change || 0));
+      setTopGainers(gainersWithSource);
+      setTopLosers(losersWithSource);
     } catch (error) {
       setMarketDataError(error instanceof Error ? error.message : 'Failed to load market data');
     } finally {
@@ -486,4 +470,4 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 };
 
 // Custom hook to use the stock context
-export const useStock = () => useContext(StockContext); 
+export const useStock = () => useContext(StockContext);

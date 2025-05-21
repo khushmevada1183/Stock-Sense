@@ -37,16 +37,6 @@ const apiRequest = async (endpoint) => {
   }
 };
 
-// Get all trending stocks
-export const getAllStocks = async () => {
-  try {
-    return await apiRequest('/stocks');
-  } catch (error) {
-    console.error('Error getting all stocks:', error.message);
-    throw error; // Re-throw the error to be handled by the UI
-  }
-};
-
 // Get details for a specific stock
 export const getStockDetails = async (symbol) => {
   try {

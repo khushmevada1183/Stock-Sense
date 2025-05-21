@@ -2,12 +2,12 @@
   "keys": [
     {
       "key": "sk-live-V4dyXhcHcQCFuxnLYWKmBM2jzKxDilFMl4BklW67",
-      "rateLimitResetTimestamp": 1747839308043,
+      "rateLimitResetTimestamp": 1747852019776,
       "isAvailable": false,
       "usageCount": 0,
       "monthlyUsage": 0,
       "lastMonthReset": "2025-05",
-      "lastErrorTimestamp": 1747839307043
+      "lastErrorTimestamp": 1747852018776
     },
     {
       "key": "sk-live-kQSxsVhWZyIk8sGy2gzXGBvi97RETSP88OOG2qt3",
@@ -20,12 +20,12 @@
     },
     {
       "key": "sk-live-QtygcAU1VLXuNtIHRAVNWnLrtoTpL0yctd2DEko5",
-      "rateLimitResetTimestamp": 0,
-      "isAvailable": true,
+      "rateLimitResetTimestamp": 1747852020108,
+      "isAvailable": false,
       "usageCount": 0,
       "monthlyUsage": 0,
       "lastMonthReset": "2025-05",
-      "lastErrorTimestamp": 0
+      "lastErrorTimestamp": 1747852019108
     },
     {
       "key": "sk-live-bi47a6KsAGkHsFAguG0sKBNzCf8VbTVFweOy1eFE",

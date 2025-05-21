@@ -40,4 +40,6 @@ jobs:
           tags: khushmevada5005/stock-sense-backend:latest
 
       - name: Image digest
-        run: echo "Images have been built and pushed to Docker Hub" 
+        run: echo "Images have been built and pushed to Docker Hub"
+
+# filepath: c:\Users\khush\Desktop\Stock_sense Fix\.github\workflows\docker-build.yml

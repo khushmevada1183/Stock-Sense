@@ -204,8 +204,8 @@ class StockApiService {
   // Get top gainers
   async getTopGainers(): Promise<StockDetails[]> {
     try {
-      const data = await this.fetchWithCache<any>('/trending', 'MARKET_DATA');
-      return data.data && data.data.top_gainers ? data.data.top_gainers : [];
+      const data = await this.fetchWithCache<any>('/top-gainers', 'MARKET_DATA');
+      return data.data || [];
     } catch (error) {
       console.error('Error fetching top gainers:', error);
       return [];
@@ -215,8 +215,8 @@ class StockApiService {
   // Get top losers
   async getTopLosers(): Promise<StockDetails[]> {
     try {
-      const data = await this.fetchWithCache<any>('/trending', 'MARKET_DATA');
-      return data.data && data.data.top_losers ? data.data.top_losers : [];
+      const data = await this.fetchWithCache<any>('/top-losers', 'MARKET_DATA');
+      return data.data || [];
     } catch (error) {
       console.error('Error fetching top losers:', error);
       return [];
@@ -244,18 +244,7 @@ class StockApiService {
       return {};
     }
   }
-  
-  // Get all stocks data (combined endpoint)
-  async getAllStocks(): Promise<any> {
-    try {
-      const data = await this.fetchWithCache<any>('/trending', 'MARKET_DATA');
-      return data.data || {};
-    } catch (error) {
-      console.error('Error fetching all stocks data:', error);
-      return {};
-    }
-  }
 }
 
 // Export a singleton instance
-export const stockApiService = new StockApiService(); 
+export const stockApiService = new StockApiService();

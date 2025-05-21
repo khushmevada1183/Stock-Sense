@@ -1,5 +1,4 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosError } from 'axios';
-import { apiHelpers } from '../utils/api';
 
 // API response types
 export interface StockDetails {
@@ -388,24 +387,6 @@ class IndianApiService {
   }
 
   /**
-   * Fetches trending stocks
-   * @returns {Promise<StockDetails[]>} Trending stocks data
-   */
-  async getTrendingStocks(): Promise<StockDetails[]> {
-    try {
-      const data = await this.getWithCache<any>('/trending');
-      // Handle different response formats
-      if (data.trending_stocks) {
-        return data.trending_stocks;
-      }
-      return Array.isArray(data) ? data : [];
-    } catch (error) {
-      console.error('Error fetching trending stocks:', error);
-      throw error;
-    }
-  }
-
-  /**
    * Fetches historical data for a stock
    * @param {string} stockName - Name of the stock
    * @param {string} period - Time period (1m, 6m, 1yr, 3yr, 5yr, 10yr, max)
@@ -753,11 +734,11 @@ class IndianApiService {
    */
   async getMarketOverview() {
     try {
-      const response = await axios.get(`${this.baseURL}/api/market/overview`);
-      return apiHelpers.normalizeApiResponse(response.data);
+      // Use cache helper to fetch and normalize response
+      const data = await this.getWithCache<any>('/api/market/overview');
+      return data;
     } catch (error) {
       console.error('Error fetching market overview:', error);
-      // Return mock data in case of error
       return this.getMockMarketData();
     }
   }
@@ -859,4 +840,4 @@ class IndianApiService {
 
 // Export a singleton instance
 const indianApiService = new IndianApiService();
-export default indianApiService; 
+export default indianApiService;

@@ -10,12 +10,6 @@ router.get('/stock/:name', asyncHandler(async (req, res) => {
   res.json(stockData);
 }));
 
-// Get trending stocks
-router.get('/trending', asyncHandler(async (req, res) => {
-  const trendingStocks = await indianStockApiService.getTrendingStocks();
-  res.json(trendingStocks);
-}));
-
 // Get historical data
 router.get('/historical/:name', asyncHandler(async (req, res) => {
   const { name } = req.params;
@@ -93,4 +87,4 @@ router.get('/stock-search', asyncHandler(async (req, res) => {
   res.json(searchResults);
 }));
 
-module.exports = router; 
+module.exports = router;

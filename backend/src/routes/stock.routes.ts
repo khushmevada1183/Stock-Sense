@@ -342,24 +342,8 @@ router.get('/:symbol', async (req, res) => {
 // Top gainers endpoint
 router.get('/top-gainers', async (req, res) => {
   try {
-    // Get data from the trending endpoint
-    const trendingData = await stockApiService.getAllStocks();
-    
-    if (trendingData && trendingData.top_gainers) {
-      // Map the top gainers to the format expected by the frontend
-      const formattedGainers = trendingData.top_gainers.map((stock: any) => ({
-        symbol: stock.symbol || stock.name,
-        companyName: stock.company_name || stock.name,
-        price: stock.current_price || 0,
-        change: stock.change || 0,
-        changePercent: stock.percent_change || 0,
-        volume: stock.volume || 0
-      }));
-      
-      res.json(formattedGainers);
-    } else {
-      res.json([]);
-    }
+    const gainers = await stockApiService.getTopGainers();
+    res.json(gainers);
   } catch (error) {
     console.error('Error in /api/stocks/top-gainers:', error);
     res.status(500).json([]);
@@ -369,28 +353,12 @@ router.get('/top-gainers', async (req, res) => {
 // Top losers endpoint
 router.get('/top-losers', async (req, res) => {
   try {
-    // Get data from the trending endpoint
-    const trendingData = await stockApiService.getAllStocks();
-    
-    if (trendingData && trendingData.top_losers) {
-      // Map the top losers to the format expected by the frontend
-      const formattedLosers = trendingData.top_losers.map((stock: any) => ({
-        symbol: stock.symbol || stock.name,
-        companyName: stock.company_name || stock.name,
-        price: stock.current_price || 0,
-        change: stock.change || 0,
-        changePercent: stock.percent_change || 0,
-        volume: stock.volume || 0
-      }));
-      
-      res.json(formattedLosers);
-    } else {
-      res.json([]);
-    }
+    const losers = await stockApiService.getTopLosers();
+    res.json(losers);
   } catch (error) {
     console.error('Error in /api/stocks/top-losers:', error);
     res.status(500).json([]);
   }
 });
 
-export default router; 
+export default router;

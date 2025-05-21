@@ -368,15 +368,9 @@ export async function getFeaturedStocks(): Promise<StockDetails[]> {
       return await standardClient.get<StockDetails[]>('/stocks/featured');
     } catch (error) {
       console.error('Error fetching featured stocks from standard API:', error);
-      // Fall through to try Indian API
     }
-    
-    // If standard API fails, try trending stocks from Indian API
-    const indianClient = getIndianApiClient();
-    const result = await indianClient.get<StockDetails[]>('/trending');
-    
-    // Normalize results
-    return result.map(normalizeStockDetails);
+    // Remove trending fallback; return empty list
+    return [];
   } catch (error) {
     console.error('Error fetching featured stocks:', error);
     return [];
@@ -613,4 +607,4 @@ function processHistoricalData(data: any): HistoricalDataPoint[] {
   }
   
   return [];
-} 
+}
