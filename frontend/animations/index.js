@@ -21,7 +21,7 @@ import MarketOverviewAnimations from './components/MarketOverviewAnimations';
 import NewsAnimations from './components/NewsAnimations';
 
 // Layout animations
-import NavigationAnimations from './layout/NavigationAnimations';
+import NavigationAnimations from './layout/navigationAnimations';
 
 // Export page animations
 export const pages = {

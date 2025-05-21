@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useAnimation } from '../../animations/shared/AnimationContext';
-import { createScrollProgressAnimation } from '../../animations/layout/NavigationAnimations';
+import { createScrollProgressAnimation } from '../../animations/layout/navigationAnimations';
 
 const ScrollProgressIndicator = () => {
   const progressBarRef = useRef(null);
