@@ -19,10 +19,11 @@ try {
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 5005; // Changed default to 5005
+const PORT = process.env.PORT || 5005;
 
-// Explicitly enable trust proxy for cloud environments
-app.set('trust proxy', true);
+// Configure trust proxy properly for Render and other cloud environments
+// Specify trusted proxies rather than trusting all proxies
+app.set('trust proxy', ['loopback', 'linklocal', 'uniquelocal']);
 
 // Log port value for debugging
 console.log(`Server configured to use port: ${PORT}`);
@@ -40,27 +41,44 @@ if (STOCK_API_KEY) {
   console.log(`⚠️ No API key found. Set STOCK_API_KEY environment variable for full functionality.`);
 }
 
-// Apply security middleware
+// Apply security middleware with CSP adjusted for Render
 app.use(helmet({
-  contentSecurityPolicy: false, // Disabled for development - enable in production
-  crossOriginEmbedderPolicy: false // Allow embedding in iframes for development
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
+      imgSrc: ["'self'", 'https:', 'data:'],
+      connectSrc: ["'self'", 'https:', 'wss:'],
+      fontSrc: ["'self'", 'https:', 'data:'],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'self'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false
 }));
 
-// Configure CORS
+// Configure CORS with more flexible options for cloud
 const corsOptions = {
   origin: process.env.CORS_ORIGIN || '*',
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 app.use(cors(corsOptions));
 
-// Apply rate limiting
+// Apply rate limiting with proper configuration for proxy environments
 const apiLimiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || 60000), // 1 minute by default
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || 100), // 100 requests per minute by default
+  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW || 60000),
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || 100),
   standardHeaders: true,
   legacyHeaders: false,
+  // Use a configuration that works with proxies
+  keyGenerator: (req) => {
+    // Use X-Forwarded-For header if available, otherwise use IP
+    return req.headers['x-forwarded-for'] || req.ip;
+  },
   message: {
     status: 'error',
     message: 'Too many requests, please try again later.'
@@ -694,33 +712,49 @@ app.get('/api/stocks/top-losers', async (req, res) => {
 // Indian API routes
 app.use('/api/indian', indianApiRoutes);
 
-// Serve the frontend static export
-app.use(express.static(path.join(__dirname, '../frontend/out')));
+// Serve the frontend static export - improved with robust error handling
+app.use(express.static(path.join(__dirname, '../frontend/out'), {
+  fallthrough: true // Continue to next middleware if file not found
+}));
+
+// For any route not handled by the static files or API, serve the index.html if it exists
+// otherwise show a fallback page
 app.get('*', (req, res, next) => {
   try {
-    // First check if the file exists in the frontend/out directory
-    const indexPath = path.join(__dirname, '../frontend/out/index.html');
-    if (fs.existsSync(indexPath)) {
-      return res.sendFile(indexPath);
-    }
-    
-    // Fall back to serving the API
+    // Skip if it's an API request
     if (req.path.startsWith('/api')) {
       return next();
     }
     
-    // For other routes, return a simple HTML response as a fallback
-    return res.send(`
+    console.log(`Attempting to serve: ${req.path}`);
+    
+    // Try to send the index.html file
+    const indexPath = path.join(__dirname, '../frontend/out/index.html');
+    
+    // Check if the file exists
+    if (fs.existsSync(indexPath)) {
+      console.log(`Serving index.html for path: ${req.path}`);
+      return res.sendFile(indexPath);
+    }
+    
+    // File doesn't exist, show a debug message
+    console.log(`Static file not found: ${indexPath}`);
+    console.log('Frontend build may not be complete. Showing fallback page.');
+    
+    // Return a simple HTML response as a fallback
+    return res.status(200).send(`
       <!DOCTYPE html>
       <html>
         <head>
           <title>Stock Sense API</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             body {
               font-family: Arial, sans-serif;
               margin: 40px;
               line-height: 1.6;
               color: #333;
+              background-color: #f4f7f9;
             }
             h1 {
               color: #0070f3;
@@ -728,20 +762,45 @@ app.get('*', (req, res, next) => {
             .container {
               max-width: 800px;
               margin: 0 auto;
+              padding: 20px;
+              background: white;
+              border-radius: 8px;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
             code {
               background: #f4f4f4;
               padding: 2px 4px;
               border-radius: 4px;
             }
+            .api-link {
+              display: inline-block;
+              margin-top: 10px;
+              padding: 8px 16px;
+              background-color: #0070f3;
+              color: white;
+              text-decoration: none;
+              border-radius: 4px;
+            }
+            .api-link:hover {
+              background-color: #0051a2;
+            }
           </style>
         </head>
         <body>
           <div class="container">
             <h1>Stock Sense API</h1>
-            <p>The API is up and running. Frontend may still be building.</p>
+            <p>The API is up and running. Frontend may still be building or is not properly configured.</p>
             <p>API endpoints available at <code>/api/...</code></p>
-            <p>Health check: <a href="/api/health">/api/health</a></p>
+            <p>
+              <a href="/api/health" class="api-link">Check API Health</a>
+            </p>
+            <h2>Troubleshooting</h2>
+            <p>If you're seeing this page instead of the frontend:</p>
+            <ul>
+              <li>Make sure the frontend is built properly</li>
+              <li>Check if the static files exist in <code>frontend/out</code> directory</li>
+              <li>Verify that the environment variables are correctly set</li>
+            </ul>
           </div>
         </body>
       </html>

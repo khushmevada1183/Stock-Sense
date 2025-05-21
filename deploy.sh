@@ -1,5 +1,13 @@
 #!/bin/bash
 echo "==== Stock-Sense Deployment Helper ===="
+
+# Print environment for debugging
+echo "Environment: NODE_ENV=$NODE_ENV"
+echo "Render detection: RENDER=$RENDER"
+echo "Current directory: $(pwd)"
+echo "Contents of current directory:"
+ls -la
+
 echo "Installing root dependencies..."
 npm install
 
@@ -14,7 +22,7 @@ npm install
 
 echo "Building frontend..."
 npm run build
-npm run export || mkdir -p out
+mkdir -p out
 cd ..
 
 echo "Ensuring out directory exists..."
@@ -25,18 +33,13 @@ export PORT=${PORT:-5005}
 export BACKEND_PORT=${PORT:-5005}
 export FRONTEND_PORT=$((BACKEND_PORT + 1))
 export NODE_ENV=production
+export RENDER=true
 
-# Detect if we're in a cloud environment
-if [ -n "$RENDER" ] || [ -n "$VERCEL" ] || [ -n "$HEROKU" ]; then
-  echo "Cloud environment detected. Running in production mode..."
-  echo "Backend will run on port $PORT"
-  
-  # In production, we just need to run the backend
-  # The frontend is served as static files by the backend
-  cd backend
-  node server.js
-else
-  echo "Starting application in development mode..."
-  echo "Backend: $BACKEND_PORT, Frontend: $FRONTEND_PORT"
-  node run.js
-fi 
+echo "Running in production mode (backend only)..."
+echo "Backend will run on port $PORT"
+
+# In production, we just need to run the backend
+cd backend
+echo "Starting backend server.js directly..."
+echo "Working directory: $(pwd)"
+node server.js 

@@ -28,13 +28,19 @@ const nextConfig = {
     maxInactiveAge: 60 * 60 * 1000, // 1 hour
     pagesBufferLength: 5,
   },
-  output: 'standalone',
+  // Ensure we use the standalone output mode for better compatibility
+  output: 'export',
+  // Set trailingSlash to true to make sure we get proper index.html files
+  trailingSlash: true,
+  // Configure image handling for static export
   images: {
     domains: ['avatars.githubusercontent.com', 'images.unsplash.com'],
     unoptimized: true
   },
+  // Environment variables
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005'
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005',
+    NEXT_PUBLIC_APP_ENV: process.env.NODE_ENV || 'development'
   }
 };
 
