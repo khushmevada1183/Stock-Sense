@@ -15,6 +15,10 @@ dotenv.config();
 const BACKEND_PORT = process.env.PORT || 10000;
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 10001;
 
+// Configure Node.js memory limits
+process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || '--max_old_space_size=4096';
+console.log(`Node.js memory settings: ${process.env.NODE_OPTIONS}`);
+
 console.log(`Using backend port: ${BACKEND_PORT}, frontend port: ${FRONTEND_PORT}`);
 
 // Validate environment
@@ -33,6 +37,7 @@ function spawnProcess(command, args, options = {}) {
     env: {
       ...process.env,
       PORT: options.isBackend ? BACKEND_PORT : FRONTEND_PORT,
+      NODE_OPTIONS: process.env.NODE_OPTIONS, // Ensure child processes inherit memory settings
     },
   });
 
@@ -81,6 +86,10 @@ if (fs.existsSync(standaloneServerPath)) {
   const buildProc = spawn(buildCmd, ['run', 'build'], {
     cwd: path.join(__dirname, 'frontend'),
     stdio: 'inherit',
+    env: {
+      ...process.env,
+      NODE_OPTIONS: '--max_old_space_size=4096', // Ensure enough memory for build
+    }
   });
   
   buildProc.on('close', (code) => {

@@ -5,7 +5,7 @@
   "homepage": "https://<GITHUB_USERNAME>.github.io/<REPO_NAME>/",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NODE_OPTIONS=--max_old_space_size=4096 next build",
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next",
