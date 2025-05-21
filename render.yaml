@@ -3,14 +3,17 @@ services:
     name: stock-sense
     env: node
     buildCommand: npm install && node build.js
-    startCommand: chmod +x deploy.sh && ./deploy.sh
+    startCommand: npm run start:prod
     envVars:
       - key: NODE_ENV
         value: production
       - key: BACKEND_PORT
-        value: 5005
-      - key: FRONTEND_PORT
-        value: 3000
+        fromService:
+          type: web
+          name: stock-sense
+          envVarKey: PORT
+      - key: RENDER
+        value: "true"
       - key: CORS_ORIGIN
         value: "*"
       - key: STOCK_API_KEY

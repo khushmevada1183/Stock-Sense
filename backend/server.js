@@ -21,11 +21,24 @@ try {
 const app = express();
 const PORT = process.env.PORT || 5005; // Changed default to 5005
 
+// Explicitly enable trust proxy for cloud environments
+app.set('trust proxy', true);
+
 // Log port value for debugging
 console.log(`Server configured to use port: ${PORT}`);
 
-// API key from environment variable only
-const STOCK_API_KEY = process.env.STOCK_API_KEY || '';
+// Look for API key in multiple places
+const STOCK_API_KEY = process.env.STOCK_API_KEY || 
+                      process.env.STOCKAPI_KEY || 
+                      process.env.INDIAN_STOCK_API_KEY || 
+                      '';
+
+// Log API key status (without revealing the key)
+if (STOCK_API_KEY) {
+  console.log(`✅ API key found with length: ${STOCK_API_KEY.length}`);
+} else {
+  console.log(`⚠️ No API key found. Set STOCK_API_KEY environment variable for full functionality.`);
+}
 
 // Apply security middleware
 app.use(helmet({

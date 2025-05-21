@@ -1,1 +1,1 @@
-web: chmod +x deploy.sh && ./deploy.sh
+web: npm run start:prod

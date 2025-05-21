@@ -27,8 +27,13 @@ let backendPort, frontendPort;
 if (isCloudDeployment) {
   // In cloud environments, the provider's PORT should be used for the backend
   backendPort = parseInt(process.env.PORT, 10) || 5005;
-  // For frontend in development mode only (usually not used in cloud)
-  frontendPort = parseInt(process.env.FRONTEND_PORT, 10) || 10000;
+  // Frontend must use a different port in development mode
+  frontendPort = parseInt(process.env.FRONTEND_PORT, 10) || (backendPort + 1);
+  
+  // If backend and frontend have the same port in cloud, adjust frontend port
+  if (frontendPort === backendPort) {
+    frontendPort = backendPort + 1;
+  }
 } else {
   // Local development
   backendPort = parseInt(cmdArgs['backend-port'], 10) || parseInt(process.env.BACKEND_PORT, 10) || 5005;

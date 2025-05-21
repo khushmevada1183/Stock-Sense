@@ -5,6 +5,7 @@
   "main": "run.js",
   "scripts": {
     "start": "node run.js",
+    "start:prod": "chmod +x deploy.sh && ./deploy.sh",
     "dev": "npm run backend & npm run frontend",
     "backend": "cd backend && npm run dev:simple",
     "frontend": "cd frontend && npm run dev",

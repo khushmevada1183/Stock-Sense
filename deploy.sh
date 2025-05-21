@@ -21,10 +21,22 @@ echo "Ensuring out directory exists..."
 mkdir -p frontend/out
 
 echo "Setting up environment variables..."
-export PORT=5005
-export BACKEND_PORT=5005
-export FRONTEND_PORT=3000
+export PORT=${PORT:-5005}
+export BACKEND_PORT=${PORT:-5005}
+export FRONTEND_PORT=$((BACKEND_PORT + 1))
 export NODE_ENV=production
 
-echo "Starting application..."
-node run.js 
+# Detect if we're in a cloud environment
+if [ -n "$RENDER" ] || [ -n "$VERCEL" ] || [ -n "$HEROKU" ]; then
+  echo "Cloud environment detected. Running in production mode..."
+  echo "Backend will run on port $PORT"
+  
+  # In production, we just need to run the backend
+  # The frontend is served as static files by the backend
+  cd backend
+  node server.js
+else
+  echo "Starting application in development mode..."
+  echo "Backend: $BACKEND_PORT, Frontend: $FRONTEND_PORT"
+  node run.js
+fi 
