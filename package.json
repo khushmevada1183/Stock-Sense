@@ -41,7 +41,7 @@
     "helmet": "^6.2.0",
     "express-rate-limit": "^6.11.2",
     "axios": "^1.6.2",
-    "next": "^15.3.2",
+    "next": "^14.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

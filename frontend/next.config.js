@@ -23,24 +23,26 @@ const nextConfig = {
   experimental: {
     largePageDataBytes: 512 * 1000, // 512KB
   },
-  // Error handling improvements
-  onDemandEntries: {
-    maxInactiveAge: 60 * 60 * 1000, // 1 hour
-    pagesBufferLength: 5,
-  },
-  // Ensure we use the standalone output mode for better compatibility
-  output: 'export',
-  // Set trailingSlash to true to make sure we get proper index.html files
-  trailingSlash: true,
-  // Configure image handling for static export
+  // Configure for dynamic rendering
+  output: 'standalone',
+  // Configure image handling
   images: {
-    domains: ['avatars.githubusercontent.com', 'images.unsplash.com'],
-    unoptimized: true
+    domains: ['avatars.githubusercontent.com', 'images.unsplash.com', 'localhost'],
+    unoptimized: false
   },
   // Environment variables
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5005',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api',
     NEXT_PUBLIC_APP_ENV: process.env.NODE_ENV || 'development'
+  },
+  // Proper API routing
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: process.env.NEXT_PUBLIC_API_URL + '/:path*' || 'http://localhost:10000/api/:path*'
+      }
+    ];
   }
 };
 

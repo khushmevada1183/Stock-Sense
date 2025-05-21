@@ -9,17 +9,14 @@ const indianApiRoutes = require('./routes/indianApiRoutes');
 const apiKeyRoutes = require('./routes/apiKeyRoutes');
 const apiKeyManager = require('./services/apiKeyManager');
 const fs = require('fs');
+const dotenv = require('dotenv');
 
-// Load environment variables if .env exists
-try {
-  require('dotenv').config();
-} catch (err) {
-  console.log('No .env file found, using default values');
-}
+// Load environment variables
+dotenv.config();
 
 // Create Express app
 const app = express();
-const PORT = process.env.PORT || 5005;
+const PORT = process.env.PORT || 10000;
 
 // Configure trust proxy properly for Render and other cloud environments
 // Specify trusted proxies rather than trusting all proxies
@@ -180,13 +177,23 @@ function handleApiError(res, error, defaultMessage = 'An error occurred') {
   return res.status(statusCode).json(createApiResponse('error', null, errorMessage));
 }
 
+// API key validation middleware
+const validateApiKey = (req, res, next) => {
+  const apiKey = process.env.STOCK_API_KEY;
+  if (!apiKey) {
+    console.warn('⚠️ No API key found in environment variables');
+    return res.status(500).json({ error: 'API key not configured' });
+  }
+  next();
+};
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json(createApiResponse('success', {
-    status: 'UP',
-    timestamp: new Date(),
-    environment: process.env.NODE_ENV || 'development'
-  }));
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV
+  });
 });
 
 // Config endpoint - returns masked API key for display purposes
@@ -201,6 +208,10 @@ app.get('/api/config', (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   }));
 });
+
+// Apply API key validation to stock endpoints
+app.use('/api/stock', validateApiKey);
+app.use('/api/trending', validateApiKey);
 
 // API routes for stocks
 app.get('/api/stocks', async (req, res) => {
@@ -712,109 +723,29 @@ app.get('/api/stocks/top-losers', async (req, res) => {
 // Indian API routes
 app.use('/api/indian', indianApiRoutes);
 
-// Serve the frontend static export - improved with robust error handling
-app.use(express.static(path.join(__dirname, '../frontend/out'), {
-  fallthrough: true // Continue to next middleware if file not found
-}));
-
-// For any route not handled by the static files or API, serve the index.html if it exists
-// otherwise show a fallback page
-app.get('*', (req, res, next) => {
-  try {
-    // Skip if it's an API request
-    if (req.path.startsWith('/api')) {
-      return next();
+// Simple root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    status: 'success',
+    message: 'Stock Sense API Server',
+    version: '1.0.0',
+    endpoints: {
+      health: '/api/health',
+      stocks: '/api/stocks',
+      search: '/api/stocks/search',
+      stockDetails: '/api/stock/:symbol',
+      ipo: '/api/ipo',
+      news: '/api/news'
     }
-    
-    console.log(`Attempting to serve: ${req.path}`);
-    
-    // Try to send the index.html file
-    const indexPath = path.join(__dirname, '../frontend/out/index.html');
-    
-    // Check if the file exists
-    if (fs.existsSync(indexPath)) {
-      console.log(`Serving index.html for path: ${req.path}`);
-      return res.sendFile(indexPath);
-    }
-    
-    // File doesn't exist, show a debug message
-    console.log(`Static file not found: ${indexPath}`);
-    console.log('Frontend build may not be complete. Showing fallback page.');
-    
-    // Return a simple HTML response as a fallback
-    return res.status(200).send(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title>Stock Sense API</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              margin: 40px;
-              line-height: 1.6;
-              color: #333;
-              background-color: #f4f7f9;
-            }
-            h1 {
-              color: #0070f3;
-            }
-            .container {
-              max-width: 800px;
-              margin: 0 auto;
-              padding: 20px;
-              background: white;
-              border-radius: 8px;
-              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            code {
-              background: #f4f4f4;
-              padding: 2px 4px;
-              border-radius: 4px;
-            }
-            .api-link {
-              display: inline-block;
-              margin-top: 10px;
-              padding: 8px 16px;
-              background-color: #0070f3;
-              color: white;
-              text-decoration: none;
-              border-radius: 4px;
-            }
-            .api-link:hover {
-              background-color: #0051a2;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <h1>Stock Sense API</h1>
-            <p>The API is up and running. Frontend may still be building or is not properly configured.</p>
-            <p>API endpoints available at <code>/api/...</code></p>
-            <p>
-              <a href="/api/health" class="api-link">Check API Health</a>
-            </p>
-            <h2>Troubleshooting</h2>
-            <p>If you're seeing this page instead of the frontend:</p>
-            <ul>
-              <li>Make sure the frontend is built properly</li>
-              <li>Check if the static files exist in <code>frontend/out</code> directory</li>
-              <li>Verify that the environment variables are correctly set</li>
-            </ul>
-          </div>
-        </body>
-      </html>
-    `);
-  } catch (err) {
-    console.error('Error serving static files:', err);
-    next();
-  }
+  });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json(createApiResponse('error', null, 'Internal server error'));
+  console.error('Error:', err);
+  res.status(err.status || 500).json({
+    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+  });
 });
 
 // Start server
@@ -825,11 +756,11 @@ app.listen(PORT, () => {
   // Validate API connection on startup
   validateApiConnection().then(isValid => {
     if (isValid) {
-    console.log('✅ API connection validated successfully');
-  } else {
+      console.log('✅ API connection validated successfully');
+    } else {
       console.warn('⚠️ API connection validation failed. Some features may not work correctly.');
-  }
-}); 
+    }
+  }); 
 });
 
 // Export the app for testing
