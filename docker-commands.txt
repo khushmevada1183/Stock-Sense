@@ -1,0 +1,28 @@
+# Steps to build and push Docker images for Stock Sense
+
+# 1. Login to Docker Hub
+docker login -u khushmevada5005
+
+# 2. Build the frontend image
+cd frontend
+docker build -t khushmevada5005/stock-sense-frontend:latest .
+cd ..
+
+# 3. Build the backend image
+cd backend
+docker build -t khushmevada5005/stock-sense-backend:latest .
+cd ..
+
+# 4. Push images to Docker Hub
+docker push khushmevada5005/stock-sense-frontend:latest
+docker push khushmevada5005/stock-sense-backend:latest
+
+# 5. Optional: Use Docker Compose to run locally
+docker-compose up
+
+# Note: The command "docker buildx create --driver cloud" is not valid
+# Docker Buildx supports these drivers: docker-container, kubernetes, remote
+# For multiplatform builds, you would use:
+# docker buildx create --name stock-sense-builder
+# docker buildx use stock-sense-builder
+# docker buildx build --platform linux/amd64,linux/arm64 -t khushmevada5005/stock-sense-frontend:latest --push ./frontend 

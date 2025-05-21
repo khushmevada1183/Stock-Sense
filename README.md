@@ -3,7 +3,13 @@
 A comprehensive web application for analyzing Indian stocks with real-time data, interactive charts, and financial insights.
 
 <p align="center">
-  <img src="docs/images/home_dashboard.png" alt="Indian Stock Sense Dashboard" width="800"/>
+  <img src="docs/images/home.png" alt="Home Dashboard" width="400"/>
+  <img src="docs/images/portfolio.png" alt="Portfolio Dashboard" width="400"/>
+</p>
+
+<p align="center">
+  <img src="docs/images/ipo.png" alt="IPO Section" width="400"/>
+  <img src="docs/images/learning_resource.png" alt="Learning Resources" width="400"/>
 </p>
 
 <p align="center">
@@ -111,13 +117,13 @@ Check out our live demo:
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="docs/images/home_dashboard.png" alt="Home Dashboard" width="400"/>
-  <img src="docs/images/portfolio_view.png" alt="Portfolio Dashboard" width="400"/>
+  <img src="docs/images/home.png" alt="Home Dashboard" width="400"/>
+  <img src="docs/images/portfolio.png" alt="Portfolio Dashboard" width="400"/>
 </p>
 
 <p align="center">
-  <img src="docs/images/ipo_section.png" alt="IPO Section" width="400"/>
-  <img src="docs/images/learning_resources.png" alt="Learning Resources" width="400"/>
+  <img src="docs/images/ipo.png" alt="IPO Section" width="400"/>
+  <img src="docs/images/learning_resource.png" alt="Learning Resources" width="400"/>
 </p>
 
 ## 📁 Project Structure
