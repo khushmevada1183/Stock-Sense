@@ -17,7 +17,7 @@ function parseArgs() {
 
 const cmdArgs = parseArgs();
 // Use different ports to avoid conflicts
-const backendPort = cmdArgs['backend-port'] || 5005; // Using port 5005 for backend
+const backendPort = cmdArgs['backend-port'] || process.env.PORT || 5005; // Use Render $PORT or default
 const frontendPort = cmdArgs['frontend-port'] || 3005; // Using port 3005 for frontend
 
 // Get the local IP address
@@ -40,7 +40,7 @@ const config = {
   backend: {
     dir: path.join(__dirname, '..', 'backend'),
     command: 'npm',
-    args: ['run', 'dev:simple'],
+    args: ['run', 'start'],
     name: 'BACKEND',
     color: '\x1b[36m', // Cyan
     port: backendPort,
@@ -53,7 +53,7 @@ const config = {
   frontend: {
     dir: path.join(__dirname, '..', 'frontend'),
     command: 'npm',
-    args: ['run', 'dev', '--', '-p', frontendPort],
+    args: ['run', 'start', '--', '-p', frontendPort],
     name: 'FRONTEND',
     color: '\x1b[35m', // Magenta
     port: frontendPort,
