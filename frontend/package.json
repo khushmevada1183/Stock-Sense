@@ -5,7 +5,7 @@
   "homepage": "https://khushmevada5005.github.io/stock-sense-build/",
   "scripts": {
     "dev": "next dev",
-    "build": "NODE_OPTIONS=--max_old_space_size=384 next build",
+    "build": "cross-env NODE_OPTIONS=--max_old_space_size=384 next build",
     "start": "next start",
     "lint": "next lint",
     "clean": "rm -rf .next",
@@ -27,7 +27,7 @@
     "test:e2e:report": "cypress run --reporter cypress-mochawesome-reporter",
     "generate:bug-report": "node tests/utils/scripts/generate-bug-report.js",
     "export": "next export || echo 'Export included in build with Next.js 13+'",
-    "build:static": "NODE_OPTIONS=--max_old_space_size=384 next build && next export",
+    "build:static": "cross-env NODE_OPTIONS=--max_old_space_size=384 next build && next export",
     "predeploy": "npm run build:static",
     "deploy": "gh-pages -d out"
   },
@@ -74,6 +74,7 @@
     "@types/sizzle": "^2.3.5",
     "autoprefixer": "^10.4.16",
     "babel-jest": "^29.7.0",
+    "cross-env": "^7.0.3",
     "cypress": "^13.5.1",
     "cypress-mochawesome-reporter": "^3.7.0",
     "esbuild": "^0.19.5",
