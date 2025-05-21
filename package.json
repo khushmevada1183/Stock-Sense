@@ -10,14 +10,18 @@
     "backend": "cd backend && npm run dev:simple",
     "frontend": "cd frontend && npm run dev",
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
-    "build": "node build.js",
+    "build": "npm run build:all",
     "build:backend": "cd backend && npm install && npm run build",
     "build:frontend": "cd frontend && npm install && npm run build",
     "export": "cd frontend && npm run export || echo 'Export not supported in newer Next.js versions'",
     "build:all": "npm run build:frontend && npm run build:backend",
     "clean": "cd frontend && npm run clean && cd ../backend && rm -rf dist",
     "install:submodules": "cd backend && npm install && cd ../frontend && npm install",
-    "postinstall": "npm run install:submodules"
+    "postinstall": "npm run install:submodules",
+    "render:backend": "cd backend && node server.js",
+    "render:frontend": "cd frontend && npm start",
+    "render:build": "npm run install:all && npm run build:all",
+    "render:health-check": "node scripts/health-check.js"
   },
   "keywords": [
     "stocks",

@@ -40,7 +40,7 @@ try {
 } catch (error) {
   console.error('Error installing root dependencies:', error);
   process.exit(1);
-}
+    }
 
 // Install backend dependencies
 console.log('\nInstalling backend dependencies...');
@@ -55,10 +55,10 @@ try {
 console.log('\nInstalling frontend dependencies...');
 try {
   execSync('cd frontend && npm install', { stdio: 'inherit' });
-} catch (error) {
+  } catch (error) {
   console.error('Error installing frontend dependencies:', error);
-  process.exit(1);
-}
+    process.exit(1);
+  }
 
 // Build frontend
 console.log('\nBuilding frontend...');

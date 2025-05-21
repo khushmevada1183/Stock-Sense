@@ -1,20 +1,60 @@
 services:
+  # Backend service
   - type: web
-    name: stock-sense
+    name: stock-sense-backend
     env: node
-    buildCommand: npm install && node build.js
-    startCommand: npm run start:prod
+    buildCommand: npm install && cd backend && npm install
+    startCommand: cd backend && node server.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+      targetMemoryPercent: 80
+      targetCPUPercent: 80
     envVars:
       - key: NODE_ENV
         value: production
-      - key: BACKEND_PORT
+      - key: PORT
+        value: 5005
+      - key: FRONTEND_URL
         fromService:
+          name: stock-sense-frontend
           type: web
-          name: stock-sense
-          envVarKey: PORT
+          property: url
       - key: RENDER
         value: "true"
       - key: CORS_ORIGIN
-        value: "*"
+        fromService:
+          name: stock-sense-frontend
+          type: web
+          property: url
       - key: STOCK_API_KEY
-        sync: false # This requires you to manually set it in the Render dashboard 
+        sync: false # This requires you to manually set it in the Render dashboard
+  
+  # Frontend service
+  - type: web
+    name: stock-sense-frontend
+    env: node
+    buildCommand: npm install && cd frontend && npm install && npm run build
+    startCommand: cd frontend && npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    scaling:
+      minInstances: 1
+      maxInstances: 3
+      targetMemoryPercent: 80
+      targetCPUPercent: 80
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: NEXT_PUBLIC_API_URL 
+        fromService:
+          name: stock-sense-backend
+          type: web
+          property: url
+          format: https://${value}
+      - key: RENDER
+        value: "true" 

@@ -7,96 +7,105 @@
 - A Render.com account
 - An Indian Stock API key (or equivalent API key for stock data)
 
-### Step 1: Create a New Web Service in Render
+### Option 1: Using Render Blueprint (Recommended)
 
+The easiest way to deploy is using the Render Blueprint defined in our `render.yaml` file:
+
+1. Fork this repository to your GitHub account
+2. Log in to your Render dashboard
+3. Click "New" and select "Blueprint"
+4. Connect to your GitHub account and select your forked repository
+5. Render will automatically detect the `render.yaml` file and set up both services
+6. Enter your API key when prompted
+7. Click "Apply" to start deploying both services
+
+This will create two services:
+- `stock-sense-backend`: The Express.js API server
+- `stock-sense-frontend`: The Next.js frontend application
+
+### Option 2: Manual Setup (Two Services)
+
+If you prefer to set up the services manually:
+
+#### Backend Service
 1. Log in to your Render dashboard
 2. Click on "New" and select "Web Service"
 3. Connect your GitHub repository
-4. Select the Stock-Sense repository
+4. Configure with these settings:
+   - **Name**: `stock-sense-backend`
+   - **Environment**: `Node`
+   - **Build Command**: `npm install && cd backend && npm install`
+   - **Start Command**: `cd backend && node server.js`
+   - **Environment Variables**:
+     - `NODE_ENV`: `production`
+     - `PORT`: `5005`
+     - `RENDER`: `true`
+     - `STOCK_API_KEY`: Your API key
+     - `CORS_ORIGIN`: `*`
 
-### Step 2: Configure the Web Service
+#### Frontend Service
+1. Click on "New" and select "Web Service" again
+2. Connect to the same repository
+3. Configure with these settings:
+   - **Name**: `stock-sense-frontend`
+   - **Environment**: `Node`
+   - **Build Command**: `npm install && cd frontend && npm install && npm run build`
+   - **Start Command**: `cd frontend && npm start`
+   - **Environment Variables**:
+     - `NODE_ENV`: `production`
+     - `PORT`: `3000`
+     - `NEXT_PUBLIC_API_URL`: URL of your backend service (e.g., `https://stock-sense-backend.onrender.com`)
 
-Use the following settings:
-- **Name**: `stock-sense` (or your preferred name)
-- **Environment**: `Node`
-- **Region**: Choose the region closest to your target audience
-- **Branch**: `main` (or your preferred branch)
-- **Build Command**: `npm install && node build.js`
-- **Start Command**: `bash deploy.sh`
-- **Instance Type**: Free (or other as needed)
+### How This Multi-Service Deployment Works
 
-### Step 3: Set Environment Variables
+1. **Backend Service**:
+   - Runs the Express.js server directly
+   - Handles all API requests and data processing
+   - Connects to the stock API using your API key
 
-Add these environment variables in the Render dashboard:
-- `NODE_ENV`: `production`
-- `RENDER`: `true`
-- `STOCK_API_KEY`: Your Indian Stock API key
-- `CORS_ORIGIN`: `*`
+2. **Frontend Service**:
+   - Runs the Next.js application in production mode
+   - Makes API calls to the backend service
+   - Provides the user interface and interactivity
 
-### Step 4: Deploy
+This approach has several advantages:
+- Each service scales independently
+- Frontend and backend are properly isolated
+- Easier to debug issues in each service
+- Follows best practices for microservices architecture
 
-Click "Create Web Service" to start the deployment process.
+### Troubleshooting Common Issues
 
-### How This Deployment Works
-
-1. The build process:
-   - Installs all dependencies (root, backend, frontend)
-   - Builds the frontend as static files (using Next.js export)
-   
-2. The deployment process:
-   - The `deploy.sh` script runs in production mode
-   - It prints diagnostic information to help with troubleshooting
-   - It installs dependencies if needed
-   - The frontend is built and exported to static files
-   - Only the backend server is started (not the development servers)
-   - The backend serves the static frontend files
-
-3. Handling requests:
-   - API requests are handled by the Express backend
-   - Frontend routes are served from the static files in `/frontend/out`
-   - If static files aren't found, a helpful fallback page is shown
-
-### Common Issues and Solutions
-
-#### Rate Limiting Errors
-The application now uses a proper configuration for rate limiting in proxy environments:
-- Uses trusted proxies instead of trusting all proxies
-- Proper IP detection from X-Forwarded-For headers
-
-#### Static File Issues
-If frontend files are not loading:
-1. Check the build logs to ensure the frontend is successfully built
-2. Verify the frontend/out directory exists and contains files
-3. The app will show a helpful fallback page if static files aren't found
-
-#### Port Configuration
-The application will use the port provided by Render and automatically configure itself.
+#### API Connection Issues
+If the frontend can't connect to the backend:
+1. Verify that the `NEXT_PUBLIC_API_URL` is set correctly
+2. Check for CORS issues in the browser console
+3. Ensure the backend is up and running
 
 #### Missing API Key
-If you see "Missing API key" errors in the logs, make sure you've set one of these environment variables:
-- `STOCK_API_KEY` (preferred)
-- `STOCKAPI_KEY`
-- `INDIAN_STOCK_API_KEY`
+If you see "Missing API key" errors in the logs, make sure you've set the `STOCK_API_KEY` 
+environment variable in the backend service settings.
 
-#### Troubleshooting
-If you continue to experience issues:
-1. Check the Render logs for specific error messages
-2. Review the diagnostic output from the deploy.sh script
-3. Ensure the frontend is building properly
-4. Verify API key and environment variables are set correctly
+#### Service Health
+Each service has its own logs and metrics in the Render dashboard:
+1. Navigate to the service in your Render dashboard
+2. Click "Logs" to see runtime logs
+3. Check "Events" to see build and deployment events
 
 ## Required Environment Variables
 
+### Backend Service
 ```
-# Server Configuration
-NODE_ENV=production            # Environment
+NODE_ENV=production
+PORT=5005
+RENDER=true
+STOCK_API_KEY=your_api_key_here
+CORS_ORIGIN=*
+```
 
-# API Keys
-STOCK_API_KEY=your_api_key_here  # Your Indian Stock API key
-
-# Cloud Detection
-RENDER=true                    # Helps the app detect it's running on Render
-
-# CORS Configuration
-CORS_ORIGIN=*                  # Cross-Origin Resource Sharing setting
+### Frontend Service
+```
+NODE_ENV=production
+PORT=3000
+NEXT_PUBLIC_API_URL=https://your-backend-service.onrender.com
 ``` 
