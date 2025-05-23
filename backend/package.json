@@ -4,7 +4,7 @@
   "description": "Backend for Indian Stock Sense application",
   "main": "dist/index.js",
   "scripts": {
-    "build": "npm install && echo 'Listing backend/node_modules/@types:' && ls -la node_modules/@types && echo 'Finished listing. Starting tsc...' && tsc",
+    "build": "npm install --production=false && echo 'Listing backend/node_modules/@types:' && ls -la node_modules/@types && echo 'Finished listing. Starting tsc...' && tsc",
     "start": "node dist/index.js",
     "dev": "nodemon --exec ts-node src/server.ts",
     "dev:full": "nodemon --exec ts-node src/index.ts",
