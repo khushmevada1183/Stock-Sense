@@ -7,19 +7,8 @@ services:
     buildCommand: |
       npm install && \
       echo "Starting backend build..." && \
-      cd backend && npm install && npm run build && cd .. && \
-      echo "Backend build finished. Starting frontend build..." && \
-      cd frontend && npm install && \
-      echo "Attempting Next.js build with output standalone..." && \
-      cross-env NODE_OPTIONS=--max_old_space_size=384 npm run build && \
-      echo "Next.js build command finished. Verifying standalone output..." && \
-      if [ ! -d ".next/standalone" ]; then \
-        echo "ERROR: .next/standalone directory NOT found after frontend build!" && \
-        exit 1; \
-      fi && \
-      echo ".next/standalone directory verified." && \
-      cd .. && \
-      echo "All builds finished."
+      npm run build:backend && \
+      echo "Backend build finished."
     startCommand: node run.js
     healthCheckPath: /api/health
     envVars:
@@ -27,8 +16,6 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: FRONTEND_PORT
-        value: 10001
       - key: STOCK_API_KEY
         sync: false
       - key: NEXT_PUBLIC_API_URL 

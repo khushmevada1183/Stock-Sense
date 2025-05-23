@@ -13,13 +13,13 @@ const os = require('os');
 dotenv.config();
 
 const BACKEND_PORT = process.env.PORT || 10000;
-const FRONTEND_PORT = process.env.FRONTEND_PORT || 10001;
+// const FRONTEND_PORT = process.env.FRONTEND_PORT || 10001; // Removed
 
 // Configure Node.js memory limits - reduced for low-memory environment
-process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || '--max_old_space_size=384'; // Lowered for Free Tier
-console.log(`Node.js memory settings: ${process.env.NODE_OPTIONS}`);
+// process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || '--max_old_space_size=384'; // Removed, backend might need more or be configured differently
+// console.log(`Node.js memory settings: ${process.env.NODE_OPTIONS}`);
 
-console.log(`Using backend port: ${BACKEND_PORT}, frontend port: ${FRONTEND_PORT}`);
+console.log(`Using backend port: ${BACKEND_PORT}`);
 
 // Validate environment
 if (!process.env.STOCK_API_KEY) {
@@ -36,12 +36,12 @@ function spawnProcess(command, args, options = {}) {
     stdio: 'pipe',
     env: {
       ...process.env,
-      PORT: options.isBackend ? BACKEND_PORT : FRONTEND_PORT,
-      NODE_OPTIONS: process.env.NODE_OPTIONS, // Ensure child processes inherit memory settings
+      PORT: BACKEND_PORT, // Backend always uses BACKEND_PORT
+      // NODE_OPTIONS: process.env.NODE_OPTIONS, // Removed, let backend script handle its own NODE_OPTIONS if needed via package.json
     },
   });
 
-  const prefix = options.isBackend ? '[BACKEND]' : '[FRONTEND]';
+  const prefix = '[BACKEND]'; // Only backend now
 
   proc.stdout.on('data', (data) => {
     console.log(`${prefix} ${data.toString().trim()}`);
@@ -62,77 +62,77 @@ function spawnProcess(command, args, options = {}) {
 const backend = spawnProcess('node', ['backend/server.js'], { isBackend: true });
 
 // Check for different possible frontend build locations
-const standaloneServerPath = path.join(__dirname, 'frontend', '.next', 'standalone', 'server.js');
-const nextBuildPath = path.join(__dirname, 'frontend', '.next');
+// const standaloneServerPath = path.join(__dirname, 'frontend', '.next', 'standalone', 'server.js');
+// const nextBuildPath = path.join(__dirname, 'frontend', '.next');
 
-let frontendStartCommand;
+// let frontendStartCommand;
 
 // Determine the best way to start the frontend
-if (fs.existsSync(standaloneServerPath)) {
-  console.log('Found standalone build, using it for frontend');
-  frontendStartCommand = { cmd: 'node', args: ['.next/standalone/server.js'] };
-} else if (fs.existsSync(nextBuildPath)) {
-  console.log('Found Next.js build directory, using npm start');
-  frontendStartCommand = { 
-    cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', 
-    args: ['run', 'start'] 
-  };
-} else {
-  console.error('No Next.js build found! Try running "npm run build:frontend" first');
-  console.log('Attempting to build the frontend now...');
+// if (fs.existsSync(standaloneServerPath)) {
+//   console.log('Found standalone build, using it for frontend');
+//   frontendStartCommand = { cmd: 'node', args: ['.next/standalone/server.js'] };
+// } else if (fs.existsSync(nextBuildPath)) {
+//   console.log('Found Next.js build directory, using npm start');
+//   frontendStartCommand = { 
+//     cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', 
+//     args: ['run', 'start'] 
+//   };
+// } else {
+//   console.error('No Next.js build found! Try running "npm run build:frontend" first');
+//   console.log('Attempting to build the frontend now...');
   
-  // Try to build the frontend if it doesn't exist
-  const buildCmd = os.platform() === 'win32' ? 'npm.cmd' : 'npm';
-  const buildProc = spawn(buildCmd, ['run', 'build'], {
-    cwd: path.join(__dirname, 'frontend'),
-    stdio: 'inherit',
-    env: {
-      ...process.env,
-      NODE_OPTIONS: '--max_old_space_size=384', // Reduced memory for low-resource environment
-    }
-  });
+//   // Try to build the frontend if it doesn't exist
+//   const buildCmd = os.platform() === 'win32' ? 'npm.cmd' : 'npm';
+//   const buildProc = spawn(buildCmd, ['run', 'build'], {
+//     cwd: path.join(__dirname, 'frontend'),
+//     stdio: 'inherit',
+//     env: {
+//       ...process.env,
+//       NODE_OPTIONS: '--max_old_space_size=384', // Reduced memory for low-resource environment
+//     }
+//   });
   
-  buildProc.on('close', (code) => {
-    if (code !== 0) {
-      console.error(`Frontend build failed with code ${code}`);
-      process.exit(1);
-    }
+//   buildProc.on('close', (code) => {
+//     if (code !== 0) {
+//       console.error(`Frontend build failed with code ${code}`);
+//       process.exit(1);
+//     }
     
-    console.log('Frontend build completed, starting frontend');
-    frontendStartCommand = { 
-      cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', 
-      args: ['run', 'start'] 
-    };
+//     console.log('Frontend build completed, starting frontend');
+//     frontendStartCommand = { 
+//       cmd: os.platform() === 'win32' ? 'npm.cmd' : 'npm', 
+//       args: ['run', 'start'] 
+//     };
     
-    startFrontend();
-  });
+//     startFrontend();
+//   });
   
-  // Return early to avoid starting frontend before build completes
-  return;
-}
+//   // Return early to avoid starting frontend before build completes
+//   return;
+// }
 
-console.log(`Starting frontend with: ${frontendStartCommand.cmd} ${frontendStartCommand.args.join(' ')}`);
+// console.log(`Starting frontend with: ${frontendStartCommand.cmd} ${frontendStartCommand.args.join(' ')}`);
 
 // Start frontend
-function startFrontend() {
-  const frontend = spawnProcess(
-    frontendStartCommand.cmd, 
-    frontendStartCommand.args, 
-    {
-      cwd: path.join(__dirname, 'frontend'),
-    }
-  );
-}
+// function startFrontend() {
+//   const frontend = spawnProcess(
+//     frontendStartCommand.cmd, 
+//     frontendStartCommand.args, 
+//     {
+//       cwd: path.join(__dirname, 'frontend'),
+//     }
+//   );
+// }
 
 // Start frontend if we didn't need to build it
-if (frontendStartCommand) {
-  startFrontend();
-}
+// if (frontendStartCommand) {
+//   startFrontend();
+// }
 
 // Handle process termination
 process.on('SIGINT', () => {
-  console.log('\nShutting down services...');
+  console.log('\nShutting down backend service...');
   backend.kill();
-  if (frontend) frontend.kill();
+  // if (frontend) frontend.kill(); // Removed frontend process
   process.exit(0);
 }); 
