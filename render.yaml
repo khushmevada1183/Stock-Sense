@@ -3,10 +3,16 @@ services:
   - type: web
     name: stock-sense
     env: node
+    plan: free # Explicitly set plan to free, though this is likely controlled in Render UI
     buildCommand: |
       npm install
-      npm run build:backend
-      npm run build:frontend
+      echo "Starting backend build..."
+      cd backend && npm install && npm run build && cd ..
+      echo "Backend build finished. Starting frontend build..."
+      # Attempting frontend build with lower memory for Free Tier
+      # This is a long shot and may fail or result in a very slow build
+      cd frontend && npm install && cross-env NODE_OPTIONS=--max_old_space_size=384 npm run build && cd ..
+      echo "Frontend build finished."
     startCommand: node run.js
     healthCheckPath: /api/health
     envVars:
