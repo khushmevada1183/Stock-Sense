@@ -11,28 +11,28 @@ This guide provides step-by-step instructions for building and pushing your Stoc
 
 ### 1. Log in to Docker Hub
 ```bash
-docker login -u khushmevada5005
+docker login -u khushmevada1183
 ```
 When prompted for password, enter your Personal Access Token (not your Docker Hub password).
 
 ### 2. Build and Tag the Frontend Image
 ```bash
 cd frontend
-docker build -t khushmevada5005/stock-sense-frontend:latest .
+docker build -t khushmevada1183/stock-sense-frontend:latest .
 cd ..
 ```
 
 ### 3. Build and Tag the Backend Image
 ```bash
 cd backend
-docker build -t khushmevada5005/stock-sense-backend:latest .
+docker build -t khushmevada1183/stock-sense-backend:latest .
 cd ..
 ```
 
 ### 4. Push the Images to Docker Hub
 ```bash
-docker push khushmevada5005/stock-sense-frontend:latest
-docker push khushmevada5005/stock-sense-backend:latest
+docker push khushmevada1183/stock-sense-frontend:latest
+docker push khushmevada1183/stock-sense-backend:latest
 ```
 
 ### 5. Using Docker Compose for Local Testing
@@ -75,5 +75,12 @@ For automated builds and deployment with GitHub Actions:
 
 ## Additional Information
 
-- Docker Hub Repository: https://hub.docker.com/u/khushmevada5005
-- GitHub Repository: https://github.com/khushmevada5005/stock-sense-build 
+- Docker Hub Repository: https://hub.docker.com/u/khushmevada1183
+- GitHub Repository: https://github.com/khushmevada1183/Stock-Sense
+- Render Dashboard: https://dashboard.render.com/
+
+## Important Links and Credentials
+
+- **Docker Hub Repository**: `https://hub.docker.com/u/khushmevada1183` (or your specific image repos)
+- **GitHub Repository**: `https://github.com/khushmevada1183/Stock-Sense`
+- **Render Dashboard**: `https://dashboard.render.com/` 

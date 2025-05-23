@@ -2,7 +2,7 @@
   "name": "indian-stock-sense-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://khushmevada5005.github.io/stock-sense-build/",
+  "homepage": "https://khushmevada1183.github.io/Stock-Sense/",
   "scripts": {
     "dev": "next dev",
     "build": "cross-env NODE_OPTIONS=--max_old_space_size=4096 next build",

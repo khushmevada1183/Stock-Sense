@@ -23,6 +23,6 @@ echo Pushing changes to GitHub...
 git push origin main
 
 echo === GitHub update complete! ===
-echo Repository updated: https://github.com/khushmevada5005/stock-sense-build
+echo Repository updated: https://github.com/khushmevada1183/Stock-Sense
 
 pause 

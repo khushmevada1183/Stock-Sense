@@ -2,8 +2,10 @@
 
 # Deploy Stock-Sense to GitHub Pages
 
-# Set variables
-GITHUB_REPO="https://github.com/khushmevada5005/stock-sense-build.git"
+# Configuration
+GIT_USER_NAME="khushmevada1183"
+GIT_USER_EMAIL="your-email@example.com" # Replace with your email
+GITHUB_REPO="https://github.com/khushmevada1183/Stock-Sense.git"
 BRANCH="main"
 
 echo "===== Stock-Sense GitHub Pages Deployment ====="
