@@ -29,8 +29,8 @@ const nextConfig = {
   // Increase build memory limit
   experimental: {
     largePageDataBytes: 512 * 1000, // 512KB
-    transpilePackages: ['@radix-ui/react-accordion'],
   },
+  transpilePackages: ['@radix-ui/react-accordion'],
   // Configure for dynamic rendering with standalone output
   output: 'standalone',
   // Configure image handling

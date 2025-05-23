@@ -4,6 +4,7 @@ const path = require('path');
 const axios = require('axios');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 const stockApiService = require('./services/stockApi');
 const indianApiRoutes = require('./routes/indianApiRoutes');
 const apiKeyRoutes = require('./routes/apiKeyRoutes');
@@ -87,8 +88,27 @@ app.use(apiLimiter);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Register API routes
+// API routes should be registered before the frontend proxy
 app.use('/api/keys', apiKeyRoutes);
+app.use('/api/indian', indianApiRoutes);
+
+// Proxy to Next.js frontend (must be after API routes)
+const FRONTEND_URL = `http://localhost:${process.env.FRONTEND_PORT || 10001}`;
+app.use('/', createProxyMiddleware({
+  target: FRONTEND_URL,
+  changeOrigin: true,
+  ws: true, // for Next.js HMR in dev, but good to have
+  logLevel: 'debug', // Optional: for more detailed proxy logs
+  onError: (err, req, res) => {
+    console.error('Proxy Error:', err);
+    if (!res.headersSent) {
+        res.writeHead(500, {
+            'Content-Type': 'text/plain'
+        });
+    }
+    res.end('Proxy Error: Could not connect to the frontend service.');
+  }
+}));
 
 // Create an API client function that uses request-specific headers
 // instead of a global Axios instance
