@@ -7,15 +7,15 @@ import { Heart, Github, Check, AlertCircle } from 'lucide-react';
 const Footer: React.FC = () => {
   const [apiStatus, setApiStatus] = useState<'loading' | 'active' | 'error'>('loading');
   const [apiKey, setApiKey] = useState<string>('');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api'; // Use consistent default
 
   useEffect(() => {
     const checkApiStatus = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/api/health');
-        if (response.data.status === 'UP') {
+        const response = await axios.get(`${apiUrl}/health`); // Use apiUrl
+        if (response.data.status === 'UP' || response.data.status === 'OK') { // Accept 'OK' as well
           setApiStatus('active');
-          // Get the API key (just for display purposes - last 4 chars)
-          const configResponse = await axios.get('http://localhost:5001/api/config');
+          const configResponse = await axios.get(`${apiUrl}/config`); // Use apiUrl
           if (configResponse.data.apiKey) {
             const key = configResponse.data.apiKey;
             setApiKey(`...${key.substring(key.length - 4)}`);
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
     };
 
     checkApiStatus();
-  }, []);
+  }, [apiUrl]); // Add apiUrl as a dependency
 
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-6 mt-12">
