@@ -69,7 +69,8 @@ const nextConfig = {
         destination: `${apiUrl}/:path*`
       }
     ];
-  }
+  },
+  productionBrowserSourceMaps: false,
 };
 
 module.exports = nextConfig;

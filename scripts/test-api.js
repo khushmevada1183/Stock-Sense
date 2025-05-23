@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Load API keys from config file
-const configPath = path.join(__dirname, 'backend/config/api-keys.json');
+const configPath = path.join(__dirname, '../backend/config/api-keys.json');
 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
 const apiKeys = config.keys.map(k => k.key);
 
