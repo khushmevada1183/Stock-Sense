@@ -3,7 +3,10 @@ services:
   - type: web
     name: stock-sense
     env: node
-    buildCommand: npm install && npm run build:backend && npm run build:frontend
+    buildCommand: |
+      npm install
+      npm run build:backend
+      npm run build:frontend
     startCommand: node run.js
     healthCheckPath: /api/health
     envVars:
