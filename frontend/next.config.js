@@ -15,48 +15,28 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
-  // Support GitHub Pages
-  basePath: process.env.NODE_ENV === 'production' ? '/stock-sense-build' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/stock-sense-build/' : '',
   // Using optimized webpack configuration for builds
   webpack: (config, { isServer }) => {
-    // Optimize for memory efficiency
+    // Optimize handling for large pages
     config.optimization.splitChunks = {
       chunks: 'all',
-      maxInitialRequests: 10,
-      minSize: 50000,
-      cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all',
-          priority: -10
-        }
-      }
+      maxInitialRequests: 25,
+      minSize: 20000
     };
-    
-    // Disable dev features in production
-    if (!isServer && process.env.NODE_ENV === 'production') {
-      // Reduce memory usage
-      config.optimization.minimize = true;
-      config.optimization.runtimeChunk = false;
-    }
     
     return config;
   },
-  // Increase build memory limit - reduced for low resource environment
+  // Increase build memory limit
   experimental: {
-    largePageDataBytes: 128 * 1000, // 128KB (reduced from 512KB)
+    largePageDataBytes: 512 * 1000, // 512KB
+    transpilePackages: ['@radix-ui/react-accordion'],
   },
-  // Moved from experimental to top level as required by Next.js 15.3.2
-  transpilePackages: ['@radix-ui/react-accordion'],
   // Configure for dynamic rendering with standalone output
   output: 'standalone',
-  // Configure image handling - optimize for memory
+  // Configure image handling
   images: {
     domains: ['avatars.githubusercontent.com', 'images.unsplash.com', 'localhost'],
-    unoptimized: process.env.NODE_ENV === 'production',
-    minimumCacheTTL: 3600, // 1 hour to reduce builds
+    unoptimized: process.env.NODE_ENV === 'production'
   },
   // Environment variables
   env: {

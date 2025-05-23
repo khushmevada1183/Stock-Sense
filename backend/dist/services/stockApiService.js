@@ -126,11 +126,23 @@ class StockApiService {
             return [];
         }
     }
+    // Get all stocks
+    async getAllStocks() {
+        try {
+            // Assuming an endpoint like /stocks for all stock data
+            const data = await this.fetchWithCache('/stocks', 'MARKET_DATA');
+            return data.data || [];
+        }
+        catch (error) {
+            console.error('Error fetching all stocks data:', error);
+            return [];
+        }
+    }
     // Get top gainers
     async getTopGainers() {
         try {
-            const data = await this.fetchWithCache('/trending', 'MARKET_DATA');
-            return data.data && data.data.top_gainers ? data.data.top_gainers : [];
+            const data = await this.fetchWithCache('/top-gainers', 'MARKET_DATA');
+            return data.data || [];
         }
         catch (error) {
             console.error('Error fetching top gainers:', error);
@@ -140,8 +152,8 @@ class StockApiService {
     // Get top losers
     async getTopLosers() {
         try {
-            const data = await this.fetchWithCache('/trending', 'MARKET_DATA');
-            return data.data && data.data.top_losers ? data.data.top_losers : [];
+            const data = await this.fetchWithCache('/top-losers', 'MARKET_DATA');
+            return data.data || [];
         }
         catch (error) {
             console.error('Error fetching top losers:', error);
@@ -167,17 +179,6 @@ class StockApiService {
         }
         catch (error) {
             console.error('Error fetching 52-week high/low data:', error);
-            return {};
-        }
-    }
-    // Get all stocks data (combined endpoint)
-    async getAllStocks() {
-        try {
-            const data = await this.fetchWithCache('/trending', 'MARKET_DATA');
-            return data.data || {};
-        }
-        catch (error) {
-            console.error('Error fetching all stocks data:', error);
             return {};
         }
     }

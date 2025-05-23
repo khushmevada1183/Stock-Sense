@@ -16,6 +16,6 @@ services:
       - key: STOCK_API_KEY
         sync: false
       - key: NEXT_PUBLIC_API_URL 
-        value: http://localhost:10000/api
+        value: ${RENDER_EXTERNAL_URL}/api
       - key: NEXT_PUBLIC_APP_ENV
         value: production 

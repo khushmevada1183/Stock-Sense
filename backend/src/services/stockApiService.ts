@@ -201,6 +201,18 @@ class StockApiService {
     }
   }
   
+  // Get all stocks
+  async getAllStocks(): Promise<StockDetails[]> {
+    try {
+      // Assuming an endpoint like /stocks for all stock data
+      const data = await this.fetchWithCache<any>('/stocks', 'MARKET_DATA');
+      return data.data || [];
+    } catch (error) {
+      console.error('Error fetching all stocks data:', error);
+      return [];
+    }
+  }
+  
   // Get top gainers
   async getTopGainers(): Promise<StockDetails[]> {
     try {

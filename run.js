@@ -16,7 +16,7 @@ const BACKEND_PORT = process.env.PORT || 10000;
 const FRONTEND_PORT = process.env.FRONTEND_PORT || 10001;
 
 // Configure Node.js memory limits - reduced for low-memory environment
-process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || '--max_old_space_size=384';
+process.env.NODE_OPTIONS = process.env.NODE_OPTIONS || '--max_old_space_size=4096';
 console.log(`Node.js memory settings: ${process.env.NODE_OPTIONS}`);
 
 console.log(`Using backend port: ${BACKEND_PORT}, frontend port: ${FRONTEND_PORT}`);

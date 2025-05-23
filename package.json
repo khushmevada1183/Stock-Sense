@@ -12,7 +12,7 @@
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
     "build": "npm run build:all",
     "build:backend": "cd backend && npm install && npm run build",
-    "build:frontend": "cd frontend && npm install && cross-env NODE_OPTIONS=--max_old_space_size=384 npm run build",
+    "build:frontend": "cd frontend && npm install && cross-env NODE_OPTIONS=--max_old_space_size=4096 npm run build",
     "export": "cd frontend && npm run export || echo 'Export not supported in newer Next.js versions'",
     "build:all": "npm run build:backend && npm run build:frontend",
     "clean": "cd frontend && npm run clean && cd ../backend && rm -rf dist",
