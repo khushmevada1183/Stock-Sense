@@ -5,14 +5,21 @@ services:
     env: node
     plan: free # Explicitly set plan to free, though this is likely controlled in Render UI
     buildCommand: |
-      npm install
-      echo "Starting backend build..."
-      cd backend && npm install && npm run build && cd ..
-      echo "Backend build finished. Starting frontend build..."
-      # Attempting frontend build with lower memory for Free Tier
-      # This is a long shot and may fail or result in a very slow build
-      cd frontend && npm install && cross-env NODE_OPTIONS=--max_old_space_size=384 npm run build && cd ..
-      echo "Frontend build finished."
+      npm install && \
+      echo "Starting backend build..." && \
+      cd backend && npm install && npm run build && cd .. && \
+      echo "Backend build finished. Starting frontend build..." && \
+      cd frontend && npm install && \
+      echo "Attempting Next.js build with output standalone..." && \
+      cross-env NODE_OPTIONS=--max_old_space_size=384 npm run build && \
+      echo "Next.js build command finished. Verifying standalone output..." && \
+      if [ ! -d ".next/standalone" ]; then \
+        echo "ERROR: .next/standalone directory NOT found after frontend build!" && \
+        exit 1; \
+      fi && \
+      echo ".next/standalone directory verified." && \
+      cd .. && \
+      echo "All builds finished."
     startCommand: node run.js
     healthCheckPath: /api/health
     envVars:
@@ -27,4 +34,18 @@ services:
       - key: NEXT_PUBLIC_API_URL 
         value: ${RENDER_EXTERNAL_URL}/api
       - key: NEXT_PUBLIC_APP_ENV
-        value: production 
+        value: production
+      - key: INDIAN_API_KEY
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
+
+# Define a separate cron job service for scheduled tasks if needed
+# crons:
+#   - name: log-cleanup
+#     schedule: "0 0 * * *" # Daily at midnight
+#     command: "echo \"Log cleanup placeholder\"" 
