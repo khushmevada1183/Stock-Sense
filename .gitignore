@@ -1,55 +1,58 @@
-# Dependencies
-node_modules/
-.pnp/
-.pnp.js
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Testing
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# pnpm
+.pnpm-store/
+pnpm-debug.log*
+
+# testing
 /coverage
 
-# Next.js
-.next/
-out/
+# next.js
+/.next/
+/out/
 
-# Production build
+# production
 /build
-/dist
 
-# Misc
+# misc
 .DS_Store
 *.pem
 
-# Debug
+# debug
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+.pnpm-debug.log*
 
-# Local env files
-.env*.local
-.env
-.env.development
-.env.production
-.env.test
 
-# API keys and secrets
-**/config/api-keys.json
-**/config/secrets.json
-**/config/credentials.json
-**/.api-keys
-
-# Vercel
+# vercel
 .vercel
 
-# TypeScript
+# typescript
 *.tsbuildinfo
 next-env.d.ts
 
-# IDEs and editors
-/.idea
-/.vscode
+# API logs
+/api/logs
+*.log
+
+# Cache files
+.cache/
+
+# IDE files
+.idea/
+.vscode/
 *.swp
 *.swo
 
-# Cache
-.npm/
-.cache/ 
-node_modules
+# Backup files
+*.bak
+*~
+
+# Build artifacts
+dist/

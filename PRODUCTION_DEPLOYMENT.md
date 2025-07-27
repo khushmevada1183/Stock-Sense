@@ -1,110 +1,203 @@
-# Stock-Sense Production Deployment Report
+# Stock Sense Frontend Production Deployment Guide
 
-## Build Process Summary
+This document outlines the steps required to deploy the Stock Sense frontend to a production environment.
 
-The Stock-Sense application has been successfully built for production deployment. The build process included:
+## Prerequisites
 
-1. **Dependency Installation**: All required dependencies for both frontend and backend were installed.
-2. **TypeScript Compilation**: TypeScript files were compiled without errors.
-3. **Asset Optimization**: Frontend assets were optimized for production.
-4. **Error Resolution**: Fixed JSX linting errors to ensure production readiness.
-5. **Production Build**: Created a minified, optimized production build.
+- Node.js v16.0.0 or higher
+- npm v8.0.0 or higher
+- Access to the production server or hosting service
 
-## Issues Resolved
+## Building for Production
 
-### 1. JSX Linting Errors
-Fixed multiple instances of unescaped entities in JSX code:
-- Replaced unescaped apostrophes with `&apos;` in privacy page and hero section
-- Replaced unescaped double quotes with `&quot;` in stock search page
-- These changes ensure proper rendering and prevent React warnings in production.
+The application has been successfully built using Next.js, with all type checks passing. To build the application for production:
 
-### 2. Dependency Warnings
-Several peer dependency warnings were observed but don't impact functionality:
-- TypeScript ESLint plugin dependency warnings (eslint version mismatches)
-- Next.js image component recommendations
+```bash
+# Navigate to the frontend directory
+cd frontend
 
-## Environment Variables Required for Deployment
+# Install dependencies
+npm install
 
-Based on the application configuration files, the following environment variables are needed for deployment:
+# Build the application
+npm run build
 
-### Backend Environment Variables
-```
-NODE_ENV=production
-PORT=10000
-CORS_ORIGIN=http://frontend:3000,http://localhost:3000
-STOCK_API_KEY=your_actual_api_key_here
-INDIAN_API_KEY=your_actual_indian_api_key_here
-```
-
-### Frontend Environment Variables
-```
-NODE_ENV=production
-NEXT_PUBLIC_API_URL=http://backend:10000/api
-NEXT_PUBLIC_INDIAN_API_URL=https://stock.indianapi.in
-NEXT_PUBLIC_INDIAN_API_KEY=your_actual_api_key_here
+# Start the production server
+npm start
 ```
 
 ## Deployment Options
 
-### 1. Docker Deployment (Recommended)
-The application is configured for Docker deployment using docker-compose:
-- **Frontend**: Built with Next.js in production mode
-- **Backend**: Node.js API server
-- **Nginx**: Configured as a reverse proxy
+### Option 1: Traditional Node.js Hosting
 
-Steps:
-1. Ensure Docker and docker-compose are installed
-2. Configure environment variables
-3. Run `docker-compose up -d` to start the containers
+1. Upload the following directory structure to your server:
+   - `.next/` - The compiled application
+   - `public/` - Static assets
+   - `node_modules/` - (or install dependencies on the server)
+   - `package.json` - Dependency and script definitions
+   - `next.config.js` - Next.js configuration
 
-### 2. Traditional Deployment
-The application can also be deployed to traditional hosting:
+2. Set up environment variables:
+   ```
+   PORT=3000
+   NODE_ENV=production
+   API_URL=https://your-api-domain.com
+   NEXT_PUBLIC_API_URL=https://your-api-domain.com
+   ```
 
-**Backend**:
-- Node.js hosting (e.g., Render, DigitalOcean, AWS EC2)
-- Start command: `npm start`
+3. Run the production server:
+   ```bash
+   npm start
+   ```
 
-**Frontend**:
-- Static hosting with server capabilities (e.g., Vercel, Netlify)
-- Deploy the `.next` directory after build
+### Option 2: Vercel (Recommended)
 
-## Performance Optimization Recommendations
+As this is a Next.js application, Vercel offers the simplest deployment solution:
 
-1. **Image Optimization**:
-   - Consider replacing `<img>` elements with Next.js `<Image />` components
-   - This will improve Largest Contentful Paint (LCP) metrics and overall page performance
+1. Install Vercel CLI (optional):
+   ```bash
+   npm install -g vercel
+   ```
 
-2. **Code Splitting**:
-   - Already implemented by Next.js
-   - Current bundle sizes are reasonable (first load JS of ~102KB shared)
+2. Deploy from the command line:
+   ```bash
+   vercel
+   ```
 
-3. **React Hook Optimizations**:
-   - Fix missing dependencies in React useEffect hooks
-   - This will prevent unnecessary re-renders and potential memory issues
+   Or connect your GitHub repository to Vercel for automatic deployments.
 
-4. **API Error Handling**:
-   - The current fallback mechanism for API failures is working well
-   - Consider implementing more detailed error logging in production
+3. Set environment variables in the Vercel dashboard.
 
-## Security Recommendations
+### Option 3: Containerized Deployment
 
-1. **API Key Management**:
-   - Ensure API keys are properly secured in environment variables
-   - Never expose keys in client-side code
-   - Consider implementing API key rotation for production
+1. Create a `Dockerfile` in the root directory:
+   ```dockerfile
+   FROM node:18-alpine AS builder
+   WORKDIR /app
+   COPY package*.json ./
+   RUN npm ci
+   COPY . .
+   RUN npm run build
 
-2. **CORS Configuration**:
-   - Current CORS settings allow specific origins
-   - In production, limit CORS to only the required domains
+   FROM node:18-alpine AS runner
+   WORKDIR /app
+   ENV NODE_ENV production
 
-3. **Rate Limiting**:
-   - Backend appears to have rate limiting configured
-   - Ensure it's properly set for production traffic volumes
+   COPY --from=builder /app/public ./public
+   COPY --from=builder /app/.next ./.next
+   COPY --from=builder /app/node_modules ./node_modules
+   COPY --from=builder /app/package.json ./
 
-## Conclusion
+   EXPOSE 3000
+   CMD ["npm", "start"]
+   ```
 
-The Stock-Sense application is now ready for production deployment. The build has been successful, with all major issues resolved. The application architecture supports containerization for easy deployment and scaling.
+2. Build and run the Docker container:
+   ```bash
+   docker build -t stock-sense-frontend .
+   docker run -p 3000:3000 stock-sense-frontend
+   ```
 
-The recommended deployment approach is using Docker with the provided docker-compose configuration, which will ensure consistent environments across deployments.
+## Server Configuration
 
-For any future updates, follow the established build process and verify all tests pass before deploying to production. 
+### NGINX Configuration
+
+If using NGINX as a reverse proxy:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### Apache Configuration
+
+If using Apache:
+
+```apache
+<VirtualHost *:80>
+    ServerName yourdomain.com
+    
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:3000/
+    ProxyPassReverse / http://localhost:3000/
+    
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+
+## Post-Deployment Checks
+
+After deployment, verify the following:
+
+1. Stock details page is loading without errors (test with different stock symbols)
+2. Charts are rendering properly
+3. API calls are working correctly
+4. Verify mobile responsiveness
+
+## Troubleshooting Common Issues
+
+### Charts Not Rendering
+
+If charts are not rendering in production:
+
+1. Ensure Chart.js is properly initialized in SSR environment:
+   ```javascript
+   // Use dynamic import for Chart.js components
+   import dynamic from 'next/dynamic'
+   
+   const ChartComponent = dynamic(() => import('../components/ChartComponent'), {
+     ssr: false
+   })
+   ```
+
+2. Verify canvas cleanup on unmount:
+   ```javascript
+   useEffect(() => {
+     return () => {
+       if (chartRef.current) {
+         chartRef.current.destroy();
+       }
+     };
+   }, []);
+   ```
+
+### API Connection Issues
+
+1. Ensure all API URLs are using environment variables
+2. Check CORS configuration on the backend
+3. Verify API endpoints are accessible from the production environment
+
+### Performance Optimization
+
+1. Enable gzip compression on your server
+2. Implement caching strategies
+3. Use a CDN for static assets
+
+## Monitoring and Analytics
+
+1. Set up error tracking with services like Sentry
+2. Implement analytics with Google Analytics or similar
+3. Set up server monitoring
+
+## Security Considerations
+
+1. Ensure all API keys are stored as environment variables
+2. Implement Content Security Policy (CSP)
+3. Set up HTTPS using a valid SSL certificate
+4. Regularly update dependencies
+
+---
+
+For further assistance, please contact the development team. 
