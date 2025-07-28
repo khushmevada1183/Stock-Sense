@@ -1,16 +1,32 @@
 export interface IpoItem {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
   symbol: string;
-  date: string;
-  priceRange: string;
+  date?: string;
+  priceRange?: string;
   bidding_start_date?: string;
+  bidding_end_date?: string;
   logo?: string;
   company_name?: string;
-  issue_size?: string;
+  issue_size?: string | number;
   price_range?: string;
   open?: string;
+  close?: string;
   subscription_status?: string;
+  status?: string;
   rhpLink?: string;
   drhpLink?: string;
+  document_url?: string;
+  listing_date?: string;
+  listing_price?: number;
+  listing_gains?: number;
+  listing_gain?: string;
+  issue_price?: number;
+  ipo_price?: string;
+  min_price?: number;
+  max_price?: number;
+  additional_text?: string;
+  is_sme?: boolean;
+  lot_size?: number;
+  issue_type?: string;
 }
