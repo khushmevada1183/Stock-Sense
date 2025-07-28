@@ -593,8 +593,8 @@ export default function IpoPage() {
       }
         
       // Fetch IPO data from our API
-      console.log('Calling stockApi.getIPOCalendar()');
-      const response = await stockApi.getIPOCalendar() as APIResponse;
+      console.log('Calling stockApi.getIPOData()');
+      const response = await stockApi.getIPOData() as APIResponse;
         
       if (response) {
         // Set statistics

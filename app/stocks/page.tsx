@@ -21,7 +21,7 @@ interface Stock {
   company_name: string;
   sector_name: string;
   current_price: number;
-  price_change_percentage: number;
+  percent_change: number;
   net_change: number;
   bid: number;
   ask: number;
@@ -188,6 +188,7 @@ export default function StocksIndexPage() {
             // Price data with comprehensive mapping
             current_price: parseFloat(stock.price || stock.current_price || stock.ltp || stock.last_price || 0),
             price_change_percentage: parseFloat(stock.percent_change || stock.percentChange || stock.price_change_percentage || 0),
+            percent_change: parseFloat(stock.percent_change || stock.percentChange || stock.price_change_percentage || 0),
             net_change: parseFloat(stock.net_change || stock.netChange || stock.change || 0),
             
             // Trading data
@@ -237,9 +238,9 @@ export default function StocksIndexPage() {
         
         // Calculate market metrics from real data
         if (transformedStocks.length > 0) {
-          const gainersCount = transformedStocks.filter(stock => stock.price_change_percentage > 0).length;
-          const losersCount = transformedStocks.filter(stock => stock.price_change_percentage < 0).length;
-          const unchangedCount = transformedStocks.filter(stock => stock.price_change_percentage === 0).length;
+          const gainersCount = transformedStocks.filter(stock => stock.percent_change > 0).length;
+          const losersCount = transformedStocks.filter(stock => stock.percent_change < 0).length;
+          const unchangedCount = transformedStocks.filter(stock => stock.percent_change === 0).length;
           
           const totalVolume = transformedStocks.reduce((sum, stock) => sum + stock.current_price, 0);
           const avgPrice = transformedStocks.length > 0 ? totalVolume / transformedStocks.length : 0;

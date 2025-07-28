@@ -6,12 +6,13 @@ import { ArrowUp, ArrowDown, TrendingUp, TrendingDown, Volume, Target, Info, Che
 
 interface EnhancedStockCardProps {
   stock: any; // Raw API response with all fields
+  price_change_percentage: number;
   showAllData?: boolean;
 }
 
-const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, showAllData = false }) => {
+const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, showAllData = false, price_change_percentage }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const percentChange = parseFloat(stock.percent_change || stock.percentChange || 0);
+  const percentChange = parseFloat(stock.percent_change || stock.percentChange || price_change_percentage || 0);
   const isPositive = percentChange >= 0;
   
   const formatCurrency = (value: any) => {

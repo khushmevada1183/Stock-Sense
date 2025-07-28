@@ -300,12 +300,66 @@ async function getLatestNews(params = {}) {
 }
 
 /**
- * Get upcoming IPO data
- * @returns {Promise<Array>} - Upcoming IPO information
+ * Get IPO data from the /ipo endpoint
+ * @returns {Promise<Object>} - IPO information including upcoming, active, and recent IPOs
  */
-async function getUpcomingIPOs() {
+async function getIPOData() {
   return getData('/ipo');
 }
+
+// Legacy aliases for backward compatibility
+async function getUpcomingIPOs() {
+  console.warn('getUpcomingIPOs is deprecated. Use getIPOData() instead.');
+  return getIPOData();
+}
+
+async function getIPOCalendar() {
+  console.warn('getIPOCalendar is deprecated. Use getIPOData() instead.');
+  return getIPOData();
+}
+
+/**
+ * Get specific IPO details (Note: API doesn't support IPO by ID, returns all IPOs)
+ * @param {string} ipoId - IPO identifier (currently ignored by API)
+ * @returns {Promise<Object>} - IPO information
+ */
+async function getIPODetails(ipoId) {
+  console.warn('API does not support specific IPO details by ID. Returning all IPO data.');
+  return getIPOData();
+}
+
+// ============================================================================
+// Stock-specific Data Endpoints
+// ============================================================================
+
+/**
+ * Get detailed stock information
+ * @param {string} symbol - Stock symbol
+ * @returns {Promise<Object>} - Stock details
+ */
+async function getStockDetails(symbol) {
+  // Matches the exact API example format
+  return getData('/stock', { name: symbol });
+}
+
+/**
+ * Get historical price data for a stock
+ * @param {string} symbol - Stock symbol
+ * @param {string} range - Time range (1m, 6m, 1yr, 3yr, 5yr, 10yr, max)
+ * @param {string} filter - Filter type (default, price, pe, sm, evebitda, ptb, mcs)
+ * @returns {Promise<Array>} - Historical price data
+ */
+async function getHistoricalPrices(symbol, range = '1m', filter = 'default') {
+  // Matches the exact API example format
+  return getData('/historical_data', { 
+    stock_name: symbol, 
+    period: range,
+    filter: filter
+  });
+}
+
+/**
+ * Get key financial ratios for a stock
 
 /**
  * Search for stocks
@@ -548,7 +602,8 @@ const apiExports = {
   getFeaturedStocks,
   getMarketOverview,
   getLatestNews,
-  getUpcomingIPOs,
+  getIPOData, // Main IPO function
+  getUpcomingIPOs, // Legacy alias
   searchStocks,
   getMarketMovers,
   
@@ -561,7 +616,7 @@ const apiExports = {
   getPeerComparison,
   
   // IPO data
-  getIPOCalendar,
+  getIPOCalendar, // Legacy alias
   getIPODetails,
   
   // Additional functions from documented API

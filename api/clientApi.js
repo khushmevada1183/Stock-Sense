@@ -112,9 +112,67 @@ export async function getRecentAnnouncements(stockName) {
 
 // ✅ OTHER DOCUMENTED ENDPOINTS
 
-// /ipo - IPO data
+// /ipo - IPO data (consolidated single function)
+export async function getIPOData() {
+  const response = await fetchApi('/ipo');
+  
+  // Extract and normalize the data fields from the API response
+  if (response && response.success && response.data) {
+    // The API returns: { success: true, data: { upcoming: [], listed: [], active: [], closed: [] } }
+    const data = response.data;
+    
+    // Return the structured data with statistics
+    return {
+      upcomingIPOs: data.upcoming || [],
+      recentlyListedIPOs: data.listed || [],
+      activeIPOs: data.active || [],
+      closedIPOs: data.closed || [],
+      statistics: {
+        upcoming: (data.upcoming || []).length,
+        active: (data.active || []).length,
+        recentlyListed: (data.listed || []).length,
+        closed: (data.closed || []).length
+      },
+      // Also include the original structure for backward compatibility
+      upcoming: data.upcoming || [],
+      listed: data.listed || [],
+      active: data.active || [],
+      closed: data.closed || []
+    };
+  } else if (response && typeof response === 'object') {
+    // Handle direct response without success wrapper
+    return response;
+  }
+  
+  // Return empty structure if no data
+  return {
+    upcomingIPOs: [],
+    recentlyListedIPOs: [],
+    activeIPOs: [],
+    closedIPOs: [],
+    statistics: {
+      upcoming: 0,
+      active: 0,
+      recentlyListed: 0,
+      closed: 0
+    },
+    upcoming: [],
+    listed: [],
+    active: [],
+    closed: []
+  };
+}
+
+// Legacy alias for backward compatibility
 export async function getUpcomingIPOs() {
-  return fetchApi('/ipo');
+  console.warn('getUpcomingIPOs is deprecated. Use getIPOData() instead.');
+  return getIPOData();
+}
+
+// Legacy alias for backward compatibility  
+export async function getIPOCalendar() {
+  console.warn('getIPOCalendar is deprecated. Use getIPOData() instead.');
+  return getIPOData();
 }
 
 // /news - News data
