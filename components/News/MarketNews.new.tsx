@@ -61,7 +61,7 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
             <p>{error}</p>
           </div>
-        ) : !Array.isArray(newsData) || newsData.length === 0 ? (
+        ) : newsData.length === 0 ? (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             No market news available at the moment.
           </div>

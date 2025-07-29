@@ -29,7 +29,7 @@ export default function FeaturedNews({ newsData, loading, error }: FeaturedNewsP
   const slideRef = useRef<HTMLDivElement>(null);
 
   // Take first 5 news items as featured
-  const featuredNews = Array.isArray(newsData) ? newsData.slice(0, 5) : [];
+  const featuredNews = newsData.slice(0, 5);
 
   // Initialize animations
   useEffect(() => {
@@ -119,11 +119,6 @@ export default function FeaturedNews({ newsData, loading, error }: FeaturedNewsP
             src={currentNews.image_url || currentNews.imageUrl || '/images/news-placeholder.jpg'}
             alt={currentNews.title}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.onerror = null; // Prevent infinite loop if placeholder also fails
-              target.src = '/images/news-placeholder.jpg';
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
         </div>

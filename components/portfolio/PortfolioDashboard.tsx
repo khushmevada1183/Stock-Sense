@@ -16,7 +16,10 @@ const formatCurrency = (value: number): string => {
 };
 
 // Helper function to format percentage
-const formatPercent = (value: number): string => {
+const formatPercent = (value: number | undefined): string => {
+  if (value === undefined || value === null || isNaN(value)) {
+    return '0.00%';
+  }
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 };
 
@@ -37,8 +40,8 @@ const PortfolioDashboard = () => {
         const holdingsData = await stockApi.getPortfolioHoldings();
         const summaryData = await stockApi.getPortfolioSummary();
         
-        setHoldings(holdingsData);
-        setSummary(summaryData);
+        setHoldings(holdingsData.holdings || []);
+        setSummary(summaryData.summary || null);
       } catch (error) {
         console.error('Error fetching portfolio data:', error);
       } finally {
@@ -176,27 +179,43 @@ const PortfolioDashboard = () => {
             <div className="relative w-32 h-32">
               {/* Simple donut chart */}
               <svg viewBox="0 0 100 100" className="w-full h-full">
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#39FF14" strokeWidth="20" strokeDasharray={`${summary.sectorAllocation[0].percentage * 2.51} 251`} transform="rotate(-90 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#00C2CB" strokeWidth="20" strokeDasharray={`${summary.sectorAllocation[1].percentage * 2.51} 251`} strokeDashoffset={`${-summary.sectorAllocation[0].percentage * 2.51}`} transform="rotate(-90 50 50)" />
-                <circle cx="50" cy="50" r="40" fill="transparent" stroke="#10B981" strokeWidth="20" strokeDasharray={`${summary.sectorAllocation[2].percentage * 2.51} 251`} strokeDashoffset={`${-(summary.sectorAllocation[0].percentage + summary.sectorAllocation[1].percentage) * 2.51}`} transform="rotate(-90 50 50)" />
-                <text x="50" y="50" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="20" fontWeight="bold">
-                  {summary.sectorAllocation[0].percentage.toFixed(1)}%
-                </text>
+                {summary.sectorAllocation && summary.sectorAllocation.length >= 3 ? (
+                  <>
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#39FF14" strokeWidth="20" strokeDasharray={`${summary.sectorAllocation[0].percentage * 2.51} 251`} transform="rotate(-90 50 50)" />
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#00C2CB" strokeWidth="20" strokeDasharray={`${summary.sectorAllocation[1].percentage * 2.51} 251`} strokeDashoffset={`${-summary.sectorAllocation[0].percentage * 2.51}`} transform="rotate(-90 50 50)" />
+                    <circle cx="50" cy="50" r="40" fill="transparent" stroke="#10B981" strokeWidth="20" strokeDasharray={`${summary.sectorAllocation[2].percentage * 2.51} 251`} strokeDashoffset={`${-(summary.sectorAllocation[0].percentage + summary.sectorAllocation[1].percentage) * 2.51}`} transform="rotate(-90 50 50)" />
+                    <text x="50" y="50" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="20" fontWeight="bold">
+                      {summary.sectorAllocation[0].percentage.toFixed(1)}%
+                    </text>
+                  </>
+                ) : (
+                  <text x="50" y="50" textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="16" fontWeight="bold">
+                    No Data
+                  </text>
+                )}
               </svg>
             </div>
             <div className="ml-4">
-              <div className="flex items-center mb-2">
-                <span className="w-3 h-3 bg-neon-400 rounded-full mr-2"></span>
-                <span className="text-gray-300">{summary.sectorAllocation[0].name}</span>
-              </div>
-              <div className="flex items-center mb-2">
-                <span className="w-3 h-3 bg-cyan-500 rounded-full mr-2"></span>
-                <span className="text-gray-300">{summary.sectorAllocation[1].name}</span>
-              </div>
-              <div className="flex items-center">
-                <span className="w-3 h-3 bg-emerald-500 rounded-full mr-2"></span>
-                <span className="text-gray-300">{summary.sectorAllocation[2].name}</span>
-              </div>
+              {summary.sectorAllocation && summary.sectorAllocation.length >= 3 ? (
+                <>
+                  <div className="flex items-center mb-2">
+                    <span className="w-3 h-3 bg-neon-400 rounded-full mr-2"></span>
+                    <span className="text-gray-300">{summary.sectorAllocation[0].name}</span>
+                  </div>
+                  <div className="flex items-center mb-2">
+                    <span className="w-3 h-3 bg-cyan-500 rounded-full mr-2"></span>
+                    <span className="text-gray-300">{summary.sectorAllocation[1].name}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-3 h-3 bg-emerald-500 rounded-full mr-2"></span>
+                    <span className="text-gray-300">{summary.sectorAllocation[2].name}</span>
+                  </div>
+                </>
+              ) : (
+                <div className="text-gray-400 text-sm">
+                  Sector allocation data unavailable
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -221,7 +240,7 @@ const PortfolioDashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {holdings.map((stock) => (
+            {Array.isArray(holdings) && holdings.length > 0 ? holdings.map((stock) => (
               <tr key={stock.symbol} className="border-b border-gray-800 hover:bg-gray-900/50">
                 <td className="py-4">
                   <Link href={`/stocks/${stock.symbol}`} className="text-neon-400 hover:text-neon-300 font-medium">
@@ -247,7 +266,13 @@ const PortfolioDashboard = () => {
                 <td className="py-4">{stock.eps.toFixed(2)}</td>
                 <td className="py-4">{stock.bookValue.toFixed(2)}</td>
               </tr>
-            ))}
+            )) : (
+              <tr>
+                <td colSpan={10} className="py-8 text-center text-gray-400">
+                  No holdings data available
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

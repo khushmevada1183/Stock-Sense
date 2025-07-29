@@ -58,7 +58,9 @@ export const fetchTopLosers = async () => {
 // Use getLatestNews instead of fetchMarketNews
 export const fetchMarketNews = async () => {
   const response = await getLatestNews();
-  return response.news || [];
+  // The API returns { success: true, data: [...] }
+  // And clientApi returns the data property directly.
+  return response.data || [];
 };
 
 // Helper object for consistent API usage

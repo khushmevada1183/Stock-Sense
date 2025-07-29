@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { 
+import {
   PieChart, Pie, Cell, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, Tooltip
 } from 'recharts';
@@ -9,7 +9,6 @@ import * as stockApi from '@/api/clientApi';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import homeAnimations from '@/animations/pages/homeAnimations';
 import marketAnimations from '@/animations/pages/marketAnimations';
-import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 
 // Market data interfaces
 interface MarketIndex {
@@ -938,35 +937,6 @@ export default function MarketPage() {
             <div className="mb-8">
               <HeatMap data={marketData.heatMapData} />
             </div>
-
-            {/* Enhanced API Data Display - Shows ALL parameters from API */}
-            {marketData.topGainers.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-                  📊 Complete API Data View
-                  <span className="text-sm font-normal text-gray-400">
-                    (Showing all {Object.keys(marketData.topGainers[0] || {}).length} parameters from API)
-                  </span>
-                </h2>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {marketData.topGainers.slice(0, 6).map((stock, index) => (
-                    <EnhancedStockCard 
-                      key={stock.symbol || index} 
-                      stock={stock} 
-                      showAllData={true}
-                    />
-                  ))}
-                </div>
-                
-                <div className="mt-6 p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
-                  <h3 className="text-lg font-semibold text-white mb-3">🔍 Raw API Response Sample:</h3>
-                  <pre className="text-xs text-gray-300 overflow-x-auto bg-gray-900/50 p-3 rounded">
-                    {JSON.stringify(marketData.topGainers[0] || {}, null, 2)}
-                  </pre>
-                </div>
-              </div>
-            )}
           </>
         )}
       </div>

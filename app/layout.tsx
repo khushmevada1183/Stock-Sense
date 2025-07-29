@@ -5,10 +5,10 @@ import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
 import { AnimationProvider } from '../animations/shared/AnimationContext';
 import Header from '../components/layout/Header';
-import Footer from '../components/Footer/Footer';
+import Footer from '../components/layout/Footer';
 import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
-import ScrollProgressIndicator from '../components/layout/ScrollProgressIndicator';
+import ClientScrollProgressIndicator from '../components/layout/ClientScrollProgressIndicator';
 
 const inter = Inter({ subsets: ['latin'] });
 const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono' });
@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} ${robotoMono.variable} ${serif.variable} ${flex.variable} min-h-screen flex flex-col antialiased`}>
+      <body className={`${inter.className} ${robotoMono.variable} ${serif.variable} ${flex.variable} min-h-screen flex flex-col antialiased`} suppressHydrationWarning>
         <ThemeProvider 
           attribute="class"
           defaultTheme="system"
@@ -38,7 +38,7 @@ export default function RootLayout({
             <StockProvider>
               <AnimationProvider>
             <div className="flex flex-col min-h-screen">
-                  <ScrollProgressIndicator />
+                  <ClientScrollProgressIndicator />
                 <Header />
               <main className="flex-grow">
                 {children}

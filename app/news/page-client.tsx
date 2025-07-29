@@ -1,8 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import * as stockApi from '@/api/clientApi';
 
 // Dynamically import components with SSR disabled for those with client-side data fetching
 const MarketNews = dynamic(() => import('@/components/News/MarketNews'), { ssr: false });
@@ -12,6 +13,29 @@ const TrendingTopics = dynamic(() => import('@/components/News/TrendingTopics'),
 const NewsCategoryTabs = dynamic(() => import('@/components/News/NewsCategoryTabs'), { ssr: false });
 
 export default function NewsPageClient() {
+  const [newsData, setNewsData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchNewsData = async () => {
+      try {
+        setLoading(true);
+        const response = await stockApi.getLatestNews();
+        setNewsData(response.data || []);
+        setError('');
+      } catch (err) {
+        console.error('Error fetching news:', err);
+        setError('Failed to load news');
+        setNewsData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNewsData();
+  }, []);
+
   return (
     <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
       {/* Grid overlay for entire page */}
@@ -40,7 +64,7 @@ export default function NewsPageClient() {
                 <span className="inline-block w-1.5 h-6 bg-neon-400 rounded-sm mr-2"></span>
               Featured News
             </h2>
-            <FeaturedNews />
+            <FeaturedNews newsData={newsData} loading={loading} error={error} />
           </section>
           
           {/* Market News Section */}
@@ -49,7 +73,7 @@ export default function NewsPageClient() {
                 <span className="inline-block w-1.5 h-6 bg-neon-400 rounded-sm mr-2"></span>
               Latest Market Updates
             </h2>
-            <MarketNews />
+            <MarketNews newsData={newsData} loading={loading} error={error} />
           </section>
           
           {/* Sector News Section */}
@@ -58,7 +82,7 @@ export default function NewsPageClient() {
                 <span className="inline-block w-1.5 h-6 bg-cyan-500 rounded-sm mr-2"></span>
               Sector News
             </h2>
-            <SectorNews />
+            <SectorNews newsData={newsData} loading={loading} error={error} />
           </section>
         </div>
         

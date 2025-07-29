@@ -6,17 +6,17 @@ import { ExternalLink } from 'lucide-react';
 
 // Define the NewsItem interface locally to avoid import issues
 interface NewsItem {
-  id?: string;
+  id: string;
   title: string;
   source: string;
-  date?: string;
-  pub_date?: string;
+  date: string;
   url: string;
   imageUrl?: string;
   image_url?: string;
   description?: string;
   summary?: string;
   publishedAt?: string;
+  pub_date?: string;
 }
 
 interface MarketNewsProps {
@@ -26,28 +26,32 @@ interface MarketNewsProps {
 }
 
 const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
-  const formatDate = (dateString: string | undefined) => {
-    if (!dateString) return 'Unknown date';
-    
-    try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      });
-    } catch (error) {
-      return 'Invalid date';
-    }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  // Format date to readable format
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+    <Card>
       <CardHeader>
         <CardTitle>Market News</CardTitle>
       </CardHeader>
       <CardContent>
-        {loading ? (
+        {isLoading ? (
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="animate-pulse">
@@ -61,14 +65,14 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
             <p>{error}</p>
           </div>
-        ) : !Array.isArray(newsData) || newsData.length === 0 ? (
+        ) : news.length === 0 ? (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             No market news available at the moment.
           </div>
         ) : (
           <div className="space-y-4">
-            {newsData.map((item, index) => (
-              <div key={item.id || index} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
+            {news.map((item) => (
+              <div key={item.id} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
                 <a 
                   href={item.url} 
                   target="_blank" 
@@ -81,12 +85,12 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
                   </h3>
                   <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">
                     <span>{item.source}</span>
-                    <span>{formatDate(item.pub_date || item.publishedAt || item.date)}</span>
+                    <span>{formatDate(item.publishedAt || item.date)}</span>
                   </div>
-                  {(item.image_url || item.imageUrl) && (
+                  {item.imageUrl && (
                     <div className="mt-2 mb-3">
                       <img 
-                        src={item.image_url || item.imageUrl} 
+                        src={item.imageUrl} 
                         alt={item.title}
                         className="w-full h-32 object-cover rounded-md"
                       />
@@ -105,4 +109,4 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
   );
 };
 
-export default MarketNews;
+export default MarketNews; 

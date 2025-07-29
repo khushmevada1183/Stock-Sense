@@ -222,7 +222,7 @@ const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
         }`}>
           {normalizedData.status}
         </span>
-        <button className="text-blue-400 hover:text-blue-300 transition-colors">
+        <button className="text-blue-400 hover:text-blue-300 transition-colors text-center">
           View Details →
         </button>
       </div>
@@ -266,8 +266,150 @@ const normalizeIpoData = (ipo: IpoItem): IPOCardProps['data'] => {
   };
 };
 
-// Upcoming IPO card component for Upcoming IPOs (shows upcoming bidding info)
+// Enhanced Upcoming IPO card component with consistent layout
 const UpcomingIpoCard = ({ ipo }: { ipo: any }) => {
+  const formatPrice = (price: any) => {
+    if (!price) return "N/A";
+    return price.toString().startsWith('₹') ? price : `₹${price}`;
+  };
+
+  const formatDate = (dateString: any) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        });
+      }
+      return dateString;
+    } catch (e) {
+      return dateString;
+    }
+  };
+
+  // Format price range with currency
+  const formatPriceRange = () => {
+    if (ipo.min_price && ipo.max_price) {
+      if (ipo.min_price === ipo.max_price) {
+        return formatPrice(ipo.min_price);
+      }
+      return `₹${ipo.min_price} - ₹${ipo.max_price}`;
+    }
+    return formatPrice(ipo.issue_price) || 'Price TBA';
+  };
+
+  // Calculate days until opening
+  const getDaysUntilOpening = () => {
+    if (!ipo.bidding_start_date) return null;
+    const startDate = new Date(ipo.bidding_start_date);
+    const today = new Date();
+    const diffTime = startDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  };
+
+  return (
+    <div className="relative group">
+      {/* Hover glow effect */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
+      
+      <div className="relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl rounded-xl overflow-hidden border border-gray-700/50 shadow-2xl h-[420px] flex flex-col">
+        {/* Header with company info - Fixed height */}
+        <div className="p-4 border-b border-gray-700/50 flex-shrink-0">
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-lg text-white mb-1 line-clamp-2 leading-tight h-12">{ipo.name || ipo.company_name}</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400 font-mono truncate">{ipo.symbol}</span>
+                {ipo.is_sme && (
+                  <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">
+                    SME
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
+              <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full border border-blue-500/30">
+                UPCOMING
+              </span>
+              {(() => {
+                const days = getDaysUntilOpening();
+                return days !== null && days > 0 ? (
+                  <span className="text-xs text-gray-400 whitespace-nowrap">
+                    {days} days to go
+                  </span>
+                ) : null;
+              })()}
+            </div>
+          </div>
+        </div>
+
+        {/* Main content - Flexible height */}
+        <div className="p-4 flex-1 flex flex-col">
+          {/* Price grid - Fixed height */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Price Band</p>
+              <p className="font-semibold text-white text-sm truncate">{formatPriceRange()}</p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Lot Size</p>
+              <p className="font-semibold text-white text-sm">{ipo.lot_size || 'TBA'}</p>
+            </div>
+          </div>
+
+          {/* Timeline - Fixed height */}
+          <div className="space-y-2 mb-4 h-16">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400 uppercase tracking-wide">Opens On</span>
+              <span className="text-sm font-medium text-white">{formatDate(ipo.bidding_start_date)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400 uppercase tracking-wide">Expected Listing</span>
+              <span className="text-sm font-medium text-white">{formatDate(ipo.listing_date)}</span>
+            </div>
+          </div>
+
+          {/* Status message - Fixed height */}
+          <div className="mb-4 h-12 flex items-center">
+            {ipo.additional_text && (
+              <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-2 w-full">
+                <p className="text-xs text-blue-400 font-medium line-clamp-2">{ipo.additional_text}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Action buttons - Fixed at bottom */}
+          <div className="flex gap-2 mt-auto">
+            <Link 
+              href={`/ipo/${ipo.symbol}`}
+              className="flex-1 text-center py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              View Details
+            </Link>
+            {ipo.document_url && (
+              <a 
+                href={ipo.document_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white text-sm rounded-lg transition-all duration-200 border border-gray-600/50 flex-shrink-0"
+                title="View Prospectus"
+              >
+                📄
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Enhanced Active IPO card component with consistent layout
+const ActiveIpoCard = ({ ipo }: { ipo: any }) => {
   const formatPrice = (price: any) => {
     if (!price) return "N/A";
     return price.toString().startsWith('₹') ? price : `₹${price}`;
@@ -301,51 +443,166 @@ const UpcomingIpoCard = ({ ipo }: { ipo: any }) => {
     return formatPrice(ipo.issue_price) || 'Price TBA';
   };
 
+  // Calculate days remaining
+  const getDaysRemaining = () => {
+    if (!ipo.bidding_end_date) return null;
+    const endDate = new Date(ipo.bidding_end_date);
+    const today = new Date();
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays > 0 ? diffDays : 0;
+  };
+
+  // Calculate subscription percentage (if available)
+  const getSubscriptionStatus = () => {
+    if (ipo.subscription_percentage) {
+      return `${ipo.subscription_percentage}x`;
+    }
+    return null;
+  };
+
   return (
-    <div className="glass-premium rounded-lg shadow-neon-sm overflow-hidden border border-neon-400/10">
-      <div className="p-4 border-b border-gray-700 flex justify-between items-center">
-        <div>
-          <h3 className="font-semibold text-white">{ipo.name || ipo.company_name}</h3>
-          <div className="text-gray-400 text-sm">{ipo.symbol}</div>
+    <div className="relative group">
+      {/* Hover glow effect */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
+      
+      <div className="relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl rounded-xl overflow-hidden border border-gray-700/50 shadow-2xl h-[420px] flex flex-col">
+        {/* Header with company info - Fixed height */}
+        <div className="p-4 border-b border-gray-700/50 flex-shrink-0">
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-lg text-white mb-1 line-clamp-2 leading-tight h-12">{ipo.name || ipo.company_name}</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400 font-mono truncate">{ipo.symbol}</span>
+                {ipo.is_sme && (
+                  <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">
+                    SME
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
+              <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full border border-green-500/30 animate-pulse">
+                LIVE NOW
+              </span>
+              {(() => {
+                const days = getDaysRemaining();
+                return days !== null ? (
+                  <span className="text-xs text-gray-400 whitespace-nowrap">
+                    {days > 0 ? `${days} days left` : 'Last day'}
+                  </span>
+                ) : null;
+              })()}
+            </div>
+          </div>
         </div>
-        <div className="text-xs font-medium px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
-          {ipo.is_sme ? 'SME - Upcoming' : 'Upcoming'}
+
+        {/* Main content - Flexible height */}
+        <div className="p-4 flex-1 flex flex-col">
+          {/* Price grid - Fixed height */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Price Band</p>
+              <p className="font-semibold text-white text-sm truncate">{formatPriceRange()}</p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Lot Size</p>
+              <p className="font-semibold text-white text-sm">{ipo.lot_size || 'TBA'}</p>
+            </div>
+          </div>
+
+          {/* Subscription status - Fixed height */}
+          <div className="mb-4 h-12 flex items-center">
+            {getSubscriptionStatus() ? (
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-2 w-full">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-green-400 font-medium">Subscription</span>
+                  <span className="text-sm font-bold text-green-400">{getSubscriptionStatus()}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-500/10 border border-gray-500/20 rounded-lg p-2 w-full">
+                <div className="flex items-center justify-center">
+                  <span className="text-xs text-gray-400">Live Bidding Open</span>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Timeline - Fixed height */}
+          <div className="space-y-2 mb-4 h-16">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400 uppercase tracking-wide">Closes On</span>
+              <span className="text-sm font-medium text-white">{formatDate(ipo.bidding_end_date)}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400 uppercase tracking-wide">Expected Listing</span>
+              <span className="text-sm font-medium text-white">{formatDate(ipo.listing_date)}</span>
+            </div>
+          </div>
+
+          {/* Status message - Fixed height */}
+          <div className="mb-4 h-12 flex items-center">
+            {ipo.additional_text && (
+              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-2 w-full">
+                <p className="text-xs text-green-400 font-medium line-clamp-2">{ipo.additional_text}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Action buttons - Fixed at bottom */}
+          <div className="flex gap-2 mt-auto">
+            <Link 
+              href={`/ipo/${ipo.symbol}`}
+              className="flex-1 text-center py-2.5 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Apply Now
+            </Link>
+            {ipo.document_url && (
+              <a 
+                href={ipo.document_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white text-sm rounded-lg transition-all duration-200 border border-gray-600/50 flex-shrink-0"
+                title="View Prospectus"
+              >
+                📄
+              </a>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="p-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-xs text-gray-400">Price Range</p>
-            <p className="font-medium text-white">{formatPriceRange()}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">Expected Listing</p>
-            <p className="font-medium text-white">{formatDate(ipo.listing_date) || 'TBA'}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">Opens On</p>
-            <p className="font-medium text-white">{formatDate(ipo.bidding_start_date) || 'TBA'}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">Status</p>
-            <p className="font-medium text-white text-xs">{ipo.additional_text || 'Coming Soon'}</p>
-          </div>
-        </div>
-      </div>
-      <div className="p-4 border-t border-gray-700 flex justify-center">
-        <Link 
-          href={`/ipo/${ipo.symbol}`}
-          className="w-full text-center py-2 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 text-sm rounded-md transition-colors border border-blue-500/30 hover:border-blue-500/50"
-        >
-          View Details
-        </Link>
       </div>
     </div>
   );
 };
+// Enhanced Listed IPO card component with consistent layout
+const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
+  // Helper function to determine color class based on gain value
+  const getGainColorClass = () => {
+    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "text-gray-400";
+    
+    if (ipo.listing_gains > 0) return "text-green-400";
+    if (ipo.listing_gains < 0) return "text-red-400";
+    return "text-gray-400";
+  };
 
-// Active IPO card component for Active IPOs (shows bidding info)
-const ActiveIpoCard = ({ ipo }: { ipo: any }) => {
+  // Helper function for gain background color
+  const getGainBgClass = () => {
+    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "bg-gray-500/10 border-gray-500/20";
+    
+    if (ipo.listing_gains > 0) return "bg-green-500/10 border-green-500/20";
+    if (ipo.listing_gains < 0) return "bg-red-500/10 border-red-500/20";
+    return "bg-gray-500/10 border-gray-500/20";
+  };
+
+  // Format gain value with +/- sign and percentage
+  const formatGain = () => {
+    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "N/A";
+    
+    // API returns listing_gains as percentage already (like 3.076923076923077 for 3.08%)
+    return `${ipo.listing_gains > 0 ? '+' : ''}${ipo.listing_gains.toFixed(2)}%`;
+  };
+  
   const formatPrice = (price: any) => {
     if (!price) return "N/A";
     return price.toString().startsWith('₹') ? price : `₹${price}`;
@@ -368,143 +625,228 @@ const ActiveIpoCard = ({ ipo }: { ipo: any }) => {
     }
   };
 
-  // Format price range
-  const formatPriceRange = () => {
-    if (ipo.min_price && ipo.max_price) {
-      if (ipo.min_price === ipo.max_price) {
-        return formatPrice(ipo.min_price);
-      }
-      return `₹${ipo.min_price} - ₹${ipo.max_price}`;
-    }
-    return formatPrice(ipo.issue_price);
+  // Calculate listing performance category
+  const getPerformanceCategory = () => {
+    if (!ipo.listing_gains && ipo.listing_gains !== 0) return 'Unknown';
+    
+    if (ipo.listing_gains >= 50) return 'Stellar';
+    if (ipo.listing_gains >= 20) return 'Strong';
+    if (ipo.listing_gains >= 5) return 'Good';
+    if (ipo.listing_gains >= 0) return 'Positive';
+    if (ipo.listing_gains >= -10) return 'Weak';
+    return 'Poor';
   };
 
   return (
-    <div className="glass-premium rounded-lg shadow-neon-sm overflow-hidden border border-neon-400/10">
-      <div className="p-4 border-b border-gray-700 flex justify-between items-center">
-        <div>
-          <h3 className="font-semibold text-white">{ipo.name || ipo.company_name}</h3>
-          <div className="text-gray-400 text-sm">{ipo.symbol}</div>
+    <div className="relative group">
+      {/* Hover glow effect */}
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-300"></div>
+      
+      <div className="relative bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-xl rounded-xl overflow-hidden border border-gray-700/50 shadow-2xl h-[420px] flex flex-col">
+        {/* Header with company info - Fixed height */}
+        <div className="p-4 border-b border-gray-700/50 flex-shrink-0">
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex-1 min-w-0">
+              <h3 className="font-bold text-lg text-white mb-1 line-clamp-2 leading-tight h-12">{ipo.name || ipo.company_name}</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400 font-mono truncate">{ipo.symbol}</span>
+                {ipo.is_sme && (
+                  <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs font-medium rounded-full border border-amber-500/30">
+                    SME
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-1 flex-shrink-0 ml-2">
+              <span className="px-3 py-1 bg-purple-500/20 text-purple-400 text-xs font-semibold rounded-full border border-purple-500/30">
+                LISTED
+              </span>
+              <span className="text-xs text-gray-400 whitespace-nowrap">
+                {getPerformanceCategory()}
+              </span>
+            </div>
+          </div>
         </div>
-        <div className="text-xs font-medium px-2 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/30">
-          {ipo.is_sme ? 'SME - Active' : 'Active'}
+
+        {/* Main content - Flexible height */}
+        <div className="p-4 flex-1 flex flex-col">
+          {/* Performance highlight - Fixed height */}
+          <div className={`${getGainBgClass()} rounded-lg p-3 mb-4 border h-16 flex items-center`}>
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2">
+                <div>
+                  <span className="text-xs text-gray-400 uppercase tracking-wide block">Performance</span>
+                  <span className="text-xs text-gray-400 block">vs Issue Price</span>
+                </div>
+                {/* Stock trend indicator */}
+                <div className="ml-2">
+                  {ipo.listing_gains > 0 ? (
+                    // Green upward trend graph
+                    <svg width="24" height="16" viewBox="0 0 24 16" className="text-green-400">
+                      <path
+                        d="M2 14 L6 10 L10 12 L14 6 L18 8 L22 2"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      {/* Upward arrow */}
+                      <path
+                        d="M18 2 L22 2 L22 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : ipo.listing_gains < 0 ? (
+                    // Red downward trend graph
+                    <svg width="24" height="16" viewBox="0 0 24 16" className="text-red-400">
+                      <path
+                        d="M2 2 L6 6 L10 4 L14 10 L18 8 L22 14"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      {/* Downward arrow */}
+                      <path
+                        d="M18 14 L22 14 L22 10"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : (
+                    // Neutral flat line
+                    <svg width="24" height="16" viewBox="0 0 24 16" className="text-gray-400">
+                      <path
+                        d="M2 8 L22 8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  )}
+                </div>
+              </div>
+              <span className={`text-xl font-bold ${getGainColorClass()}`}>
+                {formatGain()}
+              </span>
+            </div>
+          </div>
+
+          {/* Price details grid - Fixed height */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Issue Price</p>
+              <p className="font-semibold text-white text-sm truncate">{formatPrice(ipo.issue_price)}</p>
+            </div>
+            <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700/30">
+              <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Listing Price</p>
+              <p className="font-semibold text-white text-sm truncate">{formatPrice(ipo.listing_price)}</p>
+            </div>
+          </div>
+
+          {/* Timeline - Fixed height */}
+          <div className="space-y-2 mb-4 h-16">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-400 uppercase tracking-wide">Listing Date</span>
+              <span className="text-sm font-medium text-white">{formatDate(ipo.listing_date)}</span>
+            </div>
+            {ipo.lot_size && (
+              <div className="flex items-center justify-between">
+                <span className="text-xs text-gray-400 uppercase tracking-wide">Lot Size</span>
+                <span className="text-sm font-medium text-white">{ipo.lot_size}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Status message - Fixed height */}
+          <div className="mb-4 h-12 flex items-center">
+            {ipo.additional_text && (
+              <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-2 w-full">
+                <p className="text-xs text-purple-400 font-medium line-clamp-2">{ipo.additional_text}</p>
+              </div>
+            )}
+          </div>
+
+          {/* Action buttons - Fixed at bottom */}
+          <div className="flex gap-2 mt-auto">
+            <Link 
+              href={`/ipo/${ipo.symbol}`}
+              className="flex-1 text-center py-2.5 bg-gradient-to-r from-purple-600 to-pink-700 hover:from-purple-700 hover:to-pink-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              View Analysis
+            </Link>
+            {ipo.document_url && (
+              <a 
+                href={ipo.document_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2.5 bg-gray-700/50 hover:bg-gray-600/50 text-gray-300 hover:text-white text-sm rounded-lg transition-all duration-200 border border-gray-600/50 flex-shrink-0"
+                title="View Prospectus"
+              >
+                📄
+              </a>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="p-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-xs text-gray-400">Price Range</p>
-            <p className="font-medium text-white">{formatPriceRange()}</p>
+
+        {/* Performance indicator bar with trend visualization */}
+        <div className="px-4 pb-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-gray-400">Performance Trend</span>
+            <div className="flex items-center gap-1">
+              {ipo.listing_gains > 0 ? (
+                <>
+                  <svg width="12" height="8" viewBox="0 0 12 8" className="text-green-400">
+                    <path d="M1 7 L6 2 L11 1" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                    <path d="M8 1 L11 1 L11 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                  </svg>
+                  <span className="text-xs text-green-400 font-medium">Bullish</span>
+                </>
+              ) : ipo.listing_gains < 0 ? (
+                <>
+                  <svg width="12" height="8" viewBox="0 0 12 8" className="text-red-400">
+                    <path d="M1 1 L6 6 L11 7" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                    <path d="M8 7 L11 7 L11 4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
+                  </svg>
+                  <span className="text-xs text-red-400 font-medium">Bearish</span>
+                </>
+              ) : (
+                <>
+                  <svg width="12" height="8" viewBox="0 0 12 8" className="text-gray-400">
+                    <path d="M1 4 L11 4" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
+                  </svg>
+                  <span className="text-xs text-gray-400 font-medium">Neutral</span>
+                </>
+              )}
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-gray-400">Lot Size</p>
-            <p className="font-medium text-white">{ipo.lot_size || 'TBA'}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">Closes On</p>
-            <p className="font-medium text-white">{formatDate(ipo.bidding_end_date) || 'TBA'}</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">Additional Info</p>
-            <p className="font-medium text-white text-xs">{ipo.additional_text || 'N/A'}</p>
+          <div className="bg-gray-800/50 rounded-full h-2 overflow-hidden">
+            <div 
+              className={`h-full transition-all duration-500 ${
+                ipo.listing_gains >= 0 
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-500' 
+                  : 'bg-gradient-to-r from-red-500 to-red-600'
+              }`}
+              style={{
+                width: `${Math.min(100, Math.max(5, Math.abs(ipo.listing_gains || 0) * 2))}%`
+              }}
+            ></div>
           </div>
         </div>
-      </div>
-      <div className="p-4 border-t border-gray-700 flex justify-center">
-        <Link 
-          href={`/ipo/${ipo.symbol}`}
-          className="w-full text-center py-2 bg-green-600/20 hover:bg-green-600/30 text-green-400 text-sm rounded-md transition-colors border border-green-500/30 hover:border-green-500/50"
-        >
-          Apply Now
-        </Link>
       </div>
     </div>
   );
 };
-const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
-  // Helper function to determine color class based on gain value
-  const getGainColorClass = () => {
-    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "text-gray-400";
-    
-    if (ipo.listing_gains > 0) return "text-neon-400";
-    if (ipo.listing_gains < 0) return "text-red-500";
-    return "text-gray-400";
-  };
-
-  // Format gain value with +/- sign and percentage
-  const formatGain = () => {
-    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "N/A";
-    
-    // API returns listing_gains as percentage already (like 3.076923076923077 for 3.08%)
-    return `${ipo.listing_gains > 0 ? '+' : ''}${ipo.listing_gains.toFixed(2)}%`;
-  };
-  
-  const formatPrice = (price: any) => {
-    if (!price) return "N/A";
-    return price.toString().startsWith('₹') ? price : `₹${price}`;
-  };
-
-  const formatDate = (dateString: any) => {
-    if (!dateString) return "N/A";
-    try {
-      const date = new Date(dateString);
-      if (!isNaN(date.getTime())) {
-      return date.toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric'
-      });
-      }
-      return dateString;
-    } catch (e) {
-      return dateString;
-    }
-  };
-
-  return (
-    <div className="glass-premium rounded-lg shadow-neon-sm overflow-hidden border border-neon-400/10">
-      <div className="p-4 border-b border-gray-700 flex justify-between items-center">
-        <div>
-          <h3 className="font-semibold text-white">{ipo.name || ipo.company_name}</h3>
-          <div className="text-gray-400 text-sm">{ipo.symbol}</div>
-          </div>
-        <div className="text-xs font-medium px-2 py-1 rounded-full bg-neon-400 text-black">
-          {ipo.is_sme ? 'SME' : 'Main Board'}
-          </div>
-        </div>
-      <div className="p-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <div className="text-xs text-gray-400">IPO Price</div>
-            <div className="text-sm font-medium text-white">{formatPrice(ipo.issue_price)}</div>
-          </div>
-          <div>
-            <div className="text-xs text-gray-400">Listing Price</div>
-            <div className="text-sm font-medium text-white">{formatPrice(ipo.listing_price)}</div>
-          </div>
-          <div>
-            <div className="text-xs text-gray-400">Listing Gain</div>
-            <div className={`text-sm font-medium ${getGainColorClass()}`}>
-              {formatGain()}
-            </div>
-          </div>
-          <div>
-            <div className="text-xs text-gray-400">Listing Date</div>
-            <div className="text-sm font-medium text-white">{formatDate(ipo.listing_date)}</div>
-            </div>
-          </div>
-              </div>
-      <div className="p-4 border-t border-gray-700 flex justify-center">
-        <Link 
-          href={`/ipo/${ipo.symbol}`}
-          className="w-full text-center py-2 bg-gray-750 hover:bg-gray-700 text-white text-sm rounded-md transition-colors border border-neon-400/20 hover:border-neon-400/40 hover:shadow-neon-sm"
-        >
-          View Details
-        </Link>
-      </div>
-    </div>
-  );
-  };
 
   // Convert API response data to IpoItem format
   const mapToIpoItem = (ipo: any): IpoItem => {

@@ -99,21 +99,16 @@ export const cleanupGSAP = (component) => {
 
 // Initialize GSAP 
 export const initGSAP = () => {
-  // Reset ScrollTrigger on window resize for responsive support
-  // Ensure ScrollTrigger is initialized before calling refresh
-  if (ScrollTrigger) {
-    ScrollTrigger.addEventListener("refreshInit", () => {
-      ScrollTrigger.refresh();
-    });
-  } else {
-    console.warn("ScrollTrigger is not initialized. Skipping refresh.");
-  }
-
   // Setup any global GSAP defaults here
   gsap.defaults({
     ease: "power2.out",
     duration: 0.7
   });
+
+  // Register ScrollTrigger plugin if not already registered
+  if (ScrollTrigger && !gsap.plugins.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+  }
 };
 
 // Magnetic button effect
