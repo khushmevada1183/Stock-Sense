@@ -4,7 +4,8 @@
   "private": true,
   "homepage": "https://khushmevada1183.github.io/Stock-Sense/",
   "scripts": {
-    "dev": "concurrently \"pnpm run api:dev\" \"pnpm run frontend:dev\" --names \"API,FRONTEND\" --prefix-colors \"bgBlue.bold,bgGreen.bold\"",
+    "dev": "node start-dev.js",
+    "dev:concurrent": "concurrently --kill-others --prefix-colors \"bgBlue.bold,bgGreen.bold\" --names \"API,FRONTEND\" \"npm run api:dev\" \"npm run frontend:dev\"",
     "frontend:dev": "next dev",
     "build": "pnpm install --production=false && next build",
     "start": "next start",
@@ -19,7 +20,7 @@
     "api:start": "NODE_ENV=production node api/server.js",
     "dev:frontend": "next dev",
     "dev:backend": "node api/server.js",
-    "dev:all": "concurrently \"pnpm run api:dev\" \"pnpm run frontend:dev\" --names \"API,FRONTEND\" --prefix-colors \"bgBlue.bold,bgGreen.bold\""
+    "dev:sequential": "npm run api:dev && npm run frontend:dev"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
