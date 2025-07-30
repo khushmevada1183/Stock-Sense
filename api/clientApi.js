@@ -178,6 +178,26 @@ export async function getPriceShockers() {
   return fetchApi('/price_shockers');
 }
 
+// /top_gainers - Top gaining stocks
+export async function getTopGainers() {
+  return fetchApi('/trending'); // Using trending as proxy for gainers
+}
+
+// /top_losers - Top losing stocks  
+export async function getTopLosers() {
+  return fetchApi('/price_shockers'); // Using price shockers as proxy for losers
+}
+
+// Financial statements using existing endpoint
+export async function getFinancialStatements(stockName) {
+  return getFinancialStatement(stockName, 'basic');
+}
+
+// Company profile using stock details
+export async function getCompanyProfile(stockName) {
+  return getStockDetails(stockName);
+}
+
 // /industry_search - Industry search
 export async function searchIndustry(query) {
   return fetchApi('/industry_search', { query: query });

@@ -1,15 +1,28 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as stockApi from '@/api/clientApi';
-import { ArrowDown, PieChart as PieChartIcon, BarChart2 as BarChartIcon, TrendingDownIcon, FilterIcon, PercentIcon, ArrowDownRight } from 'lucide-react';
+import { ArrowDown, PieChart as PieChartIcon, BarChart2 as BarChartIcon, TrendingDown as TrendingDownIcon, Filter as FilterIcon, Percent as PercentIcon, ArrowDownRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Chart, registerables, TooltipItem, type ChartConfiguration, type ChartOptions } from 'chart.js';
 
 Chart.register(...registerables);
 
+// Define Stock interface to replace any types
+interface Stock {
+  id: string;
+  symbol: string;
+  company_name: string;
+  current_price: number;
+  price_change_percentage: number;
+  day_high: number;
+  day_low: number;
+  volume: number;
+  sector_name: string;
+}
+
 // Helper function to sort and get top N losers
-const getTopLosers = (stocks: any[], count: number = 10): any[] => {
+const getTopLosers = (stocks: Stock[], count: number = 10): Stock[] => {
   return stocks
     .filter(stock => stock.price_change_percentage < 0)
     .sort((a, b) => a.price_change_percentage - b.price_change_percentage)
@@ -22,10 +35,11 @@ interface SectorDistributionData {
 }
 
 // Helper function to process data for sector distribution chart
-const getSectorDistribution = (stocks: any[]): SectorDistributionData => {
+const getSectorDistribution = (stocks: Stock[]): SectorDistributionData => {
   const sectorCounts: { [key: string]: number } = {};
   stocks.forEach(stock => {
-    sectorCounts[stock.sector_name] = (sectorCounts[stock.sector_name] || 0) + 1;
+    const sector = stock.sector_name || 'Other';
+    sectorCounts[sector] = (sectorCounts[sector] || 0) + 1;
   });
   return {
     labels: Object.keys(sectorCounts),
@@ -33,14 +47,14 @@ const getSectorDistribution = (stocks: any[]): SectorDistributionData => {
   };
 };
 
-const getAverageChange = (stocks: any[]): number => {
+const getAverageChange = (stocks: Stock[]): number => {
   if (stocks.length === 0) return 0;
   const totalChange = stocks.reduce((sum, stock) => sum + stock.price_change_percentage, 0);
   return totalChange / stocks.length;
 };
 
-const getTopVolumeMovers = (stocks: any[], count: number = 3): any[] => {
-  return [...stocks].sort((a, b) => b.volume - a.volume).slice(0, count);
+const getTopVolumeMovers = (stocks: Stock[], count: number = 3): Stock[] => {
+  return [...stocks].sort((a, b) => (b.volume || 0) - (a.volume || 0)).slice(0, count);
 };
 
 // New Helper Functions (similar to gainers, adapted for losers where needed)
