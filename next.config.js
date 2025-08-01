@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const million = require('million/compiler');
+
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -36,9 +38,12 @@ const nextConfig = {
     
     return config;
   },
-  // Increase build memory limit
+  serverActions: true,
+  serverExternalPackages: [],
+  // Experimental features and memory limits
   experimental: {
     largePageDataBytes: 512 * 1000, // 512KB
+    optimizeCss: true,
   },
   transpilePackages: ['@radix-ui/react-accordion'],
   // Configure for dynamic rendering with standalone output
@@ -83,4 +88,11 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
 };
 
-module.exports = nextConfig;
+// Apply Million.js optimization
+module.exports = million.next(nextConfig, {
+  auto: {
+    threshold: 0.05, // Only components that take >5% of render time are optimized (default: 0.1)
+    rsc: true,       // Optimize React Server Components (default: false)
+    skip: []         // Skip optimizing specific components by name
+  }
+});
