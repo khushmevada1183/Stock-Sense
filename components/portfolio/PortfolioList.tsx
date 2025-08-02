@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { Trash2, Edit, ChevronRight, PlusCircle } from 'lucide-react';
 
 interface Stock {

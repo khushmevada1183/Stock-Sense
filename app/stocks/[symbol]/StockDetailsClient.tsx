@@ -23,8 +23,8 @@ import {
   Shield,
   Rocket
 } from 'lucide-react';
-import { apiHelpers } from '@/utils/api';
-import { getFinancialStatement, getFinancialStatements } from '@/api/clientApi';
+import { apiHelpers } from '@/api/api';
+import { getFinancialStatement, getFinancialStatements } from '@/api/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import FinancialStatements from '@/components/stocks/FinancialStatements';
@@ -208,7 +208,7 @@ export default function StockDetailsClient() {
         // Use the documented APIs instead of the missing FundamentalAnalysisService
         const [ratiosData, statementsData] = await Promise.all([
           getFinancialStatement(symbol, 'ratios'),
-          getFinancialStatements(symbol, 'income')
+          getFinancialStatements(symbol)
         ]);
 
         if (ratiosData) {
@@ -1082,10 +1082,13 @@ export default function StockDetailsClient() {
             />
           )}          {activeTab === 'risk' && (
             <RiskAssessment 
-              symbol={symbol} 
-              companyName={companyName}
-              currentPrice={parseFloat(price.toString().replace(/[₹,]/g, '')) || 0}
-              marketCap={parseFloat(marketCapValue?.toString().replace(/[₹,]/g, '') || '0')}
+              stock={{
+                symbol: symbol,
+                companyName: companyName,
+                current_price: parseFloat(price.toString().replace(/[₹,]/g, '')) || 0,
+                marketCap: parseFloat(marketCapValue?.toString().replace(/[₹,]/g, '') || '0'),
+                ...stockData
+              }}
             />
           )}          {activeTab === 'growth' && (
             <FutureGrowthPotential 

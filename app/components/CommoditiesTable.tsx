@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import LoadingSpinner from './LoadingSpinner';
 
 interface Commodity {

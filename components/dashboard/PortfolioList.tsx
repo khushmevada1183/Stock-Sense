@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getUserPortfolios, deletePortfolio } from '@/api/clientApi';
+import { getUserPortfolios, deletePortfolio } from '@/api/api';
 import { Trash2, Edit, ChevronRight, PlusCircle } from 'lucide-react';
 
 interface Stock {

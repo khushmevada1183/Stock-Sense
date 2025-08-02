@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { getStockTargetPrice } from '@/api/clientApi';
+import { getStockTargetPrice } from '@/api/api';
 import LoadingSpinner from './LoadingSpinner';
 import { Progress } from '@/components/ui/progress';
 

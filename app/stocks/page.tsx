@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { gsap } from 'gsap';
 import { Chart, registerables } from 'chart.js';
 import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, DollarSign, Activity, AlertTriangle } from 'lucide-react';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
@@ -22,6 +22,7 @@ interface Stock {
   sector_name: string;
   current_price: number;
   percent_change: number;
+  price_change_percentage: number; // Added this property
   net_change: number;
   bid: number;
   ask: number;
@@ -135,7 +136,7 @@ export default function StocksIndexPage() {
         const nseData = nseRes?.success ? (nseRes.data || []) : (Array.isArray(nseRes) ? nseRes : []);
 
         // Extract price shockers
-        let priceShockers = [];
+        let priceShockers: any[] = [];
         if (priceShockersRes?.success && priceShockersRes?.data) {
           priceShockers = [
             ...(priceShockersRes.data.BSE_PriceShocker || []),
@@ -187,8 +188,8 @@ export default function StocksIndexPage() {
             
             // Price data with comprehensive mapping
             current_price: parseFloat(stock.price || stock.current_price || stock.ltp || stock.last_price || 0),
-            price_change_percentage: parseFloat(stock.percent_change || stock.percentChange || stock.price_change_percentage || 0),
-            percent_change: parseFloat(stock.percent_change || stock.percentChange || stock.price_change_percentage || 0),
+            price_change_percentage: parseFloat(stock.percent_change || stock.percentChange || (stock.price_change_percentage || stock.percent_change || 0) || 0),
+            percent_change: parseFloat(stock.percent_change || stock.percentChange || (stock.price_change_percentage || stock.percent_change || 0) || 0),
             net_change: parseFloat(stock.net_change || stock.netChange || stock.change || 0),
             
             // Trading data
@@ -366,7 +367,7 @@ export default function StocksIndexPage() {
                 borderColor: 'rgba(75, 85, 99, 1)',
                 borderWidth: 1,
                 callbacks: {
-                  label: (context) => `${context.label}: ${context.raw} stocks (${((context.raw / sectorValues.reduce((a, b) => a + b, 0)) * 100).toFixed(1)}%)`
+                  label: (context: any) => `${context.label}: ${context.raw} stocks (${((Number(Number(context.raw)) / sectorValues.reduce((a, b) => a + b, 0)) * 100).toFixed(1)}%)`
                 }
               }
             },
@@ -418,7 +419,7 @@ export default function StocksIndexPage() {
                 borderColor: 'rgba(75, 85, 99, 1)',
                 borderWidth: 1,
                 callbacks: {
-                  label: (context) => `${context.label}: ${context.raw} stocks`
+                  label: (context: any) => `${context.label}: ${context.raw} stocks`
                 }
               }
             },
@@ -426,7 +427,7 @@ export default function StocksIndexPage() {
               x: {
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -504,7 +505,7 @@ export default function StocksIndexPage() {
                 borderColor: 'rgba(75, 85, 99, 1)',
                 borderWidth: 1,
                 callbacks: {
-                  label: (context) => `${context.label}: ₹${(context.raw * 100).toFixed(2)}`
+                  label: (context: any) => `${context.label}: ₹${(Number(context.raw) * 100).toFixed(2)}`
                 }
               }
             },
@@ -512,7 +513,7 @@ export default function StocksIndexPage() {
               x: {
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -522,7 +523,7 @@ export default function StocksIndexPage() {
               y: {
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -585,7 +586,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context) => `Volume: ${context.raw.toFixed(2)}M`
+                  label: (context: any) => `Volume: ${Number(context.raw).toFixed(2)}M`
                 }
               }
             },
@@ -593,7 +594,7 @@ export default function StocksIndexPage() {
               x: {
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -604,7 +605,7 @@ export default function StocksIndexPage() {
                 beginAtZero: true,
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -667,7 +668,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context) => `Volume: ${context.raw.toFixed(2)}M`
+                  label: (context: any) => `Volume: ${Number(context.raw).toFixed(2)}M`
                 }
               }
             },
@@ -675,7 +676,7 @@ export default function StocksIndexPage() {
               x: {
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -686,7 +687,7 @@ export default function StocksIndexPage() {
                 beginAtZero: true,
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -753,7 +754,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context) => `Change: ${context.raw.toFixed(2)}%`
+                  label: (context: any) => `Change: ${Number(context.raw).toFixed(2)}%`
                 }
               }
             },
@@ -761,7 +762,7 @@ export default function StocksIndexPage() {
               x: {
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -837,7 +838,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context) => `Change: ${context.raw.toFixed(2)}%`
+                  label: (context: any) => `Change: ${Number(context.raw).toFixed(2)}%`
                 }
               }
             },
@@ -845,7 +846,7 @@ export default function StocksIndexPage() {
               x: {
                 grid: {
                   color: 'rgba(75, 85, 99, 0.2)',
-                  drawBorder: false
+                  
                 },
                 ticks: {
                   color: 'rgba(156, 163, 175, 1)',
@@ -925,11 +926,11 @@ export default function StocksIndexPage() {
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative z-10">
       <div ref={headerRef} className="mb-12">
-        <div className="text-center">
+        <div className="text-start">
           <h1 className="text-4xl font-bold text-white bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
             Stock Market Dashboard
           </h1>
-          <p className="text-gray-300 mt-2 text-lg">Real-time insights and analytics for the Indian stock market</p>
+          <p className="text-gray-300 mt-2 text-lg align-start">Real-time insights and analytics for the Indian stock market</p>
         </div>
       </div>
       
@@ -1137,20 +1138,20 @@ export default function StocksIndexPage() {
                           </div>
                         </td>
                         <td className={`px-4 py-4 whitespace-nowrap text-right font-medium ${
-                          stock.price_change_percentage >= 0 
+                          (stock.price_change_percentage || stock.percent_change || 0) >= 0 
                             ? 'text-green-400' 
                             : 'text-red-400'
                         }`}>
                           <div className="flex flex-col items-end">
                             <div className="flex items-center">
-                              {stock.price_change_percentage >= 0 ? (
+                              {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? (
                                 <ArrowUp className="w-4 h-4 mr-1" />
                               ) : (
                                 <ArrowDown className="w-4 h-4 mr-1" />
                               )}
                               <span>
-                                {stock.price_change_percentage >= 0 ? '+' : ''}
-                                {stock.price_change_percentage.toFixed(2)}%
+                                {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? '+' : ''}
+                                {(stock.price_change_percentage || stock.percent_change || 0).toFixed(2)}%
                               </span>
                             </div>
                             <div className="text-xs text-gray-400">
@@ -1247,9 +1248,9 @@ export default function StocksIndexPage() {
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-2">Current Price</h4>
                       <p className="text-2xl font-bold text-white">₹{stock.current_price.toLocaleString()}</p>
-                      <p className={`text-sm ${stock.price_change_percentage >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                        {stock.price_change_percentage >= 0 ? '+' : ''}
-                        {stock.price_change_percentage.toFixed(2)}% (₹{stock.net_change.toFixed(2)})
+                      <p className={`text-sm ${(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? '+' : ''}
+                        {(stock.price_change_percentage || stock.percent_change || 0).toFixed(2)}% (₹{stock.net_change.toFixed(2)})
                       </p>
                     </div>
                     <div>
@@ -1446,18 +1447,18 @@ export default function StocksIndexPage() {
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-gray-300">{stock.symbol}</span>
                     <span className={`text-sm font-medium ${
-                      stock.price_change_percentage >= 0 ? 'text-green-400' : 'text-red-400'
+                      (stock.price_change_percentage || stock.percent_change || 0) >= 0 ? 'text-green-400' : 'text-red-400'
                     }`}>
-                      {stock.price_change_percentage >= 0 ? '+' : ''}{stock.price_change_percentage.toFixed(2)}%
+                      {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? '+' : ''}{(stock.price_change_percentage || stock.percent_change || 0).toFixed(2)}%
                     </span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-1.5 mb-1">
                     <div 
                       className={`h-1.5 rounded-full ${
-                        stock.price_change_percentage >= 0 ? 'bg-green-500' : 'bg-red-500'
+                        (stock.price_change_percentage || stock.percent_change || 0) >= 0 ? 'bg-green-500' : 'bg-red-500'
                       }`}
                       style={{ 
-                        width: `${Math.min(Math.abs(stock.price_change_percentage) * 10, 100)}%`,
+                        width: `${Math.min(Math.abs((stock.price_change_percentage || stock.percent_change || 0)) * 10, 100)}%`,
                         minWidth: '2%'
                       }}
                     ></div>
@@ -1533,6 +1534,7 @@ export default function StocksIndexPage() {
                 <EnhancedStockCard
                   key={stock.id}
                   stock={stock}
+                  price_change_percentage={(stock.price_change_percentage || stock.percent_change || 0) || stock.percent_change || 0}
                   showAllData={true}
                 />
               ))}

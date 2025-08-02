@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { ArrowDown, PieChart as PieChartIcon, BarChart2 as BarChartIcon, TrendingDown as TrendingDownIcon, Filter as FilterIcon, Percent as PercentIcon, ArrowDownRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Chart, registerables, TooltipItem, type ChartConfiguration, type ChartOptions } from 'chart.js';

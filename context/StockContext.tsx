@@ -1,13 +1,13 @@
 "use client";
 
 import React, { createContext, useState, useContext, ReactNode, useCallback, useEffect } from 'react';
-import * as api from '@/utils/api';
+import * as api from '@/api/api';
 import { 
   searchStocks, 
   fetchStockDetails, 
   fetchHistoricalData,
   fetchMarketNews 
-} from '@/utils/api';
+} from '@/api/api';
 
 // Simplified unified type, as backend now provides a consistent format
 interface StockDetails {

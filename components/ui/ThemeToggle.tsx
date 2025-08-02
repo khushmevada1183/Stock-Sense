@@ -5,7 +5,7 @@ import { useTheme } from 'next-themes';
 import { Sun, Moon } from 'lucide-react';
 
 const ThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   // Ensure component is mounted on the client
@@ -19,13 +19,13 @@ const ThemeToggle = () => {
 
   return (
     <button
-      aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+      aria-label="Theme toggle (decorative only)"
       className={`p-2 rounded-full transition-all duration-300 ${
         theme === 'dark' 
           ? 'bg-gray-900/90 backdrop-blur-lg text-neon-400 hover:text-neon-300 hover:bg-gray-700/90 hover:shadow-neon-sm' 
           : 'bg-gray-100 text-gray-600 hover:text-blue-600 hover:bg-gray-200'
       }`}
-      onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      // Removed onClick functionality
     >
       {theme === 'dark' ? (
         <Sun size={20} className="transition-transform hover:scale-110" />

@@ -20,7 +20,7 @@ import {
   Download,
   RefreshCw
 } from 'lucide-react';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 
 // Helper function to format currency
 const formatCurrency = (value: number): string => {

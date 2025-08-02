@@ -1,9 +1,64 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ArrowUpRight, ArrowDownRight, Clock, Newspaper, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Clock, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import gsap from 'gsap';
+
+// Define interfaces for type safety
+interface Index {
+  name: string;
+  code: string;
+  price: string;
+  change: string;
+  percentChange: string;
+  direction: string;
+  historicalData: { time: string; price: string; }[];
+}
+
+interface Stock {
+  name: string;
+  code: string;
+  price: string;
+  change: string;
+  percentChange: string;
+  direction: string;
+  historicalData: { time: string; price: string; }[];
+  volume: number;
+  dayRange: { low: string; high: string; };
+  yearRange: { low: string; high: string; };
+}
+
+interface Sector {
+  name: string;
+  change: string;
+}
+
+interface MarketBreadth {
+  advancers: number;
+  decliners: number;
+  unchanged: number;
+}
+
+interface NewsItem {
+  headline: string;
+  content: string;
+  time: string;
+  source: string;
+  image: string;
+  category: string;
+}
+
+interface MarketData {
+  timestamp: string;
+  indices: Index[];
+  stocks: Stock[];
+  sectors: Sector[];
+  topGainers: Stock[];
+  topLosers: Stock[];
+  marketBreadth: MarketBreadth;
+  news: NewsItem[];
+}
 
 // Enhanced mock Indian stock market data with more realistic news
-const generateMockStockData = () => {
+const generateMockStockData = (): MarketData => {
   // Major Indian indices
   const indices = [
     { name: "NIFTY 50", code: "NIFTY" },
@@ -276,7 +331,8 @@ interface PriceChangeProps {
 }
 
 const PriceChange = ({ change, percentChange }: PriceChangeProps) => {
-  const isPositive = parseFloat(change) >= 0;
+  const changeNum = typeof change === 'string' ? parseFloat(change) : change;
+  const isPositive = changeNum >= 0;
   const color = isPositive ? "text-green-500" : "text-red-500";
   const Arrow = isPositive ? ArrowUpRight : ArrowDownRight;
   
@@ -332,7 +388,7 @@ interface NewsItemProps {
 }
 
 const NewsItem = ({ item }: NewsItemProps) => {
-  const categoryColors = {
+  const categoryColors: { [key: string]: string } = {
     "Markets": "bg-blue-500",
     "Economy": "bg-green-500",
     "Corporate": "bg-purple-500",
@@ -372,7 +428,7 @@ const NewsItem = ({ item }: NewsItemProps) => {
 
 // Main dashboard component
 const IndianStockMarketDashboard = () => {
-  const [marketData, setMarketData] = useState(null);
+  const [marketData, setMarketData] = useState<MarketData | null>(null);
   const [loading, setLoading] = useState(true);
   const dashboardRef = useRef(null);
 
@@ -424,6 +480,16 @@ const IndianStockMarketDashboard = () => {
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-t-blue-500 border-gray-600 rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-xl">Loading Market Data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!marketData) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl">No market data available</p>
         </div>
       </div>
     );

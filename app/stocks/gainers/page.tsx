@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { ArrowUp, PieChart as PieChartIcon, BarChart2 as BarChartIcon, TrendingUpIcon, FilterIcon, PercentIcon, ArrowUpRight } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Chart, registerables, TooltipItem, type ChartConfiguration, type ChartOptions } from 'chart.js';
@@ -104,7 +104,7 @@ export default function TopGainersPage() {
     const fetchGainers = async () => {
       try {
         setLoading(true);
-        const data = await stockApi.getTopGainers({ limit: 10 });
+        const data = await stockApi.getTopGainers();
         setGainers(Array.isArray(data) ? data : []);
         setError(null);
       } catch (err) {

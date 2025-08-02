@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { StockData as Stock } from '@/types/stocks';
 import { gsap } from 'gsap';
 import { TrendingUp, TrendingDown, BarChart2, DollarSign } from 'lucide-react';

@@ -5,7 +5,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, Tooltip
 } from 'recharts';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import homeAnimations from '@/animations/pages/homeAnimations';
 import marketAnimations from '@/animations/pages/marketAnimations';

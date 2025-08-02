@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { Progress } from '@/components/ui/progress';
 

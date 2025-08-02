@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Calendar, TrendingUp, DollarSign, Percent } from 'lucide-react';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { IpoItem } from '@/types/ipo';
 import { gsap } from 'gsap';
 

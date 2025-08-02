@@ -42,6 +42,15 @@ const nextConfig = {
   experimental: {
     largePageDataBytes: 512 * 1000, // 512KB
     optimizeCss: true,
+    // Enable webpack cache for faster builds
+    webpackBuildWorker: true,
+  },
+  // Enable caching for better performance
+  onDemandEntries: {
+    // Period (in ms) where the server will keep pages in the buffer
+    maxInactiveAge: 25 * 1000,
+    // Number of pages that should be kept simultaneously without being disposed
+    pagesBufferLength: 5,
   },
   transpilePackages: ['@radix-ui/react-accordion'],
   // Configure for dynamic rendering with standalone output

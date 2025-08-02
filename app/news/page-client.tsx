@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 
 // Dynamically import components with SSR disabled for those with client-side data fetching
 const MarketNews = dynamic(() => import('@/components/News/MarketNews'), { ssr: false });

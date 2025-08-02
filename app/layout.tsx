@@ -26,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} ${robotoMono.variable} ${serif.variable} ${flex.variable} min-h-screen flex flex-col antialiased`} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="bg-grid-white/[0.02]">
+      <body className={`${inter.className} ${robotoMono.variable} ${serif.variable} ${flex.variable} min-h-screen flex flex-col antialiased relative`} suppressHydrationWarning>
         <ThemeProvider 
           attribute="class"
           defaultTheme="system"

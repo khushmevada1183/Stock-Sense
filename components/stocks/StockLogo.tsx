@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 
 interface StockLogoProps {
   symbol: string;

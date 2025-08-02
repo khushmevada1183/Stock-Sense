@@ -7,7 +7,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 
 interface Stock {
   symbol: string;

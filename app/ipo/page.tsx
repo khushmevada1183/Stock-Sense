@@ -10,7 +10,7 @@ import { IpoItem } from '@/types/ipo';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import { initIpoPageAnimations } from '@/animations/pages/ipoAnimations';
 import { createCardHoverEffect, createIPOItemHoverEffect } from '@/animations/shared/AnimationUtils';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { FEATURES, API_CONFIG } from '@/services/config.js';
 import { gsap } from 'gsap';
 

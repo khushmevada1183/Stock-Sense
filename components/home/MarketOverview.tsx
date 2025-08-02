@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import * as stockApi from '@/api/clientApi';
+import * as stockApi from '@/api/api';
 import { IndexData } from '@/types/market';
 
 export default function MarketOverview() {
