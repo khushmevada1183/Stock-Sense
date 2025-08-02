@@ -49,6 +49,24 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Neon colors for highlights
+        neon: {
+          50: '#f0fff4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#39ff14', // Main neon green
+          500: '#22c55e',
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
+        },
+      },
+      boxShadow: {
+        'neon-sm': '0 0 5px rgba(57, 255, 20, 0.5)',
+        'neon': '0 0 10px rgba(57, 255, 20, 0.5), 0 0 20px rgba(57, 255, 20, 0.3)',
+        'neon-lg': '0 0 15px rgba(57, 255, 20, 0.6), 0 0 30px rgba(57, 255, 20, 0.4)',
       },
       borderRadius: {
         lg: "var(--radius)",
