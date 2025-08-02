@@ -1,6 +1,4 @@
 /** @type {import('next').NextConfig} */
-const million = require('million/compiler');
-
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -88,11 +86,4 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
 };
 
-// Apply Million.js optimization
-module.exports = million.next(nextConfig, {
-  auto: {
-    threshold: 0.05, // Only components that take >5% of render time are optimized (default: 0.1)
-    rsc: true,       // Optimize React Server Components (default: false)
-    skip: []         // Skip optimizing specific components by name
-  }
-});
+module.exports = nextConfig;
