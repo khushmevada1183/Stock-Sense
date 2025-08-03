@@ -89,8 +89,150 @@ export default function FeaturedStocks() {
   }, [loading, stocks]);
 
   useEffect(() => {
-    setLoading(false);
-    setStocks([]);
+    const fetchFeaturedStocks = async () => {
+      try {
+        // Fetch trending stocks from API
+        console.log('Fetching trending stocks...');
+        const response = await stockApi.getTrendingStocks();
+        console.log('Trending stocks response:', response);
+        
+        if (response && response.success && response.data && Array.isArray(response.data)) {
+          // Make sure we have data and it's an array
+          if (response.data.length > 0) {
+            const featuredStocks = response.data
+              .slice(0, 6) // Limit to 6 stocks
+              .map(normalizeStock);
+            
+            console.log('Normalized stocks:', featuredStocks);
+            setStocks(featuredStocks);
+          } else {
+            console.log('API returned empty data array for trending stocks');
+            // Use the fallback mock data
+            setStocks([
+              {
+                id: 'RELIANCE',
+                symbol: 'RELIANCE',
+                company_name: 'Reliance Industries',
+                sector_name: 'Oil & Gas',
+                price_change_percentage: 0.96,
+                current_price: 2457.35
+              },
+              {
+                id: 'TCS',
+                symbol: 'TCS',
+                company_name: 'Tata Consultancy Services',
+                sector_name: 'Information Technology',
+                price_change_percentage: 1.25,
+                current_price: 3725.80
+              },
+              {
+                id: 'HDFCBANK',
+                symbol: 'HDFCBANK',
+                company_name: 'HDFC Bank',
+                sector_name: 'Banking',
+                price_change_percentage: -0.32,
+                current_price: 1680.45
+              },
+              {
+                id: 'INFY',
+                symbol: 'INFY',
+                company_name: 'Infosys',
+                sector_name: 'Information Technology',
+                price_change_percentage: 0.85,
+                current_price: 1560.30
+              }
+            ]);
+          }
+        } else {
+          // Mock data for fallback
+          setStocks([
+            {
+              id: 'RELIANCE',
+              symbol: 'RELIANCE',
+              company_name: 'Reliance Industries',
+              sector_name: 'Oil & Gas',
+              price_change_percentage: 0.96,
+              current_price: 2457.35
+            },
+            {
+              id: 'TCS',
+              symbol: 'TCS',
+              company_name: 'Tata Consultancy Services',
+              sector_name: 'Information Technology',
+              price_change_percentage: 1.25,
+              current_price: 3725.80
+            },
+            {
+              id: 'HDFCBANK',
+              symbol: 'HDFCBANK',
+              company_name: 'HDFC Bank',
+              sector_name: 'Banking',
+              price_change_percentage: -0.32,
+              current_price: 1680.45
+            },
+            {
+              id: 'INFY',
+              symbol: 'INFY',
+              company_name: 'Infosys',
+              sector_name: 'Information Technology',
+              price_change_percentage: 0.85,
+              current_price: 1560.30
+            },
+            {
+              id: 'BHARTIARTL',
+              symbol: 'BHARTIARTL',
+              company_name: 'Bharti Airtel',
+              sector_name: 'Telecom',
+              price_change_percentage: 1.20,
+              current_price: 865.75
+            },
+            {
+              id: 'ICICIBANK',
+              symbol: 'ICICIBANK',
+              company_name: 'ICICI Bank',
+              sector_name: 'Banking',
+              price_change_percentage: -0.15,
+              current_price: 992.50
+            }
+          ]);
+          console.log('API returned unexpected data structure for featured stocks, using fallback');
+        }
+      } catch (err) {
+        console.error('Failed to fetch featured stocks:', err);
+        setError('Failed to fetch featured stocks');
+        // Fallback data
+        setStocks([
+          {
+            id: 'RELIANCE',
+            symbol: 'RELIANCE',
+            company_name: 'Reliance Industries',
+            sector_name: 'Oil & Gas',
+            price_change_percentage: 0.96,
+            current_price: 2457.35
+          },
+          {
+            id: 'TCS',
+            symbol: 'TCS',
+            company_name: 'Tata Consultancy Services',
+            sector_name: 'Information Technology',
+            price_change_percentage: 1.25,
+            current_price: 3725.80
+          },
+          {
+            id: 'HDFCBANK',
+            symbol: 'HDFCBANK',
+            company_name: 'HDFC Bank',
+            sector_name: 'Banking',
+            price_change_percentage: -0.32,
+            current_price: 1680.45
+          }
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedStocks();
   }, []);
 
   if (loading) {

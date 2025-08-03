@@ -82,16 +82,91 @@ export default function IpoSection() {
   }, [loading, ipoData]);
 
   useEffect(() => {
-    setLoading(false);
-    setIpoData([]);
+    const fetchIpoData = async () => {
+      try {
+        // Fetch IPO data from API
+        const response = await stockApi.getIPOData();
+        
+        if (response && response.success && response.data) {
+          // Format varies depending on the API response structure
+          let upcomingIpos: ExtendedIpoItem[] = [];
+          
+          if (Array.isArray(response.data)) {
+            // Handle array response
+            upcomingIpos = response.data.slice(0, 5).map((ipo: any) => ({
+              ...ipo,
+              hasMinimalData: !ipo.price_range || !ipo.issue_size
+            }));
+          } else if (response.data.upcoming && Array.isArray(response.data.upcoming)) {
+            // Handle object with upcoming array
+            upcomingIpos = response.data.upcoming.slice(0, 5).map((ipo: any) => ({
+              ...ipo,
+              hasMinimalData: !ipo.price_range || !ipo.issue_size
+            }));
+          }
+          
+          setIpoData(upcomingIpos);
+        } else {
+          // If API returns unexpected structure, use mock data
+          setIpoData(getMockIpoData());
+          console.log('API returned unexpected data structure for IPOs, using fallback');
+        }
+      } catch (err) {
+        console.error('Failed to fetch IPO data:', err);
+        setError('Failed to fetch IPO data');
+        setIpoData(getMockIpoData()); // Fallback to mock data
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Mock IPO data for development/fallback
+    const getMockIpoData = (): ExtendedIpoItem[] => {
+      return [
+        {
+          company_name: 'Cello World Ltd',
+          symbol: 'CELLO',
+          price_range: '₹648 - ₹660',
+          issue_size: '₹1,900 Cr',
+          bidding_start_date: '2023-10-30'
+        },
+        {
+          company_name: 'Protean eGov Technologies',
+          symbol: 'PROTEAN',
+          price_range: '₹745 - ₹792',
+          issue_size: '₹490 Cr',
+          bidding_start_date: '2023-11-06'
+        },
+        {
+          company_name: 'ASK Automotive Ltd',
+          symbol: 'ASKAUTO',
+          price_range: '₹268 - ₹282',
+          issue_size: '₹834 Cr',
+          bidding_start_date: '2023-11-07'
+        },
+        {
+          company_name: 'Aadhar Housing Finance',
+          symbol: 'AADHAR',
+          price_range: '₹280 - ₹295',
+          issue_size: '₹3,000 Cr',
+          bidding_start_date: '2023-11-15'
+        },
+        {
+          company_name: 'Zaggle Prepaid Ocean Services',
+          symbol: 'ZAGGLE',
+          price_range: '₹156 - ₹164',
+          issue_size: '₹563 Cr',
+          bidding_start_date: '2023-11-20'
+        }
+      ];
+    };
+
+    fetchIpoData();
   }, []);
 
   if (loading) {
     return (
       <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-100">Upcoming IPOs</h3>
-            </div>
         <div className="flex justify-center py-10">
           <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -110,15 +185,6 @@ export default function IpoSection() {
   if (ipoData.length === 0) {
     return (
       <div className="bg-gray-900 rounded-xl shadow-lg p-6 border border-gray-800">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-100">Upcoming IPOs</h3>
-          <Link 
-            href="/ipo"
-            className="text-blue-400 hover:text-blue-300 font-medium text-sm"
-          >
-            View All IPOs →
-          </Link>
-        </div>
         <p className="text-gray-400 text-center py-8">
           No upcoming IPO data available at this time.
         </p>
@@ -132,15 +198,6 @@ export default function IpoSection() {
   return (
     <div ref={sectionRef} className="bg-gray-900 rounded-xl shadow-lg overflow-hidden border border-gray-800">
       <div className="p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-100">Upcoming IPOs</h3>
-          <Link 
-            href="/ipo"
-            className="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 text-gray-900 rounded-lg text-sm font-medium transition-colors"
-          >
-            View All
-          </Link>
-        </div>
         <div className="text-gray-400 text-sm mb-6">
           Companies that have filed for an IPO with SEBI. Details might be disclosed later.
         </div>
@@ -289,14 +346,7 @@ export default function IpoSection() {
           </a>
         </div>
         
-        <div className="mt-4 text-right">
-          <Link 
-            href="/ipo"
-            className="text-blue-400 hover:text-blue-300 hover:underline font-medium text-sm transition-colors"
-          >
-            Explore All IPOs →
-          </Link>
-        </div>
+        {/* Removed redundant "Explore All IPOs" link since it's already present above the component */}
       </div>
     </div>
   );

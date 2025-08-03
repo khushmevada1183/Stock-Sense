@@ -12,8 +12,6 @@ const Footer = () => {
         { name: 'Stocks', href: '/stocks' },
         { name: 'IPOs', href: '/ipo' },
         { name: 'Market News', href: '/news' },
-        { name: 'Top Gainers', href: '/stocks/gainers' },
-        { name: 'Top Losers', href: '/stocks/losers' },
       ]
     },
     {

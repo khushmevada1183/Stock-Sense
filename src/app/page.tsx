@@ -6,6 +6,7 @@ import Image from 'next/image';
 import HeroSection from '../components/home/HeroSection';
 import FeaturedStocks from '../components/home/FeaturedStocks';
 import MarketOverview from '../components/home/MarketOverview';
+import SectorPerformance from '../components/home/SectorPerformance';
 import AnalysisFeatures from '../components/home/AnalysisFeatures';
 import IpoSection from '../components/home/IpoSection';
 import CtaSection from '../components/home/CtaSection';
@@ -16,6 +17,7 @@ export default function Home() {
   // Create refs for each section to animate
   const heroRef = useRef<HTMLDivElement>(null);
   const marketOverviewRef = useRef<HTMLElement>(null);
+  const sectorPerformanceRef = useRef<HTMLElement>(null);
   const featuredStocksRef = useRef<HTMLElement>(null);
   const ipoSectionRef = useRef<HTMLElement>(null);
   const analysisFeaturesRef = useRef<HTMLDivElement>(null);
@@ -30,6 +32,7 @@ export default function Home() {
       const refs = {
         heroRef,
         marketOverviewRef,
+        sectorPerformanceRef,
         featuredStocksRef,
         ipoSectionRef,
         analysisFeaturesRef,
@@ -62,6 +65,24 @@ export default function Home() {
           <div className="overflow-x-auto pb-2">
             <MarketOverview />
           </div>
+        </div>
+      </section>
+
+      {/* Subtle divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      
+      {/* Sector Performance */}
+      <section ref={sectorPerformanceRef} className="py-12 relative z-10">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-lg md:text-xl font-bold text-white">
+              Sector Performance
+            </h2>
+            <Link href="/market" className="text-neon-400 hover:text-neon-300 font-medium">
+              View Details
+            </Link>
+          </div>
+          <SectorPerformance />
         </div>
       </section>
 

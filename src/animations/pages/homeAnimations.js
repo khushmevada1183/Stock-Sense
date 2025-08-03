@@ -270,6 +270,7 @@ export const initHomePageAnimations = (refs) => {
   const {
     heroRef,
     marketOverviewRef,
+    sectorPerformanceRef,
     featuredStocksRef,
     ipoSectionRef,
     latestNewsRef,
@@ -289,6 +290,10 @@ export const initHomePageAnimations = (refs) => {
   // Setup scroll triggered animations for other sections
   if (marketOverviewRef?.current) {
     animateMarketOverview(marketOverviewRef);
+  }
+  
+  if (sectorPerformanceRef?.current) {
+    animateSectorPerformance(sectorPerformanceRef);
   }
   
   if (featuredStocksRef?.current) {
@@ -315,9 +320,13 @@ export const initHomePageAnimations = (refs) => {
   return masterTimeline;
 };
 
+// Import sector performance animations
+import { animateSectorPerformance } from '../components/SectorPerformanceAnimations';
+
 export default {
   animateHeroSection,
   animateMarketOverview,
+  animateSectorPerformance,
   animateFeaturedStocks,
   animateIpoSection,
   animateLatestNews,

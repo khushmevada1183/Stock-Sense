@@ -36,7 +36,6 @@ const nextConfig = {
     
     return config;
   },
-  serverActions: true,
   serverExternalPackages: [],
   // Experimental features and memory limits
   experimental: {

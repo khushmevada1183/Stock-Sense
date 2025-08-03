@@ -10,8 +10,58 @@ export default function MarketOverview() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(false);
-    setIndices([]);
+    const fetchMarketData = async () => {
+      try {
+        // Fetch market indices from API
+        const response = await stockApi.getBSEMostActive();
+        
+        if (response && response.success && response.data) {
+          // Map the API response to our IndexData interface
+          const marketIndices: IndexData[] = [
+            { 
+              name: 'NIFTY 50',
+              symbol: 'NIFTY',
+              value: parseFloat(response.data.indices?.nifty?.value || '22654.5'), 
+              change: parseFloat(response.data.indices?.nifty?.change || '127.45'), 
+              changePercent: parseFloat(response.data.indices?.nifty?.percent_change || '0.57')
+            },
+            { 
+              name: 'BSE SENSEX',
+              symbol: 'SENSEX',
+              value: parseFloat(response.data.indices?.sensex?.value || '74683.7'), 
+              change: parseFloat(response.data.indices?.sensex?.change || '260.30'), 
+              changePercent: parseFloat(response.data.indices?.sensex?.percent_change || '0.35')
+            },
+            { 
+              name: 'NIFTY BANK',
+              symbol: 'BANKNIFTY',
+              value: parseFloat(response.data.indices?.bank_nifty?.value || '48521.6'), 
+              change: parseFloat(response.data.indices?.bank_nifty?.change || '-73.25'), 
+              changePercent: parseFloat(response.data.indices?.bank_nifty?.percent_change || '-0.15')
+            },
+            {
+              name: 'NIFTY IT',
+              symbol: 'NIFTYIT',
+              value: parseFloat(response.data.indices?.it_nifty?.value || '34892.8'),
+              change: parseFloat(response.data.indices?.it_nifty?.change || '412.95'),
+              changePercent: parseFloat(response.data.indices?.it_nifty?.percent_change || '1.20')
+            }
+          ];
+          
+          setIndices(marketIndices);
+        } else {
+          // If API returns unexpected structure, fall back to hardcoded data
+          console.log('API returned unexpected data structure for indices, using fallback');
+        }
+      } catch (error) {
+        console.error('Failed to fetch market indices:', error);
+        setError('Failed to load market data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMarketData();
   }, []);
 
   // If we're still loading, show a loading skeleton
