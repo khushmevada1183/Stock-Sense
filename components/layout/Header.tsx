@@ -6,13 +6,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Search, BarChart2, TrendingUp, Briefcase, Newspaper, Home } from 'lucide-react';
 import { useUI } from '../../context/UIContext';
 import ThemeToggle from '../ui/ThemeToggle';
+import SearchBar from '../../app/components/SearchBar';
 
 const Header = () => {
   const pathname = usePathname();
-  const router = useRouter();
   const { isMobileMenuOpen, setMobileMenuOpen } = useUI();
   const [mounted, setMounted] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   
   // Ensure component is mounted on the client
   useEffect(() => {
@@ -34,14 +33,6 @@ const Header = () => {
   
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
-  };
-  
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/stocks/${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
-    }
   };
   
   return (
@@ -94,25 +85,7 @@ const Header = () => {
             
             {/* Search Bar (Desktop) */}
             <div className="hidden md:block relative w-72 lg:w-80">
-              <form onSubmit={handleSearch} className="relative">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search stocks (e.g., RELIANCE)"
-                  className="w-full py-1.5 pl-9 pr-4 bg-gray-900/90 backdrop-blur-lg/50 backdrop-blur-xl border border-gray-700/30 rounded-full focus:outline-none focus:ring-1 focus:ring-neon-400 focus:border-transparent text-sm text-gray-200 placeholder-gray-400"
-                  aria-label="Search stocks"
-                />
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Search className="w-3.5 h-3.5 text-gray-400" aria-hidden="true" />
-                </div>
-                <button 
-                  type="submit"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-neon-400 hover:text-neon-300 font-mono"
-                >
-                  Go
-                </button>
-              </form>
+              <SearchBar compact={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
             </div>
             
             {/* Actions */}
@@ -172,25 +145,7 @@ const Header = () => {
               
               {/* Search Bar (Mobile) */}
               <div className="mt-3 sm:mt-4 px-2">
-                <form onSubmit={handleSearch} className="relative">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search stocks (e.g., RELIANCE)"
-                    className="w-full py-1.5 sm:py-2 pl-8 sm:pl-10 pr-4 bg-gray-900/90 backdrop-blur-lg/50 backdrop-blur-xl border border-gray-700/30 rounded-lg focus:outline-none focus:ring-1 focus:ring-neon-400 focus:border-transparent text-sm text-gray-200 placeholder-gray-400"
-                    aria-label="Search stocks"
-                  />
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-2.5 sm:pl-3 pointer-events-none">
-                    <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" aria-hidden="true" />
-                  </div>
-                  <button 
-                    type="submit"
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-neon-400 hover:text-neon-300 font-mono"
-                  >
-                    Go
-                  </button>
-                </form>
+                <SearchBar compact={true} isMobile={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
               </div>
             </div>
           )}

@@ -1,51 +1,10 @@
-/* import React, { useState, useRef, useEffect } from 'react';
-import { Search } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import StockLogo from './StockLogo';
-import { useDebounce } from '../../lib/hooks/useDebounce';
-import StockDetailsJson from './StockDetailsJson';
-import api, { apiHelpers } from '../../utils/api';
-
-// Define StockDetails interface locally since we removed the service import
-interface StockDetails {
-  symbol: string;
-  name?: string;
-  company_name?: string;
-  current_price?: number;
-  price?: number;
-  lastPrice?: number;
-  last_price?: number;
-  change?: number;
-  percent_change?: number;
-  sector?: string;
-  [key: string]: any;
-}able jsx-a11y/role-has-required-aria-props */
 'use client';
-
+// SearchBar component for the stock search functionality
 import React, { useState, useRef, useEffect } from 'react';
 import { Search } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import StockLogo from './StockLogo';
 import { useDebounce } from '../../lib/hooks/useDebounce';
-import StockDetailsJson from './StockDetailsJson';
-import api, { apiHelpers } from '../../utils/api';
-
-// Define StockDetails interface locally since we removed the service import
-interface StockDetails {
-  symbol: string;
-  name?: string;
-  company_name?: string;
-  current_price?: number;
-  price?: number;
-  lastPrice?: number;
-  last_price?: number;
-  change?: number;
-  percent_change?: number;
-  sector?: string;
-  [key: string]: any;
-}
 
 // Unified search result type
 interface UnifiedSearchResult {
@@ -57,16 +16,26 @@ interface UnifiedSearchResult {
   sector?: string;
 }
 
-const SearchBar: React.FC = () => {
+interface SearchBarProps {
+  compact?: boolean;
+  showDetailsInline?: boolean;
+  onSearchComplete?: (symbol: string, results?: any[]) => void;
+  isMobile?: boolean;
+}
+
+const SearchBar: React.FC<SearchBarProps> = ({ 
+  compact = false,
+  showDetailsInline = false, // Default to false as we only need navigation behavior
+  onSearchComplete,
+  isMobile = false
+}) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<UnifiedSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isResultsVisible, setIsResultsVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchMode, setSearchMode] = useState<'global' | 'indian'>('global');
-  const [selectedStock, setSelectedStock] = useState<any>(null);
-  const [isLoadingStockDetails, setIsLoadingStockDetails] = useState(false);
-  const [stockDetailsError, setStockDetailsError] = useState<string | null>(null);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 500); // 500ms debounce
@@ -85,49 +54,6 @@ const SearchBar: React.FC = () => {
     };
   }, []);
 
-  // Convert StockDetails to UnifiedSearchResult
-  const mapStockDetailsToUnified = (stocks: StockDetails[]): UnifiedSearchResult[] => {
-    return stocks.map(stock => {
-      // Get price from any available price field
-      const price = stock.current_price || stock.price || stock.lastPrice || stock.last_price || 0;
-      
-      console.log(`Mapping stock ${stock.symbol} with price:`, {
-        current_price: stock.current_price,
-        price: stock.price,
-        lastPrice: stock.lastPrice,
-        last_price: stock.last_price,
-        final_price: price
-      });
-      
-      return {
-        symbol: stock.symbol,
-        companyName: stock.name || stock.company_name || stock.symbol,
-        latestPrice: price,
-        change: stock.change,
-        changePercent: stock.percent_change,
-        sector: stock.sector
-      };
-    });
-  };
-
-  // Fetch stock details directly from API
-  const fetchStockDetails = async (stockName: string) => {
-    setIsLoadingStockDetails(true);
-    setStockDetailsError(null);
-    
-    try {
-      // Use apiHelpers for stock details
-      const data = await apiHelpers.getStockDetails(stockName);
-      setSelectedStock(data);
-    } catch (error) {
-      console.error('Error fetching stock details:', error);
-      setStockDetailsError('Failed to load stock details. Please try again.');
-      setSelectedStock(null);
-    } finally {
-      setIsLoadingStockDetails(false);
-    }
-  };
-
   // Fetch search results when debounced query changes
   useEffect(() => {
     const fetchResults = async () => {
@@ -143,12 +69,14 @@ const SearchBar: React.FC = () => {
       setIsResultsVisible(true);
 
       try {
-        // Use apiHelpers to search for stocks
-        const stockResults = await apiHelpers.searchStocks(debouncedQuery);
+        // Search using API endpoints
+        const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
+        const data = await response.json();
+        const stockResults = data.results || data || [];
         
         if (stockResults && stockResults.length > 0) {
           // Map results to our unified format
-          const mappedResults = stockResults.map(stock => ({
+          const mappedResults = stockResults.map((stock: any) => ({
             symbol: stock.symbol,
             companyName: stock.name || stock.company_name || stock.symbol,
             latestPrice: stock.current_price || stock.price || 0,
@@ -158,25 +86,47 @@ const SearchBar: React.FC = () => {
           
           setResults(mappedResults);
           setSearchMode('indian');
+          
+          // Pass results to parent component if callback is provided
+          if (onSearchComplete && mappedResults.length > 0) {
+            onSearchComplete(debouncedQuery, stockResults);
+          }
         } else {
-          // If no results, try with the api as fallback
+          // If no results, try with trending data as fallback
           try {
-            const globalResults = await apiHelpers.searchStocks(debouncedQuery);
-            if (globalResults && globalResults.length > 0) {
-              const mappedGlobalResults = globalResults.map(stock => ({
-                symbol: stock.symbol,
+            const trendingResponse = await fetch('/api/trending');
+            const trendingData = await trendingResponse.json();
+            const trendingStocks = [
+              ...(trendingData.data?.trending_stocks?.top_gainers || []),
+              ...(trendingData.data?.trending_stocks?.top_losers || [])
+            ].filter((stock: any) => {
+              const searchLower = debouncedQuery.toLowerCase();
+              const nameLower = (stock.company_name || stock.name || '').toLowerCase();
+              const symbolLower = (stock.ticker_id || stock.symbol || '').toLowerCase();
+              return nameLower.includes(searchLower) || symbolLower.includes(searchLower);
+            });
+            
+            if (trendingStocks.length > 0) {
+              const mappedTrending = trendingStocks.map((stock: any) => ({
+                symbol: stock.symbol || stock.ticker_id,
                 companyName: stock.name || stock.company_name || stock.symbol,
                 latestPrice: stock.current_price || stock.price || 0,
                 changePercent: stock.percent_change,
                 sector: stock.sector
               })).slice(0, 10);
-              setResults(mappedGlobalResults);
+              
+              setResults(mappedTrending);
               setSearchMode('global');
+              
+              // Pass results to parent component if callback is provided
+              if (onSearchComplete && trendingStocks.length > 0) {
+                onSearchComplete(debouncedQuery, trendingStocks);
+              }
             } else {
               setResults([]);
               setError('No results found');
             }
-          } catch {
+          } catch (err) {
             setResults([]);
             setError('No results found');
           }
@@ -185,52 +135,82 @@ const SearchBar: React.FC = () => {
         console.error('Search error:', err);
         setResults([]);
         setError('Error searching stocks. Please try again.');
+        
+        // Inform parent component about the error if callback is provided
+        if (onSearchComplete) {
+          onSearchComplete('', []);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchResults();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, onSearchComplete]);
+
+  // Function to handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Only process if results are visible
+    if (!isResultsVisible || results.length === 0) return;
+    
+    switch(e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setHighlightedIndex(prev => 
+          prev < results.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setHighlightedIndex(prev => 
+          prev > 0 ? prev - 1 : 0
+        );
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (highlightedIndex >= 0 && highlightedIndex < results.length) {
+          const selected = results[highlightedIndex];
+          handleResultClick(selected.symbol, selected.companyName);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        setIsResultsVisible(false);
+        break;
+    }
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (query.trim()) {
       setIsResultsVisible(false);
-      setIsLoadingStockDetails(true);
-      setStockDetailsError(null);
       
+      // If we have results and the query matches one of them, use that symbol
+      const matchingResult = results.find(result => 
+        result.symbol.toLowerCase() === query.trim().toLowerCase() || 
+        result.companyName.toLowerCase() === query.trim().toLowerCase()
+      );
+      
+      // Use the matching result's symbol if found, otherwise use the query
+      const searchTerm = matchingResult ? matchingResult.symbol : query.trim();
+      
+      // Navigate to stock details page
+      router.push(`/stocks/${searchTerm}`);
+        
+      // Optionally notify parent component when navigating
+      if (onSearchComplete) {
+        onSearchComplete(searchTerm);
+      }
+
+      // Add to search history in localStorage
       try {
-        // If we have results and the query matches one of them, use that symbol
-        const matchingResult = results.find(result => 
-          result.symbol.toLowerCase() === query.trim().toLowerCase() || 
-          result.companyName.toLowerCase() === query.trim().toLowerCase()
-        );
-        
-        // Use the matching result's symbol if found, otherwise use the query
-        const searchTerm = matchingResult ? matchingResult.symbol : query.trim();
-        console.log(`Searching for stock: ${searchTerm}`);
-        
-        // Use the apiHelpers utility with improved error handling
-        const data = await apiHelpers.getStockDetails(searchTerm);
-        
-        if (data) {
-          console.log('Stock data received:', data);
-          setSelectedStock(data);
-        } else {
-          console.error(`No data found for stock: ${searchTerm}`);
-          setStockDetailsError(`No data found for "${searchTerm}". Please check the stock name or symbol and try again.`);
-        }
-      } catch (error: any) {
-        console.error('Error fetching stock:', error);
-        setStockDetailsError(
-          error.response?.status === 404
-            ? `Stock "${query.trim()}" not found. Please check the name or symbol and try again.`
-            : `Failed to fetch stock data: ${error.message || 'Unknown error'}. Please try again.`
-        );
-      } finally {
-        setIsLoadingStockDetails(false);
+        const history = localStorage.getItem('stockSearchHistory');
+        const searchHistory = history ? JSON.parse(history) : [];
+        const newHistory = [searchTerm, ...searchHistory.filter((h: string) => h !== searchTerm)].slice(0, 10);
+        localStorage.setItem('stockSearchHistory', JSON.stringify(newHistory));
+      } catch (error) {
+        console.error('Error updating search history:', error);
       }
     }
   };
@@ -238,37 +218,30 @@ const SearchBar: React.FC = () => {
   const handleResultClick = async (symbol: string, name: string) => {
     setIsResultsVisible(false);
     setQuery(name); // Set the query to the stock name for better UX
-    setIsLoadingStockDetails(true);
-    setStockDetailsError(null);
     
+    // Navigate to stock details page
+    router.push(`/stocks/${symbol}`);
+    
+    // Add to search history in localStorage
     try {
-      console.log(`Fetching stock details for ${symbol} (${name})`);
-      
-      // Use the apiHelpers utility with improved error handling
-      const data = await apiHelpers.getStockDetails(symbol);
-      
-      if (data) {
-        console.log('Stock data received:', data);
-        setSelectedStock(data);
-      } else {
-        console.error(`No data found for stock: ${symbol}`);
-        setStockDetailsError(`No data found for "${name}" (${symbol}). Please try another stock.`);
-      }
-    } catch (error: any) {
-      console.error('Error fetching stock:', error);
-      setStockDetailsError(
-        error.response?.status === 404
-          ? `Stock "${name}" (${symbol}) not found. Please try another stock.`
-          : `Failed to fetch stock data: ${error.message || 'Unknown error'}. Please try again.`
-      );
-    } finally {
-      setIsLoadingStockDetails(false);
+      const history = localStorage.getItem('stockSearchHistory');
+      const searchHistory = history ? JSON.parse(history) : [];
+      const newHistory = [symbol, ...searchHistory.filter((h: string) => h !== symbol)].slice(0, 10);
+      localStorage.setItem('stockSearchHistory', JSON.stringify(newHistory));
+    } catch (error) {
+      console.error('Error updating search history:', error);
+    }
+    
+    // Notify parent when navigating away
+    if (onSearchComplete) {
+      onSearchComplete(symbol);
     }
   };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
+    setHighlightedIndex(-1); // Reset highlighted index
     
     // Only show loading if typing actively and length >= 2
     if (value.length >= 2) {
@@ -280,40 +253,55 @@ const SearchBar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full">
-      <div className="relative w-full max-w-xl mx-auto" ref={searchRef} suppressHydrationWarning>
+    <div className={`flex flex-col ${compact ? 'gap-3' : 'gap-6'} w-full`}>
+      <div className="relative w-full" ref={searchRef} suppressHydrationWarning>
         <form onSubmit={handleSearch} className="relative" data-testid="search-form">
           <input
             type="text"
             value={query}
             onChange={handleInputChange}
-            placeholder="Search for stocks (e.g., RELIANCE, TATASTEEL)"
-            className="w-full py-3 pl-10 pr-4 bg-white bg-gray-900/90 backdrop-blur-lg border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onKeyDown={handleKeyDown}
+            placeholder={compact ? "Search stocks (e.g., RELIANCE)" : "Search for stocks (e.g., RELIANCE, TATASTEEL)"}
+            className={`w-full 
+              ${compact && !isMobile ? 'py-1.5 text-sm' : isMobile ? 'py-1.5 sm:py-2 text-sm' : 'py-3'} 
+              ${compact && !isMobile ? 'pl-9 pr-4' : isMobile ? 'pl-8 sm:pl-10 pr-4' : 'pl-10 pr-4'} 
+              bg-gray-900/90 backdrop-blur-lg border 
+              ${compact && !isMobile ? 'border-gray-700/30 rounded-full' : isMobile ? 'border-gray-700/30 rounded-lg' : 'border-gray-700/50 rounded-lg'} 
+              focus:outline-none 
+              ${compact ? 'focus:ring-1 focus:ring-neon-400' : 'focus:ring-2 focus:ring-blue-500'} 
+              focus:border-transparent 
+              ${compact ? 'text-gray-200 placeholder-gray-400' : 'text-white'}`}
             onFocus={() => query.length >= 2 && setIsResultsVisible(true)}
             aria-label="Search stocks"
             data-testid="search-input"
+            role="combobox"
+            aria-expanded={isResultsVisible}
+            aria-autocomplete="list"
+            aria-owns="search-results-list"
           />
           <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none" suppressHydrationWarning>
-            <Search className="w-5 h-5 text-gray-400" aria-hidden="true" />
+            <Search className={`${isMobile ? 'w-3.5 h-3.5 sm:w-4 sm:h-4' : compact ? 'w-3.5 h-3.5' : 'w-5 h-5'} text-gray-400`} aria-hidden="true" />
           </div>
           <button 
             type="submit" 
-            className="absolute inset-y-0 right-0 flex items-center px-4 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-r-lg"
+            className={`absolute inset-y-0 right-0 flex items-center pr-3 
+              ${compact ? 'text-neon-400 hover:text-neon-300 font-mono' : 'text-blue-400 hover:text-blue-300'}`}
             data-testid="search-button"
           >
             {isLoading ? (
               <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
             ) : (
-              <span>Search</span>
+              <span>Go</span>
             )}
           </button>
         </form>
 
         {isResultsVisible && (
           <div 
-            className="absolute z-50 w-full mt-1 bg-white bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto" 
+            className="absolute z-50 w-full mt-1 bg-gray-950/90 backdrop-blur-xl rounded-xl shadow-lg border border-gray-800/30 max-h-96 overflow-y-auto" 
             suppressHydrationWarning
             role="listbox"
+            id="search-results-list"
             data-testid="search-results"
           >
             {searchMode === 'indian' && (
@@ -325,11 +313,15 @@ const SearchBar: React.FC = () => {
             {results && results.length > 0 ? (
               <ul>
                 {results.map((stock, index) => (
-                  <li key={`${stock.symbol}-${index}`} className="border-b border-gray-100 dark:border-gray-700 last:border-0">
+                  <li 
+                    key={`${stock.symbol}-${index}`} 
+                    className={`border-b border-gray-100 dark:border-gray-700 last:border-0 ${index === highlightedIndex ? 'bg-gray-100 dark:bg-gray-700' : ''}`}
+                  >
                     <button
                       onClick={() => handleResultClick(stock.symbol, stock.companyName)}
                       className="w-full text-left flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700"
                       role="option"
+                      aria-selected={index === highlightedIndex}
                       data-testid="stock-card"
                     >
                       <div className="flex items-center" suppressHydrationWarning>
@@ -362,24 +354,13 @@ const SearchBar: React.FC = () => {
               </div>
             ) : (
               <div className="p-4 text-center text-gray-500 dark:text-gray-400" data-testid="no-results">
-                No stocks found matching your search
+                <p>No stocks found matching your search</p>
+                <p className="mt-2 text-sm">Try searching for company names like "Reliance" or symbols like "INFY"</p>
               </div>
             )}
           </div>
         )}
       </div>
-
-      {/* Stock Details Section */}
-      {(selectedStock || isLoadingStockDetails || stockDetailsError) && (
-        <div className="mt-6 w-full max-w-3xl mx-auto bg-white bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-bold mb-4">Stock Details</h2>
-          <StockDetailsJson 
-            stock={selectedStock}
-            isLoading={isLoadingStockDetails}
-            error={stockDetailsError}
-          />
-        </div>
-      )}
     </div>
   );
 };

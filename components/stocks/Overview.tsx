@@ -1,0 +1,153 @@
+"use client";
+
+import React, { useRef } from 'react';
+import { Building, LineChart, TrendingUp } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import FinancialHighlights from '@/components/stocks/FinancialHighlights';
+import ManagementInfo from '@/components/stocks/ManagementInfo';
+import StockNewsSection from '@/components/stocks/StockNewsSection';
+
+interface OverviewProps {
+  stockData: any;
+  symbol: string;
+  companyName: string;
+  industry: string;
+  price: string | number;
+  yearHigh: number | undefined;
+  yearLow: number | undefined;
+  volume: number | undefined;
+  avgVolume: number | undefined;
+  dividendYield: number | string | undefined;
+  debtToEquity: number | string | undefined;
+  description: string;
+  financialData: any[];
+  recentNews: any[];
+  officers: any[];
+  // Chart refs
+  performanceChartRef: React.RefObject<HTMLCanvasElement>;
+  sectorDistributionChartRef: React.RefObject<HTMLCanvasElement>;
+  aboutRef: React.RefObject<HTMLDivElement>;
+  chartContainerRef: React.RefObject<HTMLDivElement>;
+}
+
+const Overview: React.FC<OverviewProps> = ({
+  stockData,
+  symbol,
+  companyName,
+  industry,
+  price,
+  yearHigh,
+  yearLow,
+  volume,
+  avgVolume,
+  dividendYield,
+  debtToEquity,
+  description,
+  financialData,
+  recentNews,
+  officers,
+  performanceChartRef,
+  sectorDistributionChartRef,
+  aboutRef,
+  chartContainerRef
+}) => {
+  return (
+    <div className="space-y-8">
+      {/* Financial Highlights Section */}
+      {financialData && financialData.length > 0 && (
+        <FinancialHighlights financialData={financialData} />
+      )}
+      
+      {/* Charts and About Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Performance Chart */}
+        <div ref={chartContainerRef} className="lg:col-span-2">
+          <Card className="bg-gray-700 border-gray-600">
+            <CardHeader>
+              <CardTitle className="text-white">Price Performance</CardTitle>
+              <CardDescription className="text-gray-400">Last 30 days</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px] relative">
+                <canvas ref={performanceChartRef} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* About Card */}
+        <div ref={aboutRef} className="lg:col-span-1">
+          <Card className="bg-gray-700 border-gray-600 h-full">
+            <CardHeader>
+              <CardTitle className="text-white">About</CardTitle>
+              <CardDescription className="text-gray-400">Company Overview</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-gray-300 text-sm overflow-y-auto max-h-[230px] pr-2">
+                {description}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Trading Info and Sector Distribution */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Trading Info */}
+        <Card className="bg-gray-700 border-gray-600">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <LineChart className="h-5 w-5 text-indigo-400" />
+              Trading Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between py-2 border-b border-gray-600">
+              <span className="text-gray-400">Volume</span>
+              <span className="text-white font-medium">{volume ? volume.toLocaleString() : 'N/A'}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-gray-600">
+              <span className="text-gray-400">Avg. Volume</span>
+              <span className="text-white font-medium">{avgVolume ? avgVolume.toLocaleString() : 'N/A'}</span>
+            </div>
+            <div className="flex justify-between py-2 border-b border-gray-600">
+              <span className="text-gray-400">Dividend Yield</span>
+              <span className="text-white font-medium">{dividendYield ? `${dividendYield}%` : 'N/A'}</span>
+            </div>
+            <div className="flex justify-between py-2">
+              <span className="text-gray-400">Debt to Equity</span>
+              <span className="text-white font-medium">{debtToEquity || 'N/A'}</span>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Sector Distribution */}
+        <Card className="bg-gray-700 border-gray-600">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Building className="h-5 w-5 text-indigo-400" />
+              Sector Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[200px] flex items-center justify-center relative">
+              <canvas ref={sectorDistributionChartRef} />
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Key Management - Basic version for overview */}
+        <div className="lg:col-span-1">
+          <ManagementInfo officers={officers} />
+        </div>
+      </div>
+
+      {/* Recent News Section */}
+      {recentNews && recentNews.length > 0 && (
+        <StockNewsSection news={recentNews} />
+      )}
+    </div>
+  );
+};
+
+export default Overview;

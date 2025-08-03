@@ -35,6 +35,7 @@ async function fetchApi(endpoint, params = {}) {
 // ===== STOCK DATA ENDPOINTS =====
 
 export async function getStockDetails(stockName) {
+  console.log(`🔍 API Call: /stock?name=${stockName}`);
   return fetchApi('/stock', { name: stockName });
 }
 
@@ -51,6 +52,7 @@ export async function getHistoricalData(stockName, period = '6m', filter = 'pric
 }
 
 export async function getFinancialStatement(stockName, stats) {
+  console.warn(`⚠️  DEPRECATED: getFinancialStatement called - should use /stock endpoint instead`);
   return fetchApi('/statement', { 
     stock_name: stockName, 
     stats: stats 

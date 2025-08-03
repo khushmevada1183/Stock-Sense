@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '../../components/ui/button';
-import { Moon, Sun, Menu, X, Bug } from 'lucide-react';
+import { Moon, Sun, Menu, X, Bug, Search } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import SearchBar from './SearchBar';
 
 interface NavLinkProps {
   href: string;
@@ -76,13 +77,19 @@ const Navigation: React.FC = () => {
                 <span className="text-lg font-bold text-gray-900 dark:text-white">Indian Stock Analyzer</span>
               </Link>
             </div>
+            
+            {/* Search Bar - Desktop */}
+            <div className="hidden md:flex flex-1 mx-6">
+              <div className="w-full max-w-xl relative">
+                <SearchBar compact={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
+              </div>
+            </div>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center">
               <div className="flex space-x-1">
                 <NavLink href="/dashboard">Dashboard</NavLink>
                 <NavLink href="/stocks">Stocks</NavLink>
-                <NavLink href="/search">Advanced Search</NavLink>
                 <NavLink href="/mutual-funds">Mutual Funds</NavLink>
                 <NavLink href="/commodities">Commodities</NavLink>
                 <NavLink href="/ipo">IPO</NavLink>
@@ -136,10 +143,14 @@ const Navigation: React.FC = () => {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden bg-gray-900/90 backdrop-blur-lg dark:bg-gray-950 border-b border border-gray-700/50 shadow-lg">
+            {/* Mobile Search Bar */}
+            <div className="px-2 pt-3 pb-2">
+              <SearchBar compact={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
+            </div>
+            
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <NavLink href="/dashboard" className="block">Dashboard</NavLink>
               <NavLink href="/stocks" className="block">Stocks</NavLink>
-              <NavLink href="/search" className="block">Advanced Search</NavLink>
               <NavLink href="/mutual-funds" className="block">Mutual Funds</NavLink>
               <NavLink href="/commodities" className="block">Commodities</NavLink>
               <NavLink href="/ipo" className="block">IPO</NavLink>

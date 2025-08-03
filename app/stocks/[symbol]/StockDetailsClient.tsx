@@ -24,7 +24,7 @@ import {
   Rocket
 } from 'lucide-react';
 import { apiHelpers } from '@/api/api';
-import { getFinancialStatement, getFinancialStatements } from '@/api/api';
+// Removed separate financial API imports - now using single /stock endpoint
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import FinancialStatements from '@/components/stocks/FinancialStatements';
@@ -40,6 +40,9 @@ import InstitutionalInvestment from '@/components/stocks/InstitutionalInvestment
 import ESGMetrics from '@/components/stocks/ESGMetrics';
 import RiskAssessment from '@/components/stocks/RiskAssessment';
 import FutureGrowthPotential from '@/components/stocks/FutureGrowthPotential';
+import Overview from '@/components/stocks/Overview';
+import FundamentalAnalysis from '@/components/stocks/FundamentalAnalysis';
+import MetricCard from '@/components/stocks/MetricCard';
 // Define types needed for financial data
 interface FinancialRatiosData {
   [key: string]: any;
@@ -52,65 +55,6 @@ import { FinancialPeriod } from '@/components/stocks/FinancialStatements'; // Im
 
 // Register Chart.js components
 Chart.register(...registerables);
-
-type MetricCardProps = {
-  title: string;
-        value: string | number;
-  change?: string | number;
-  isPositive?: boolean;
-  icon: React.ReactNode;
-  isAnimated?: boolean;
-  delay?: number;
-};
-
-// Reusable Metric Card Component
-const MetricCard: React.FC<MetricCardProps> = ({ 
-  title, value, change, isPositive, icon, isAnimated = true, delay = 0
-}) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (isAnimated && cardRef.current) {
-      gsap.from(cardRef.current, {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-        delay: delay,
-        ease: "power3.out"
-      });
-    }
-  }, [isAnimated, delay]);
-
-  return (
-    <div ref={cardRef} className="metric-card bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl overflow-hidden hover:bg-gray-700/50 transition-colors">
-      <div className="p-5">
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-gray-400 font-medium text-sm">{title}</h3>
-          <div className={`p-2 rounded-lg ${
-            typeof isPositive === 'boolean' 
-              ? isPositive 
-                ? 'bg-green-500/20 text-green-400'
-                : 'bg-red-500/20 text-red-400'
-              : 'bg-indigo-500/20 text-indigo-400'
-          }`}>
-            {icon}
-          </div>
-        </div>
-        <div className="flex flex-col">
-          <p className="text-2xl font-bold text-white">{value}</p>
-          {change && (
-            <div className={`flex items-center mt-1 text-sm ${
-              isPositive ? 'text-green-400' : 'text-red-400'
-            }`}>
-              {isPositive ? <ArrowUp className="w-3 h-3 mr-1" /> : <ArrowDown className="w-3 h-3 mr-1" />}
-              <span>{change}</span>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 export default function StockDetailsClient() {
   const params = useParams();
@@ -186,6 +130,8 @@ export default function StockDetailsClient() {
         if (data) {
           console.log('Stock data received:', data);
           setStockData(data);
+          // Process financial data from the main response
+          setTimeout(() => fetchFinancialData(), 100);
         } else {
           setError(`No data found for \"${symbol}\". Please check the stock name or symbol and try again.`);
         }
@@ -202,39 +148,30 @@ export default function StockDetailsClient() {
     };
 
     const fetchFinancialData = async () => {
-      setLoadingRatios(true);
-      setLoadingStatements(true);
-      try {
-        // Use the documented APIs instead of the missing FundamentalAnalysisService
-        const [ratiosData, statementsData] = await Promise.all([
-          getFinancialStatement(symbol, 'ratios'),
-          getFinancialStatements(symbol)
-        ]);
-
-        if (ratiosData) {
-          setFinancialRatios(ratiosData);
+      // Financial data should already be included in the main stock data response
+      // No need for separate API calls since /stock endpoint returns all data
+      setLoadingRatios(false);
+      setLoadingStatements(false);
+      
+      if (stockData) {
+        // Extract financial ratios from main stock data
+        if (stockData.financialRatios || stockData.ratios || stockData.keyMetrics) {
+          setFinancialRatios(stockData.financialRatios || stockData.ratios || stockData.keyMetrics);
         } else {
-          setErrorRatios(`No financial ratios found for \"${symbol}\".`);
+          setErrorRatios(`No financial ratios found in stock data for \"${symbol}\".`);
         }
 
-        if (statementsData) {
-          setFinancialStatements(statementsData);
+        // Extract financial statements from main stock data
+        if (stockData.financialStatements || stockData.statements || stockData.fiscalPeriods) {
+          setFinancialStatements(stockData.financialStatements || stockData.statements || stockData.fiscalPeriods);
         } else {
-          setErrorStatements(`No financial statements found for \"${symbol}\".`);
+          setErrorStatements(`No financial statements found in stock data for \"${symbol}\".`);
         }
-
-      } catch (err: any) {
-        console.error('Error fetching fundamental data:', err);
-        setErrorRatios(`Failed to fetch financial ratios: ${err.message || 'Unknown error'}.`);
-        setErrorStatements(`Failed to fetch financial statements: ${err.message || 'Unknown error'}.`);
-      } finally {
-        setLoadingRatios(false);
-        setLoadingStatements(false);
       }
     };
     
     fetchStockData();
-    fetchFinancialData(); 
+    // fetchFinancialData(); // Removed - now handled within fetchStockData 
   }, [symbol]);
   
   // Initialize animations after data is loaded
@@ -750,19 +687,6 @@ export default function StockDetailsClient() {
       description: 'Growth potential and strategic opportunities'
     }
   ];
-
-  // Helper function to render financial ratio items
-  const renderRatioItem = (label: string, value: string | number | undefined, unit: string = '') => {
-    if (value === undefined || value === null || value === 'N/A' || value === '--' || value === '-') {
-      return null; 
-    }
-    return (
-      <div className="flex justify-between py-2 border-b border-gray-700 last:border-b-0">
-        <span className="text-gray-400 text-sm">{label}</span>
-        <span className="text-white font-medium text-sm">{typeof value === 'number' ? value.toFixed(2) : value}{unit}</span>
-      </div>
-    );
-  };
   
   return (
     <div className="stock-details-page min-h-screen bg-gray-900 text-white p-4 md:p-8">
@@ -889,166 +813,48 @@ export default function StockDetailsClient() {
         {/* Tab Content */}
         <div className="p-6">
           {activeTab === 'overview' && (
-            <div className="space-y-8">
-              {/* Financial Highlights Section */}
-              {financialData && financialData.length > 0 && (
-                <FinancialHighlights financialData={financialData} />
-              )}
-              
-              {/* Charts and About Section */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Performance Chart */}
-                <div ref={chartContainerRef} className="lg:col-span-2">
-                  <Card className="bg-gray-700 border-gray-600">
-                    <CardHeader>
-                      <CardTitle className="text-white">Price Performance</CardTitle>
-                      <CardDescription className="text-gray-400">Last 30 days</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="h-[300px] relative">
-                        <canvas ref={performanceChartRef} />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                
-                {/* About Card */}
-                <div ref={aboutRef} className="lg:col-span-1">
-                  <Card className="bg-gray-700 border-gray-600 h-full">
-                    <CardHeader>
-                      <CardTitle className="text-white">About</CardTitle>
-                      <CardDescription className="text-gray-400">Company Overview</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-gray-300 text-sm overflow-y-auto max-h-[230px] pr-2">
-                        {description}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-
-              {/* Trading Info and Sector Distribution */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Trading Info */}
-                <Card className="bg-gray-700 border-gray-600">
-                  <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <LineChart className="h-5 w-5 text-indigo-400" />
-                      Trading Information
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex justify-between py-2 border-b border-gray-600">
-                      <span className="text-gray-400">Volume</span>
-                      <span className="text-white font-medium">{volume ? volume.toLocaleString() : 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-gray-600">
-                      <span className="text-gray-400">Avg. Volume</span>
-                      <span className="text-white font-medium">{avgVolume ? avgVolume.toLocaleString() : 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b border-gray-600">
-                      <span className="text-gray-400">Dividend Yield</span>
-                      <span className="text-white font-medium">{dividendYield ? `${dividendYield}%` : 'N/A'}</span>
-                    </div>
-                    <div className="flex justify-between py-2">
-                      <span className="text-gray-400">Debt to Equity</span>
-                      <span className="text-white font-medium">{debtToEquity || 'N/A'}</span>
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Sector Distribution */}
-                <Card className="bg-gray-700 border-gray-600">
-                  <CardHeader>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Building className="h-5 w-5 text-indigo-400" />
-                      Sector Distribution
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-[200px] flex items-center justify-center relative">
-                      <canvas ref={sectorDistributionChartRef} />
-                    </div>
-                  </CardContent>
-                </Card>
-                
-                {/* Key Management - Basic version for overview */}
-                <div className="lg:col-span-1">
-                  <ManagementInfo officers={officers} />
-                </div>
-              </div>
-
-              {/* Recent News Section */}
-              {recentNews && recentNews.length > 0 && (
-                <StockNewsSection news={recentNews} />
-              )}
-            </div>
+            <Overview 
+              stockData={stockData}
+              symbol={symbol}
+              companyName={companyName}
+              industry={industry}
+              price={price}
+              yearHigh={yearHigh}
+              yearLow={yearLow}
+              volume={volume}
+              avgVolume={avgVolume}
+              dividendYield={dividendYield}
+              debtToEquity={debtToEquity}
+              description={description}
+              financialData={financialData}
+              recentNews={recentNews}
+              officers={officers}
+              performanceChartRef={performanceChartRef}
+              sectorDistributionChartRef={sectorDistributionChartRef}
+              aboutRef={aboutRef}
+              chartContainerRef={chartContainerRef}
+            />
           )}
 
           {activeTab === 'fundamental' && (
-            <div className="space-y-8">
-              {/* Financial Ratios Section */}
-              {!loadingRatios && financialRatios && Object.keys(financialRatios).length > 0 && (
-                <Card className="bg-gray-700 border-gray-600 text-white">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold flex items-center">
-                      <BarChart4 className="w-6 h-6 mr-2 text-indigo-400" />
-                      Key Financial Ratios
-                    </CardTitle>
-                    <CardDescription className="text-gray-400">
-                      Important financial metrics for {companyName}.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
-                      {renderRatioItem("P/E Ratio", financialRatios.peRatio ?? pe)} 
-                      {renderRatioItem("P/B Ratio", financialRatios.pbRatio)}
-                      {renderRatioItem("Dividend Yield", financialRatios.dividendYield ?? dividendYield, '%')}
-                      {renderRatioItem("Debt to Equity", financialRatios.debtToEquity ?? debtToEquity)}
-                      {renderRatioItem("ROE (Return on Equity)", financialRatios.roe, '%')}
-                      {renderRatioItem("ROCE (Return on Capital Employed)", financialRatios.roce, '%')}
-                      {renderRatioItem("EPS (Earnings Per Share)", financialRatios.eps ?? eps, stockData?.currencySymbol || '₹')}
-                      {renderRatioItem("Book Value", financialRatios.bookValue, stockData?.currencySymbol || '₹')}
-                      {renderRatioItem("Current Ratio", financialRatios.currentRatio)}
-                      {renderRatioItem("Quick Ratio", financialRatios.quickRatio)}
-                      {renderRatioItem("Promoter Holding", financialRatios.promoterHolding, '%')}
-                      {renderRatioItem("Pledged Percentage", financialRatios.pledgedPercentage, '%')}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-              {loadingRatios && <LoadingSpinner />}
-              {!loadingRatios && errorRatios && (
-                <Card className="bg-gray-700 border-gray-600 text-white">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-red-400">Error</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-red-300">{errorRatios}</p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Financial Statements Section */}
-              {!loadingStatements && financialStatements && (
-                <FinancialStatements 
-                  financialData={transformFetchedFinancialStatements(financialStatements)}
-                />
-              )}
-              {loadingStatements && <LoadingSpinner />}
-              {!loadingStatements && errorStatements && (
-                <Card className="bg-gray-700 border-gray-600 text-white">
-                  <CardHeader>
-                    <CardTitle className="text-xl font-semibold text-red-400">Error</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-red-300">{errorStatements}</p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          )}          {activeTab === 'technical' && (
+            <FundamentalAnalysis
+              financialRatios={financialRatios}
+              financialStatements={financialStatements}
+              companyName={companyName}
+              pe={pe}
+              eps={eps}
+              dividendYield={dividendYield}
+              debtToEquity={debtToEquity}
+              currencySymbol={stockData?.currencySymbol || '₹'}
+              loadingRatios={loadingRatios}
+              errorRatios={errorRatios}
+              loadingStatements={loadingStatements}
+              errorStatements={errorStatements}
+              transformFetchedFinancialStatements={transformFetchedFinancialStatements}
+            />
+          )}
+          
+          {activeTab === 'technical' && (
             <TechnicalAnalysis 
               symbol={symbol} 
               currentPrice={parseFloat(price.toString().replace(/[₹,]/g, '')) || 0}
@@ -1072,15 +878,21 @@ export default function StockDetailsClient() {
               symbol={symbol} 
               marketCap={parseFloat(marketCapValue?.toString().replace(/[₹,]/g, '') || '0')} 
             />
-          )}          {activeTab === 'macroeconomic' && (
+          )}
+          
+          {activeTab === 'macroeconomic' && (
             <MacroeconomicIndicators sector={industry} />
-          )}          {activeTab === 'esg' && (
+          )}
+          
+          {activeTab === 'esg' && (
             <ESGMetrics 
               symbol={symbol} 
               companyName={companyName}
               industry={industry}
             />
-          )}          {activeTab === 'risk' && (
+          )}
+          
+          {activeTab === 'risk' && (
             <RiskAssessment 
               stock={{
                 symbol: symbol,
@@ -1090,7 +902,9 @@ export default function StockDetailsClient() {
                 ...stockData
               }}
             />
-          )}          {activeTab === 'growth' && (
+          )}
+          
+          {activeTab === 'growth' && (
             <FutureGrowthPotential 
               symbol={symbol} 
               companyName={companyName}
