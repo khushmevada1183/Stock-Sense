@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
@@ -56,7 +53,16 @@ const nextConfig = {
   output: 'standalone',
   // Configure image handling
   images: {
-    domains: ['avatars.githubusercontent.com', 'images.unsplash.com', 'localhost'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+    ],
     unoptimized: process.env.NODE_ENV === 'production'
   },
   // Environment variables
