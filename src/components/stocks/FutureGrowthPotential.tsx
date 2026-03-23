@@ -338,7 +338,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
   const getStageColor = (stage: string): string => {
     switch (stage) {
       case 'Research':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        return 'bg-cyan-500/10 text-cyan-400 border-blue-500/30';
       case 'Development':
         return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
       case 'Testing':
@@ -384,17 +384,17 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
   return (
     <div ref={containerRef} className="space-y-6">
       {/* Growth Potential Overview */}
-      <Card className="growth-card bg-gray-700 border-gray-600">
+      <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Rocket className="h-5 w-5 text-indigo-400" />
+            <Rocket className="h-5 w-5 text-neon-400" />
             Growth Potential Overview
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-4xl font-bold text-indigo-400 mb-2">
+              <div className="text-4xl font-bold text-neon-400 mb-2">
                 {overallGrowthScore.toFixed(0)}/100
               </div>
               <div className="text-sm text-gray-400">Growth Score</div>
@@ -420,7 +420,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
       </Card>
 
       {/* Growth Drivers */}
-      <Card className="growth-card bg-gray-700 border-gray-600">
+      <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-green-400" />
@@ -430,10 +430,10 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
         <CardContent>
           <div className="space-y-4">
             {growthDrivers.map((driver, index) => (
-              <div key={index} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-600">
+              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-700 rounded-lg">
+                    <div className="p-2 glass-card rounded-xl">
                       {getCategoryIcon(driver.category)}
                     </div>
                     <div>
@@ -467,7 +467,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
                 </div>
                 
                 <div className="mt-3">
-                  <div className="w-full bg-gray-600 rounded-full h-2">
+                  <div className="w-full bg-gray-800/60 rounded-full h-1.5">
                     <div 
                       className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full"
                       style={{ width: `${driver.probability}%` }}
@@ -481,10 +481,10 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
       </Card>
 
       {/* Growth Projections */}
-      <Card className="growth-card bg-gray-700 border-gray-600">
+      <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-blue-400" />
+            <BarChart3 className="h-5 w-5 text-cyan-400" />
             Growth Projections
           </CardTitle>
         </CardHeader>
@@ -492,7 +492,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-600">
+                <tr className="border-b border-gray-800/30">
                   <th className="text-left py-2 text-gray-400">Metric</th>
                   <th className="text-right py-2 text-gray-400">Current</th>
                   <th className="text-right py-2 text-gray-400">Year 1</th>
@@ -503,7 +503,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
               </thead>
               <tbody>
                 {growthProjections.map((projection, index) => (
-                  <tr key={index} className="border-b border-gray-600/50">
+                  <tr key={index} className="border-b border-gray-800/30/50">
                     <td className="py-3 text-white font-medium">{projection.metric}</td>
                     <td className="py-3 text-right text-gray-300">
                       {formatNumber(projection.current, projection.unit)}
@@ -541,7 +541,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
 
       {/* Market Opportunities & Innovation Pipeline */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="growth-card bg-gray-700 border-gray-600">
+        <Card glass>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5 text-purple-400" />
@@ -551,7 +551,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
           <CardContent>
             <div className="space-y-4">
               {marketOpportunities.map((opportunity, index) => (
-                <div key={index} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-600">
+                <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-semibold text-white">{opportunity.market}</h3>
                     <span className="text-lg font-bold text-purple-400">
@@ -604,7 +604,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
           </CardContent>
         </Card>
 
-        <Card className="growth-card bg-gray-700 border-gray-600">
+        <Card glass>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-yellow-400" />
@@ -614,7 +614,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
           <CardContent>
             <div className="space-y-4">
               {innovations.map((innovation, index) => (
-                <div key={index} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-600">
+                <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       {getCategoryIcon(innovation.category)}
@@ -649,7 +649,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
       </div>
 
       {/* Competitive Advantages */}
-      <Card className="growth-card bg-gray-700 border-gray-600">
+      <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Star className="h-5 w-5 text-orange-400" />
@@ -659,7 +659,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {competitiveAdvantages.map((advantage, index) => (
-              <div key={index} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-600">
+              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
                 <div className="mb-3">
                   <h3 className="font-semibold text-white mb-1">{advantage.factor}</h3>
                   <div className="flex items-center gap-2">

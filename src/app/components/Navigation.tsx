@@ -69,7 +69,7 @@ const Navigation: React.FC = () => {
   
   return (
     <>
-      <nav className="bg-gray-900/90 backdrop-blur-lg dark:bg-gray-950 border-b border border-gray-700/50 shadow-lg sticky top-0 z-30">
+      <nav className="bg-gray-900/90 backdrop-blur-lg dark:bg-gray-950 border-b border border-gray-800/30 shadow-lg sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -142,7 +142,7 @@ const Navigation: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="md:hidden bg-gray-900/90 backdrop-blur-lg dark:bg-gray-950 border-b border border-gray-700/50 shadow-lg">
+          <div className="md:hidden bg-gray-900/90 backdrop-blur-lg dark:bg-gray-950 border-b border border-gray-800/30 shadow-lg">
             {/* Mobile Search Bar */}
             <div className="px-2 pt-3 pb-2">
               <SearchBar compact={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />

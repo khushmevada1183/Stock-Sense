@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
   }, [apiUrl]); // Add apiUrl as a dependency
 
   return (
-    <footer className="bg-gray-900/90 backdrop-blur-lg dark:bg-gray-900 border-t border border-gray-700/50 shadow-lg py-6 mt-12">
+    <footer className="bg-gray-900/90 backdrop-blur-lg dark:bg-gray-900 border-t border border-gray-800/30 shadow-lg py-6 mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center mb-4 md:mb-0">

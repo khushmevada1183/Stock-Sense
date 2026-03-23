@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, Newspaper } from 'lucide-react';
 
 interface NewsItem {
   id: string;
@@ -20,12 +20,15 @@ interface StockNewsSectionProps {
 const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
   if (!news || news.length === 0) {
     return (
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
-          <CardTitle className="text-white">Recent News</CardTitle>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Newspaper className="h-5 w-5 text-neon-400" />
+            Recent News
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-400">No recent news available for this stock.</p>
+          <p className="text-gray-500">No recent news available for this stock.</p>
         </CardContent>
       </Card>
     );
@@ -34,11 +37,8 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
   // Format date for display
   const formatDate = (dateString: string) => {
     try {
-      // Handle format like "Mon, 12 May 2025 10:59 AM IST IST"
       const parts = dateString.split(',');
-      if (parts.length > 1) {
-        return parts.slice(1).join(',').trim();
-      }
+      if (parts.length > 1) return parts.slice(1).join(',').trim();
       return dateString;
     } catch (e) {
       return dateString;
@@ -46,19 +46,22 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
   };
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+    <Card glass>
       <CardHeader>
-        <CardTitle className="text-white">Recent News</CardTitle>
+        <CardTitle className="text-white flex items-center gap-2">
+          <Newspaper className="h-5 w-5 text-neon-400" />
+          Recent News
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+        <div className="space-y-0 max-h-[500px] overflow-y-auto pr-2">
           {news.slice(0, 5).map((item) => (
-            <div key={item.id} className="border-b border-gray-700 pb-4 last:border-0">
+            <div key={item.id} className="border-b border-gray-800/30 py-4 first:pt-0 last:border-0 last:pb-0">
               <a 
                 href={item.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="group"
+                className="group block"
               >
                 <div className="flex items-start gap-3">
                   {item.thumbnailimage && (
@@ -66,28 +69,28 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
                       <img 
                         src={item.thumbnailimage} 
                         alt={item.headline} 
-                        className="w-16 h-16 object-cover rounded"
+                        className="w-16 h-16 object-cover rounded-lg border border-gray-800/30"
                       />
                     </div>
                   )}
-                  <div>
-                    <h3 className="font-medium text-white group-hover:text-blue-400 transition-colors flex items-center">
-                      {item.headline}
-                      <ExternalLink className="ml-1 h-3 w-3 opacity-50" />
+                  <div className="min-w-0">
+                    <h3 className="font-medium text-gray-200 group-hover:text-neon-400 transition-colors flex items-center text-sm">
+                      <span className="line-clamp-2">{item.headline}</span>
+                      <ExternalLink className="ml-1.5 h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0" />
                     </h3>
-                    <p className="text-sm text-gray-400 mt-1 line-clamp-2">{item.intro}</p>
-                    <div className="flex items-center text-xs text-gray-500 mt-2">
+                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{item.intro}</p>
+                    <div className="flex items-center text-xs text-gray-600 mt-2">
                       <span>{formatDate(item.date)}</span>
                       {item.timeToRead && (
                         <>
-                          <span className="mx-2">•</span>
+                          <span className="mx-2 text-gray-700">•</span>
                           <span>{item.timeToRead} min read</span>
                         </>
                       )}
                       {item.section && (
                         <>
-                          <span className="mx-2">•</span>
-                          <span>{item.section}</span>
+                          <span className="mx-2 text-gray-700">•</span>
+                          <span className="text-neon-400/60">{item.section}</span>
                         </>
                       )}
                     </div>
@@ -102,7 +105,7 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
             href={`https://www.google.com/search?q=${encodeURIComponent('stock news')}`} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center justify-center mt-4 text-blue-400 hover:text-blue-300 transition-colors text-sm"
+            className="flex items-center justify-center mt-5 text-neon-400 hover:text-neon-300 transition-colors text-sm"
           >
             View More News
             <ExternalLink className="h-3 w-3 ml-1" />
@@ -113,4 +116,4 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
   );
 };
 
-export default StockNewsSection; 
+export default StockNewsSection;

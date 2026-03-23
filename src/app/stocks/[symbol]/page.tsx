@@ -292,12 +292,12 @@ export default function Page() {
         datasets: [{
           data: [26.5, 22.3, 15.8, 12.9, 10.5, 8.7],
           backgroundColor: [
-            'rgba(99, 102, 241, 0.8)',
-            'rgba(139, 92, 246, 0.8)',
-            'rgba(236, 72, 153, 0.8)',
-            'rgba(34, 211, 238, 0.8)',
-            'rgba(16, 185, 129, 0.8)',
-            'rgba(245, 158, 11, 0.8)',
+            'rgba(57, 255, 20, 0.7)',
+            'rgba(0, 194, 203, 0.7)',
+            'rgba(139, 92, 246, 0.7)',
+            'rgba(34, 211, 238, 0.7)',
+            'rgba(16, 185, 129, 0.7)',
+            'rgba(245, 158, 11, 0.7)',
           ],
           borderWidth: 0
         }]
@@ -316,6 +316,11 @@ export default function Page() {
               display: false
             },
             tooltip: {
+              backgroundColor: 'rgba(10, 10, 10, 0.9)',
+              borderColor: 'rgba(57, 255, 20, 0.2)',
+              borderWidth: 1,
+              titleColor: '#fff',
+              bodyColor: '#9ca3af',
               callbacks: {
                 label: (context) => `${context.label}: ${context.raw}%`
               }
@@ -340,8 +345,9 @@ export default function Page() {
         try {
       // Create gradient
       const gradient = performanceCtx.createLinearGradient(0, 0, 0, 200);
-      gradient.addColorStop(0, 'rgba(99, 102, 241, 0.5)');
-      gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
+      gradient.addColorStop(0, 'rgba(57, 255, 20, 0.3)');
+      gradient.addColorStop(0.5, 'rgba(57, 255, 20, 0.08)');
+      gradient.addColorStop(1, 'rgba(57, 255, 20, 0.0)');
       
       // Extract price from stock data (use price field or fallback to current_price)
       const price = extractPrice();
@@ -367,13 +373,15 @@ export default function Page() {
           datasets: [{
             label: 'Price (₹)',
             data: lastMonthData,
-            borderColor: 'rgb(99, 102, 241)',
+            borderColor: '#39FF14',
             backgroundColor: gradient,
-            tension: 0.3,
+            tension: 0.4,
             fill: true,
             pointRadius: 0,
             pointHoverRadius: 5,
-            pointHoverBackgroundColor: 'rgb(129, 140, 248)'
+            pointHoverBackgroundColor: '#39FF14',
+            pointHoverBorderColor: '#39FF14',
+            borderWidth: 2,
           }]
         },
         options: {
@@ -382,26 +390,37 @@ export default function Page() {
           plugins: {
             legend: {
               display: false
+            },
+            tooltip: {
+              backgroundColor: 'rgba(10, 10, 10, 0.9)',
+              borderColor: 'rgba(57, 255, 20, 0.2)',
+              borderWidth: 1,
+              titleColor: '#fff',
+              bodyColor: '#9ca3af',
             }
           },
           scales: {
             x: {
               grid: {
-                color: 'rgba(75, 85, 99, 0.1)'
+                color: 'rgba(255, 255, 255, 0.03)',
               },
               ticks: {
                 maxTicksLimit: 6,
-                color: 'rgba(156, 163, 175, 0.8)'
-              }
+                color: 'rgba(156, 163, 175, 0.5)',
+                font: { size: 11 }
+              },
+              border: { display: false }
             },
             y: {
               grid: {
-                color: 'rgba(75, 85, 99, 0.1)'
+                color: 'rgba(255, 255, 255, 0.03)',
               },
               ticks: {
                 callback: (value) => `₹${value.toLocaleString()}`,
-                color: 'rgba(156, 163, 175, 0.8)'
-              }
+                color: 'rgba(156, 163, 175, 0.5)',
+                font: { size: 11 }
+              },
+              border: { display: false }
             }
           },
           animation: {
@@ -566,15 +585,21 @@ export default function Page() {
   };
   
   if (loading) {
-    return <LoadingSpinner />; // Removed text prop
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
   
   if (error) {
     return (
-      <div className="bg-red-900/30 border border-red-800 text-red-400 p-6 rounded-xl">
-        <div className="flex items-center">
-          <Info className="h-5 w-5 mr-2" />
-          <p>{error}</p>
+      <div className="min-h-screen bg-gray-950 p-8">
+        <div className="glass-card rounded-xl p-6 border-red-500/20 max-w-2xl mx-auto">
+          <div className="flex items-center text-red-400">
+            <Info className="h-5 w-5 mr-3 flex-shrink-0" />
+            <p>{error}</p>
+          </div>
         </div>
       </div>
     );
@@ -690,30 +715,50 @@ export default function Page() {
   ];
   
   return (
-    <div className="min-h-screen bg-gray-900 py-8">
-      <div className="stock-details-page min-h-screen bg-gray-900 text-white p-4 md:p-8">
+    <div className="min-h-screen bg-gray-950 relative">
+      {/* Background effects */}
+      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0" />
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute w-[600px] h-[600px] rounded-full bg-neon-400/[0.02] blur-[120px] -top-40 -right-40" />
+        <div className="absolute w-[400px] h-[400px] rounded-full bg-cyan-500/[0.02] blur-[100px] bottom-20 -left-40" />
+      </div>
+
+      <div className="stock-details-page min-h-screen text-white p-4 md:p-8 relative z-10">
         {/* Header Section */}
-        <div ref={headerRef} className="mb-6">
+        <div ref={headerRef} className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-3xl font-bold text-white">{companyName}</h1>
-                <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-sm">{displaySymbol}</span>
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl md:text-4xl font-bold text-white">{companyName}</h1>
+                <span className="px-3 py-1 bg-neon-400/10 text-neon-400 border border-neon-400/20 rounded-full text-sm font-medium">
+                  {displaySymbol}
+                </span>
               </div>
-              {industry && <p className="text-gray-400 mt-1">{industry}</p>}
+              {industry && (
+                <p className="text-gray-500 mt-2 flex items-center">
+                  <Building className="h-4 w-4 mr-1.5 text-gray-600" />
+                  {industry}
+                </p>
+              )}
             </div>
             
-            <div className="mt-4 md:mt-0 flex items-center gap-3">
-              <span className="text-sm text-gray-400">ISIN: {isin || 'N/A'}</span>
-              <span className="text-sm text-gray-400">BSE: {bseCode || 'N/A'}</span>
-              <span className="text-sm text-gray-400">NSE: {nseCode || 'N/A'}</span>
+            <div className="mt-4 md:mt-0 flex items-center gap-4">
+              {[
+                { label: 'ISIN', value: isin },
+                { label: 'BSE', value: bseCode },
+                { label: 'NSE', value: nseCode }
+              ].map((id) => (
+                <span key={id.label} className="text-xs text-gray-600">
+                  <span className="text-gray-500">{id.label}:</span> {id.value || 'N/A'}
+                </span>
+              ))}
             </div>
           </div>
         </div>
         
         {/* Price and Key Metrics Cards */}
         <div ref={priceRef} className="mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             {/* Current Price Card */}
             <MetricCard
               title="Current Price"
@@ -752,13 +797,13 @@ export default function Page() {
         
         {/* 52 Week Range */}
         {(yearHigh || yearLow) && (
-          <div ref={rangeRef} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl p-6 mb-8">
-            <h2 className="text-lg font-semibold text-white mb-4">52 Week Range</h2>
+          <div ref={rangeRef} className="glass-card rounded-xl p-6 mb-8">
+            <h2 className="text-base font-semibold text-gray-300 mb-4">52 Week Range</h2>
             <div className="flex items-center justify-between">
-              <span className="text-gray-300">₹{yearLow || 'N/A'}</span>
-              <div className="h-2 bg-gray-700 rounded-full flex-grow mx-4 relative range-slider">
+              <span className="text-gray-400 font-mono text-sm">₹{yearLow || 'N/A'}</span>
+              <div className="h-2 bg-gray-800/60 rounded-full flex-grow mx-4 relative range-slider">
                 <div 
-                  className="h-full bg-indigo-500 rounded-full" 
+                  className="h-full bg-gradient-to-r from-neon-400/70 to-cyan-400/50 rounded-full" 
                   style={{ 
                     width: `${Math.min(
                       100, 
@@ -771,7 +816,7 @@ export default function Page() {
                   }}
                 />
                 <div 
-                  className="absolute h-5 w-5 bg-indigo-600 -top-1.5 rounded-full transform -translate-x-1/2 shadow-lg range-dot"
+                  className="absolute h-5 w-5 bg-neon-400 -top-1.5 rounded-full transform -translate-x-1/2 shadow-neon-sm range-dot"
                   style={{ 
                     left: `${Math.min(
                       100, 
@@ -784,31 +829,109 @@ export default function Page() {
                   }}
                 />
               </div>
-              <span className="text-gray-300">₹{yearHigh || 'N/A'}</span>
+              <span className="text-gray-400 font-mono text-sm">₹{yearHigh || 'N/A'}</span>
             </div>
           </div>
         )}
 
-        {/* Tabbed Interface */}
-        <div className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl overflow-hidden">
-          {/* Tab Navigation */}
-          <div className="border-b border-gray-700">
-            <div className="flex overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
-              {tabs.map((tab) => (
+        {/* Tabbed Interface — Modern Pill Design */}
+        <div className="mb-8">
+          {/* Tab Category Groups */}
+          <div className="space-y-3">
+            {/* Primary Tabs Row */}
+            <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1">
+              <span className="text-[10px] uppercase tracking-widest text-gray-600 font-semibold mr-1 flex-shrink-0 hidden lg:block">Core</span>
+              {tabs.slice(0, 3).map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-indigo-600 text-white border-b-2 border-indigo-400'
-                      : 'text-gray-400 hover:text-gray-300 hover:bg-gray-700'
+                      ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/30 border border-transparent'
                   }`}
                 >
-                  {tab.icon}
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <span className="sm:hidden">{tab.label.split(' ')[0]}</span>
+                  <span className={`transition-all duration-300 ${
+                    activeTab === tab.id 
+                      ? 'text-neon-400 drop-shadow-[0_0_6px_rgba(57,255,20,0.5)]' 
+                      : 'text-gray-600 group-hover:text-gray-400'
+                  }`}>
+                    {tab.icon}
+                  </span>
+                  <span>{tab.label}</span>
+                  {activeTab === tab.id && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-neon-400 animate-pulse shadow-[0_0_6px_rgba(57,255,20,0.6)]" />
+                  )}
                 </button>
               ))}
+
+              <div className="w-px h-6 bg-gray-800/40 mx-1 flex-shrink-0 hidden lg:block" />
+              <span className="text-[10px] uppercase tracking-widest text-gray-600 font-semibold mr-1 flex-shrink-0 hidden lg:block">Analysis</span>
+              {tabs.slice(3, 6).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
+                    activeTab === tab.id
+                      ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/30 border border-transparent'
+                  }`}
+                >
+                  <span className={`transition-all duration-300 ${
+                    activeTab === tab.id 
+                      ? 'text-neon-400 drop-shadow-[0_0_6px_rgba(57,255,20,0.5)]' 
+                      : 'text-gray-600 group-hover:text-gray-400'
+                  }`}>
+                    {tab.icon}
+                  </span>
+                  <span>{tab.label}</span>
+                  {activeTab === tab.id && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-neon-400 animate-pulse shadow-[0_0_6px_rgba(57,255,20,0.6)]" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Secondary Tabs Row */}
+            <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1">
+              <span className="text-[10px] uppercase tracking-widest text-gray-600 font-semibold mr-1 flex-shrink-0 hidden lg:block">Research</span>
+              {tabs.slice(6).map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
+                    activeTab === tab.id
+                      ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
+                      : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/30 border border-transparent'
+                  }`}
+                >
+                  <span className={`transition-all duration-300 ${
+                    activeTab === tab.id 
+                      ? 'text-neon-400 drop-shadow-[0_0_6px_rgba(57,255,20,0.5)]' 
+                      : 'text-gray-600 group-hover:text-gray-400'
+                  }`}>
+                    {tab.icon}
+                  </span>
+                  <span>{tab.label}</span>
+                  {activeTab === tab.id && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-neon-400 animate-pulse shadow-[0_0_6px_rgba(57,255,20,0.6)]" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Content Panel */}
+        <div className="glass-card rounded-2xl overflow-hidden">
+          {/* Active tab header bar */}
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-800/20">
+            <span className="text-neon-400">
+              {tabs.find(t => t.id === activeTab)?.icon}
+            </span>
+            <div>
+              <h2 className="text-white font-semibold text-base">{tabs.find(t => t.id === activeTab)?.label}</h2>
+              <p className="text-gray-600 text-xs">{tabs.find(t => t.id === activeTab)?.description}</p>
             </div>
           </div>
 
@@ -918,4 +1041,4 @@ export default function Page() {
       </div>
     </div>
   );
-} 
+}

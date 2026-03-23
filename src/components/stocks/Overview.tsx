@@ -62,10 +62,13 @@ const Overview: React.FC<OverviewProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Performance Chart */}
         <div ref={chartContainerRef} className="lg:col-span-2">
-          <Card className="bg-gray-700 border-gray-600">
+          <Card glass className="h-full">
             <CardHeader>
-              <CardTitle className="text-white">Price Performance</CardTitle>
-              <CardDescription className="text-gray-400">Last 30 days</CardDescription>
+              <CardTitle className="text-white flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-neon-400" />
+                Price Performance
+              </CardTitle>
+              <CardDescription className="text-gray-500">Last 30 days</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-[300px] relative">
@@ -77,13 +80,13 @@ const Overview: React.FC<OverviewProps> = ({
         
         {/* About Card */}
         <div ref={aboutRef} className="lg:col-span-1">
-          <Card className="bg-gray-700 border-gray-600 h-full">
+          <Card glass className="h-full">
             <CardHeader>
               <CardTitle className="text-white">About</CardTitle>
-              <CardDescription className="text-gray-400">Company Overview</CardDescription>
+              <CardDescription className="text-gray-500">Company Overview</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="text-gray-300 text-sm overflow-y-auto max-h-[230px] pr-2">
+              <div className="text-gray-400 text-sm overflow-y-auto max-h-[230px] pr-2 leading-relaxed">
                 {description}
               </div>
             </CardContent>
@@ -94,38 +97,38 @@ const Overview: React.FC<OverviewProps> = ({
       {/* Trading Info and Sector Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Trading Info */}
-        <Card className="bg-gray-700 border-gray-600">
+        <Card glass>
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <LineChart className="h-5 w-5 text-indigo-400" />
+              <LineChart className="h-5 w-5 text-neon-400" />
               Trading Information
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex justify-between py-2 border-b border-gray-600">
-              <span className="text-gray-400">Volume</span>
-              <span className="text-white font-medium">{volume ? volume.toLocaleString() : 'N/A'}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-gray-600">
-              <span className="text-gray-400">Avg. Volume</span>
-              <span className="text-white font-medium">{avgVolume ? avgVolume.toLocaleString() : 'N/A'}</span>
-            </div>
-            <div className="flex justify-between py-2 border-b border-gray-600">
-              <span className="text-gray-400">Dividend Yield</span>
-              <span className="text-white font-medium">{dividendYield ? `${dividendYield}%` : 'N/A'}</span>
-            </div>
-            <div className="flex justify-between py-2">
-              <span className="text-gray-400">Debt to Equity</span>
-              <span className="text-white font-medium">{debtToEquity || 'N/A'}</span>
-            </div>
+          <CardContent className="space-y-0">
+            {[
+              { label: 'Volume', value: volume ? volume.toLocaleString() : 'N/A' },
+              { label: 'Avg. Volume', value: avgVolume ? avgVolume.toLocaleString() : 'N/A' },
+              { label: 'Dividend Yield', value: dividendYield ? `${dividendYield}%` : 'N/A' },
+              { label: 'Debt to Equity', value: debtToEquity || 'N/A' }
+            ].map((item, i, arr) => (
+              <div 
+                key={item.label} 
+                className={`flex justify-between py-3 ${
+                  i < arr.length - 1 ? 'border-b border-gray-800/30' : ''
+                }`}
+              >
+                <span className="text-gray-500 text-sm">{item.label}</span>
+                <span className="text-gray-200 font-medium text-sm">{item.value}</span>
+              </div>
+            ))}
           </CardContent>
         </Card>
         
         {/* Sector Distribution */}
-        <Card className="bg-gray-700 border-gray-600">
+        <Card glass>
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Building className="h-5 w-5 text-indigo-400" />
+              <Building className="h-5 w-5 text-neon-400" />
               Sector Distribution
             </CardTitle>
           </CardHeader>

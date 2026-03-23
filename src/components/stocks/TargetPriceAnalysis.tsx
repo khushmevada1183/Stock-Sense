@@ -136,7 +136,7 @@ const TargetPriceAnalysis: React.FC<TargetPriceProps> = ({ symbol, currentPrice 
               <span className="text-xs">₹{priceTarget.Low.toLocaleString('en-IN')}</span>
               <span className="text-xs">₹{priceTarget.High.toLocaleString('en-IN')}</span>
             </div>
-            <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+            <div className="relative h-2 bg-gray-200 dark:bg-gray-800/60 rounded shimmer-full">
               {currentPrice && (
                 <div 
                   className="absolute h-4 w-2 bg-blue-600 -top-1 rounded-full"

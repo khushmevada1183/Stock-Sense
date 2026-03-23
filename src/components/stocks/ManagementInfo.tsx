@@ -30,15 +30,15 @@ interface ManagementInfoProps {
 const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers }) => {
   if (!officers || officers.length === 0) {
     return (
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Users className="h-5 w-5 text-indigo-400" />
+            <Users className="h-5 w-5 text-neon-400" />
             Management Team
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-400 text-sm">Management information not available</p>
+          <p className="text-gray-500 text-sm">Management information not available</p>
         </CardContent>
       </Card>
     );
@@ -46,99 +46,78 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers }) => {
 
   // Helper to extract officer name
   const getOfficerName = (officer: Officer): string => {
-    if (officer.name) {
-      return officer.name;
-    }
-    
-    if (officer.firstName && officer.lastName) {
-      return `${officer.firstName} ${officer.lastName}`;
-    }
-    
+    if (officer.name) return officer.name;
+    if (officer.firstName && officer.lastName) return `${officer.firstName} ${officer.lastName}`;
     return 'Unknown';
   };
 
   // Helper to extract officer title
   const getOfficerTitle = (officer: Officer): string => {
-    if (typeof officer.title === 'string') {
-      return officer.title;
-    }
-    
-    if (typeof officer.title === 'object' && officer.title?.Value) {
-      return officer.title.Value;
-    }
-    
+    if (typeof officer.title === 'string') return officer.title;
+    if (typeof officer.title === 'object' && officer.title?.Value) return officer.title.Value;
     return 'Unknown Position';
   };
 
   // Helper to extract start date
   const getStartDate = (officer: Officer): string => {
-    if (officer.since) {
-      return officer.since;
-    }
-    
+    if (officer.since) return officer.since;
     if (officer.startYear) {
       const month = officer.startMonth || '01';
       const day = officer.startDay || '01';
       return `${officer.startYear}-${month}-${day}`;
     }
-    
     return '';
   };
 
   // Format date for display
   const formatDate = (dateString: string) => {
     if (!dateString) return 'N/A';
-    
     try {
       const date = new Date(dateString);
-      return date.toLocaleDateString('en-IN', { 
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
+      return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
     } catch (e) {
       return dateString;
     }
   };
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+    <Card glass>
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
-          <Users className="h-5 w-5 text-indigo-400" />
+          <Users className="h-5 w-5 text-neon-400" />
           Management Team
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-6">
+        <div className="space-y-5">
           {officers.slice(0, 5).map((officer, index) => {
             const name = getOfficerName(officer);
             const title = getOfficerTitle(officer);
             const startDate = getStartDate(officer);
             
             return (
-              <div key={index} className="flex items-start">
-                <div className="w-12 h-12 bg-indigo-500/20 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                  <span className="text-indigo-400 text-lg font-bold">
+              <div key={index} className="flex items-start group">
+                <div className="w-11 h-11 bg-neon-400/10 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 border border-neon-400/10 group-hover:border-neon-400/20 transition-colors">
+                  <span className="text-neon-400 text-base font-bold">
                     {name.substring(0, 1)}
                   </span>
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-white font-medium">{name}</h3>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-gray-200 font-medium text-sm">{name}</h3>
                   <div className="flex items-center mt-1">
-                    <Briefcase className="h-4 w-4 text-gray-400 mr-1" />
-                    <p className="text-gray-400 text-sm">{title}</p>
+                    <Briefcase className="h-3.5 w-3.5 text-gray-600 mr-1.5 flex-shrink-0" />
+                    <p className="text-gray-500 text-xs truncate">{title}</p>
                   </div>
                   {startDate && (
-                    <div className="flex items-center mt-1 text-xs text-gray-500">
-                      <Calendar className="h-3.5 w-3.5 mr-1" />
+                    <div className="flex items-center mt-1 text-xs text-gray-600">
+                      <Calendar className="h-3 w-3 mr-1 flex-shrink-0" />
                       <span>Since {formatDate(startDate)}</span>
                     </div>
                   )}
                   {officer.education && (
-                    <div className="flex items-center mt-1 text-xs text-gray-500">
-                      <Award className="h-3.5 w-3.5 mr-1" />
-                      <span>{officer.education}</span>
+                    <div className="flex items-center mt-1 text-xs text-gray-600">
+                      <Award className="h-3 w-3 mr-1 flex-shrink-0" />
+                      <span className="truncate">{officer.education}</span>
                     </div>
                   )}
                 </div>
@@ -148,8 +127,8 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers }) => {
         </div>
         
         {officers.length > 5 && (
-          <div className="mt-4 text-center">
-            <button className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+          <div className="mt-5 text-center">
+            <button className="text-sm text-neon-400 hover:text-neon-300 transition-colors">
               View All {officers.length} Management Members
             </button>
           </div>
@@ -159,4 +138,4 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers }) => {
   );
 };
 
-export default ManagementInfo; 
+export default ManagementInfo;

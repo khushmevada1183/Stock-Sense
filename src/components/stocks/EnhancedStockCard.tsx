@@ -47,7 +47,7 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, showAllDat
   };
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg hover:shadow-xl transition-all duration-300 h-fit">
+    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-800/30 shadow-lg hover:shadow-xl transition-all duration-300 h-fit">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1 min-w-0">
@@ -110,7 +110,7 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, showAllDat
         {/* Expand/Collapse Button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full flex items-center justify-center gap-2 py-2 text-sm text-gray-400 hover:text-white transition-colors border-t border-gray-700/50"
+          className="w-full flex items-center justify-center gap-2 py-2 text-sm text-gray-400 hover:text-white transition-colors border-t border-gray-800/30"
         >
           {isExpanded ? 'Show Less' : 'Show More'}
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

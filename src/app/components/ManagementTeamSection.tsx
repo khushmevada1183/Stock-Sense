@@ -54,7 +54,7 @@ const OfficerCard = ({ officer }: { officer: Officer }) => {
   return (
     <div className="bg-white bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow">
       <div className="flex items-center mb-3">
-        <div className="bg-gray-200 dark:bg-gray-700 rounded-full h-12 w-12 flex items-center justify-center mr-3">
+        <div className="bg-gray-200 dark:bg-gray-800/60 rounded shimmer-full h-12 w-12 flex items-center justify-center mr-3">
           <span className="font-medium text-lg">
             {fullName.substring(0, 2).toUpperCase()}
           </span>
@@ -127,7 +127,7 @@ const ManagementTeamSection = ({ officers }: ManagementTeamSectionProps) => {
             {hasMoreOfficers && (
               <button 
                 onClick={showMoreOfficers}
-                className="w-full py-2 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                className="w-full py-2 text-blue-600 dark:text-cyan-400 border border-blue-200 dark:border-blue-800 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
               >
                 View More Management
               </button>

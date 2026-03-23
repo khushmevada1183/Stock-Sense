@@ -242,13 +242,13 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
-          <Card key={i} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <Card key={i} glass>
             <CardContent className="p-6">
               <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-gray-700 rounded w-1/4"></div>
+                <div className="h-4 bg-gray-800/60 rounded shimmer w-1/4"></div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="h-20 bg-gray-700 rounded"></div>
-                  <div className="h-20 bg-gray-700 rounded"></div>
+                  <div className="h-20 bg-gray-800/60 rounded shimmer"></div>
+                  <div className="h-20 bg-gray-800/60 rounded shimmer"></div>
                 </div>
               </div>
             </CardContent>
@@ -262,7 +262,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
     <div ref={containerRef} className="space-y-6">
       {/* Key Economic Indicators by Category */}
       {Object.entries(groupedIndicators).map(([category, categoryIndicators]) => (
-        <Card key={category} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+        <Card key={category} glass>
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2 capitalize">
               {getCategoryIcon(category)}
@@ -272,7 +272,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {categoryIndicators.map((indicator, index) => (
-                <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+                <div key={index} className="glass-card rounded-xl p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h4 className="text-white font-medium text-sm">{indicator.name}</h4>
                     <div className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 ${getImpactColor(indicator.impact)}`}>
@@ -305,17 +305,17 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
       ))}
 
       {/* Recent Policy Updates */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Building className="w-5 h-5" />
+            <Building className="w-5 h-5 text-neon-400" />
             Recent Policy Updates
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {policyUpdates.map((update, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium">{update.title}</h4>
                   <div className="flex items-center gap-2">
@@ -328,7 +328,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
                   </div>
                 </div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400 capitalize`}>
+                  <span className={`px-2 py-1 rounded-full text-xs bg-cyan-500/10 text-cyan-400 capitalize`}>
                     {update.category}
                   </span>
                 </div>
@@ -340,10 +340,10 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
       </Card>
 
       {/* Economic Health Score */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <PieChart className="w-5 h-5" />
+            <PieChart className="w-5 h-5 text-neon-400" />
             Economic Health Score
           </CardTitle>
         </CardHeader>
@@ -352,15 +352,15 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
             <div className="text-4xl font-bold text-green-400 mb-2">75/100</div>
             <div className="text-gray-400 mb-4">Strong Economic Fundamentals</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-              <div className="bg-gray-700/50 rounded-lg p-3">
+              <div className="glass-card rounded-xl p-3">
                 <div className="text-green-400 font-bold">Good</div>
                 <div className="text-gray-400 text-sm">Growth Metrics</div>
               </div>
-              <div className="bg-gray-700/50 rounded-lg p-3">
+              <div className="glass-card rounded-xl p-3">
                 <div className="text-yellow-400 font-bold">Moderate</div>
                 <div className="text-gray-400 text-sm">Inflation Control</div>
               </div>
-              <div className="bg-gray-700/50 rounded-lg p-3">
+              <div className="glass-card rounded-xl p-3">
                 <div className="text-green-400 font-bold">Strong</div>
                 <div className="text-gray-400 text-sm">External Position</div>
               </div>

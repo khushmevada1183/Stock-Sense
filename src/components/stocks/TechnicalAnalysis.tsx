@@ -245,9 +245,9 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
 
   const getSignalColor = (signal: 'BUY' | 'SELL' | 'HOLD') => {
     switch (signal) {
-      case 'BUY': return 'text-green-400 bg-green-500/20';
-      case 'SELL': return 'text-red-400 bg-red-500/20';
-      default: return 'text-yellow-400 bg-yellow-500/20';
+      case 'BUY': return 'text-green-400 bg-green-500/10 border border-green-500/20';
+      case 'SELL': return 'text-red-400 bg-red-500/10 border border-red-500/20';
+      default: return 'text-yellow-400 bg-yellow-500/10 border border-yellow-500/20';
     }
   };
 
@@ -262,10 +262,10 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
   return (
     <div ref={containerRef} className="space-y-6">
       {/* Overall Signal */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Signal className="w-5 h-5" />
+            <Signal className="w-5 h-5 text-neon-400" />
             Technical Analysis Signal
           </CardTitle>
         </CardHeader>
@@ -274,24 +274,24 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
             {getSignalIcon(overallSignal)}
             <span>{overallSignal}</span>
           </div>
-          <p className="text-gray-400 mt-2">
+          <p className="text-gray-500 mt-2">
             Based on analysis of {indicators.length} technical indicators
           </p>
         </CardContent>
       </Card>
 
       {/* Technical Indicators */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
+            <BarChart3 className="w-5 h-5 text-neon-400" />
             Technical Indicators
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {indicators.map((indicator, index) => (
-              <div key={index} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-700/50">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium">{indicator.name}</h4>
                   <div className={`px-2 py-1 rounded text-xs ${getSignalColor(indicator.signal)}`}>
@@ -316,10 +316,10 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
       </Card>
 
       {/* Support & Resistance Levels */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Target className="w-5 h-5" />
+            <Target className="w-5 h-5 text-neon-400" />
             Support & Resistance Levels
           </CardTitle>
         </CardHeader>
@@ -327,14 +327,14 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
           <div className="space-y-3">
             {supportResistance.length > 0 ? (
               supportResistance.map((level, index) => (
-                <div key={index} className="flex justify-between items-center py-2 border-b border-gray-700/50 last:border-b-0">
+                <div key={index} className="flex justify-between items-center py-3 border-b border-gray-800/30 last:border-b-0">
                   <div className="flex items-center gap-2">
                     <div className={`w-3 h-3 rounded-full ${
                       level.type === 'resistance' ? 'bg-red-400' : 'bg-green-400'
                     }`} />
                     <span className="text-white capitalize">{level.type}</span>
                     <span className={`text-xs px-2 py-1 rounded ${
-                      level.strength === 'strong' ? 'bg-blue-500/20 text-blue-400' :
+                      level.strength === 'strong' ? 'bg-cyan-500/10 text-cyan-400' :
                       level.strength === 'moderate' ? 'bg-yellow-500/20 text-yellow-400' :
                       'bg-gray-500/20 text-gray-400'
                     }`}>

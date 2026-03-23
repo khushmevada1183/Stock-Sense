@@ -63,7 +63,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
   };
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
+    <Card glass>
       <CardHeader>
         <CardTitle className="flex items-center text-white">
           <Building2 className="mr-2 h-5 w-5" />
@@ -111,7 +111,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                   <div>
                     <div className="text-xs text-gray-500">Website</div>
                     <a href={website} target="_blank" rel="noopener noreferrer" 
-                       className="text-blue-400 hover:text-blue-300 transition-colors">
+                       className="text-neon-400 hover:text-neon-300 transition-colors">
                       {website.replace(/^https?:\/\//, '')}
                     </a>
                   </div>
@@ -143,7 +143,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                   <Mail className="h-4 w-4 text-gray-400 mt-1 mr-2" />
                   <div>
                     <div className="text-xs text-gray-500">Email</div>
-                    <a href={`mailto:${email}`} className="text-blue-400 hover:text-blue-300 transition-colors">
+                    <a href={`mailto:${email}`} className="text-neon-400 hover:text-neon-300 transition-colors">
                       {email}
                     </a>
                   </div>
@@ -195,7 +195,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
           </div>
           
           {/* Stock exchange and identifiers */}
-          <div className="pt-4 border-t border-gray-700/50">
+          <div className="pt-4 border-t border-gray-800/30">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {stockExchange && (
                 <div>

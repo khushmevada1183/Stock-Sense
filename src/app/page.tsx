@@ -3,6 +3,7 @@
 import { useRef, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import HeroSection from '../components/home/HeroSection';
 import FeaturedStocks from '../components/home/FeaturedStocks';
 import MarketOverview from '../components/home/MarketOverview';
@@ -13,8 +14,20 @@ import CtaSection from '../components/home/CtaSection';
 import { useAnimation } from '../animations/shared/AnimationContext';
 import { initHomePageAnimations } from '../animations/pages/homeAnimations';
 
+// Framer Motion viewport animation wrapper
+const SectionReveal = ({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: '-60px' }}
+    transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
+    className={className}
+  >
+    {children}
+  </motion.div>
+);
+
 export default function Home() {
-  // Create refs for each section to animate
   const heroRef = useRef<HTMLDivElement>(null);
   const marketOverviewRef = useRef<HTMLElement>(null);
   const sectorPerformanceRef = useRef<HTMLElement>(null);
@@ -23,10 +36,8 @@ export default function Home() {
   const analysisFeaturesRef = useRef<HTMLDivElement>(null);
   const ctaSectionRef = useRef<HTMLDivElement>(null);
 
-  // Get animation context
   const { isAnimationEnabled } = useAnimation();
 
-  // Initialize animations when component mounts
   useEffect(() => {
     if (isAnimationEnabled) {
       const refs = {
@@ -53,96 +64,104 @@ export default function Home() {
         <HeroSection />
       </div>
 
-      {/* Subtle divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      {/* Animated section divider */}
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Market Overview */}
-      <section ref={marketOverviewRef} className="py-12 relative z-10">
-        <div className="container mx-auto px-4 max-w-[1440px] overflow-x-visible">
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-white">
-            Market Overview
-          </h2>
-          <div className="overflow-x-auto pb-2">
-            <MarketOverview />
+      <SectionReveal>
+        <section ref={marketOverviewRef} className="py-14 relative z-10 section-glow">
+          <div className="container mx-auto px-4 max-w-[1440px] overflow-x-visible">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-10 text-white">
+              Market <span className="gradient-text">Overview</span>
+            </h2>
+            <div className="overflow-x-auto pb-2">
+              <MarketOverview />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </SectionReveal>
 
-      {/* Subtle divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      <div className="section-divider mx-auto max-w-5xl" />
       
       {/* Sector Performance */}
-      <section ref={sectorPerformanceRef} className="py-12 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-lg md:text-xl font-bold text-white">
-              Sector Performance
-            </h2>
-            <Link href="/market" className="text-neon-400 hover:text-neon-300 font-medium">
-              View Details
-            </Link>
+      <SectionReveal delay={0.05}>
+        <section ref={sectorPerformanceRef} className="py-14 relative z-10">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-lg md:text-xl font-bold text-white">
+                Sector Performance
+              </h2>
+              <Link href="/market" className="text-neon-400 hover:text-neon-300 font-medium text-sm transition-colors duration-300 hover-underline">
+                View Details
+              </Link>
+            </div>
+            <SectorPerformance />
           </div>
-          <SectorPerformance />
-        </div>
-      </section>
+        </section>
+      </SectionReveal>
 
-      {/* Subtle divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Featured Stocks */}
-      <section ref={featuredStocksRef} className="py-12 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-lg md:text-xl font-bold text-white">
-              Featured Stocks
-            </h2>
-            <Link href="/stocks" className="text-neon-400 hover:text-neon-300 font-medium">
-              View All Stocks
-            </Link>
+      <SectionReveal delay={0.05}>
+        <section ref={featuredStocksRef} className="py-14 relative z-10 section-glow">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-lg md:text-xl font-bold text-white">
+                Featured <span className="gradient-text">Stocks</span>
+              </h2>
+              <Link href="/stocks" className="text-neon-400 hover:text-neon-300 font-medium text-sm transition-colors duration-300 hover-underline">
+                View All Stocks
+              </Link>
+            </div>
+            <FeaturedStocks />
           </div>
-          <FeaturedStocks />
-        </div>
-      </section>
+        </section>
+      </SectionReveal>
 
-      {/* Subtle divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* IPO Section */}
-      <section ref={ipoSectionRef} className="py-12 relative z-10">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-lg md:text-xl font-bold text-white">
-              Upcoming IPOs
-            </h2>
-            <Link href="/ipo" className="text-neon-400 hover:text-neon-300 font-medium">
-              View All IPOs
-            </Link>
+      <SectionReveal delay={0.05}>
+        <section ref={ipoSectionRef} className="py-14 relative z-10">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center mb-10">
+              <h2 className="text-lg md:text-xl font-bold text-white">
+                Upcoming IPOs
+              </h2>
+              <Link href="/ipo" className="text-neon-400 hover:text-neon-300 font-medium text-sm transition-colors duration-300 hover-underline">
+                View All IPOs
+              </Link>
+            </div>
+            <IpoSection />
           </div>
-          <IpoSection />
-        </div>
-      </section>
+        </section>
+      </SectionReveal>
 
-      {/* Subtle divider */}
-      <div className="h-px bg-gradient-to-r from-transparent via-neon-400/20 to-transparent mx-auto max-w-5xl"></div>
+      <div className="section-divider mx-auto max-w-5xl" />
 
       {/* Analysis Features */}
-      <section ref={analysisFeaturesRef} className="py-12 relative z-10">
-        <div className="container mx-auto px-4">
-          <AnalysisFeatures />
-        </div>
-      </section>
+      <SectionReveal delay={0.05}>
+        <section ref={analysisFeaturesRef} className="py-14 relative z-10 section-glow">
+          <div className="container mx-auto px-4">
+            <AnalysisFeatures />
+          </div>
+        </section>
+      </SectionReveal>
 
       {/* Call to Action */}
-      <section ref={ctaSectionRef} className="py-12 relative z-10">
-        <div className="container mx-auto px-4">
-          <CtaSection />
-        </div>
-      </section>
+      <SectionReveal delay={0.05}>
+        <section ref={ctaSectionRef} className="py-14 relative z-10">
+          <div className="container mx-auto px-4">
+            <CtaSection />
+          </div>
+        </section>
+      </SectionReveal>
 
       {/* Background glow effects */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute w-[800px] h-[800px] rounded-full bg-neon-400/5 blur-3xl top-1/3 -left-96"></div>
-        <div className="absolute w-[600px] h-[600px] rounded-full bg-cyan-500/5 blur-3xl top-2/3 -right-80"></div>
+        <div className="absolute w-[800px] h-[800px] rounded-full bg-neon-400/[0.03] blur-3xl top-1/3 -left-96 animate-float-slow"></div>
+        <div className="absolute w-[600px] h-[600px] rounded-full bg-cyan-500/[0.03] blur-3xl top-2/3 -right-80 animate-float-delayed"></div>
       </div>
     </div>
   );

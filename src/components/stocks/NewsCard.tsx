@@ -45,7 +45,7 @@ const NewsCard: React.FC<NewsItemProps> = ({
   };
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col bg-gray-900/90 backdrop-blur-lg border border-gray-800/30">
       {bigimage && (
         <div className="relative w-full h-40 overflow-hidden">
           <img 
@@ -71,7 +71,7 @@ const NewsCard: React.FC<NewsItemProps> = ({
         <p className="text-gray-300 line-clamp-3 text-sm">{intro}</p>
       </CardContent>
       
-      <CardFooter className="pt-0 border-t border-gray-700/50 text-xs text-gray-400 flex flex-wrap items-center gap-2">
+      <CardFooter className="pt-0 border-t border-gray-800/30 text-xs text-gray-400 flex flex-wrap items-center gap-2">
         {byline && <span>{byline}</span>}
         <span>{formatDate(date)}</span>
         {timeToRead && (
@@ -90,7 +90,7 @@ const NewsCard: React.FC<NewsItemProps> = ({
           href={url} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="ml-auto text-blue-400 hover:text-blue-300 flex items-center gap-1"
+          className="ml-auto text-neon-400 hover:text-neon-300 flex items-center gap-1"
         >
           Read more
           <ExternalLink className="h-3 w-3" />

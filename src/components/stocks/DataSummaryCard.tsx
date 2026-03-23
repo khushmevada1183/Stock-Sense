@@ -73,7 +73,7 @@ const DataSummaryCard: React.FC<DataSummaryCardProps> = ({
   };
   
   return (
-    <Card className="mb-6 bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+    <Card className="mb-6 bg-gray-900/90 backdrop-blur-lg border-gray-800/30">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
@@ -94,7 +94,7 @@ const DataSummaryCard: React.FC<DataSummaryCardProps> = ({
                     ? (metric.isPositive 
                       ? 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400' 
                       : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400')
-                    : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                    : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-cyan-400'
                   }`}
                 >
                   {metric.icon}

@@ -266,7 +266,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               ${compact && !isMobile ? 'py-1.5 text-sm' : isMobile ? 'py-1.5 sm:py-2 text-sm' : 'py-3'} 
               ${compact && !isMobile ? 'pl-9 pr-4' : isMobile ? 'pl-8 sm:pl-10 pr-4' : 'pl-10 pr-4'} 
               bg-gray-900/90 backdrop-blur-lg border 
-              ${compact && !isMobile ? 'border-gray-700/30 rounded-full' : isMobile ? 'border-gray-700/30 rounded-lg' : 'border-gray-700/50 rounded-lg'} 
+              ${compact && !isMobile ? 'border-gray-700/30 rounded-full' : isMobile ? 'border-gray-700/30 rounded-lg' : 'border-gray-800/30 rounded-lg'} 
               focus:outline-none 
               ${compact ? 'focus:ring-1 focus:ring-neon-400' : 'focus:ring-2 focus:ring-blue-500'} 
               focus:border-transparent 
@@ -285,7 +285,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <button 
             type="submit" 
             className={`absolute inset-y-0 right-0 flex items-center pr-3 
-              ${compact ? 'text-neon-400 hover:text-neon-300 font-mono' : 'text-blue-400 hover:text-blue-300'}`}
+              ${compact ? 'text-neon-400 hover:text-neon-300 font-mono' : 'text-cyan-400 hover:text-blue-300'}`}
             data-testid="search-button"
           >
             {isLoading ? (

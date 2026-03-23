@@ -36,7 +36,7 @@ const FinancialStatements: React.FC<FinancialStatementsProps> = ({ financialData
   // Check if we have any financial data
   if (!financialData || financialData.length === 0) {
     return (
-      <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white">Financial Statements</CardTitle>
         </CardHeader>
@@ -78,7 +78,7 @@ const FinancialStatements: React.FC<FinancialStatementsProps> = ({ financialData
   };
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+    <Card glass>
       <CardHeader>
         <CardTitle className="text-white">Financial Statements</CardTitle>
         <div className="text-sm text-gray-400">

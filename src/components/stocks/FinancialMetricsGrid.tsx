@@ -64,7 +64,7 @@ const FinancialMetric: React.FC<FinancialMetricProps> = ({
   };
 
   return (
-    <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/50">
+    <div className="p-4 glass-card rounded-xl border border-gray-800/30">
       <div className="text-sm text-gray-400 mb-1">{label}</div>
       <div className="text-xl font-semibold text-white">{formatValue(value)}</div>
       
@@ -92,7 +92,7 @@ const FinancialMetricsGrid: React.FC<FinancialMetricsGridProps> = ({
 }) => {
   if (!metrics || metrics.length === 0) {
     return (
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white">{title}</CardTitle>
         </CardHeader>
@@ -104,7 +104,7 @@ const FinancialMetricsGrid: React.FC<FinancialMetricsGridProps> = ({
   }
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
+    <Card glass>
       <CardHeader>
         <CardTitle className="text-white">{title}</CardTitle>
       </CardHeader>

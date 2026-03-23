@@ -19,13 +19,11 @@ export default function SectorPerformance() {
   useEffect(() => {
     const fetchSectorData = async () => {
       try {
-        // Try to fetch sector data via NSE most active (which often includes sector data)
         const response = await stockApi.getNSEMostActive();
         
         if (response && response.success && response.data && response.data.sector_performance) {
-          // Map API response to our SectorData interface
           const sectorData: SectorData[] = response.data.sector_performance
-            .slice(0, 8) // Limit to 8 sectors for display
+            .slice(0, 8)
             .map((sector: any) => ({
               name: sector.sector_name || sector.name,
               changePercent: parseFloat(sector.change_percent || sector.percent_change || '0'),
@@ -34,14 +32,13 @@ export default function SectorPerformance() {
           
           setSectors(sectorData);
         } else {
-          // Fallback to mock data
           setSectors(mockSectors);
           console.log('API returned unexpected data structure for sectors, using fallback');
         }
       } catch (err) {
         console.error('Failed to fetch sector performance:', err);
         setError('Failed to load sector performance');
-        setSectors(mockSectors); // Fallback to mock data
+        setSectors(mockSectors);
       } finally {
         setLoading(false);
       }
@@ -50,7 +47,6 @@ export default function SectorPerformance() {
     fetchSectorData();
   }, []);
 
-  // Mock data for development/fallback
   const mockSectors: SectorData[] = [
     { name: 'Information Technology', changePercent: 1.8 },
     { name: 'Financial Services', changePercent: -0.5 },
@@ -64,12 +60,12 @@ export default function SectorPerformance() {
 
   if (loading) {
     return (
-      <div ref={sectionRef} className="animate-pulse">
+      <div ref={sectionRef}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-700/50">
-              <div className="h-4 bg-gray-700 rounded w-3/4 mb-3"></div>
-              <div className="h-6 bg-gray-700 rounded w-1/2"></div>
+            <div key={i} className="glass-card rounded-xl p-4">
+              <div className="h-4 bg-gray-800/60 rounded-lg w-3/4 mb-3 shimmer" />
+              <div className="h-6 bg-gray-800/60 rounded-lg w-1/2 shimmer" />
             </div>
           ))}
         </div>
@@ -79,30 +75,52 @@ export default function SectorPerformance() {
 
   if (error) {
     return (
-      <div className="bg-red-900/30 border border-red-800 rounded-lg p-4 text-red-400">
+      <div className="glass-card rounded-xl p-4 border-red-500/20 text-red-400">
         {error}
       </div>
     );
   }
 
+  // Find the max absolute change for bar scaling
+  const maxAbsChange = Math.max(...sectors.map(s => Math.abs(s.changePercent)), 1);
+
   return (
     <div ref={sectionRef} className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {sectors.map((sector, index) => (
-        <div 
-          key={sector.name || index}
-          className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-700/50 transition-all hover:border-gray-600/70 hover:shadow-lg hover:shadow-blue-900/10"
-        >
-          <h3 className="font-medium text-gray-300 mb-1 text-sm">{sector.name}</h3>
-          <div className={`flex items-center font-semibold text-lg ${sector.changePercent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-            {sector.changePercent >= 0 ? (
-              <ArrowUp className="w-4 h-4 mr-1" />
-            ) : (
-              <ArrowDown className="w-4 h-4 mr-1" />
-            )}
-            {Math.abs(sector.changePercent).toFixed(2)}%
+      {sectors.map((sector, index) => {
+        const positive = sector.changePercent >= 0;
+        const barWidth = (Math.abs(sector.changePercent) / maxAbsChange) * 100;
+        
+        return (
+          <div 
+            key={sector.name || index}
+            className="glass-card card-shine rounded-xl p-4 group relative overflow-hidden"
+          >
+            {/* Performance bar (background accent) */}
+            <div 
+              className={`absolute bottom-0 left-0 h-[3px] rounded-full transition-all duration-700 ${
+                positive 
+                  ? 'bg-gradient-to-r from-green-500/60 to-green-400/30' 
+                  : 'bg-gradient-to-r from-red-500/60 to-red-400/30'
+              }`}
+              style={{ width: `${barWidth}%` }}
+            />
+            
+            <h3 className="font-medium text-gray-400 mb-2 text-sm leading-tight group-hover:text-gray-300 transition-colors duration-300">
+              {sector.name}
+            </h3>
+            <div className={`flex items-center font-bold text-lg ${
+              positive ? 'text-green-400' : 'text-red-400'
+            }`}>
+              {positive ? (
+                <ArrowUp className="w-4 h-4 mr-1 animate-subtle-bounce" />
+              ) : (
+                <ArrowDown className="w-4 h-4 mr-1" />
+              )}
+              {Math.abs(sector.changePercent).toFixed(2)}%
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

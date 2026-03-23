@@ -43,9 +43,9 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
       return null; 
     }
     return (
-      <div className="flex justify-between py-2 border-b border-gray-700 last:border-b-0">
-        <span className="text-gray-400 text-sm">{label}</span>
-        <span className="text-white font-medium text-sm">{typeof value === 'number' ? value.toFixed(2) : value}{unit}</span>
+      <div className="flex justify-between py-3 border-b border-gray-800/30 last:border-b-0">
+        <span className="text-gray-500 text-sm">{label}</span>
+        <span className="text-gray-200 font-medium text-sm">{typeof value === 'number' ? value.toFixed(2) : value}{unit}</span>
       </div>
     );
   };
@@ -54,18 +54,18 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
     <div className="space-y-8">
       {/* Financial Ratios Section */}
       {!loadingRatios && financialRatios && Object.keys(financialRatios).length > 0 && (
-        <Card className="bg-gray-700 border-gray-600 text-white">
+        <Card glass className="text-white">
           <CardHeader>
             <CardTitle className="text-xl font-semibold flex items-center">
-              <BarChart4 className="w-6 h-6 mr-2 text-indigo-400" />
+              <BarChart4 className="w-5 h-5 mr-2.5 text-neon-400" />
               Key Financial Ratios
             </CardTitle>
-            <CardDescription className="text-gray-400">
+            <CardDescription className="text-gray-500">
               Important financial metrics for {companyName}.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8">
               {renderRatioItem("P/E Ratio", financialRatios.peRatio ?? pe)} 
               {renderRatioItem("P/B Ratio", financialRatios.pbRatio)}
               {renderRatioItem("Dividend Yield", financialRatios.dividendYield ?? dividendYield, '%')}
@@ -84,12 +84,9 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
       )}
       {loadingRatios && <LoadingSpinner />}
       {!loadingRatios && errorRatios && (
-        <Card className="bg-gray-700 border-gray-600 text-white">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold text-red-400">Error</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-red-300">{errorRatios}</p>
+        <Card glass>
+          <CardContent className="p-6">
+            <p className="text-red-400 text-sm">{errorRatios}</p>
           </CardContent>
         </Card>
       )}
@@ -102,12 +99,9 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
       )}
       {loadingStatements && <LoadingSpinner />}
       {!loadingStatements && errorStatements && (
-        <Card className="bg-gray-700 border-gray-600 text-white">
-          <CardHeader>
-            <CardTitle className="text-xl font-semibold text-red-400">Error</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-red-300">{errorStatements}</p>
+        <Card glass>
+          <CardContent className="p-6">
+            <p className="text-red-400 text-sm">{errorStatements}</p>
           </CardContent>
         </Card>
       )}

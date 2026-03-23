@@ -13,6 +13,9 @@ import {
   Brain,
   Users,
   MessageSquare,
+  MessageCircle,
+  Newspaper,
+  Star,
   BarChart3,
   Zap,
   Globe,
@@ -26,6 +29,8 @@ interface SentimentData {
   analyst: number;
   retail: number;
   institutional: number;
+  forum: number;
+  rating: number;
 }
 
 interface SentimentSource {
@@ -69,7 +74,9 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
         news: Math.floor(Math.random() * 50) + 10, // Random between 10-60
         analyst: Math.floor(Math.random() * 40) + 30, // Random between 30-70
         retail: Math.floor(Math.random() * 50) + 5, // Random between 5-55
-        institutional: Math.floor(Math.random() * 30) + 40 // Random between 40-70
+        institutional: Math.floor(Math.random() * 30) + 40, // Random between 40-70
+        forum: Math.floor(Math.random() * 40) + 10, // Random between 10-50
+        rating: Math.floor(Math.random() * 30) + 50 // Random between 50-80
       };
 
       const mockSources: SentimentSource[] = [
@@ -170,9 +177,9 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
   };
 
   const getSentimentIcon = (sentiment: number) => {
-    if (sentiment >= 30) return <ThumbsUp className="w-5 h-5" />;
-    if (sentiment >= -30) return <Activity className="w-5 h-5" />;
-    return <ThumbsDown className="w-5 h-5" />;
+    if (sentiment >= 30) return <ThumbsUp className="w-5 h-5 text-neon-400" />;
+    if (sentiment >= -30) return <Activity className="w-5 h-5 text-neon-400" />;
+    return <ThumbsDown className="w-5 h-5 text-neon-400" />;
   };
 
   const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
@@ -187,11 +194,11 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
-          <Card key={i} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <Card key={i} glass>
             <CardContent className="p-6">
               <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-                <div className="h-32 bg-gray-700 rounded"></div>
+                <div className="h-4 bg-gray-800/60 rounded shimmer w-1/4"></div>
+                <div className="h-32 bg-gray-800/60 rounded shimmer"></div>
               </div>
             </CardContent>
           </Card>
@@ -204,10 +211,10 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
     <div ref={containerRef} className="space-y-6">
       {/* Overall Sentiment Score */}
       {sentimentData && (
-        <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+        <Card glass>
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Brain className="w-5 h-5" />
+              <Brain className="w-5 h-5 text-neon-400" />
               Overall Sentiment Score
             </CardTitle>
           </CardHeader>
@@ -228,35 +235,35 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
             {/* Sentiment Breakdown */}
                         {/* Sentiment Breakdown */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-              <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 text-center border border-gray-700/50">
+              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
                 <div className="flex items-center justify-center mb-2">
-                  <MessageSquare className="w-5 h-5 text-blue-400" />
+                  <MessageSquare className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.social}</div>
                 <div className="text-sm text-gray-400">Social Media</div>
               </div>
-              <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 text-center border border-gray-700/50">
+              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
                 <div className="flex items-center justify-center mb-2">
                   <Newspaper className="w-5 h-5 text-green-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.news}</div>
                 <div className="text-sm text-gray-400">News Articles</div>
               </div>
-              <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 text-center border border-gray-700/50">
+              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
                 <div className="flex items-center justify-center mb-2">
                   <Users className="w-5 h-5 text-purple-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.analyst}</div>
                 <div className="text-sm text-gray-400">Analyst Reports</div>
               </div>
-              <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 text-center border border-gray-700/50">
+              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
                 <div className="flex items-center justify-center mb-2">
                   <MessageCircle className="w-5 h-5 text-orange-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.forum}</div>
                 <div className="text-sm text-gray-400">Forums</div>
               </div>
-              <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 text-center border border-gray-700/50">
+              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
                 <div className="flex items-center justify-center mb-2">
                   <Star className="w-5 h-5 text-yellow-400" />
                 </div>
@@ -269,17 +276,17 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
       )}
 
       {/* Sentiment Sources */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Zap className="w-5 h-5" />
+            <Zap className="w-5 h-5 text-neon-400" />
             Sentiment Sources
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {sources.map((source, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-2">
                     <h4 className="text-white font-medium">{source.source}</h4>
@@ -297,7 +304,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
                   <div className="text-sm text-gray-400 mb-1">Trending Topics:</div>
                   <div className="flex flex-wrap gap-1">
                     {source.trending_topics.map((topic, topicIndex) => (
-                      <span key={topicIndex} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded">
+                      <span key={topicIndex} className="px-2 py-1 bg-cyan-500/10 text-cyan-400 text-xs rounded">
                         {topic}
                       </span>
                     ))}
@@ -308,7 +315,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
                   <div className="text-sm text-gray-400 mb-1">Key Mentions:</div>
                   <div className="flex flex-wrap gap-1">
                     {source.key_mentions.map((mention, mentionIndex) => (
-                      <span key={mentionIndex} className="px-2 py-1 bg-gray-600/50 text-gray-300 text-xs rounded">
+                      <span key={mentionIndex} className="px-2 py-1 bg-gray-800/40 text-gray-300 text-xs rounded">
                         {mention}
                       </span>
                     ))}
@@ -321,17 +328,17 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
       </Card>
 
       {/* Market Psychology Indicators */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Heart className="w-5 h-5" />
+            <Heart className="w-5 h-5 text-neon-400" />
             Market Psychology Indicators
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {marketMood.map((indicator, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium">{indicator.name}</h4>
                   {getTrendIcon(indicator.trend)}
@@ -349,10 +356,10 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
       </Card>
 
       {/* Sentiment Analysis Insights */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Brain className="w-5 h-5" />
+            <Brain className="w-5 h-5 text-neon-400" />
             AI Insights
           </CardTitle>
         </CardHeader>
@@ -360,9 +367,9 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyNa
           <div className="space-y-3">
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
               <div className="flex items-start gap-2">
-                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                <div className="w-2 h-2 bg-neon-400 rounded-full mt-2"></div>
                 <div>
-                  <div className="text-blue-400 font-medium text-sm">Sentiment Trend</div>
+                  <div className="text-cyan-400 font-medium text-sm">Sentiment Trend</div>
                   <div className="text-gray-300 text-sm">
                     {sentimentData && sentimentData.overall > 30 
                       ? "Positive sentiment is building momentum across multiple platforms. Social media engagement is increasing with bullish discussions."

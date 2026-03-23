@@ -36,7 +36,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({
 }) => {
   if (!newsItems || newsItems.length === 0) {
     return (
-      <div className="rounded-lg p-6 bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
+      <div className="rounded-lg p-6 bg-gray-900/90 backdrop-blur-lg border border-gray-800/30">
         <h2 className="text-xl font-semibold text-white mb-4">{title}</h2>
         <p className="text-gray-400">No news items available at the moment.</p>
       </div>
@@ -46,7 +46,7 @@ const NewsGrid: React.FC<NewsGridProps> = ({
   const displayedItems = newsItems.slice(0, maxItems);
 
   return (
-    <div className="rounded-lg p-6 bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
+    <div className="rounded-lg p-6 bg-gray-900/90 backdrop-blur-lg border border-gray-800/30">
       <h2 className="text-xl font-semibold text-white mb-4">{title}</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

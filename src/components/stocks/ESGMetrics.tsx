@@ -218,7 +218,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
       case 'Environmental':
         return <Leaf className="h-5 w-5 text-green-400" />;
       case 'Social':
-        return <Heart className="h-5 w-5 text-blue-400" />;
+        return <Heart className="h-5 w-5 text-cyan-400" />;
       case 'Governance':
         return <Scale className="h-5 w-5 text-purple-400" />;
       default:
@@ -244,7 +244,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
       case 'Completed':
         return 'bg-green-500/20 text-green-400 border-green-500/30';
       case 'In Progress':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        return 'bg-cyan-500/10 text-cyan-400 border-blue-500/30';
       case 'Planned':
         return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
       default:
@@ -266,7 +266,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
       {/* ESG Overview Scores */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {esgScores.map((score, index) => (
-          <Card key={index} className="esg-card bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+          <Card key={index} glass>
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-3 text-lg">
                 {getCategoryIcon(score.category)}
@@ -287,7 +287,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
                   </div>
                 </div>
                 
-                <div className="w-full bg-gray-600 rounded-full h-2">
+                <div className="w-full bg-gray-800/60 rounded-full h-1.5">
                   <div 
                     className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
                     style={{ width: `${(score.score / score.maxScore) * 100}%` }}
@@ -302,17 +302,17 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
       </div>
 
       {/* ESG Initiatives */}
-      <Card className="esg-card bg-gray-700 border-gray-600">
+      <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-indigo-400" />
+            <Award className="h-5 w-5 text-neon-400" />
             ESG Initiatives
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {initiatives.map((initiative, index) => (
-              <div key={index} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-600">
+              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     {getCategoryIcon(initiative.category)}
@@ -345,7 +345,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
       </Card>
 
       {/* ESG Risks */}
-      <Card className="esg-card bg-gray-700 border-gray-600">
+      <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-400" />
@@ -355,7 +355,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
         <CardContent>
           <div className="space-y-4">
             {risks.map((risk, index) => (
-              <div key={index} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border border-gray-600">
+              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-semibold text-white">{risk.factor}</h3>
                   <div className="flex items-center gap-2">
@@ -383,10 +383,10 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
       </Card>
 
       {/* Industry Comparison */}
-      <Card className="esg-card bg-gray-700 border-gray-600">
+      <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Globe className="h-5 w-5 text-blue-400" />
+            <Globe className="h-5 w-5 text-cyan-400" />
             Industry ESG Comparison
           </CardTitle>
         </CardHeader>
@@ -395,15 +395,15 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
             {industryComparison.map((company, index) => (
               <div 
                 key={index} 
-                className={`bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 border ${
-                  company.isCurrentCompany ? 'border-indigo-500' : 'border-gray-600'
+                className={`glass-card rounded-xl p-4 border ${
+                  company.isCurrentCompany ? 'border-indigo-500' : 'border-gray-800/30'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-white">{company.company}</h3>
                     {company.isCurrentCompany && (
-                      <CheckCircle className="h-4 w-4 text-indigo-400" />
+                      <CheckCircle className="h-4 w-4 text-neon-400" />
                     )}
                   </div>
                   <span className={`text-lg font-bold ${getScoreColor(company.overallScore)}`}>

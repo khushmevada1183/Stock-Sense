@@ -237,7 +237,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       'bg-yellow-500/20 text-yellow-400', // 1st - Gold
       'bg-gray-400/20 text-gray-300',     // 2nd - Silver
       'bg-orange-500/20 text-orange-400', // 3rd - Bronze
-      'bg-blue-500/20 text-blue-400',     // 4th+
+      'bg-cyan-500/10 text-cyan-400',     // 4th+
       'bg-purple-500/20 text-purple-400'  // 5th+
     ];
     return colors[Math.min(rank - 1, colors.length - 1)];
@@ -247,11 +247,11 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
-          <Card key={i} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <Card key={i} glass>
             <CardContent className="p-6">
               <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-                <div className="h-32 bg-gray-700 rounded"></div>
+                <div className="h-4 bg-gray-800/60 rounded shimmer w-1/4"></div>
+                <div className="h-32 bg-gray-800/60 rounded shimmer"></div>
               </div>
             </CardContent>
           </Card>
@@ -263,17 +263,17 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
   return (
     <div ref={containerRef} className="space-y-6">
       {/* Industry Overview */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Building2 className="w-5 h-5" />
+            <Building2 className="w-5 h-5 text-neon-400" />
             {industry} Industry Overview
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {industryMetrics.map((metric, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium text-sm">{metric.name}</h4>
                   <div className={`px-2 py-1 rounded text-xs ${getRankBadge(metric.rank)}`}>
@@ -301,10 +301,10 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       </Card>
 
       {/* Competitive Landscape */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Users className="w-5 h-5" />
+            <Users className="w-5 h-5 text-neon-400" />
             Competitive Landscape
           </CardTitle>
         </CardHeader>
@@ -312,7 +312,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-700">
+                <tr className="border-b border-gray-800/30">
                   <th className="text-left text-gray-400 font-medium py-3">Rank</th>
                   <th className="text-left text-gray-400 font-medium py-3">Company</th>
                   <th className="text-right text-gray-400 font-medium py-3">Market Cap</th>
@@ -323,7 +323,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
               </thead>
               <tbody>
                 {competitors.map((competitor, index) => (
-                  <tr key={index} className="border-b border-gray-700/50 hover:bg-gray-700/30">
+                  <tr key={index} className="border-b border-gray-800/30 hover:bg-gray-700/30">
                     <td className="py-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${getRankBadge(competitor.rank)}`}>
                         {competitor.rank}
@@ -353,10 +353,10 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       </Card>
 
       {/* Industry Trends */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" />
+            <TrendingUp className="w-5 h-5 text-neon-400" />
             Industry Trends & Outlook
           </CardTitle>
         </CardHeader>
@@ -383,29 +383,29 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       </Card>
 
       {/* Sector Performance */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
+            <BarChart3 className="w-5 h-5 text-neon-400" />
             Sector Performance Analysis
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Performance Metrics */}
-            <div className="bg-gray-700/50 rounded-lg p-4 text-center">
+            <div className="glass-card rounded-xl p-4 text-center">
               <div className="text-green-400 text-2xl font-bold mb-1">+18.5%</div>
               <div className="text-gray-400 text-sm">YTD Performance</div>
               <div className="text-xs text-gray-500 mt-1">vs Market: +12.3%</div>
             </div>
             
-            <div className="bg-gray-700/50 rounded-lg p-4 text-center">
-              <div className="text-blue-400 text-2xl font-bold mb-1">1.2x</div>
+            <div className="glass-card rounded-xl p-4 text-center">
+              <div className="text-cyan-400 text-2xl font-bold mb-1">1.2x</div>
               <div className="text-gray-400 text-sm">Beta vs Market</div>
               <div className="text-xs text-gray-500 mt-1">Moderate volatility</div>
             </div>
             
-            <div className="bg-gray-700/50 rounded-lg p-4 text-center">
+            <div className="glass-card rounded-xl p-4 text-center">
               <div className="text-yellow-400 text-2xl font-bold mb-1">Rs 4.2L Cr</div>
               <div className="text-gray-400 text-sm">Total Market Cap</div>
               <div className="text-xs text-gray-500 mt-1">15% of IT sector</div>
@@ -421,7 +421,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
                 <span className="text-gray-300">Strong demand for digital transformation services</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Globe className="w-4 h-4 text-blue-400" />
+                <Globe className="w-4 h-4 text-cyan-400" />
                 <span className="text-gray-300">Expansion in North American and European markets</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
@@ -438,10 +438,10 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       </Card>
 
       {/* Risk Factors */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Shield className="w-5 h-5" />
+            <Shield className="w-5 h-5 text-neon-400" />
             Industry Risk Assessment
           </CardTitle>
         </CardHeader>
@@ -473,7 +473,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
                   <div className="text-gray-300 text-sm">AI and automation services</div>
                 </div>
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-                  <div className="font-medium text-blue-400 text-sm">High</div>
+                  <div className="font-medium text-neon-400 text-sm">High</div>
                   <div className="text-gray-300 text-sm">Cloud migration projects</div>
                 </div>
                 <div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3">

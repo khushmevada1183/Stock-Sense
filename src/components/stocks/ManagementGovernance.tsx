@@ -294,11 +294,11 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
-          <Card key={i} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <Card key={i} glass>
             <CardContent className="p-6">
               <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-                <div className="h-32 bg-gray-700 rounded"></div>
+                <div className="h-4 bg-gray-800/60 rounded shimmer w-1/4"></div>
+                <div className="h-32 bg-gray-800/60 rounded shimmer"></div>
               </div>
             </CardContent>
           </Card>
@@ -310,21 +310,21 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
   return (
     <div ref={containerRef} className="space-y-6">
       {/* Executive Team */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Users className="w-5 h-5" />
+            <Users className="w-5 h-5 text-neon-400" />
             Executive Leadership Team
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {executives.map((executive, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h4 className="text-white font-medium">{executive.name}</h4>
-                    <p className="text-blue-400 text-sm">{executive.position}</p>
+                    <p className="text-neon-400 text-sm">{executive.position}</p>
                   </div>
                   <div className="text-right">
                     <div className="text-white text-sm">{executive.tenure}y</div>
@@ -338,7 +338,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
                     <span className="text-gray-300">{executive.education}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Building className="w-4 h-4 text-blue-400" />
+                    <Building className="w-4 h-4 text-cyan-400" />
                     <span className="text-gray-300">{executive.experience} years experience</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -362,10 +362,10 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       </Card>
 
       {/* Governance Score */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Shield className="w-5 h-5" />
+            <Shield className="w-5 h-5 text-neon-400" />
             Corporate Governance Score
           </CardTitle>
         </CardHeader>
@@ -378,7 +378,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {governanceMetrics.map((metric, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium text-sm">{metric.category}</h4>
                   <div className={`px-2 py-1 rounded text-xs flex items-center gap-1 ${getStatusColor(metric.status)}`}>
@@ -392,9 +392,9 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
                     <span className="text-gray-400">Score</span>
                     <span className="text-white">{metric.score}/{metric.maxScore}</span>
                   </div>
-                  <div className="w-full bg-gray-600 rounded-full h-2">
+                  <div className="w-full bg-gray-800/60 rounded-full h-1.5">
                     <div 
-                      className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full"
+                      className="bg-gradient-to-r from-neon-400 to-cyan-400 h-1.5 rounded-full"
                       style={{ width: `${(metric.score / metric.maxScore) * 100}%` }}
                     ></div>
                   </div>
@@ -405,7 +405,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
                 <div className="space-y-1">
                   {metric.factors.map((factor, factorIndex) => (
                     <div key={factorIndex} className="flex items-center gap-1 text-xs text-gray-500">
-                      <div className="w-1 h-1 bg-blue-400 rounded-full"></div>
+                      <div className="w-1 h-1 bg-neon-400 rounded-full"></div>
                       <span>{factor}</span>
                     </div>
                   ))}
@@ -417,17 +417,17 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       </Card>
 
       {/* Compliance Status */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <FileText className="w-5 h-5" />
+            <FileText className="w-5 h-5 text-neon-400" />
             Regulatory Compliance
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {compliance.map((item, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium">{item.area}</h4>
                   <div className="flex items-center gap-2">
@@ -456,17 +456,17 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       </Card>
 
       {/* Recent Corporate Actions */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
+            <BarChart3 className="w-5 h-5 text-neon-400" />
             Recent Corporate Actions
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             {corporateActions.map((action, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h4 className="text-white font-medium">{action.type}</h4>
@@ -488,28 +488,28 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       </Card>
 
       {/* Management Effectiveness Metrics */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" />
+            <TrendingUp className="w-5 h-5 text-neon-400" />
             Management Effectiveness
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gray-700/50 rounded-lg p-4 text-center">
+            <div className="glass-card rounded-xl p-4 text-center">
               <div className="text-green-400 text-2xl font-bold mb-1">18.5%</div>
               <div className="text-gray-400 text-sm">ROE (Return on Equity)</div>
               <div className="text-xs text-gray-500 mt-1">Above peer average</div>
             </div>
             
-            <div className="bg-gray-700/50 rounded-lg p-4 text-center">
-              <div className="text-blue-400 text-2xl font-bold mb-1">24.2%</div>
+            <div className="glass-card rounded-xl p-4 text-center">
+              <div className="text-cyan-400 text-2xl font-bold mb-1">24.2%</div>
               <div className="text-gray-400 text-sm">ROIC (Return on Capital)</div>
               <div className="text-xs text-gray-500 mt-1">Efficient capital use</div>
             </div>
             
-            <div className="bg-gray-700/50 rounded-lg p-4 text-center">
+            <div className="glass-card rounded-xl p-4 text-center">
               <div className="text-yellow-400 text-2xl font-bold mb-1">1.8%</div>
               <div className="text-gray-400 text-sm">Employee Turnover</div>
               <div className="text-xs text-gray-500 mt-1">Below industry avg</div>
@@ -528,7 +528,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
                 <span className="text-gray-300">Experienced management team</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <Eye className="w-4 h-4 text-blue-400" />
+                <Eye className="w-4 h-4 text-cyan-400" />
                 <span className="text-gray-300">Transparent communication</span>
               </div>
               <div className="flex items-center gap-2 text-sm">

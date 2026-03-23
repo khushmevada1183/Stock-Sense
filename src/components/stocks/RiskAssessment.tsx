@@ -143,9 +143,9 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
     if (risk > 75) colorClass = 'bg-red-500';
     
     return (
-      <div className="w-full bg-gray-800 rounded-full h-2">
+      <div className="w-full bg-gray-800/60 rounded-full h-1.5">
         <div 
-          className={`h-2 rounded-full transition-all duration-300 ${colorClass}`}
+          className={`h-1.5 rounded-full transition-all duration-300 ${colorClass}`}
           style={{ width: `${width}%` }}
         />
       </div>
@@ -156,17 +156,17 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
   const OverallIcon = overallRiskInfo.icon;
 
   return (
-    <Card className={`bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg ${className}`}>
+    <Card glass className={className}>
       <CardHeader className="pb-3">
         <CardTitle className="text-white flex items-center gap-2">
-          <OverallIcon className="w-5 h-5 text-orange-400" />
+          <OverallIcon className="w-5 h-5 text-neon-400" />
           Risk Assessment
         </CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Overall Risk Score */}
-        <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700/30">
+        <div className="p-4 glass-card rounded-xl">
           <div className="flex items-center justify-between mb-2">
             <span className="text-gray-300 font-medium">Overall Risk</span>
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${overallRiskInfo.color}`}>
@@ -188,7 +188,7 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
           {/* Volatility Risk */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-blue-400" />
+              <Activity className="w-4 h-4 text-cyan-400" />
               <span className="text-sm text-gray-300">Day Volatility</span>
             </div>
             <div className="flex items-center gap-2">
@@ -224,7 +224,7 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
           {/* Volume Risk */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-indigo-400" />
+              <BarChart3 className="w-4 h-4 text-neon-400" />
               <span className="text-sm text-gray-300">Volume Pattern</span>
             </div>
             <div className="flex items-center gap-2">
@@ -261,7 +261,7 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
         </div>
 
         {/* Risk Summary */}
-        <div className="pt-3 border-t border-gray-700/50">
+        <div className="pt-3 border-t border-gray-800/30">
           <div className="text-xs text-gray-400 space-y-1">
             <div>• Risk calculated from volatility, technical trends, and market position</div>
             <div>• Higher scores indicate increased potential for price fluctuation</div>

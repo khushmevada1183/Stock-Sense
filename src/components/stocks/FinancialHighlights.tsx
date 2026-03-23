@@ -40,12 +40,12 @@ interface HighlightMetric {
 const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData }) => {
   if (!financialData || financialData.length === 0) {
     return (
-      <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white">Financial Highlights</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-400">No financial data available.</p>
+          <p className="text-gray-500">No financial data available.</p>
         </CardContent>
       </Card>
     );
@@ -74,12 +74,8 @@ const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData
   // Format value with commas for thousands
   const formatValue = (value?: string) => {
     if (!value) return 'N/A';
-    
-    // Check if value is a number
     const num = parseFloat(value);
     if (isNaN(num)) return value;
-    
-    // Format with commas
     return num.toLocaleString('en-IN');
   };
 
@@ -131,27 +127,27 @@ const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData
   const periodType = latestFinancialPeriod.Type === 'Annual' ? 'Annual' : 'Quarterly';
   
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+    <Card glass>
       <CardHeader>
         <CardTitle className="text-white">
           Financial Highlights ({periodType})
         </CardTitle>
-        <div className="text-sm text-gray-400">
+        <div className="text-sm text-gray-500">
           Period: {latestFinancialPeriod.EndDate.split('-')[0]} - FY{latestFinancialPeriod.FiscalYear}
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {highlightMetrics.map((metric, index) => (
-            <div key={index} className="bg-gray-750 rounded-lg p-4 hover:bg-gray-700/80 transition-colors">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="text-gray-400 font-medium text-sm">{metric.title}</h3>
-                <div className={`p-2 rounded-lg ${
+            <div key={index} className="glass-card rounded-xl p-4 group transition-all duration-300">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wider">{metric.title}</h3>
+                <div className={`p-2 rounded-lg transition-colors duration-300 ${
                   typeof metric.isPositive === 'boolean' 
                     ? metric.isPositive 
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-red-500/20 text-red-400'
-                    : 'bg-indigo-500/20 text-indigo-400'
+                      ? 'bg-green-500/10 text-green-400 group-hover:bg-green-500/15'
+                      : 'bg-red-500/10 text-red-400 group-hover:bg-red-500/15'
+                    : 'bg-neon-400/10 text-neon-400 group-hover:bg-neon-400/15'
                 }`}>
                   {metric.icon}
                 </div>
@@ -173,4 +169,4 @@ const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData
   );
 };
 
-export default FinancialHighlights; 
+export default FinancialHighlights;

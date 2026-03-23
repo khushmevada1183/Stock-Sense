@@ -204,7 +204,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'FII': return 'text-blue-400 bg-blue-500/20';
+      case 'FII': return 'text-cyan-400 bg-neon-400/10';
       case 'DII': return 'text-green-400 bg-green-500/20';
       case 'MF': return 'text-purple-400 bg-purple-500/20';
       case 'Insurance': return 'text-yellow-400 bg-yellow-500/20';
@@ -236,11 +236,11 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
     return (
       <div className="space-y-6">
         {[1, 2, 3].map(i => (
-          <Card key={i} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <Card key={i} glass>
             <CardContent className="p-6">
               <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-                <div className="h-32 bg-gray-700 rounded"></div>
+                <div className="h-4 bg-gray-800/60 rounded shimmer w-1/4"></div>
+                <div className="h-32 bg-gray-800/60 rounded shimmer"></div>
               </div>
             </CardContent>
           </Card>
@@ -252,16 +252,16 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
   return (
     <div ref={containerRef} className="space-y-6">
       {/* Institutional Holding Summary */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Building className="w-5 h-5" />
+            <Building className="w-5 h-5 text-neon-400" />
             Institutional Holdings Overview
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-6 mb-6">
-            <div className="text-4xl font-bold text-blue-400 mb-2">{totalInstitutional.toFixed(1)}%</div>
+            <div className="text-4xl font-bold text-cyan-400 mb-2">{totalInstitutional.toFixed(1)}%</div>
             <div className="text-gray-400">Total Institutional Holding</div>
             <div className="text-sm text-gray-500 mt-1">
               {formatCurrency(marketCap * totalInstitutional / 100)} market value
@@ -270,7 +270,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {holdings.map((holding, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium text-sm">{holding.institution}</h4>
                   <div className={`px-2 py-1 rounded text-xs ${getTypeColor(holding.type)}`}>
@@ -303,17 +303,17 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
       </Card>
 
       {/* FII vs DII Flows */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5" />
+            <TrendingUp className="w-5 h-5 text-neon-400" />
             FII vs DII Flow Analysis
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {flows.map((flow, index) => (
-              <div key={index} className="bg-gray-700/50 rounded-lg p-4">
+              <div key={index} className="glass-card rounded-xl p-4">
                 <div className="flex justify-between items-start mb-3">
                   <div className="text-white font-medium">
                     {new Date(flow.date).toLocaleDateString('en-US', { 
@@ -349,7 +349,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
                   </div>
                   
                   <div className="text-center">
-                    <div className="text-lg font-bold text-blue-400">
+                    <div className="text-lg font-bold text-cyan-400">
                       {((Math.abs(flow.netFlow) / marketCap) * 100).toFixed(2)}%
                     </div>
                     <div className="text-gray-400 text-sm">of Market Cap</div>
@@ -362,10 +362,10 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
       </Card>
 
       {/* Top Institutional Investors */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Target className="w-5 h-5" />
+            <Target className="w-5 h-5 text-neon-400" />
             Top Institutional Investors
           </CardTitle>
         </CardHeader>
@@ -373,7 +373,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-700">
+                <tr className="border-b border-gray-800/30">
                   <th className="text-left text-gray-400 font-medium py-3">Institution</th>
                   <th className="text-center text-gray-400 font-medium py-3">Type</th>
                   <th className="text-right text-gray-400 font-medium py-3">Shares Held</th>
@@ -384,7 +384,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
               </thead>
               <tbody>
                 {topInstitutions.map((institution, index) => (
-                  <tr key={index} className="border-b border-gray-700/50 hover:bg-gray-700/30">
+                  <tr key={index} className="border-b border-gray-800/30 hover:bg-gray-700/30">
                     <td className="py-3">
                       <div className="text-white font-medium">{institution.name}</div>
                     </td>
@@ -417,23 +417,23 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
       </Card>
 
       {/* Investment Analysis */}
-      <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+      <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5" />
+            <BarChart3 className="w-5 h-5 text-neon-400" />
             Investment Pattern Analysis
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* FII vs DII Comparison */}
-            <div className="bg-gray-700/50 rounded-lg p-4">
+            <div className="glass-card rounded-xl p-4">
               <h4 className="text-white font-medium mb-4">FII vs DII Holding Pattern</h4>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Foreign Institutional</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-20 bg-gray-600 rounded-full h-2">
+                    <div className="w-20 bg-gray-800/60 rounded-full h-1.5">
                       <div className="bg-blue-500 h-2 rounded-full" style={{width: '74%'}}></div>
                     </div>
                     <span className="text-white text-sm">18.5%</span>
@@ -442,7 +442,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400">Domestic Institutional</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-20 bg-gray-600 rounded-full h-2">
+                    <div className="w-20 bg-gray-800/60 rounded-full h-1.5">
                       <div className="bg-green-500 h-2 rounded-full" style={{width: '56%'}}></div>
                     </div>
                     <span className="text-white text-sm">13.9%</span>
@@ -452,7 +452,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
             </div>
 
             {/* Recent Trends */}
-            <div className="bg-gray-700/50 rounded-lg p-4">
+            <div className="glass-card rounded-xl p-4">
               <h4 className="text-white font-medium mb-4">Recent Trends</h4>
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm">
@@ -464,7 +464,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
                   <span className="text-gray-300">DII holding slight decline (-0.8%)</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <Activity className="w-4 h-4 text-blue-400" />
+                  <Activity className="w-4 h-4 text-cyan-400" />
                   <span className="text-gray-300">Mutual fund participation stable</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
@@ -481,9 +481,9 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                 <div className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-neon-400 rounded-full mt-2"></div>
                   <div>
-                    <div className="text-blue-400 font-medium text-sm">Strong Institutional Support</div>
+                    <div className="text-cyan-400 font-medium text-sm">Strong Institutional Support</div>
                     <div className="text-gray-300 text-sm">
                       High institutional holding at {totalInstitutional.toFixed(1)}% indicates strong confidence
                       from professional investors and fund managers.

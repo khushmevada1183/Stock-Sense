@@ -72,7 +72,7 @@ const StockLogo: React.FC<StockLogoProps> = ({ symbol, size = 40, className = ''
   if (isLoading) {
     return (
       <div 
-        className={`bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse ${className}`} 
+        className={`bg-gray-200 dark:bg-gray-800/60 rounded shimmer-full animate-pulse ${className}`} 
         style={{ width: `${size}px`, height: `${size}px` }}
       />
     );

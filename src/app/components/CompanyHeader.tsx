@@ -79,7 +79,7 @@ const CompanyHeader = ({
           <span>₹{yearHigh.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
         </div>
         
-        <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
+        <div className="relative h-2 bg-gray-200 dark:bg-gray-800/60 rounded shimmer-full">
           <div 
             className="absolute h-4 w-4 bg-blue-600 dark:bg-blue-500 -top-1 rounded-full transform -translate-x-1/2"
             style={{ 

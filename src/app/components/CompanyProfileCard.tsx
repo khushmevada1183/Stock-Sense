@@ -51,7 +51,7 @@ const CompanyProfileCard = ({
           {isLongDescription && (
             <button 
               onClick={toggleExpanded}
-              className="mt-2 text-blue-600 dark:text-blue-400 flex items-center text-sm font-medium hover:underline"
+              className="mt-2 text-blue-600 dark:text-cyan-400 flex items-center text-sm font-medium hover:underline"
             >
               {isExpanded ? (
                 <>
@@ -83,7 +83,7 @@ const CompanyProfileCard = ({
           {isin && (
             <div className="flex items-start">
               <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-full mr-3">
-                <Hash className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Hash className="h-5 w-5 text-blue-600 dark:text-cyan-400" />
               </div>
               <div>
                 <p className="text-sm text-gray-500 dark:text-gray-400">ISIN</p>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import * as stockApi from '@/api/api';
 import { IndexData } from '@/types/market';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 export default function MarketOverview() {
   const [indices, setIndices] = useState<IndexData[]>([]);
@@ -12,11 +13,9 @@ export default function MarketOverview() {
   useEffect(() => {
     const fetchMarketData = async () => {
       try {
-        // Fetch market indices from API
         const response = await stockApi.getBSEMostActive();
         
         if (response && response.success && response.data) {
-          // Map the API response to our IndexData interface
           const marketIndices: IndexData[] = [
             { 
               name: 'NIFTY 50',
@@ -50,7 +49,6 @@ export default function MarketOverview() {
           
           setIndices(marketIndices);
         } else {
-          // If API returns unexpected structure, fall back to hardcoded data
           console.log('API returned unexpected data structure for indices, using fallback');
         }
       } catch (error) {
@@ -64,129 +62,119 @@ export default function MarketOverview() {
     fetchMarketData();
   }, []);
 
-  // If we're still loading, show a loading skeleton
+  // Loading skeleton with shimmer
   if (loading) {
     return (
-      <div className="animate-pulse">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-6 border border-gray-700/50">
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-3"></div>
-              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-2"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-            </div>
-          ))}
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="glass-card rounded-xl p-6">
+            <div className="h-4 bg-gray-800/60 rounded-lg w-3/4 mb-3 shimmer" />
+            <div className="h-7 bg-gray-800/60 rounded-lg w-1/2 mb-3 shimmer" />
+            <div className="h-4 bg-gray-800/60 rounded-lg w-1/3 shimmer" />
+          </div>
+        ))}
       </div>
     );
   }
 
-  // If there was an error, show an error message
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
+      <div className="glass-card rounded-xl p-4 border-red-500/20 text-red-400">
         {error}
       </div>
     );
   }
 
-  // If no indices were found, show a message
   if (indices.length === 0) {
-    // Fallback hardcoded indices for development/testing
-    console.log('No indices found, using fallback data');
     const fallbackIndices: IndexData[] = [
-      { 
-        name: 'NIFTY 50',
-        symbol: 'NIFTY',
-        value: 22654.5, 
-        change: 127.45, 
-        changePercent: 0.57
-      },
-      { 
-        name: 'BSE SENSEX',
-        symbol: 'SENSEX',
-        value: 74683.7, 
-        change: 260.30, 
-        changePercent: 0.35
-      },
-      { 
-        name: 'NIFTY BANK',
-        symbol: 'BANKNIFTY',
-        value: 48521.6, 
-        change: -73.25, 
-        changePercent: -0.15
-      },
-      {
-        name: 'NIFTY IT',
-        symbol: 'NIFTYIT',
-        value: 34892.8,
-        change: 412.95,
-        changePercent: 1.20
-      }
+      { name: 'NIFTY 50', symbol: 'NIFTY', value: 22654.5, change: 127.45, changePercent: 0.57 },
+      { name: 'BSE SENSEX', symbol: 'SENSEX', value: 74683.7, change: 260.30, changePercent: 0.35 },
+      { name: 'NIFTY BANK', symbol: 'BANKNIFTY', value: 48521.6, change: -73.25, changePercent: -0.15 },
+      { name: 'NIFTY IT', symbol: 'NIFTYIT', value: 34892.8, change: 412.95, changePercent: 1.20 }
     ];
     
     setIndices(fallbackIndices);
-    return null; // This will re-render once we set the indices
+    return null;
   }
 
-  console.log('Rendering indices:', indices);
-
-  // Helper function to safely format numbers
   const formatNumber = (value: number | string | undefined, decimals = 2) => {
-    if (value === undefined) {
-      return '0.00';
-    }
-    
+    if (value === undefined) return '0.00';
     let numValue: number;
     if (typeof value === 'string') {
       numValue = parseFloat(value);
     } else {
       numValue = value;
     }
-    
-    if (isNaN(numValue)) {
-      return '0.00';
-    }
-    
+    if (isNaN(numValue)) return '0.00';
     return numValue.toFixed(decimals);
   };
 
-  // Helper function to check if a value is positive
   const isPositive = (value: number | string | undefined): boolean => {
-    if (value === undefined) {
-      return false;
-    }
-    if (typeof value === 'string') {
-      return parseFloat(value) >= 0;
-    }
+    if (value === undefined) return false;
+    if (typeof value === 'string') return parseFloat(value) >= 0;
     return value >= 0;
   };
 
+  // Mini sparkline data for visual interest
+  const sparklinePoints = [
+    "0,8 3,6 6,7 9,4 12,5 15,3 18,6 21,2 24,4 27,3",
+    "0,5 3,7 6,4 9,6 12,3 15,5 18,2 21,4 24,6 27,5",
+    "0,3 3,5 6,7 9,4 12,6 15,8 18,5 21,7 24,6 27,7",
+    "0,7 3,4 6,5 9,3 12,2 15,4 18,3 21,1 24,3 27,2",
+  ];
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full overflow-x-visible">
-      {indices.map((index, i) => (
-        <div key={i} className="bg-gray-900/90 backdrop-blur-lg dark:bg-gray-900/90 backdrop-blur-lg rounded-lg shadow p-6 min-w-[100%]">
-          <h3 className="text-gray-600 dark:text-gray-400 text-sm mb-2">{index.name}</h3>
-          <div className="text-2xl font-bold mb-1">
-            {typeof index.value === 'number' 
-              ? index.value.toLocaleString('en-IN')
-              : parseFloat(String(index.value)).toLocaleString('en-IN') || '0'}
+      {indices.map((index, i) => {
+        const positive = isPositive(index.change);
+        return (
+          <div 
+            key={i} 
+            className="glass-card card-shine rounded-xl p-6 group"
+          >
+            {/* Header row */}
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-gray-500 text-xs font-medium uppercase tracking-wider">{index.name}</h3>
+              {/* Mini sparkline */}
+              <svg width="30" height="10" className="text-gray-600 opacity-40 group-hover:opacity-70 transition-opacity">
+                <polyline 
+                  fill="none" 
+                  stroke={positive ? '#39FF14' : '#EF4444'} 
+                  strokeWidth="1.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  points={sparklinePoints[i] || sparklinePoints[0]} 
+                />
+              </svg>
+            </div>
+            
+            {/* Value */}
+            <div className="text-2xl font-bold mb-2 text-white">
+              {typeof index.value === 'number' 
+                ? index.value.toLocaleString('en-IN')
+                : parseFloat(String(index.value)).toLocaleString('en-IN') || '0'}
+            </div>
+            
+            {/* Change indicator */}
+            <div className={`flex items-center text-sm font-medium ${
+              positive ? 'text-green-400' : 'text-red-400'
+            }`}>
+              {positive ? (
+                <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
+              ) : (
+                <TrendingDown className="h-3.5 w-3.5 mr-1.5" />
+              )}
+              <span>
+                {positive ? '+' : ''}{formatNumber(index.change)}
+              </span>
+              <span className="mx-1.5 text-gray-700">|</span>
+              <span>
+                {positive ? '+' : ''}{formatNumber(index.changePercent)}%
+              </span>
+            </div>
           </div>
-          <div className={`flex items-center ${
-            isPositive(index.change)
-              ? 'text-green-600 dark:text-green-400' 
-              : 'text-red-600 dark:text-red-400'
-          }`}>
-            <span className="font-medium">
-              {isPositive(index.change) ? '+' : ''}{formatNumber(index.change)}
-            </span>
-            <span className="mx-1">|</span>
-            <span>
-              {isPositive(index.changePercent) ? '+' : ''}{formatNumber(index.changePercent)}%
-            </span>
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
-} 
+}

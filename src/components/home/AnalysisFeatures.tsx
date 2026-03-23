@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { FiBarChart2, FiUsers, FiTrendingUp, FiActivity, FiDollarSign, FiFile, FiPieChart, FiTarget, FiGrid, FiBriefcase } from 'react-icons/fi';
 
 interface FeatureItem {
@@ -12,39 +13,46 @@ interface FeatureItem {
 export default function AnalysisFeatures() {
   const [mounted, setMounted] = useState(false);
   
-  // Ensure component is mounted on the client
   useEffect(() => {
     setMounted(true);
   }, []);
   
   return (
-    <section className="py-16">
+    <section className="py-16 section-glow">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4 text-white">Comprehensive Stock Analysis</h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl md:text-4xl font-bold mb-5 text-white">
+            Comprehensive Stock <span className="gradient-text">Analysis</span>
+          </h2>
+          <p className="text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
             Our platform analyzes stocks across ten key dimensions to give you the most complete picture.
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {features.map((feature, index) => (
-            <div 
-              key={index} 
-              className="glass-premium p-6 rounded-lg shadow-neon-sm hover:shadow-neon transition-shadow border border-neon-400/10"
+            <motion.div 
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.5, delay: index * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              className="glass-card card-shine p-5 rounded-xl group"
             >
-              <div className="text-neon-400 text-2xl mb-4">
+              <div className="text-neon-400 text-2xl mb-4 icon-glow w-fit">
                 {mounted ? (
                   React.cloneElement(feature.icon as React.ReactElement, { suppressHydrationWarning: true })
                 ) : (
                   <div className="h-8 w-8"></div>
                 )}
               </div>
-              <h3 className="text-lg font-semibold mb-2 text-white">{feature.title}</h3>
-              <p className="text-gray-300 text-sm">
+              <h3 className="text-base font-semibold mb-2 text-gray-200 group-hover:text-white transition-colors duration-300">
+                {feature.title}
+              </h3>
+              <p className="text-gray-500 text-sm leading-relaxed group-hover:text-gray-400 transition-colors duration-300">
                 {feature.description}
               </p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -103,4 +111,4 @@ const features: FeatureItem[] = [
     description: 'Analysis of sentiment indicators, investor behavior patterns, and market psychology.',
     icon: <FiDollarSign className="h-8 w-8" />
   }
-]; 
+];
