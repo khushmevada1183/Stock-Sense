@@ -126,7 +126,7 @@ export default function PortfolioPage() {
   const { summary, holdings } = mockPortfolioData;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850">
+    <div className="min-h-screen">
       {/* Grid overlay */}
       <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
       

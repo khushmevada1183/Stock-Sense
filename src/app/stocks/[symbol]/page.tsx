@@ -24,6 +24,7 @@ import {
   Rocket
 } from 'lucide-react';
 import { apiHelpers } from '@/api/api';
+import { normalizeStockData, formatPrice, formatPct, type NormalizedStock } from '@/lib/normalizeStock';
 // Removed separate financial API imports - now using single /stock endpoint
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -60,17 +61,18 @@ Chart.register(...registerables);
 export default function Page() {
   const params = useParams();
   const symbol = params?.symbol as string || '';
-  const [stockData, setStockData] = useState<any>(null);
+  const [stockData, setStockData] = useState<any>(null);           // raw API response
+  const [stock, setStock] = useState<NormalizedStock | null>(null); // normalized data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
 
   // State for Fundamental Analysis Data
   const [financialRatios, setFinancialRatios] = useState<FinancialRatiosData | null>(null);
-  const [financialStatements, setFinancialStatements] = useState<FetchedFinancialStatementsData | null>(null); // Use renamed type
-  const [loadingRatios, setLoadingRatios] = useState(true);
+  const [financialStatements, setFinancialStatements] = useState<FetchedFinancialStatementsData | null>(null);
+  const [loadingRatios, setLoadingRatios] = useState(false);
   const [errorRatios, setErrorRatios] = useState<string | null>(null);
-  const [loadingStatements, setLoadingStatements] = useState(true);
+  const [loadingStatements, setLoadingStatements] = useState(false);
   const [errorStatements, setErrorStatements] = useState<string | null>(null);
   
   // Refs for animations and charts
@@ -120,21 +122,26 @@ export default function Page() {
     // Clean up any existing charts when the symbol changes
     cleanupCharts();
 
-    // Function to fetch stock data using our improved apiHelpers
+    // Fetch stock data and normalize NSE India response structure
     const fetchStockData = async () => {
       try {
         setLoading(true);
         console.log(`Fetching stock data for symbol: ${symbol}`);
         
-        const data = await apiHelpers.getStockDetails(symbol);
+        const raw = await apiHelpers.getStockDetails(symbol);
         
-        if (data) {
-          console.log('Stock data received:', data);
-          setStockData(data);
-          // Process financial data from the main response
-          setTimeout(() => fetchFinancialData(), 100);
+        if (raw) {
+          console.log('Raw stock data received:', raw);
+          setStockData(raw);
+          // Normalize the nested NSE India structure into a flat object
+          const normalized = normalizeStockData(raw);
+          console.log('Normalized stock data:', normalized);
+          setStock(normalized);
+          if (!normalized) {
+            setError(`Could not parse data for "${symbol}". Unexpected data format.`);
+          }
         } else {
-          setError(`No data found for \"${symbol}\". Please check the stock name or symbol and try again.`);
+          setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
         }
       } catch (err: any) {
         console.error('Error fetching stock data:', err);
@@ -147,116 +154,39 @@ export default function Page() {
         setLoading(false);
       }
     };
-
-    const fetchFinancialData = async () => {
-      // Financial data should already be included in the main stock data response
-      // No need for separate API calls since /stock endpoint returns all data
-      setLoadingRatios(false);
-      setLoadingStatements(false);
-      
-      if (stockData) {
-        // Extract financial ratios from main stock data
-        if (stockData.financialRatios || stockData.ratios || stockData.keyMetrics) {
-          setFinancialRatios(stockData.financialRatios || stockData.ratios || stockData.keyMetrics);
-        } else {
-          setErrorRatios(`No financial ratios found in stock data for \"${symbol}\".`);
-        }
-
-        // Extract financial statements from main stock data
-        if (stockData.financialStatements || stockData.statements || stockData.fiscalPeriods) {
-          setFinancialStatements(stockData.financialStatements || stockData.statements || stockData.fiscalPeriods);
-        } else {
-          setErrorStatements(`No financial statements found in stock data for \"${symbol}\".`);
-        }
-      }
-    };
     
     fetchStockData();
-    // fetchFinancialData(); // Removed - now handled within fetchStockData 
+    // fetchFinancialData(); // Removed - NSE India equityDetails is all-in-one
   }, [symbol]);
   
-  // Initialize animations after data is loaded
+  // Initialize animations after data is loaded — use fromTo so elements always end visible
   useEffect(() => {
     if (!loading && stockData && !error) {
       const timeline = gsap.timeline();
       
-      // Animate header
-      if (headerRef.current) {
-        timeline.from(headerRef.current, {
-          y: -20,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out"
-        });
-      }
+      if (headerRef.current)
+        timeline.fromTo(headerRef.current,
+          { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" });
       
-      // Animate price card
-      if (priceRef.current) {
-        timeline.from(priceRef.current, {
-          scale: 0.95,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out"
-        }, "-=0.3");
-      }
+      if (priceRef.current)
+        timeline.fromTo(priceRef.current,
+          { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.3");
       
-      // Animate range slider
-      if (rangeRef.current) {
-        const rangeSlider = rangeRef.current.querySelector('.range-slider');
-        const rangeDot = rangeRef.current.querySelector('.range-dot');
-        
-        timeline.from(rangeRef.current, {
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out"
-        }, "-=0.4");
-        
-        if (rangeSlider) {
-          timeline.from(rangeSlider, {
-            width: 0,
-            duration: 0.8,
-            ease: "power3.inOut"
-          }, "-=0.3");
-        }
-        
-        if (rangeDot) {
-          timeline.from(rangeDot, {
-            scale: 0,
-            duration: 0.5,
-            ease: "back.out(1.7)"
-          }, "-=0.4");
-        }
-      }
+      if (rangeRef.current)
+        timeline.fromTo(rangeRef.current,
+          { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.4");
       
-      // Animate about section
-      if (aboutRef.current) {
-        timeline.from(aboutRef.current, {
-          y: 30,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out"
-        }, "-=0.3");
-      }
+      if (aboutRef.current)
+        timeline.fromTo(aboutRef.current,
+          { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.3");
 
-      // Animate Financial Ratios section
-      if (financialRatiosRef.current) {
-        timeline.from(financialRatiosRef.current, {
-          y: 30,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out"
-        }, "-=0.2");
-      }
+      if (financialRatiosRef.current)
+        timeline.fromTo(financialRatiosRef.current,
+          { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.2");
 
-      // Animate Financial Statements section
-      if (financialStatementsRef.current) {
-        timeline.from(financialStatementsRef.current, {
-          y: 30,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power3.out"
-        }, "-=0.2");
-      }
+      if (financialStatementsRef.current)
+        timeline.fromTo(financialStatementsRef.current,
+          { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.2");
       
       // Initialize charts with animations
       setTimeout(() => {
@@ -437,10 +367,13 @@ export default function Page() {
   };
   
   // Helper function to extract price
+  // ── Data extraction (all reads from normalized `stock` object) ──────────
   const extractPrice = () => {
+    if (stock) return stock.lastPrice || 'N/A';
     if (!stockData) return 'N/A';
-    // Prioritize specific fields if they exist, otherwise fall back
-    return stockData.price || stockData.current_price || stockData.lastPrice || stockData.ltp || 'N/A';
+    // Legacy fallbacks for any cached old-format data
+    const raw = stockData?.data || stockData;
+    return raw?.priceInfo?.lastPrice || raw?.price || raw?.lastPrice || 'N/A';
   };
 
   const formatMarketCap = (marketCap: string | number): string => {
@@ -462,68 +395,23 @@ export default function Page() {
     return 'N/A';
   };
   
-  // Helper function to extract PE ratio
+  // Helper: PE ratio from normalized data (metadata.pdSymbolPe in NSE India)
   const extractPE = () => {
-    if (!stockData) return 'N/A';
-    
-    let pe = stockData.pe || stockData.pe_ratio || stockData.peRatio;
-    
-    // Try to extract from nested objects
-    if (!pe && stockData.stockTechnicalData && stockData.stockTechnicalData.length > 0) {
-      pe = stockData.stockTechnicalData[0].pe || stockData.stockTechnicalData[0].peRatio;
-    }
-    
-    if (!pe && stockData.companyProfile) {
-      pe = stockData.companyProfile.pe || stockData.companyProfile.peRatio;
-    }
-    
-    // Format the PE ratio
-    if (pe !== undefined && pe !== null) {
-      if (typeof pe === 'number') {
-        return pe.toFixed(2);
-      }
-      return pe;
-    }
-    
+    if (stock?.symbolPE && stock.symbolPE !== 'N/A') return String(stock.symbolPE);
+    // fallback: try raw nested
+    const raw = stockData?.data || stockData;
+    const pe = raw?.metadata?.pdSymbolPe || raw?.pe || raw?.pe_ratio;
+    if (pe !== undefined && pe !== null && pe !== '') return String(pe);
     return 'N/A';
   };
   
-  // Helper function to extract EPS
+  // Helper: EPS — not directly in NSE India equityDetails; show N/A
   const extractEPS = () => {
-    if (!stockData) return 'N/A';
-    
-    let eps = stockData.eps || stockData.EPS;
-    
-    // Try to extract from nested objects
-    if (!eps && stockData.stockTechnicalData && stockData.stockTechnicalData.length > 0) {
-      eps = stockData.stockTechnicalData[0].eps || stockData.stockTechnicalData[0].EPS;
+    const raw = stockData?.data || stockData;
+    const eps = raw?.eps || raw?.EPS;
+    if (eps !== undefined && eps !== null && eps !== '') {
+      return typeof eps === 'number' ? `₹${eps.toFixed(2)}` : `₹${eps}`;
     }
-    
-    if (!eps && stockData.companyProfile) {
-      eps = stockData.companyProfile.eps || stockData.companyProfile.EPS;
-    }
-    
-    // Also check for financials section if available
-    if (!eps && stockData.financials && stockData.financials.statements && stockData.financials.statements.length > 0) {
-      const latestStatement = stockData.financials.statements[0];
-      if (latestStatement.income) {
-        const epsEntry = latestStatement.income.find((item: any) => 
-          item.name === 'EPS' || item.name === 'Earnings Per Share'
-        );
-        if (epsEntry) {
-          eps = epsEntry.value;
-        }
-      }
-    }
-    
-    // Format the EPS
-    if (eps !== undefined && eps !== null) {
-      if (typeof eps === 'number') {
-        return `₹${eps.toFixed(2)}`;
-      }
-      return eps.toString().startsWith('₹') ? eps : `₹${eps}`;
-    }
-    
     return 'N/A';
   };
   // Helper function to transform financial data from API response
@@ -605,46 +493,65 @@ export default function Page() {
     );
   }
   
-  // Extract key information for display
-  const companyName = stockData.companyName || stockData.name || symbol;
-  const displaySymbol = stockData.symbol || symbol;
-  const industry = stockData.industry || stockData.sector || 'N/A';
+  // ── Extract key info — prefer normalized stock, fall back to raw ─────────────
+  const companyName = stock?.companyName || stockData?.data?.info?.companyName || stockData?.info?.companyName || symbol;
+  const displaySymbol = stock?.symbol || stockData?.data?.info?.symbol || symbol;
+  const industry = stock?.industry || stockData?.data?.industryInfo?.industry || 'N/A';
+  const sector = stock?.sector || stockData?.data?.industryInfo?.sector || 'N/A';
   const price = extractPrice();
-  const marketCapValue = stockData.marketCap || stockData.market_cap; // Extracted for formatting
   
   // Percent change
-  const percentChange = stockData.percentChange || stockData.percent_change || 0;
-  const isPositive = parseFloat(percentChange) >= 0;
+  const pChange = stock?.pChange ?? 0;
+  const change = stock?.change ?? 0;
+  const isPositive = stock ? stock.isPositive : pChange >= 0;
   
-  // 52-week range
-  const yearHigh = stockData.yearHigh || stockData.year_high;
-  const yearLow = stockData.yearLow || stockData.year_low;
+  // 52-week range (NSE India: priceInfo.weekHighLow.{max,min})
+  const yearHigh = stock?.yearHigh;
+  const yearLow = stock?.yearLow;
   
-  // Key metrics using our enhanced extraction functions
-  const marketCap = formatMarketCap(marketCapValue); // Use extracted value
+  // Intraday
+  const dayHigh = stock?.dayHigh;
+  const dayLow = stock?.dayLow;
+  const openPrice = stock?.open;
+  const prevClose = stock?.previousClose;
+  const vwap = stock?.vwap;
+  
+  // Circuit limits
+  const upperCircuit = stock?.upperCircuit || 'N/A';
+  const lowerCircuit = stock?.lowerCircuit || 'N/A';
+  const priceBand = stock?.priceBand || 'N/A';
+  
+  // Metrics (PE, EPS, Market Cap)
   const pe = extractPE();
   const eps = extractEPS();
-  const debtToEquity = stockData.debtToEquity || stockData.debt_to_equity;
-  const dividendYield = stockData.dividendYield || stockData.dividend_yield;
-  const volume = stockData.volume;
-  const avgVolume = stockData.averageVolume || stockData.average_volume;
+  const marketCap = 'N/A'; // Not in NSE equity details – available via separate trade_info
+  const volume = stockData?.data?.preOpenMarket?.totalTradedVolume || 'N/A';
+  const avgVolume = 'N/A';
+  const debtToEquity = 'N/A';
+  const dividendYield = 'N/A';
   
-  // Company description
-  const description = stockData.companyProfile?.companyDescription || stockData.description || 'No company description available.';
+  // Identifiers from NSE India
+  const isin = stock?.isin || '';
+  const bseCode = '';
+  const nseCode = stock?.symbol || '';
   
-  // Identifiers
-  const isin = stockData.companyProfile?.isInId;
-  const bseCode = stockData.companyProfile?.exchangeCodeBse;
-  const nseCode = stockData.companyProfile?.exchangeCodeNse;
+  // Market status
+  const marketCapValue = undefined;
+  const percentChange = pChange;
   
   // Management team
-  const officers = stockData.companyProfile?.officers?.officer || [];
+  const officers: any[] = [];
 
-  // Financial data
-  const financialData = transformFinancialData(); // This will be used by FinancialStatements and FinancialHighlights
+  // Financial data (NSE India doesn't return detailed financials in equityDetails)
+  const financialData: any[] = [];
   
+  // Company description from securityInfo or industryInfo
+  const description = stockData?.data?.securityInfo?.companyDescription 
+    || stockData?.data?.metadata?.pdSectorInd 
+    || `${companyName} is listed on the NSE under the ${industry} sector.`;
+
   // Recent news
-  const recentNews = stockData.recentNews || [];  // Tab configuration
+  const recentNews: any[] = [];  // Tab configuration
   const tabs = [
     {
       id: 'overview',
@@ -762,75 +669,90 @@ export default function Page() {
             {/* Current Price Card */}
             <MetricCard
               title="Current Price"
-              value={`${stockData?.currencySymbol || '₹'}${price}`}
-              change={`${percentChange}%`}
+              value={`₹${typeof price === 'number' ? price.toLocaleString('en-IN', {minimumFractionDigits:2,maximumFractionDigits:2}) : price}`}
+              change={`${pChange >= 0 ? '+' : ''}${pChange.toFixed(2)}% (₹${change >= 0 ? '+' : ''}${change.toFixed(2)})`}
               isPositive={isPositive}
               icon={<TrendingUp className="h-5 w-5" />}
               delay={0.1}
             />
             
-            {/* Market Cap Card */}
+            {/* Day's Range Card */}
             <MetricCard
-              title="Market Cap"
-              value={marketCap}
+              title="Day's Range"
+              value={dayHigh ? `₹${(dayLow || 0).toLocaleString('en-IN')} – ₹${dayHigh.toLocaleString('en-IN')}` : 'N/A'}
               icon={<Building className="h-5 w-5" />}
               delay={0.2}
             />
             
-            {/* P/E Ratio Card */}
+            {/* VWAP Card */}
             <MetricCard
-              title="P/E Ratio"
-              value={pe}
+              title="VWAP"
+              value={vwap ? `₹${vwap.toLocaleString('en-IN', {minimumFractionDigits:2})}` : 'N/A'}
               icon={<Scale className="h-5 w-5" />}
               delay={0.3}
             />
             
-            {/* EPS Card */}
+            {/* P/E Ratio (Sector PE as fallback) */}
             <MetricCard
-              title="EPS"
-              value={eps}
+              title={pe !== 'N/A' ? 'P/E Ratio' : 'Sector PE'}
+              value={pe !== 'N/A' ? pe : (stock?.sectorPE !== 'N/A' ? String(stock?.sectorPE) : 'N/A')}
               icon={<Percent className="h-5 w-5" />}
               delay={0.4}
             />
           </div>
         </div>
         
-        {/* 52 Week Range */}
+        {/* 52-Week Range + Trading Info */}
         {(yearHigh || yearLow) && (
           <div ref={rangeRef} className="glass-card rounded-xl p-6 mb-8">
-            <h2 className="text-base font-semibold text-gray-300 mb-4">52 Week Range</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold text-gray-300">52-Week Range</h2>
+              <div className="flex gap-4 text-xs text-gray-500">
+                {prevClose && <span>Prev Close: <span className="text-gray-300 font-mono">₹{typeof prevClose === 'number' ? prevClose.toLocaleString('en-IN', {minimumFractionDigits:2}) : prevClose}</span></span>}
+                {openPrice && <span>Open: <span className="text-gray-300 font-mono">₹{typeof openPrice === 'number' ? openPrice.toLocaleString('en-IN', {minimumFractionDigits:2}) : openPrice}</span></span>}
+                {stock?.priceBand && stock.priceBand !== 'N/A' && <span>Band: <span className="text-gray-300">{stock.priceBand}</span></span>}
+              </div>
+            </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 font-mono text-sm">₹{yearLow || 'N/A'}</span>
+              <div className="text-left">
+                <div className="text-gray-400 font-mono text-sm">₹{yearLow?.toLocaleString('en-IN') || 'N/A'}</div>
+                <div className="text-[10px] text-gray-600">{stock?.yearLowDate}</div>
+              </div>
               <div className="h-2 bg-gray-800/60 rounded-full flex-grow mx-4 relative range-slider">
                 <div 
                   className="h-full bg-gradient-to-r from-neon-400/70 to-cyan-400/50 rounded-full" 
                   style={{ 
-                    width: `${Math.min(
-                      100, 
-                      Math.max(
-                        0, 
-                        ((parseFloat(price) - (yearLow || 0)) / 
-                         ((yearHigh || 0) - (yearLow || 0))) * 100
-                      )
-                    )}%` 
+                    width: `${Math.min(100, Math.max(0, 
+                      (((stock?.lastPrice || 0) - (yearLow || 0)) / 
+                       ((yearHigh || 1) - (yearLow || 0))) * 100
+                    ))}%` 
                   }}
                 />
                 <div 
                   className="absolute h-5 w-5 bg-neon-400 -top-1.5 rounded-full transform -translate-x-1/2 shadow-neon-sm range-dot"
                   style={{ 
-                    left: `${Math.min(
-                      100, 
-                      Math.max(
-                        0, 
-                        ((parseFloat(price) - (yearLow || 0)) / 
-                         ((yearHigh || 0) - (yearLow || 0))) * 100
-                      )
-                    )}%` 
+                    left: `${Math.min(100, Math.max(0, 
+                      (((stock?.lastPrice || 0) - (yearLow || 0)) / 
+                       ((yearHigh || 1) - (yearLow || 0))) * 100
+                    ))}%` 
                   }}
                 />
               </div>
-              <span className="text-gray-400 font-mono text-sm">₹{yearHigh || 'N/A'}</span>
+              <div className="text-right">
+                <div className="text-gray-400 font-mono text-sm">₹{yearHigh?.toLocaleString('en-IN') || 'N/A'}</div>
+                <div className="text-[10px] text-gray-600">{stock?.yearHighDate}</div>
+              </div>
             </div>
+            {/* Circuit Limits */}
+            {(upperCircuit !== 'N/A' || lowerCircuit !== 'N/A') && (
+              <div className="mt-4 pt-3 border-t border-gray-800/30 flex gap-6 text-xs">
+                <span className="text-gray-500">Upper Circuit: <span className="text-green-400 font-mono">₹{upperCircuit}</span></span>
+                <span className="text-gray-500">Lower Circuit: <span className="text-red-400 font-mono">₹{lowerCircuit}</span></span>
+                {stock?.listingDate && stock.listingDate !== 'N/A' && (
+                  <span className="text-gray-500 ml-auto">Listed: <span className="text-gray-300">{stock.listingDate}</span></span>
+                )}
+              </div>
+            )}
           </div>
         )}
 
@@ -939,15 +861,15 @@ export default function Page() {
           <div className="p-6">
             {activeTab === 'overview' && (
               <Overview 
-                stockData={stockData}
+                stockData={stock?._raw || stockData?.data || stockData}
                 symbol={symbol}
                 companyName={companyName}
                 industry={industry}
-                price={price}
+                price={stock?.lastPrice ?? 0}
                 yearHigh={yearHigh}
                 yearLow={yearLow}
-                volume={volume}
-                avgVolume={avgVolume}
+                volume={typeof volume === 'number' ? volume : 0}
+                avgVolume={0}
                 dividendYield={dividendYield}
                 debtToEquity={debtToEquity}
                 description={description}
@@ -982,7 +904,7 @@ export default function Page() {
             {activeTab === 'technical' && (
               <TechnicalAnalysis 
                 symbol={symbol} 
-                currentPrice={parseFloat(price.toString().replace(/[₹,]/g, '')) || 0}
+              currentPrice={stock?.lastPrice || 0}
               />
             )}
 
@@ -1001,7 +923,7 @@ export default function Page() {
             {activeTab === 'institutional' && (
               <InstitutionalInvestment 
                 symbol={symbol} 
-                marketCap={parseFloat(marketCapValue?.toString().replace(/[₹,]/g, '') || '0')} 
+                marketCap={0} 
               />
             )}
             
@@ -1020,11 +942,16 @@ export default function Page() {
             {activeTab === 'risk' && (
               <RiskAssessment 
                 stock={{
-                  symbol: symbol,
-                  companyName: companyName,
-                  current_price: parseFloat(price.toString().replace(/[₹,]/g, '')) || 0,
-                  marketCap: parseFloat(marketCapValue?.toString().replace(/[₹,]/g, '') || '0'),
-                  ...stockData
+                  symbol,
+                  companyName,
+                  current_price: stock?.lastPrice ?? 0,
+                  marketCap: 0,
+                  industry,
+                  sector,
+                  pe,
+                  pChange,
+                  yearHigh,
+                  yearLow,
                 }}
               />
             )}

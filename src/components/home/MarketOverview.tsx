@@ -10,50 +10,57 @@ export default function MarketOverview() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fallbackIndices: IndexData[] = [
+    { name: 'NIFTY 50', symbol: 'NIFTY', value: 22654.5, change: 127.45, changePercent: 0.57 },
+    { name: 'BSE SENSEX', symbol: 'SENSEX', value: 74683.7, change: 260.30, changePercent: 0.35 },
+    { name: 'NIFTY BANK', symbol: 'BANKNIFTY', value: 48521.6, change: -73.25, changePercent: -0.15 },
+    { name: 'NIFTY IT', symbol: 'NIFTYIT', value: 34892.8, change: 412.95, changePercent: 1.20 }
+  ];
+
   useEffect(() => {
     const fetchMarketData = async () => {
       try {
         const response = await stockApi.getBSEMostActive();
-        
-        if (response && response.success && response.data) {
+
+        // Try to extract real index data if the API provides it
+        // Shape attempt: { success, data: { indices: { nifty, sensex, bank_nifty, it_nifty } } }
+        const indicesData = response?.data?.indices || response?.data?.data?.indices;
+
+        if (indicesData && indicesData.nifty) {
           const marketIndices: IndexData[] = [
-            { 
-              name: 'NIFTY 50',
-              symbol: 'NIFTY',
-              value: parseFloat(response.data.indices?.nifty?.value || '22654.5'), 
-              change: parseFloat(response.data.indices?.nifty?.change || '127.45'), 
-              changePercent: parseFloat(response.data.indices?.nifty?.percent_change || '0.57')
-            },
-            { 
-              name: 'BSE SENSEX',
-              symbol: 'SENSEX',
-              value: parseFloat(response.data.indices?.sensex?.value || '74683.7'), 
-              change: parseFloat(response.data.indices?.sensex?.change || '260.30'), 
-              changePercent: parseFloat(response.data.indices?.sensex?.percent_change || '0.35')
-            },
-            { 
-              name: 'NIFTY BANK',
-              symbol: 'BANKNIFTY',
-              value: parseFloat(response.data.indices?.bank_nifty?.value || '48521.6'), 
-              change: parseFloat(response.data.indices?.bank_nifty?.change || '-73.25'), 
-              changePercent: parseFloat(response.data.indices?.bank_nifty?.percent_change || '-0.15')
+            {
+              name: 'NIFTY 50', symbol: 'NIFTY',
+              value: parseFloat(indicesData.nifty?.value ?? '22654.5'),
+              change: parseFloat(indicesData.nifty?.change ?? '127.45'),
+              changePercent: parseFloat(indicesData.nifty?.percent_change ?? '0.57')
             },
             {
-              name: 'NIFTY IT',
-              symbol: 'NIFTYIT',
-              value: parseFloat(response.data.indices?.it_nifty?.value || '34892.8'),
-              change: parseFloat(response.data.indices?.it_nifty?.change || '412.95'),
-              changePercent: parseFloat(response.data.indices?.it_nifty?.percent_change || '1.20')
+              name: 'BSE SENSEX', symbol: 'SENSEX',
+              value: parseFloat(indicesData.sensex?.value ?? '74683.7'),
+              change: parseFloat(indicesData.sensex?.change ?? '260.30'),
+              changePercent: parseFloat(indicesData.sensex?.percent_change ?? '0.35')
+            },
+            {
+              name: 'NIFTY BANK', symbol: 'BANKNIFTY',
+              value: parseFloat(indicesData.bank_nifty?.value ?? '48521.6'),
+              change: parseFloat(indicesData.bank_nifty?.change ?? '-73.25'),
+              changePercent: parseFloat(indicesData.bank_nifty?.percent_change ?? '-0.15')
+            },
+            {
+              name: 'NIFTY IT', symbol: 'NIFTYIT',
+              value: parseFloat(indicesData.it_nifty?.value ?? '34892.8'),
+              change: parseFloat(indicesData.it_nifty?.change ?? '412.95'),
+              changePercent: parseFloat(indicesData.it_nifty?.percent_change ?? '1.20')
             }
           ];
-          
           setIndices(marketIndices);
         } else {
-          console.log('API returned unexpected data structure for indices, using fallback');
+          // BSE endpoint returns empty mock — always use fallback
+          setIndices(fallbackIndices);
         }
       } catch (error) {
         console.error('Failed to fetch market indices:', error);
-        setError('Failed to load market data');
+        setIndices(fallbackIndices);
       } finally {
         setLoading(false);
       }
@@ -61,6 +68,7 @@ export default function MarketOverview() {
 
     fetchMarketData();
   }, []);
+
 
   // Loading skeleton with shimmer
   if (loading) {
@@ -85,17 +93,10 @@ export default function MarketOverview() {
     );
   }
 
-  if (indices.length === 0) {
-    const fallbackIndices: IndexData[] = [
-      { name: 'NIFTY 50', symbol: 'NIFTY', value: 22654.5, change: 127.45, changePercent: 0.57 },
-      { name: 'BSE SENSEX', symbol: 'SENSEX', value: 74683.7, change: 260.30, changePercent: 0.35 },
-      { name: 'NIFTY BANK', symbol: 'BANKNIFTY', value: 48521.6, change: -73.25, changePercent: -0.15 },
-      { name: 'NIFTY IT', symbol: 'NIFTYIT', value: 34892.8, change: 412.95, changePercent: 1.20 }
-    ];
-    
-    setIndices(fallbackIndices);
-    return null;
-  }
+  // indices is always populated by the effect (real data or fallback)
+  // so indices.length === 0 only transiently during first render before effect fires
+  if (indices.length === 0) return null;
+
 
   const formatNumber = (value: number | string | undefined, decimals = 2) => {
     if (value === undefined) return '0.00';

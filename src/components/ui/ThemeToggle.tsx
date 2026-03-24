@@ -5,29 +5,30 @@ import { useTheme } from 'next-themes';
 import { Sun, Moon } from 'lucide-react';
 
 const ThemeToggle = () => {
-  const { theme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Ensure component is mounted on the client
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return <div className="w-10 h-10"></div>; // Placeholder to prevent layout shift
+    return <div className="w-10 h-10" />;
   }
+
+  const isDark = resolvedTheme === 'dark';
 
   return (
     <button
-      aria-label="Theme toggle (decorative only)"
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
       className={`p-2 rounded-full transition-all duration-300 ${
-        theme === 'dark' 
-          ? 'bg-gray-900/90 backdrop-blur-lg text-neon-400 hover:text-neon-300 hover:bg-gray-700/90 hover:shadow-neon-sm' 
-          : 'bg-gray-100 text-gray-600 hover:text-blue-600 hover:bg-gray-200'
+        isDark
+          ? 'bg-gray-900/90 backdrop-blur-lg text-neon-400 hover:text-neon-300 hover:bg-gray-700/90 hover:shadow-neon-sm'
+          : 'bg-gray-200 text-gray-600 hover:text-blue-600 hover:bg-gray-300'
       }`}
-      // Removed onClick functionality
     >
-      {theme === 'dark' ? (
+      {isDark ? (
         <Sun size={20} className="transition-transform hover:scale-110" />
       ) : (
         <Moon size={20} className="transition-transform hover:scale-110" />

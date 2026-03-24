@@ -117,25 +117,52 @@ export default function StocksIndexPage() {
           priceShockers: priceShockersRes 
         });
 
-        // Extract trending data with proper structure
-        let trendingGainers = [];
-        let trendingLosers = [];
-        
-        if (trendingRes?.success && trendingRes?.data?.trending_stocks) {
-          trendingGainers = trendingRes.data.trending_stocks.top_gainers || [];
-          trendingLosers = trendingRes.data.trending_stocks.top_losers || [];
-        } else if (trendingRes?.trending_stocks) {
-          trendingGainers = trendingRes.trending_stocks.top_gainers || [];
-          trendingLosers = trendingRes.trending_stocks.top_losers || [];
+        // ---- Trending stocks -----------------------------------------------
+        // Actual shape: { success, data: { stocks: [...] } }
+        // Each item: { id, symbol, company_name, sector_name, current_price, price_change_percentage }
+        let allTrendingStocks: any[] = [];
+
+        if (trendingRes?.success && Array.isArray(trendingRes?.data?.stocks)) {
+          allTrendingStocks = trendingRes.data.stocks;
+        } else if (trendingRes?.success && trendingRes?.data?.trending_stocks) {
+          // Legacy nested format fallback
+          const g = trendingRes.data.trending_stocks.top_gainers || [];
+          const l = trendingRes.data.trending_stocks.top_losers || [];
+          allTrendingStocks = [...g, ...l];
+        } else if (Array.isArray(trendingRes?.data)) {
+          allTrendingStocks = trendingRes.data;
+        } else if (Array.isArray(trendingRes)) {
+          allTrendingStocks = trendingRes;
         }
 
-        // Extract BSE data
-        const bseData = bseRes?.success ? (bseRes.data || []) : (Array.isArray(bseRes) ? bseRes : []);
-        
-        // Extract NSE data  
-        const nseData = nseRes?.success ? (nseRes.data || []) : (Array.isArray(nseRes) ? nseRes : []);
+        const trendingGainers = allTrendingStocks.filter(
+          s => (s.price_change_percentage ?? s.percent_change ?? 0) >= 0
+        );
+        const trendingLosers = allTrendingStocks.filter(
+          s => (s.price_change_percentage ?? s.percent_change ?? 0) < 0
+        );
 
-        // Extract price shockers
+        // ---- BSE / NSE most active -----------------------------------------
+        // Actual shape when data exists: { success, data: { success, data: [...] } }  (double-wrapped)
+        // Current mock returns: { success, data: { success, message, data: {} } }
+        const unwrap = (res: any): any[] => {
+          if (!res) return [];
+          // Try double-unwrap first (real data format)
+          const inner = res?.data?.data;
+          if (Array.isArray(inner)) return inner;
+          if (inner && typeof inner === 'object' && Object.keys(inner).length > 0) {
+            return Object.values(inner) as any[];
+          }
+          // Single-unwrap
+          if (Array.isArray(res?.data)) return res.data;
+          if (Array.isArray(res)) return res;
+          return [];
+        };
+
+        const bseData = unwrap(bseRes);
+        const nseData = unwrap(nseRes);
+
+        // ---- Price shockers ------------------------------------------------
         let priceShockers: any[] = [];
         if (priceShockersRes?.success && priceShockersRes?.data) {
           priceShockers = [
@@ -144,33 +171,26 @@ export default function StocksIndexPage() {
           ];
         }
 
-        console.log('Extracted data:', { 
-          trendingGainersCount: trendingGainers.length,
-          trendingLosersCount: trendingLosers.length,
-          bseCount: bseData.length, 
+        console.log('Extracted data:', {
+          trendingTotal: allTrendingStocks.length,
+          gainers: trendingGainers.length,
+          losers: trendingLosers.length,
+          bseCount: bseData.length,
           nseCount: nseData.length,
           priceShockersCount: priceShockers.length,
-          trendingGainersSample: trendingGainers[0],
-          bseSample: bseData[0],
-          nseSample: nseData[0],
-          priceShockersSample: priceShockers[0]
+          sample: allTrendingStocks[0],
         });
 
-        // Combine all trending stocks for comprehensive view
-        const allTrendingStocks = [...trendingGainers, ...trendingLosers];
-
-        console.log(`Total trending stocks: ${allTrendingStocks.length} (${trendingGainers.length} gainers + ${trendingLosers.length} losers)`);
-
-        // Set individual data states
         setTrendingStocks(allTrendingStocks);
-        setBseActive(Array.isArray(bseData) ? bseData : []);
-        setNseActive(Array.isArray(nseData) ? nseData : []);
-        
-        // Also add price shockers to the mix for more comprehensive data
+        setBseActive(bseData);
+        setNseActive(nseData);
+
+        // Combine all stocks for the main table/metrics
         const allStocksData = [
           ...allTrendingStocks,
-          ...priceShockers.slice(0, 10) // Add top 10 price shockers
+          ...priceShockers.slice(0, 10)
         ];
+
 
         // Transform API data to include ALL available fields with enhanced mapping
         const transformedStocks = allStocksData.map((stock, index) => {
@@ -311,19 +331,26 @@ export default function StocksIndexPage() {
 
   // Initialize charts
   useEffect(() => {
-    // Cleanup existing charts
+    // Cleanup: destroy any chart tracked in our ref AND any orphaned charts
+    // still attached to canvas elements (handles React Strict Mode double-invoke)
     chartInstances.current.forEach(chart => {
-      if (chart) {
-        chart.destroy();
-      }
+      try { chart?.destroy(); } catch (_) {}
     });
     chartInstances.current = [];
+
+    // Helper: destroy any existing Chart.js instance on a canvas before creating a new one
+    const safeGetCtx = (ref: React.RefObject<HTMLCanvasElement>) => {
+      if (!ref.current) return null;
+      const existing = Chart.getChart(ref.current);
+      if (existing) { try { existing.destroy(); } catch (_) {} }
+      return ref.current.getContext('2d');
+    };
 
     if (!loading && sectorChartRef.current && gainersLosersChartRef.current && volumeChartRef.current && 
         bseVolumeChartRef.current && nseVolumeChartRef.current && bsePerformanceChartRef.current && nsePerformanceChartRef.current) {
       
       // Sector distribution chart (donut) - using real sector data
-      const sectorCtx = sectorChartRef.current.getContext('2d');
+      const sectorCtx = safeGetCtx(sectorChartRef);
       if (sectorCtx && Object.keys(sectorDistribution).length > 0) {
         const sectorLabels = Object.keys(sectorDistribution);
         const sectorValues = Object.values(sectorDistribution);
@@ -381,9 +408,9 @@ export default function StocksIndexPage() {
       }
       
       // Gainers vs Losers chart (horizontal bar) - using real market metrics
-      const gainersLosersCtx = gainersLosersChartRef.current.getContext('2d');
+      const gainersLosersCtx = safeGetCtx(gainersLosersChartRef);
       if (gainersLosersCtx && (marketMetrics.gainers > 0 || marketMetrics.losers > 0 || marketMetrics.unchanged > 0)) {
-        new Chart(gainersLosersCtx, {
+        const gainersLosersChart = new Chart(gainersLosersCtx, {
           type: 'bar',
           data: {
             labels: ['Gainers', 'Losers', 'Unchanged'],
@@ -450,10 +477,11 @@ export default function StocksIndexPage() {
             }
           }
         });
+        chartInstances.current.push(gainersLosersChart);
       }
       
       // Volume chart (line) - using price trends from real stock data
-      const volumeCtx = volumeChartRef.current.getContext('2d');
+      const volumeCtx = safeGetCtx(volumeChartRef);
       if (volumeCtx && stocks.length > 0) {
         // Use stock prices as a proxy for volume trend (up to 5 stocks or all if less)
         const chartStocksCount = Math.min(5, stocks.length);
@@ -466,7 +494,7 @@ export default function StocksIndexPage() {
         gradient.addColorStop(0.5, 'rgba(99, 102, 241, 0.3)');
         gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
         
-        new Chart(volumeCtx, {
+        const volumeChart = new Chart(volumeCtx, {
           type: 'line',
           data: {
             labels: stockSymbols,
@@ -538,15 +566,16 @@ export default function StocksIndexPage() {
             }
           }
         });
+        chartInstances.current.push(volumeChart);
       }
       
       // BSE Volume Chart (bar chart showing volume by stock)
-      const bseVolumeCtx = bseVolumeChartRef.current.getContext('2d');
+      const bseVolumeCtx = safeGetCtx(bseVolumeChartRef);
       if (bseVolumeCtx && bseActive.length > 0) {
         const bseVolumes = bseActive.slice(0, 5).map(stock => stock.volume / 1000000); // Convert to millions
         const bseSymbols = bseActive.slice(0, 5).map(stock => stock.ticker?.split('.')[0] || stock.company?.substring(0, 8));
         
-        new Chart(bseVolumeCtx, {
+        const bseVolumeChart = new Chart(bseVolumeCtx, {
           type: 'bar',
           data: {
             labels: bseSymbols,
@@ -620,15 +649,16 @@ export default function StocksIndexPage() {
             }
           }
         });
+        chartInstances.current.push(bseVolumeChart);
       }
       
       // NSE Volume Chart (bar chart)
-      const nseVolumeCtx = nseVolumeChartRef.current.getContext('2d');
+      const nseVolumeCtx = safeGetCtx(nseVolumeChartRef);
       if (nseVolumeCtx && nseActive.length > 0) {
         const nseVolumes = nseActive.slice(0, 5).map(stock => stock.volume / 1000000);
         const nseSymbols = nseActive.slice(0, 5).map(stock => stock.ticker?.split('.')[0] || stock.company?.substring(0, 8));
         
-        new Chart(nseVolumeCtx, {
+        const nseVolumeChart = new Chart(nseVolumeCtx, {
           type: 'bar',
           data: {
             labels: nseSymbols,
@@ -702,15 +732,16 @@ export default function StocksIndexPage() {
             }
           }
         });
+        chartInstances.current.push(nseVolumeChart);
       }
       
       // BSE Performance Chart (horizontal bar showing % change)
-      const bsePerformanceCtx = bsePerformanceChartRef.current.getContext('2d');
+      const bsePerformanceCtx = safeGetCtx(bsePerformanceChartRef);
       if (bsePerformanceCtx && bseActive.length > 0) {
         const bseChanges = bseActive.slice(0, 6).map(stock => stock.percent_change || 0);
         const bseCompanies = bseActive.slice(0, 6).map(stock => stock.company?.substring(0, 12) || stock.ticker);
         
-        new Chart(bsePerformanceCtx, {
+        const bsePerformanceChart = new Chart(bsePerformanceCtx, {
           type: 'bar',
           data: {
             labels: bseCompanies,
@@ -786,15 +817,16 @@ export default function StocksIndexPage() {
             }
           }
         });
+        chartInstances.current.push(bsePerformanceChart);
       }
       
       // NSE Performance Chart (horizontal bar)
-      const nsePerformanceCtx = nsePerformanceChartRef.current.getContext('2d');
+      const nsePerformanceCtx = safeGetCtx(nsePerformanceChartRef);
       if (nsePerformanceCtx && nseActive.length > 0) {
         const nseChanges = nseActive.slice(0, 6).map(stock => stock.percent_change || 0);
         const nseCompanies = nseActive.slice(0, 6).map(stock => stock.company?.substring(0, 12) || stock.ticker);
         
-        new Chart(nsePerformanceCtx, {
+        const nsePerformanceChart = new Chart(nsePerformanceCtx, {
           type: 'bar',
           data: {
             labels: nseCompanies,
@@ -870,6 +902,7 @@ export default function StocksIndexPage() {
             }
           }
         });
+        chartInstances.current.push(nsePerformanceChart);
       }
     }
   }, [loading, stocks, marketMetrics, sectorDistribution, bseActive, nseActive]);
@@ -920,7 +953,7 @@ export default function StocksIndexPage() {
   }
 
   return (
-    <div ref={dashboardRef} className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
+    <div ref={dashboardRef} className="min-h-screen">
       {/* Grid overlay for entire page */}
       <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
       

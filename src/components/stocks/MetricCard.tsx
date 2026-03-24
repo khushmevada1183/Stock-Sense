@@ -21,13 +21,10 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
   useEffect(() => {
     if (isAnimated && cardRef.current) {
-      gsap.from(cardRef.current, {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-        delay: delay,
-        ease: "power3.out"
-      });
+      gsap.fromTo(cardRef.current, 
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, delay: delay, ease: "power3.out" }
+      );
     }
   }, [isAnimated, delay]);
 

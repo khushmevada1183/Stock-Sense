@@ -12,19 +12,9 @@ const Header = () => {
   const pathname = usePathname();
   const { isMobileMenuOpen, setMobileMenuOpen } = useUI();
   const [mounted, setMounted] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  
+
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  // Track scroll position for header background intensity
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
   const navItems = [
@@ -45,11 +35,7 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="mx-auto w-[98%] sm:w-[95%] px-1 sm:px-2 pt-2 sm:pt-4">
-        <div className={`rounded-full shadow-lg border transition-all duration-500 ${
-          scrolled 
-            ? 'bg-gray-950/70 backdrop-blur-2xl border-gray-800/30 shadow-glass' 
-            : 'bg-gray-950/40 backdrop-blur-xl border-gray-800/20'
-        }`}>
+        <div className="header-pill rounded-full shadow-lg border backdrop-blur-xl transition-all duration-300">
           <div className="flex items-center justify-between h-12 sm:h-14 px-3 sm:px-6">
             {/* Logo */}
             <Link href="/" className="flex items-center group">
@@ -76,7 +62,7 @@ const Header = () => {
                       className={`relative flex items-center px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
                         active
                           ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm'
-                          : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/40'
+                          : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/40'
                       }`}
                     >
                       <Icon size={15} className={`mr-1.5 transition-colors duration-300 ${active ? 'text-neon-400' : 'text-gray-500'}`} />
@@ -119,7 +105,7 @@ const Header = () => {
           
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="absolute inset-x-4 top-16 lg:hidden bg-gray-950/90 backdrop-blur-2xl rounded-2xl shadow-glass-hover px-4 py-4 border border-gray-800/30 animate-scale-in">
+            <div className="absolute inset-x-4 top-16 lg:hidden header-pill backdrop-blur-2xl rounded-2xl shadow-glass-hover px-4 py-4 border animate-scale-in">
               <nav className="flex flex-col space-y-1 px-1">
                 {navItems.map((item) => {
                   const active = isActive(item.href);
@@ -131,7 +117,7 @@ const Header = () => {
                       className={`flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
                         active
                           ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm'
-                          : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/40'
+                          : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/40'
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
                     >

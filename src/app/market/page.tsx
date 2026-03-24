@@ -611,45 +611,69 @@ export default function MarketPage() {
         stockApi.getPriceShockers()
       ]);
 
-      // Extract price shockers data (for Top Gainers/Losers & Breadth)
-      let priceShockers: any[] = [];
+      // ---- Price Shockers ------------------------------------------------
+      // Actual shape: { success, data: { gainers: [...], losers: [...] } }
+      // Each item: { symbol, change_percent, last_price }
+      let priceGainers: any[] = [];
+      let priceLosers: any[] = [];
       if (priceShockersData.status === 'fulfilled' && priceShockersData.value?.success && priceShockersData.value?.data) {
-        // Price shockers API returns { BSE_PriceShocker: [], NSE_PriceShocker: [] }
-        const bseShockers = priceShockersData.value.data.BSE_PriceShocker || [];
-        const nseShockers = priceShockersData.value.data.NSE_PriceShocker || [];
-        priceShockers = [...bseShockers, ...nseShockers];
+        const d = priceShockersData.value.data;
+        // Try new format first: { gainers, losers }
+        priceGainers = d.gainers || d.BSE_PriceShocker || [];
+        priceLosers  = d.losers  || d.NSE_PriceShocker || [];
       }
+      const priceShockers = [...priceGainers, ...priceLosers];
 
       // Calculate Market Breadth from price shockers
+      // Field name: change_percent (not percentChange)
       const breadthCalculation = priceShockers.reduce(
         (acc: { advances: number; declines: number; unchanged: number }, stock: any) => {
-          const percentChange = parseFloat(stock.percentChange || 0);
-          if (percentChange > 0) {
-            acc.advances++;
-          } else if (percentChange < 0) {
-            acc.declines++;
-          } else {
-            acc.unchanged++;
-          }
+          const pct = parseFloat(stock.change_percent ?? stock.percentChange ?? stock.percent_change ?? 0);
+          if (pct > 0) acc.advances++;
+          else if (pct < 0) acc.declines++;
+          else acc.unchanged++;
           return acc;
         },
         { advances: 0, declines: 0, unchanged: 0 }
       );
 
-      // Create mock sector performance data since industry search endpoint is not available
-      const sectorPerformance = [
-        { name: 'Banking', change: Math.random() * 6 - 3 }, // Random between -3% to +3%
-        { name: 'IT', change: Math.random() * 6 - 3 },
-        { name: 'Pharma', change: Math.random() * 6 - 3 },
-        { name: 'Auto', change: Math.random() * 6 - 3 },
-        { name: 'FMCG', change: Math.random() * 6 - 3 }
-      ];
+      // Sector Performance — derive from trending stocks by sector_name
+      const sectorMap: { [k: string]: number[] } = {};
+      const sectorPerformance: { name: string; change: number }[] = [];
 
-      // Extract trending stocks data for Heat Map
+      // ---- Trending stocks -----------------------------------------------
+      // Actual shape: { success, data: { stocks: [...] } }
       let trendingStocks: any[] = [];
-      if (trendingData.status === 'fulfilled' && trendingData.value?.success && trendingData.value?.data?.trending_stocks) {
-        const { top_gainers = [], top_losers = [] } = trendingData.value.data.trending_stocks;
-        trendingStocks = [...top_gainers, ...top_losers];
+      if (trendingData.status === 'fulfilled' && trendingData.value?.success) {
+        const td = trendingData.value.data;
+        if (Array.isArray(td?.stocks)) {
+          trendingStocks = td.stocks;
+        } else if (td?.trending_stocks) {
+          trendingStocks = [
+            ...(td.trending_stocks.top_gainers || []),
+            ...(td.trending_stocks.top_losers || [])
+          ];
+        } else if (Array.isArray(td)) {
+          trendingStocks = td;
+        }
+      }
+
+      // Build sector performance from trending stock sectors
+      trendingStocks.forEach((s: any) => {
+        const sec = s.sector_name || s.sector || 'Other';
+        const pct = parseFloat(s.price_change_percentage ?? s.percent_change ?? 0);
+        if (!sectorMap[sec]) sectorMap[sec] = [];
+        sectorMap[sec].push(pct);
+      });
+      Object.entries(sectorMap).forEach(([name, vals]) => {
+        const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+        sectorPerformance.push({ name, change: parseFloat(avg.toFixed(2)) });
+      });
+      // Ensure we always have some sector data
+      if (sectorPerformance.length === 0) {
+        ['Banking', 'IT', 'Pharma', 'Auto', 'FMCG'].forEach(name => {
+          sectorPerformance.push({ name, change: parseFloat((Math.random() * 4 - 2).toFixed(2)) });
+        });
       }
 
       // Extract BSE most active data
@@ -707,14 +731,15 @@ export default function MarketPage() {
       }
 
       // Add trending stocks if we have data
+      // Field names: symbol, company_name, price_change_percentage, current_price
       if (trendingStocks.length > 0) {
         heatMapData.push({
           sector: "Trending Stocks",
           stocks: trendingStocks.slice(0, 8).map(stock => ({
-            name: stock.company_name || 'Unknown Company',
-            symbol: stock.ric?.split('.')[0] || stock.company_name?.substring(0, 4).toUpperCase() || 'N/A',
-            change: parseFloat(stock.percent_change || 0),
-            marketCap: parseInt(stock.volume || 2000000) // Using volume as proxy for market cap
+            name: stock.company_name || stock.displayName || 'Unknown',
+            symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
+            change: parseFloat(stock.price_change_percentage ?? stock.percent_change ?? 0),
+            marketCap: parseInt(stock.current_price || 2000000)
           }))
         });
       }
@@ -725,30 +750,27 @@ export default function MarketPage() {
         breadth: breadthCalculation, // Calculated from price shockers
         sectors: sectorPerformance, // Mock data since industry search not available
         
-        // Top Gainers from price shockers (filter positive changes)
-        topGainers: priceShockers
-          .filter(stock => parseFloat(stock.percentChange || 0) > 0)
-          .sort((a, b) => parseFloat(b.percentChange || 0) - parseFloat(a.percentChange || 0))
+        // Top Gainers — from price shockers gainers array
+        // Fields: symbol, change_percent, last_price
+        topGainers: priceGainers
           .slice(0, 5)
           .map(stock => ({
-            symbol: stock.ric?.split('.')[0] || stock.displayName?.substring(0, 4).toUpperCase() || 'N/A',
-            name: stock.displayName || 'Unknown Company',
-            price: parseFloat(stock.price || 0),
-            change: parseFloat(stock.netChange || 0),
-            percentChange: parseFloat(stock.percentChange || 0)
+            symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
+            name: stock.company_name || stock.displayName || stock.symbol || 'Unknown',
+            price: parseFloat(stock.last_price ?? stock.current_price ?? stock.price ?? 0),
+            change: parseFloat(stock.change_percent ?? stock.netChange ?? 0),
+            percentChange: parseFloat(stock.change_percent ?? stock.percentChange ?? 0)
           })),
-          
-        // Top Losers from price shockers (filter negative changes)
-        topLosers: priceShockers
-          .filter(stock => parseFloat(stock.percentChange || 0) < 0)
-          .sort((a, b) => parseFloat(a.percentChange || 0) - parseFloat(b.percentChange || 0))
+
+        // Top Losers — from price shockers losers array
+        topLosers: priceLosers
           .slice(0, 5)
           .map(stock => ({
-            symbol: stock.ric?.split('.')[0] || stock.displayName?.substring(0, 4).toUpperCase() || 'N/A',
-            name: stock.displayName || 'Unknown Company',
-            price: parseFloat(stock.price || 0),
-            change: parseFloat(stock.netChange || 0),
-            percentChange: parseFloat(stock.percentChange || 0)
+            symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
+            name: stock.company_name || stock.displayName || stock.symbol || 'Unknown',
+            price: parseFloat(stock.last_price ?? stock.current_price ?? stock.price ?? 0),
+            change: parseFloat(stock.change_percent ?? stock.netChange ?? 0),
+            percentChange: parseFloat(stock.change_percent ?? stock.percentChange ?? 0)
           })),
         
         // Most Active: Combine BSE and NSE most active stocks
@@ -795,7 +817,7 @@ export default function MarketPage() {
 
   if (loading) {
     return (
-      <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
+      <div className="min-h-screen">
         {/* Grid overlay for entire page */}
         <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
         
@@ -847,7 +869,7 @@ export default function MarketPage() {
   }
 
   return (
-    <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
+    <div className="min-h-screen">
       {/* Grid overlay for entire page */}
       <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
       

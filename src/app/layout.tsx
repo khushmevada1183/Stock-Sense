@@ -1,5 +1,5 @@
 import './globals.css';
-import { Inter, Roboto_Mono, Lora, Montserrat } from 'next/font/google';
+import { Inter, Roboto_Mono } from 'next/font/google';
 import { ThemeProvider } from '../components/ui/ThemeProvider';
 import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
@@ -10,10 +10,8 @@ import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
 import ClientScrollProgressIndicator from '../components/layout/ClientScrollProgressIndicator';
 
-const inter = Inter({ subsets: ['latin'] });
-const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono' });
-const serif = Lora({ subsets: ['latin'], variable: '--font-serif' });
-const flex = Montserrat({ subsets: ['latin'], variable: '--font-flex' });
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
+const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono', display: 'swap' });
 
 export const metadata = {
   title: 'Indian Stock Sense',
@@ -26,20 +24,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="bg-grid-white/[0.02]">
-      <body className={`${inter.className} ${robotoMono.variable} ${serif.variable} ${flex.variable} min-h-screen flex flex-col antialiased relative`} suppressHydrationWarning>
-        {/* Background mirror for header area */}
-        <div className="fixed top-0 left-0 right-0 h-40 z-10 pointer-events-none">
-          <div className="absolute inset-0 header-bg-mirror"></div>
-          <div className="absolute inset-0 noise-bg opacity-20 dark:opacity-30"></div>
-          {/* Additional seamless transition overlay */}
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-gray-950/20 dark:to-gray-950/40"></div>
-        </div>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} ${robotoMono.variable} min-h-screen flex flex-col antialiased relative`} suppressHydrationWarning>
+
         
         <ThemeProvider 
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="dark"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <UIProvider>

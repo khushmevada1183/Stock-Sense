@@ -71,25 +71,28 @@ export default function FeaturedStocks() {
   useEffect(() => {
     const fetchFeaturedStocks = async () => {
       try {
-        console.log('Fetching trending stocks...');
         const response = await stockApi.getTrendingStocks();
         console.log('Trending stocks response:', response);
-        
-        if (response && response.success && response.data && Array.isArray(response.data)) {
-          if (response.data.length > 0) {
-            const featuredStocks = response.data
-              .slice(0, 6)
-              .map(normalizeStock);
-            
-            console.log('Normalized stocks:', featuredStocks);
-            setStocks(featuredStocks);
-          } else {
-            console.log('API returned empty data array for trending stocks');
-            setStocks(fallbackStocks);
-          }
+
+        // Actual API shape: { success, data: { stocks: [...] } }
+        // Fallback shapes: { success, data: [...] } or { success, data: { trending_stocks: {...} } }
+        let rawStocks: any[] = [];
+
+        if (response?.success && Array.isArray(response?.data?.stocks)) {
+          rawStocks = response.data.stocks;
+        } else if (response?.success && response?.data?.trending_stocks) {
+          const g = response.data.trending_stocks.top_gainers || [];
+          const l = response.data.trending_stocks.top_losers || [];
+          rawStocks = [...g, ...l];
+        } else if (response?.success && Array.isArray(response?.data)) {
+          rawStocks = response.data;
+        }
+
+        if (rawStocks.length > 0) {
+          setStocks(rawStocks.slice(0, 6).map(normalizeStock));
         } else {
+          console.log('No stocks returned from API — using fallback');
           setStocks(fallbackStocks);
-          console.log('API returned unexpected data structure for featured stocks, using fallback');
         }
       } catch (err) {
         console.error('Failed to fetch featured stocks:', err);

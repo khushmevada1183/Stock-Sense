@@ -37,100 +37,239 @@ body {
  
   .dark {
     /* Dark theme with neon green accents */
-    --background: 0 0% 2%; /* #050505 */
-    --background-secondary: 0 0% 7%; /* #121212 */
-    --foreground: 0 0% 100%; /* #FFFFFF */
-    --foreground-secondary: 0 0% 88%; /* #E0E0E0 */
-    
-    --card: 0 0% 7%; /* #121212 */
-    --card-foreground: 0 0% 100%; /* #FFFFFF */
-    
-    --popover: 0 0% 7%; /* #121212 */
-    --popover-foreground: 0 0% 100%; /* #FFFFFF */
-    
-    --primary: 114 100% 54%; /* #39FF14 - Neon Green */
-    --primary-foreground: 0 0% 0%; /* #000000 */
-    
-    --secondary: 183 100% 40%; /* #00C2CB - Cyan Blue */
-    --secondary-foreground: 0 0% 100%; /* #FFFFFF */
-    
-    --muted: 0 0% 15%; /* #262626 */
-    --muted-foreground: 0 0% 65%; /* #A6A6A6 */
-    
-    --accent: 114 100% 54%; /* #39FF14 - Neon Green */
-    --accent-foreground: 0 0% 0%; /* #000000 */
-    
-    --destructive: 0 84% 60%; /* #EF4444 */
-    --destructive-foreground: 0 0% 98%; /* #FAFAFA */
-    
-    --border: 0 0% 15%; /* #262626 */
-    --input: 0 0% 15%; /* #262626 */
-    --ring: 114 100% 54%; /* #39FF14 - Neon Green */
-    
-    --chart-1: 114 100% 54%; /* #39FF14 - Neon Green */
-    --chart-2: 183 100% 40%; /* #00C2CB - Cyan Blue */
-    --chart-3: 180 100% 50%; /* #00FFFF - Cyan */
-    --chart-4: 120 100% 40%; /* #00CC00 - Green */
-    --chart-5: 150 100% 45%; /* #00D48A - Teal */
+    --background: 0 0% 2%;
+    --background-secondary: 0 0% 7%;
+    --foreground: 0 0% 100%;
+    --foreground-secondary: 0 0% 88%;
+    --card: 0 0% 7%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 114 100% 54%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 183 100% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 114 100% 54%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 114 100% 54%;
+    --chart-1: 114 100% 54%;
+    --chart-2: 183 100% 40%;
+    --chart-3: 180 100% 50%;
+    --chart-4: 120 100% 40%;
+    --chart-5: 150 100% 45%;
   }
+}
+
+/* ===========================================================================
+   THEME BACKGROUNDS & SURFACE PALETTES
+   =========================================================================== */
+
+/* ── LIGHT MODE (default) ───────────────────────────────────────────────────
+   Page bg : #EEF2F6  cool blue-slate (not blinding white)
+   Card    : #FFFFFF  pure white, clearly lifted above page
+   Raised  : #F1F5F9  inputs, table headers
+   Text    : #0F172A  primary  |  #475569 secondary  |  #94A3B8 muted
+   ─────────────────────────────────────────────────────────────────────────*/
+html {
+  background: #EEF2F6;
+  color-scheme: light;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ── DARK MODE ──────────────────────────────────────────────────────────────
+   Page bg : #0D1117  deep navy-black (not pure black)
+   Card    : #161B22  clearly lifted surface
+   Raised  : #1C2128  inputs, table rows, hover
+   Text    : #E6EDF3  primary  |  #8B949E secondary  |  #484F58 muted
+   ─────────────────────────────────────────────────────────────────────────*/
+html.dark {
+  background: #0D1117;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(57,255,20,0.06) 0%, transparent 60%);
+  color-scheme: dark;
 }
 
 @layer base {
-  * {
-    @apply border-solid;
-  }
+  * { @apply border-solid; }
   body {
-    @apply bg-background text-foreground;
-  }
-  
-  .dark body {
-    background: linear-gradient(to bottom, #050505, #101010);
+    background: transparent;
+    @apply text-foreground;
+    transition: color 0.25s ease;
   }
 }
 
-/* Header background mirror effect */
-.header-bg-mirror {
-  background: linear-gradient(to bottom, 
-    rgba(5, 5, 5, 0.95) 0%,
-    rgba(8, 8, 8, 0.9) 30%,
-    rgba(12, 12, 12, 0.8) 60%,
-    rgba(16, 16, 16, 0.4) 80%,
-    transparent 100%
-  );
-  background-image: 
-    linear-gradient(to bottom, 
-      rgba(5, 5, 5, 0.95) 0%,
-      rgba(8, 8, 8, 0.9) 30%,
-      rgba(12, 12, 12, 0.8) 60%,
-      rgba(16, 16, 16, 0.4) 80%,
-      transparent 100%
-    ),
-    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.02)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-  background-size: 100% 100%, 32px 32px;
-  background-repeat: no-repeat, repeat;
-  background-attachment: scroll, scroll;
+/* ── HEADER PILL ────────────────────────────────────────────────────────────*/
+.dark .header-pill {
+  background: rgba(22, 27, 34, 0.96);
+  border-color: rgba(48,54,61,0.9);
+  backdrop-filter: blur(20px);
+}
+.header-pill {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(0,0,0,0.09);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+  backdrop-filter: blur(20px);
 }
 
-.light .header-bg-mirror {
-  background: linear-gradient(to bottom, 
-    rgba(249, 250, 251, 0.95) 0%,
-    rgba(243, 244, 246, 0.9) 30%,
-    rgba(229, 231, 235, 0.8) 60%,
-    rgba(209, 213, 219, 0.4) 80%,
-    transparent 100%
-  );
-  background-image: 
-    linear-gradient(to bottom, 
-      rgba(249, 250, 251, 0.95) 0%,
-      rgba(243, 244, 246, 0.9) 30%,
-      rgba(229, 231, 235, 0.8) 60%,
-      rgba(209, 213, 219, 0.4) 80%,
-      transparent 100%
-    ),
-    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(0 0 0 / 0.02)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-  background-size: 100% 100%, 32px 32px;
-  background-repeat: no-repeat, repeat;
-  background-attachment: scroll, scroll;
+/* ===========================================================================
+   DARK MODE SURFACE OVERRIDES
+   Replace harsh Tailwind dark grays with the proper surface palette
+   =========================================================================== */
+html.dark .bg-gray-950 {
+  background-color: #0D1117 !important;
+}
+html.dark .bg-gray-900\/60,
+html.dark .bg-gray-900\/90,
+html.dark .bg-gray-900 {
+  background-color: #161B22 !important;
+  border-color: rgba(48,54,61,0.8) !important;
+}
+html.dark .bg-gray-800\/50,
+html.dark .bg-gray-800\/30,
+html.dark .bg-gray-800 {
+  background-color: #1C2128 !important;
+  border-color: rgba(48,54,61,0.6) !important;
+}
+html.dark .border-gray-700\/50,
+html.dark .border-gray-800\/30,
+html.dark .border-gray-800\/20,
+html.dark .border-gray-700 {
+  border-color: rgba(48,54,61,0.9) !important;
+}
+html.dark .divide-gray-700\/50 > * {
+  border-color: rgba(48,54,61,0.6) !important;
+}
+html.dark .hover\:bg-gray-800\/30:hover {
+  background-color: rgba(28,33,40,0.9) !important;
+}
+/* Soften pure-white text — easier on eyes against dark bg */
+html.dark .text-white {
+  color: #E6EDF3 !important;
+}
+html.dark .text-gray-300 {
+  color: #C9D1D9 !important;
+}
+html.dark .text-gray-400 {
+  color: #8B949E !important;
+}
+
+/* ===========================================================================
+   LIGHT MODE SURFACE OVERRIDES
+   Replace dark Tailwind classes with the proper light surface palette
+   =========================================================================== */
+html:not(.dark) {
+  color-scheme: light;
+}
+
+/* Cards — crisp white with shadow so they float above the page */
+html:not(.dark) .bg-gray-950,
+html:not(.dark) .bg-gray-900\/60,
+html:not(.dark) .bg-gray-900\/90,
+html:not(.dark) .bg-gray-900 {
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 20px rgba(0,0,0,0.05) !important;
+  border-color: rgba(0,0,0,0.07) !important;
+}
+/* Raised surfaces (table headers, inputs) */
+html:not(.dark) .bg-gray-800\/50,
+html:not(.dark) .bg-gray-800,
+html:not(.dark) .bg-gray-600\/50 {
+  background-color: #F1F5F9 !important;
+  border-color: rgba(0,0,0,0.07) !important;
+}
+html:not(.dark) .bg-gray-800\/30 {
+  background-color: rgba(0,0,0,0.04) !important;
+}
+/* Text */
+html:not(.dark) .text-white  { color: #0F172A !important; }
+html:not(.dark) .text-gray-300 { color: #334155 !important; }
+html:not(.dark) .text-gray-400 { color: #475569 !important; }
+html:not(.dark) .text-gray-500 { color: #64748B !important; }
+/* Borders */
+html:not(.dark) .border-gray-700\/50,
+html:not(.dark) .border-gray-800\/30,
+html:not(.dark) .border-gray-800\/20,
+html:not(.dark) .border-gray-700 {
+  border-color: rgba(0,0,0,0.08) !important;
+}
+html:not(.dark) .divide-gray-700\/50 > * {
+  border-color: rgba(0,0,0,0.06) !important;
+}
+html:not(.dark) .hover\:bg-gray-800\/30:hover {
+  background-color: rgba(99,102,241,0.05) !important;
+}
+/* Grid overlay design-for-dark — hide in light */
+html:not(.dark) .bg-grid-white\/\[0\.02\] {
+  display: none;
+}
+
+/* ── GRADIENT CARD OVERRIDES (light mode) ───────────────────────────────────
+   bg-gradient-to-br from-gray-800/80 to-gray-900/80 etc.
+   These set --tw-gradient-from/to vars, not background-color.
+   We reset background to white and nuke the gradient image.
+   ─────────────────────────────────────────────────────────────────────────*/
+html:not(.dark) [class*="from-gray-7"],
+html:not(.dark) [class*="from-gray-8"],
+html:not(.dark) [class*="from-gray-9"] {
+  background-image: none !important;
+  background-color: #FFFFFF !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07), 0 4px 20px rgba(0,0,0,0.05) !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+
+/* bg-gray-700/50 and hover:bg-gray-700/50 */
+html:not(.dark) .bg-gray-700\/50,
+html:not(.dark) .bg-gray-700 {
+  background-color: #F1F5F9 !important;
+  border-color: rgba(0,0,0,0.08) !important;
+}
+html:not(.dark) .hover\:bg-gray-700\/50:hover {
+  background-color: rgba(0,0,0,0.04) !important;
+}
+
+/* text-gray-200 in light mode */
+html:not(.dark) .text-gray-200 {
+  color: #1E293B !important;
+}
+html:not(.dark) .text-gray-100 {
+  color: #0F172A !important;
+}
+
+/* ── GRADIENT CARD OVERRIDES (dark mode) ────────────────────────────────────
+   Same cards in dark mode: from-gray-800/80 → replace with proper palette
+   ─────────────────────────────────────────────────────────────────────────*/
+html.dark [class*="from-gray-8"],
+html.dark [class*="from-gray-9"] {
+  background-image: none !important;
+  background-color: #161B22 !important;
+  border-color: rgba(48,54,61,0.8) !important;
+}
+html.dark .bg-gray-700\/50,
+html.dark .bg-gray-700 {
+  background-color: #1C2128 !important;
+}
+html.dark .text-gray-200 {
+  color: #C9D1D9 !important;
+}
+
+
+
+/* Hero section ambient glow — pure CSS, zero compositing layers */
+.hero-glow-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 80% at 15% 60%, rgba(57, 255, 20, 0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 70% at 80% 30%, rgba(0, 194, 203, 0.04) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* Noise texture for dark mode */
@@ -156,7 +295,7 @@ body {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.02)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
   background-size: 32px 32px;
   background-repeat: repeat;
-  background-attachment: fixed;
+  /* Removed background-attachment:fixed — forces repaint on scroll */
 }
 
 /* Light mode grid pattern */
@@ -186,25 +325,18 @@ body {
 }
 
 /* Enhanced glass card with hover state */
+/* Performance-first glass card — uses solid dark bg instead of expensive blur */
 .glass-card {
-  background: linear-gradient(135deg, rgba(14, 14, 18, 0.6) 0%, rgba(8, 12, 10, 0.5) 100%);
-  backdrop-filter: blur(20px) saturate(1.2);
-  -webkit-backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 
-    0 4px 24px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(14, 16, 14, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  will-change: auto;
 }
 
 .glass-card:hover {
-  border-color: rgba(57, 255, 20, 0.12);
-  background: linear-gradient(135deg, rgba(18, 22, 18, 0.65) 0%, rgba(10, 16, 12, 0.55) 100%);
-  box-shadow: 
-    0 8px 40px rgba(0, 0, 0, 0.45),
-    0 0 24px rgba(57, 255, 20, 0.04),
-    inset 0 1px 0 rgba(57, 255, 20, 0.05);
-  transform: translateY(-2px);
+  border-color: rgba(57, 255, 20, 0.15);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 0 12px rgba(57, 255, 20, 0.04);
 }
 
 /* Card with shine sweep on hover */
@@ -251,15 +383,13 @@ body {
    NEON GLOW SYSTEM
    ============================================================================ */
 
+/* neon-glow: only apply on explicit usage, not on every hover */
 .neon-glow {
-  box-shadow: 
-    0 0 5px rgba(57, 255, 20, 0.4),
-    0 0 15px rgba(57, 255, 20, 0.2),
-    0 0 30px rgba(57, 255, 20, 0.1);
+  box-shadow: 0 0 10px rgba(57, 255, 20, 0.3), 0 0 20px rgba(57, 255, 20, 0.1);
 }
 
 .neon-glow-text {
-  text-shadow: 0 0 8px rgba(57, 255, 20, 0.6), 0 0 20px rgba(57, 255, 20, 0.3);
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
 }
 
 .neon-border {
@@ -267,14 +397,14 @@ body {
   box-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
 }
 
-/* Gradient text helper */
+/* Gradient text helper — no animation, static gradient is fast */
 .gradient-text {
   background: linear-gradient(135deg, #39FF14 0%, #00C2CB 50%, #39FF14 100%);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shift 6s ease infinite;
+  /* animation removed: gradient-shift every 6s was burning GPU on every text element */
 }
 
 /* Section glow accent (for behind important sections) */
@@ -318,7 +448,7 @@ body {
   pointer-events: none;
 }
 
-/* Animated gradient border */
+/* Animated gradient border — static version (border-rotate @property animation is GPU-heavy) */
 .animated-border {
   position: relative;
   border-radius: 0.75rem;
@@ -331,24 +461,11 @@ body {
   inset: 0;
   padding: 1px;
   border-radius: inherit;
-  background: linear-gradient(var(--border-angle, 0deg), #39FF14, #00C2CB, #007A87, #39FF14);
+  background: linear-gradient(135deg, #39FF14, #00C2CB, #007A87, #39FF14);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-  animation: border-rotate 4s linear infinite;
-}
-
-@keyframes border-rotate {
-  to {
-    --border-angle: 360deg;
-  }
-}
-
-@property --border-angle {
-  syntax: '<angle>';
-  inherits: false;
-  initial-value: 0deg;
 }
 
 /* ============================================================================
@@ -401,24 +518,12 @@ body {
   50% { transform: translateY(-3px); }
 }
 
-/* Animated section divider */
+/* Animated section divider — sweep animation removed (constant repaint) */
 .section-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(57, 255, 20, 0.3), rgba(0, 194, 203, 0.2), transparent);
   position: relative;
   overflow: visible;
-}
-
-.section-divider::after {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 30%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent, #39FF14, transparent);
-  filter: blur(1px);
-  animation: divider-sweep 4s ease-in-out infinite;
 }
 
 @keyframes divider-sweep {
@@ -502,9 +607,7 @@ body {
   100% { opacity: 1; }
 }
 
-.pulse-data {
-  animation: pulse-neon 2s infinite;
-}
+
 
 .hover-grow {
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -518,7 +621,13 @@ body {
    LOADING SHIMMER
    ============================================================================ */
 
+/* Shimmer — only active when .shimmer-active is added (e.g. skeleton loaders) */
 .shimmer {
+  /* static placeholder — no animation by default */
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.shimmer.shimmer-active {
   background-image: linear-gradient(
     90deg,
     rgba(255, 255, 255, 0.03) 0%,
@@ -530,7 +639,7 @@ body {
   animation: shimmer-slide 2s ease-in-out infinite;
 }
 
-.dark .shimmer {
+.dark .shimmer.shimmer-active {
   background-image: linear-gradient(
     90deg,
     rgba(57, 255, 20, 0.02) 0%,
@@ -625,7 +734,8 @@ body {
 
 .gpu-accelerated {
   transform: translateZ(0);
-  will-change: transform, opacity;
+  /* will-change removed — globally applied will-change wastes GPU layer memory budget;
+     add it inline only on elements immediately before animating */
 }
 
 /* ============================================================================

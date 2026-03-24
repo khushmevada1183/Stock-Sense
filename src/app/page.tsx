@@ -55,9 +55,8 @@ export default function Home() {
   }, [isAnimationEnabled]);
 
   return (
-    <div className="pb-16 bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg">
-      {/* Grid overlay for entire page */}
-      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
+    <div className="pb-16">
+      {/* Grid overlay is applied globally via html in globals.css — no duplicate here */}
 
       {/* Hero Section */}
       <div ref={heroRef}>
@@ -158,11 +157,6 @@ export default function Home() {
         </section>
       </SectionReveal>
 
-      {/* Background glow effects */}
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute w-[800px] h-[800px] rounded-full bg-neon-400/[0.03] blur-3xl top-1/3 -left-96 animate-float-slow"></div>
-        <div className="absolute w-[600px] h-[600px] rounded-full bg-cyan-500/[0.03] blur-3xl top-2/3 -right-80 animate-float-delayed"></div>
-      </div>
     </div>
   );
 }

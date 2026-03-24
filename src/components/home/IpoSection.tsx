@@ -9,7 +9,7 @@ import { IpoItem } from '@/types/ipo';
 import { gsap } from 'gsap';
 
 // Define extended IPO item type with our custom animation properties
-type ExtendedIpoItem = IpoItem & { 
+type ExtendedIpoItem = IpoItem & {
   hasMinimalData?: boolean;
   bidding_start_date?: string;
 };
@@ -24,12 +24,12 @@ export default function IpoSection() {
 
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (!carouselRef.current) return;
-    
+
     const scrollAmount = 300;
-    const scrollPosition = direction === 'left' 
-      ? carouselRef.current.scrollLeft - scrollAmount 
+    const scrollPosition = direction === 'left'
+      ? carouselRef.current.scrollLeft - scrollAmount
       : carouselRef.current.scrollLeft + scrollAmount;
-      
+
     carouselRef.current.scrollTo({
       left: scrollPosition,
       behavior: 'smooth'
@@ -67,10 +67,10 @@ export default function IpoSection() {
     const fetchIpoData = async () => {
       try {
         const response = await stockApi.getIPOData();
-        
+
         if (response && response.success && response.data) {
           let upcomingIpos: ExtendedIpoItem[] = [];
-          
+
           if (Array.isArray(response.data)) {
             upcomingIpos = response.data.slice(0, 5).map((ipo: any) => ({
               ...ipo,
@@ -82,7 +82,7 @@ export default function IpoSection() {
               hasMinimalData: !ipo.price_range || !ipo.issue_size
             }));
           }
-          
+
           setIpoData(upcomingIpos);
         } else {
           setIpoData(getMockIpoData());
@@ -161,32 +161,32 @@ export default function IpoSection() {
         <div className="text-gray-500 text-sm mb-6">
           Companies that have filed for an IPO with SEBI. Details might be disclosed later.
         </div>
-        
+
         {/* IPO Cards in a scrollable container */}
         <div className="relative mb-4">
-          <div 
+          <div
             ref={carouselRef}
             className="overflow-x-auto pb-4 relative max-w-full hide-scrollbar"
           >
             <div ref={cardsRef} className="flex gap-5 px-1 py-2 min-w-full">
               {displayedIpos.map((ipo, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="ipo-card glass-card card-shine rounded-xl p-5 min-w-[300px] flex flex-col relative overflow-hidden"
                   data-minimal={ipo.hasMinimalData ? 'true' : 'false'}
                 >
                   {/* Status accent on top */}
                   <div className={`absolute top-0 left-0 right-0 h-[2px] ${getStatusGradient(ipo.subscription_status || '')}`} />
-                  
+
                   <div className="flex items-center mb-4">
                     {ipo.logo ? (
                       <div className="w-12 h-12 rounded-xl bg-gray-800/60 flex items-center justify-center overflow-hidden mr-3 border border-gray-700/30">
-                        <Image 
-                          src={ipo.logo} 
-                          alt={`${ipo.company_name} logo`} 
-                          width={48} 
-                          height={48} 
-                          className="object-contain" 
+                        <Image
+                          src={ipo.logo}
+                          alt={`${ipo.company_name} logo`}
+                          width={48}
+                          height={48}
+                          className="object-contain"
                         />
                       </div>
                     ) : (
@@ -199,7 +199,7 @@ export default function IpoSection() {
                       <div className="text-gray-500 text-sm">{ipo.symbol}</div>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-3 mb-4">
                     <div className="metric-item flex items-center text-gray-300">
                       <div className="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-2.5">
@@ -210,7 +210,7 @@ export default function IpoSection() {
                         <span className="text-gray-200 font-medium">{ipo.issue_size}</span>
                       </div>
                     </div>
-                    
+
                     <div className="metric-item flex items-center text-gray-300">
                       <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center mr-2.5">
                         <TrendingUp size={14} className="text-blue-400" />
@@ -220,7 +220,7 @@ export default function IpoSection() {
                         <span className="text-gray-200 font-medium">{ipo.price_range}</span>
                       </div>
                     </div>
-                    
+
                     <div className="metric-item flex items-center text-gray-300">
                       <div className="w-7 h-7 rounded-lg bg-green-500/10 flex items-center justify-center mr-2.5">
                         <Calendar size={14} className="text-green-400" />
@@ -236,37 +236,37 @@ export default function IpoSection() {
                   <div className="mb-4">
                     <div className="text-xs text-gray-600 mb-1.5">Expected Interest</div>
                     <div className="h-1.5 bg-gray-800/60 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="h-full bg-gradient-to-r from-neon-400/60 to-cyan-400/40 rounded-full"
-                        style={{ width: `${Math.random() * 50 + 50}%` }} 
+                        style={{ width: `${Math.random() * 50 + 50}%` }}
                       />
                     </div>
                   </div>
-                  
+
                   <div className="mt-auto">
                     <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(ipo.subscription_status || '')}`}>
                       {ipo.subscription_status || 'Upcoming'}
                     </span>
                   </div>
-                  
+
                   {/* Document links if available */}
                   {(ipo.rhpLink || ipo.drhpLink) && (
                     <div className="flex gap-4 mt-3 pt-3 border-t border-gray-800/30">
                       {ipo.rhpLink && (
-                        <a 
-                          href={ipo.rhpLink} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
+                        <a
+                          href={ipo.rhpLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="text-yellow-400 hover:text-yellow-300 text-xs font-medium transition-colors hover-underline"
                         >
                           RHP Document
                         </a>
                       )}
                       {ipo.drhpLink && (
-                        <a 
-                          href={ipo.drhpLink} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
+                        <a
+                          href={ipo.drhpLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="text-green-400 hover:text-green-300 text-xs font-medium transition-colors hover-underline"
                         >
                           DRHP Document
@@ -280,18 +280,18 @@ export default function IpoSection() {
             {/* Fade effect */}
             <div className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-gray-950/80 to-transparent pointer-events-none" />
           </div>
-          
+
           {/* Carousel navigation buttons */}
           {displayedIpos.length > 2 && (
             <div className="flex justify-end mt-2 gap-2">
-              <button 
+              <button
                 onClick={() => scrollCarousel('left')}
                 className="p-2 rounded-full glass-card text-gray-400 hover:text-neon-400 hover:border-neon-400/20 transition-all duration-300"
                 aria-label="Scroll left"
               >
                 <ChevronLeft size={16} />
               </button>
-              <button 
+              <button
                 onClick={() => scrollCarousel('right')}
                 className="p-2 rounded-full glass-card text-gray-400 hover:text-neon-400 hover:border-neon-400/20 transition-all duration-300"
                 aria-label="Scroll right"
@@ -301,17 +301,17 @@ export default function IpoSection() {
             </div>
           )}
         </div>
-        
+
         {/* Demat Account CTA */}
         <div className="mt-6 glass-card rounded-xl p-5 text-center border-neon-400/10">
           <div className="font-semibold text-gray-200 mb-2">Applying for IPOs?</div>
           <p className="text-gray-500 text-sm mb-4">
             To apply for IPOs, you need a Demat account. Open your account now to start investing.
           </p>
-          <a 
-            href="#" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <a
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-5 py-2 bg-neon-400 hover:shadow-neon text-black rounded-lg text-sm font-semibold inline-block transition-all duration-300 hover:scale-[1.03]"
           >
             Open a Demat Account

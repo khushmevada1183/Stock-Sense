@@ -1,108 +1,81 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, TrendingUp, ChevronRight, Sparkles } from 'lucide-react';
 
 export default function HeroSection() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [stocksAnalyzed, setStocksAnalyzed] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
-  
+  // Parallax: write directly to DOM via ref — no React state updates on every mouse move
+  const chartRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number | null>(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+
   const testimonials = [
-    { name: "Rajesh M.", position: "Portfolio Manager", text: "Gained 27% returns in just 3 months using Stock Sense\u0027s AI predictions" },
+    { name: "Rajesh M.", position: "Portfolio Manager", text: "Gained 27% returns in just 3 months using Stock Sense's AI predictions" },
     { name: "Priya S.", position: "Retail Investor", text: "The real-time alerts helped me avoid a 15% market drop last quarter" },
     { name: "Vikram J.", position: "Financial Advisor", text: "My clients have seen an average 31% improvement in portfolio performance" }
   ];
-  
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        setMousePosition({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top
-        });
-      }
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+
+  // RAF-throttled mousemove: mutates chart DOM directly, bypasses React render cycle entirely
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    if (rafRef.current !== null) return; // already scheduled
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      if (!chartRef.current || !heroRef.current) return;
+      const cx = heroRef.current.offsetWidth / 2;
+      const cy = heroRef.current.offsetHeight / 2;
+      const px = (mouseRef.current.x - cx) / 100;
+      const py = (mouseRef.current.y - cy) / 100;
+      chartRef.current.style.transform = `translate(${-px}px, ${-py}px)`;
+    });
   }, []);
-  
-  // Animate stocks analyzed counter with spring physics
+
   useEffect(() => {
-    let start = 0;
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
+  }, [handleMouseMove]);
+
+  // Animate stocks analyzed counter
+  useEffect(() => {
     const end = 247;
     const duration = 2000;
     const startTime = Date.now();
-    
+
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease-out cubic for spring-like feel
       const eased = 1 - Math.pow(1 - progress, 3);
-      const current = Math.round(eased * end);
-      setStocksAnalyzed(current);
-      
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      }
+      setStocksAnalyzed(Math.round(eased * end));
+      if (progress < 1) requestAnimationFrame(animate);
     };
-    
+
     requestAnimationFrame(animate);
   }, []);
-  
+
   // Rotate testimonials
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTestimonial(prev => (prev + 1) % testimonials.length);
     }, 5000);
-    
     return () => clearInterval(interval);
   }, []);
-  
-  const calcParallaxX = (depth = 1) => {
-    const centerX = heroRef.current ? heroRef.current.offsetWidth / 2 : 0;
-    return (mousePosition.x - centerX) / 50 * depth;
-  };
-  
-  const calcParallaxY = (depth = 1) => {
-    const centerY = heroRef.current ? heroRef.current.offsetHeight / 2 : 0;
-    return (mousePosition.y - centerY) / 50 * depth;
-  };
 
   return (
     <section 
       ref={heroRef}
-      className="relative py-24 md:py-32 overflow-hidden text-white"
+      className="relative py-24 md:py-32 overflow-hidden text-white hero-glow-bg"
     >
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div 
-          className="absolute w-[800px] h-[800px] rounded-full bg-neon-400/[0.04] blur-[100px] animate-float-slow"
-          style={{ 
-            left: `calc(10% + ${calcParallaxX(0.5)}px)`, 
-            top: `calc(30% + ${calcParallaxY(0.5)}px)` 
-          }}
-        />
-        <div 
-          className="absolute w-[600px] h-[600px] rounded-full bg-cyan-500/[0.04] blur-[80px] animate-float-delayed"
-          style={{ 
-            right: `calc(15% + ${calcParallaxX(-0.3)}px)`, 
-            top: `calc(20% + ${calcParallaxY(-0.3)}px)` 
-          }}
-        />
-        <div 
-          className="absolute w-[500px] h-[500px] rounded-full bg-neon-400/[0.03] blur-[120px] animate-float"
-          style={{ 
-            left: `calc(50% + ${calcParallaxX(0.2)}px)`, 
-            bottom: `calc(10% + ${calcParallaxY(0.2)}px)` 
-          }}
-        />
-      </div>
+      {/* Static CSS radial-gradient bg — no animated blur divs, zero compositing layers */}
       
       {/* Grid overlay */}
       <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:50px_50px]" />
@@ -116,7 +89,7 @@ export default function HeroSection() {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               {/* Badge */}
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-neon-400/20 bg-neon-400/[0.05] backdrop-blur-lg text-neon-400 text-sm mb-8 animate-glow-pulse">
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-neon-400/20 bg-neon-400/[0.05] text-neon-400 text-sm mb-8">
                 <Sparkles className="mr-2 h-3.5 w-3.5" />
                 Real-time market intelligence
               </div>
@@ -184,13 +157,12 @@ export default function HeroSection() {
           
           {/* Chart Visualization */}
           <div className="lg:col-span-5">
+            {/* chartRef receives direct DOM transform from RAF mousemove — no React state */}
             <motion.div
+              ref={chartRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              style={{ 
-                transform: `translate(${calcParallaxX(-0.5)}px, ${calcParallaxY(-0.5)}px)` 
-              }}
               className="relative"
             >
               {/* 3D Chart Card */}
@@ -248,25 +220,25 @@ export default function HeroSection() {
                   ))}
                 </svg>
                 
-                {/* Live data indicators */}
+                {/* Live data indicators — removed backdrop-blur (new compositing layer per element) */}
                 <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
-                  <div className="text-xs font-mono bg-gray-950/70 backdrop-blur-xl px-3 py-1.5 rounded-full text-neon-400 flex items-center border border-gray-700/30">
+                  <div className="text-xs font-mono bg-gray-950/90 px-3 py-1.5 rounded-full text-neon-400 flex items-center border border-gray-700/30">
                     <span className="animate-pulse mr-2 h-1.5 w-1.5 rounded-full bg-neon-400 shadow-neon-sm" />
                     LIVE DATA
                   </div>
-                  <div className="text-xs font-mono bg-gray-950/70 backdrop-blur-xl px-3 py-1.5 rounded-full text-gray-300 border border-gray-700/30">
+                  <div className="text-xs font-mono bg-gray-950/90 px-3 py-1.5 rounded-full text-gray-300 border border-gray-700/30">
                     NIFTY 50: 19,200 <span className="text-neon-400 ml-1">+1.20%</span>
                   </div>
                 </div>
                 
-                {/* Bottom metrics */}
+                {/* Bottom metrics — removed backdrop-blur-xl */}
                 <div className="absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2">
                   {[
                     { label: 'SENSEX', value: '63,450', up: true },
                     { label: 'BANK NIFTY', value: '44,120', up: false },
                     { label: 'IT INDEX', value: '32,150', up: true }
                   ].map((metric, i) => (
-                    <div key={i} className="bg-gray-950/60 backdrop-blur-xl p-2.5 rounded-lg border border-gray-700/20">
+                    <div key={i} className="bg-gray-950/90 p-2.5 rounded-lg border border-gray-700/20">
                       <div className="text-[10px] text-gray-500 uppercase tracking-wider">{metric.label}</div>
                       <div className="text-sm font-semibold flex items-center mt-0.5">
                         {metric.value}
@@ -281,14 +253,14 @@ export default function HeroSection() {
                 <div className="absolute -top-20 -right-20 w-[200px] h-[200px] rounded-full bg-cyan-500/[0.06] blur-[60px]" />
               </div>
               
-              {/* Testimonial card */}
+              {/* Testimonial card — removed scale from animation (avoids layout thrashing) */}
               <AnimatePresence mode="wait">
                 <motion.div 
                   key={currentTestimonial}
-                  initial={{ opacity: 0, y: 16, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
                   className="absolute -bottom-12 -right-8 w-64 glass-card card-shine rounded-xl border border-neon-400/10 p-4"
                 >
                   <div className="flex items-start mb-3">
