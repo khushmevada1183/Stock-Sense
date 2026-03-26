@@ -384,11 +384,11 @@ export default function Page() {
     if (typeof marketCap === 'number') {
       // Format large numbers in crores/lakhs
       if (marketCap >= 10000000) {
-        return `₹${(marketCap / 10000000).toFixed(2)} Cr`;
+        return `₹${(marketCap / 10000000).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Cr`;
       } else if (marketCap >= 100000) {
-        return `₹${(marketCap / 100000).toFixed(2)} L`;
+        return `₹${(marketCap / 100000).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})} L`;
       } else {
-        return `₹${marketCap.toLocaleString()}`;
+        return `₹${marketCap.toLocaleString('en-IN')}`;
       }
     }
     
@@ -524,8 +524,8 @@ export default function Page() {
   // Metrics (PE, EPS, Market Cap)
   const pe = extractPE();
   const eps = extractEPS();
-  const marketCap = 'N/A'; // Not in NSE equity details – available via separate trade_info
-  const volume = stockData?.data?.preOpenMarket?.totalTradedVolume || 'N/A';
+  const marketCap = stock?.marketCap ? formatMarketCap(stock.marketCap) : 'N/A';
+  const volume = stock?.volume ? stock.volume : (stockData?.data?.preOpenMarket?.totalTradedVolume || 'N/A');
   const avgVolume = 'N/A';
   const debtToEquity = 'N/A';
   const dividendYield = 'N/A';
@@ -536,7 +536,7 @@ export default function Page() {
   const nseCode = stock?.symbol || '';
   
   // Market status
-  const marketCapValue = undefined;
+  const marketCapValue = stock?.marketCap || undefined;
   const percentChange = pChange;
   
   // Management team
@@ -869,6 +869,7 @@ export default function Page() {
                 yearHigh={yearHigh}
                 yearLow={yearLow}
                 volume={typeof volume === 'number' ? volume : 0}
+                marketCap={marketCap}
                 avgVolume={0}
                 dividendYield={dividendYield}
                 debtToEquity={debtToEquity}
@@ -923,7 +924,7 @@ export default function Page() {
             {activeTab === 'institutional' && (
               <InstitutionalInvestment 
                 symbol={symbol} 
-                marketCap={0} 
+                marketCap={marketCapValue || 0} 
               />
             )}
             
@@ -945,7 +946,7 @@ export default function Page() {
                   symbol,
                   companyName,
                   current_price: stock?.lastPrice ?? 0,
-                  marketCap: 0,
+                  marketCap: marketCapValue || 0,
                   industry,
                   sector,
                   pe,

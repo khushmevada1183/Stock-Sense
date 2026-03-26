@@ -16,6 +16,7 @@ interface OverviewProps {
   yearHigh: number | undefined;
   yearLow: number | undefined;
   volume: number | undefined;
+  marketCap: string | number | undefined;
   avgVolume: number | undefined;
   dividendYield: number | string | undefined;
   debtToEquity: number | string | undefined;
@@ -39,6 +40,7 @@ const Overview: React.FC<OverviewProps> = ({
   yearHigh,
   yearLow,
   volume,
+  marketCap,
   avgVolume,
   dividendYield,
   debtToEquity,
@@ -106,9 +108,9 @@ const Overview: React.FC<OverviewProps> = ({
           </CardHeader>
           <CardContent className="space-y-0">
             {[
+              { label: 'Market Cap', value: marketCap || 'N/A' },
               { label: 'Volume', value: volume ? volume.toLocaleString() : 'N/A' },
-              { label: 'Avg. Volume', value: avgVolume ? avgVolume.toLocaleString() : 'N/A' },
-              { label: 'Dividend Yield', value: dividendYield ? `${dividendYield}%` : 'N/A' },
+              { label: 'Dividend Yield', value: dividendYield && dividendYield !== 'N/A' ? `${dividendYield}%` : 'N/A' },
               { label: 'Debt to Equity', value: debtToEquity || 'N/A' }
             ].map((item, i, arr) => (
               <div 

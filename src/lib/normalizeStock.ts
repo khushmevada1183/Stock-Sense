@@ -77,9 +77,10 @@ export interface NormalizedStock {
   sectorPE: number | string;
   symbolPE: number | string;
   
-  // Utility fields for components
   isPositive: boolean;
   marketStatus: string;
+  marketCap: number;
+  volume: number;
   
   // Raw data preserved for advanced components
   _raw: any;
@@ -141,10 +142,18 @@ export function normalizeStockData(raw: any): NormalizedStock | null {
   const symbol = info.symbol || metadata.symbol || '';
   const companyName = info.companyName || metadata.companyName || symbol;
   const isin = info.isin || securityInfo.isin || '';
-  
   // PE data from metadata
   const symbolPE = safeNum(metadata.pdSymbolPe) || metadata.pdSymbolPe || 'N/A';
   const sectorPE = safeNum(metadata.pdSectorPe) || metadata.pdSectorPe || 'N/A';
+  
+  // Calculate Market Cap & Volume
+  const issuedSize = safeNum(securityInfo.issuedSize);
+  const marketCap = lastPrice && issuedSize ? lastPrice * issuedSize : 0;
+  
+  // NSE volume can be scattered depending on time of day
+  const preOpenVolume = safeNum(data.preOpenMarket?.totalTradedVolume);
+  const priceInfoVolume = safeNum(priceInfo.totalTradedVolume) || safeNum(priceInfo.volume) || safeNum(priceInfo.quantityTraded);
+  const volume = priceInfoVolume || preOpenVolume || 0;
   
   return {
     symbol,
@@ -184,9 +193,10 @@ export function normalizeStockData(raw: any): NormalizedStock | null {
     
     symbolPE,
     sectorPE,
-    
     isPositive: pChange >= 0,
     marketStatus: data.currentMarketType || 'N/A',
+    marketCap,
+    volume,
     
     _raw: data,
   };
