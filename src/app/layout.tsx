@@ -9,6 +9,7 @@ import Footer from '../components/layout/Footer';
 import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
 import ClientScrollProgressIndicator from '../components/layout/ClientScrollProgressIndicator';
+import KeepAlive from '../components/KeepAlive';
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono', display: 'swap' });
@@ -48,6 +49,7 @@ export default function RootLayout({
                 {/* Global UI components */}
                 <Toasts />
                 <ModalContainer />
+                <KeepAlive />
             </div>
               </AnimationProvider>
             </StockProvider>
