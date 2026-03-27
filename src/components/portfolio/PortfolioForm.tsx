@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import * as stockApi from '@/api/api';
 import { X, PlusCircle, Save } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface Stock {
   symbol: string;

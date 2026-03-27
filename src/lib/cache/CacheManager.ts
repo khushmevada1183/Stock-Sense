@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 /**
  * Advanced Cache Manager for Frontend
  * 
@@ -90,7 +91,7 @@ class AdvancedCacheManager {
           const binaryString = Array.from(uint8Array).map(byte => String.fromCharCode(byte)).join('');
           return btoa(binaryString);
         } catch (error) {
-          console.warn('Compression failed, storing uncompressed:', error);
+          logger.warn('Compression failed, storing uncompressed:', error);
         }
       }
     }
@@ -186,7 +187,7 @@ class AdvancedCacheManager {
 
       sessionStorage.setItem(cacheKey, JSON.stringify(item));
     } catch (error) {
-      console.warn('Failed to set session storage cache:', error);
+      logger.warn('Failed to set session storage cache:', error);
     }
   }
 
@@ -211,7 +212,7 @@ class AdvancedCacheManager {
       
       return await this.decompressData(item.data);
     } catch (error) {
-      console.warn('Failed to get session storage cache:', error);
+      logger.warn('Failed to get session storage cache:', error);
       return null;
     }
   }
@@ -234,7 +235,7 @@ class AdvancedCacheManager {
 
       localStorage.setItem(cacheKey, JSON.stringify(item));
     } catch (error) {
-      console.warn('Failed to set local storage cache:', error);
+      logger.warn('Failed to set local storage cache:', error);
     }
   }
 
@@ -259,7 +260,7 @@ class AdvancedCacheManager {
       
       return await this.decompressData(item.data);
     } catch (error) {
-      console.warn('Failed to get local storage cache:', error);
+      logger.warn('Failed to get local storage cache:', error);
       return null;
     }
   }
@@ -401,7 +402,7 @@ class AdvancedCacheManager {
         }
       });
     } catch (error) {
-      console.warn('Failed to cleanup session storage:', error);
+      logger.warn('Failed to cleanup session storage:', error);
     }
 
     // Clean local storage
@@ -420,7 +421,7 @@ class AdvancedCacheManager {
         }
       });
     } catch (error) {
-      console.warn('Failed to cleanup local storage:', error);
+      logger.warn('Failed to cleanup local storage:', error);
     }
   }
 
@@ -446,7 +447,7 @@ class AdvancedCacheManager {
           return acc + (value ? value.length : 0);
         }, 0);
       } catch (error) {
-        console.warn('Failed to get session storage stats:', error);
+        logger.warn('Failed to get session storage stats:', error);
       }
 
       // Local storage stats
@@ -458,7 +459,7 @@ class AdvancedCacheManager {
           return acc + (value ? value.length : 0);
         }, 0);
       } catch (error) {
-        console.warn('Failed to get local storage stats:', error);
+        logger.warn('Failed to get local storage stats:', error);
       }
     }
 

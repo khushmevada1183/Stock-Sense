@@ -35,7 +35,7 @@ const StockSearchPage: React.FC = () => {
         setPopularStocks(popular);
       }
     } catch (error) {
-      console.error('Error fetching popular stocks:', error);
+      logger.error('Error fetching popular stocks:', error);
     }
   };
 

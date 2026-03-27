@@ -1,4 +1,5 @@
 'use client';
+import { logger } from '@/lib/logger';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
@@ -86,10 +87,10 @@ export default function IpoSection() {
           setIpoData(upcomingIpos);
         } else {
           setIpoData(getMockIpoData());
-          console.log('API returned unexpected data structure for IPOs, using fallback');
+          logger.debug('API returned unexpected data structure for IPOs, using fallback');
         }
       } catch (err) {
-        console.error('Failed to fetch IPO data:', err);
+        logger.error('Failed to fetch IPO data:', err);
         setError('Failed to fetch IPO data');
         setIpoData(getMockIpoData());
       } finally {

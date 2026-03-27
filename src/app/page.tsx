@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -11,8 +11,6 @@ import SectorPerformance from '../components/home/SectorPerformance';
 import AnalysisFeatures from '../components/home/AnalysisFeatures';
 import IpoSection from '../components/home/IpoSection';
 import CtaSection from '../components/home/CtaSection';
-import { useAnimation } from '../animations/shared/AnimationContext';
-import { initHomePageAnimations } from '../animations/pages/homeAnimations';
 
 // Framer Motion viewport animation wrapper
 const SectionReveal = ({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (
@@ -35,24 +33,6 @@ export default function Home() {
   const ipoSectionRef = useRef<HTMLElement>(null);
   const analysisFeaturesRef = useRef<HTMLDivElement>(null);
   const ctaSectionRef = useRef<HTMLDivElement>(null);
-
-  const { isAnimationEnabled } = useAnimation();
-
-  useEffect(() => {
-    if (isAnimationEnabled) {
-      const refs = {
-        heroRef,
-        marketOverviewRef,
-        sectorPerformanceRef,
-        featuredStocksRef,
-        ipoSectionRef,
-        analysisFeaturesRef,
-        ctaSectionRef
-      };
-
-      initHomePageAnimations(refs);
-    }
-  }, [isAnimationEnabled]);
 
   return (
     <div className="pb-16">

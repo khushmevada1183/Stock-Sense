@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UserPlus, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { logger } from '@/lib/logger';
 
 const RegisterPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -44,7 +45,7 @@ const RegisterPage: React.FC = () => {
 
     try {
       // Add your registration logic here
-      console.log('Registration attempt:', formData);
+      logger.debug('Registration attempt:', formData);
       // For now, just simulate a registration
       setTimeout(() => {
         setLoading(false);

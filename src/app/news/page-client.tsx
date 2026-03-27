@@ -4,6 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import * as stockApi from '@/api/api';
+import { logger } from '@/lib/logger';
 
 // Dynamically import components with SSR disabled for those with client-side data fetching
 const MarketNews = dynamic(() => import('@/components/News/MarketNews'), { ssr: false });
@@ -47,7 +48,7 @@ export default function NewsPageClient() {
         setNewsData(articles.length > 0 ? articles : FALLBACK_NEWS);
         setError('');
       } catch (err) {
-        console.error('Error fetching news (using fallback):', err);
+        logger.error('Error fetching news (using fallback)', err);
         setNewsData(FALLBACK_NEWS);
         setError('');
       } finally {

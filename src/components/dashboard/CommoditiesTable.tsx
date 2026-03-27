@@ -33,7 +33,7 @@ const CommoditiesTable = () => {
         setCommodities(response.data);
         setError('');
       } catch (err) {
-        console.error('Error fetching commodities:', err);
+        logger.error('Error fetching commodities:', err);
         setError('Failed to load commodities data. Please try again later.');
       } finally {
         setIsLoading(false);

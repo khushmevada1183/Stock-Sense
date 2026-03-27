@@ -4,12 +4,13 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { Chart, registerables } from 'chart.js';
-import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, DollarSign, Activity, AlertTriangle } from 'lucide-react';
+import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, DollarSign, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
 import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
+import { logger } from '@/lib/logger';
+import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -54,6 +55,11 @@ interface HighLowData {
   current_price: number;
 }
 
+const STOCKS_TABLE_PAGE_SIZE = 10;
+const SECTOR_CARD_PAGE_SIZE = 6;
+const PERFORMANCE_CARD_PAGE_SIZE = 8;
+const HIGH_LOW_CARD_PAGE_SIZE = 4;
+
 export default function StocksIndexPage() {
   // API Data States
   const [stocks, setStocks] = useState<Stock[]>([]);
@@ -63,6 +69,10 @@ export default function StocksIndexPage() {
   const [highLowData, setHighLowData] = useState<HighLowData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [stocksTablePage, setStocksTablePage] = useState(1);
+  const [sectorCardPage, setSectorCardPage] = useState(1);
+  const [performanceCardPage, setPerformanceCardPage] = useState(1);
+  const [highLowCardPage, setHighLowCardPage] = useState(1);
   
   // Calculated metrics from real API data
   const [marketMetrics, setMarketMetrics] = useState({
@@ -97,6 +107,58 @@ export default function StocksIndexPage() {
   // Get animation context
   const { isAnimationEnabled } = useAnimation();
 
+  const totalStocksPages = Math.max(1, Math.ceil((stocks?.length || 0) / STOCKS_TABLE_PAGE_SIZE));
+  const tableStartIndex = (stocksTablePage - 1) * STOCKS_TABLE_PAGE_SIZE;
+  const paginatedStocks = (Array.isArray(stocks) ? stocks : []).slice(
+    tableStartIndex,
+    tableStartIndex + STOCKS_TABLE_PAGE_SIZE
+  );
+
+  const sectorEntries = Object.entries(sectorDistribution);
+  const totalSectorPages = Math.max(1, Math.ceil(sectorEntries.length / SECTOR_CARD_PAGE_SIZE));
+  const sectorStartIndex = (sectorCardPage - 1) * SECTOR_CARD_PAGE_SIZE;
+  const paginatedSectorEntries = sectorEntries.slice(sectorStartIndex, sectorStartIndex + SECTOR_CARD_PAGE_SIZE);
+
+  const totalPerformancePages = Math.max(1, Math.ceil(stocks.length / PERFORMANCE_CARD_PAGE_SIZE));
+  const performanceStartIndex = (performanceCardPage - 1) * PERFORMANCE_CARD_PAGE_SIZE;
+  const paginatedPerformanceStocks = stocks.slice(performanceStartIndex, performanceStartIndex + PERFORMANCE_CARD_PAGE_SIZE);
+
+  const totalHighLowPages = Math.max(1, Math.ceil(highLowData.length / HIGH_LOW_CARD_PAGE_SIZE));
+  const highLowStartIndex = (highLowCardPage - 1) * HIGH_LOW_CARD_PAGE_SIZE;
+  const paginatedHighLowData = highLowData.slice(highLowStartIndex, highLowStartIndex + HIGH_LOW_CARD_PAGE_SIZE);
+
+  useEffect(() => {
+    setStocksTablePage((prev) => Math.min(prev, totalStocksPages));
+  }, [totalStocksPages]);
+
+  useEffect(() => {
+    setSectorCardPage((prev) => Math.min(prev, totalSectorPages));
+  }, [totalSectorPages]);
+
+  useEffect(() => {
+    setPerformanceCardPage((prev) => Math.min(prev, totalPerformancePages));
+  }, [totalPerformancePages]);
+
+  useEffect(() => {
+    setHighLowCardPage((prev) => Math.min(prev, totalHighLowPages));
+  }, [totalHighLowPages]);
+
+  useEffect(() => {
+    setStocksTablePage(1);
+  }, [stocks.length]);
+
+  useEffect(() => {
+    setSectorCardPage(1);
+  }, [sectorEntries.length]);
+
+  useEffect(() => {
+    setPerformanceCardPage(1);
+  }, [stocks.length]);
+
+  useEffect(() => {
+    setHighLowCardPage(1);
+  }, [highLowData.length]);
+
   useEffect(() => {
     const fetchStockData = async () => {
       try {
@@ -110,7 +172,7 @@ export default function StocksIndexPage() {
           fetch('/api/price_shockers').then(r => r.json()).catch(() => ({ success: false, data: {} }))
         ]);
 
-        console.log('API Responses:', { 
+        logger.debug('API Responses fetched', { 
           trending: trendingRes, 
           bse: bseRes, 
           nse: nseRes, 
@@ -171,7 +233,7 @@ export default function StocksIndexPage() {
           ];
         }
 
-        console.log('Extracted data:', {
+        logger.debug('Extracted data:', {
           trendingTotal: allTrendingStocks.length,
           gainers: trendingGainers.length,
           losers: trendingLosers.length,
@@ -194,12 +256,12 @@ export default function StocksIndexPage() {
 
         // Transform API data to include ALL available fields with enhanced mapping
         const transformedStocks = allStocksData.map((stock, index) => {
-          console.log(`Processing stock ${index}:`, stock);
+          logger.debug(`Processing stock ${index}`, stock);
           
           return {
             id: index + 1,
             // Handle different API response formats for ticker/symbol
-            ticker_id: stock.ticker_id || stock.tickerId || `T${index + 1}`,
+            ticker_id: stock.ticker_id || stock.tickerId || stock.ticker?.split('.')?.[0] || '',
             symbol: stock.ric?.split('.')[0] || stock.nseCode || stock.symbol || stock.ticker?.split('.')[0] || `STOCK${index + 1}`,
             
             // Company name with fallbacks
@@ -254,7 +316,7 @@ export default function StocksIndexPage() {
           };
         });
 
-        console.log('Transformed stocks data:', transformedStocks); // Debug log
+        logger.info('Transformed stocks data', { count: transformedStocks.length });
         setStocks(transformedStocks); // Show ALL stocks from trending API (dynamic)
         
         // Calculate market metrics from real data
@@ -299,11 +361,11 @@ export default function StocksIndexPage() {
             }));
           
           setHighLowData(highLowStocks);
-          console.log('52-week high/low data populated:', highLowStocks); // Debug log
+          logger.debug('52-week high/low data populated', { count: highLowStocks.length });
         }
         
       } catch (err) {
-        console.error('Error loading stock data:', err);
+        logger.error('Error loading stock data', err);
         setError('Failed to load stock data. Please check if the API server is running.');
       } finally {
         setLoading(false);
@@ -1138,18 +1200,15 @@ export default function StocksIndexPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {(Array.isArray(stocks) ? stocks : []).map((stock) => (
-                      <tr key={stock.id} className="hover:bg-gray-700/50">
+                    {paginatedStocks.map((stock) => (
+                      <tr key={stock.id}>
                         <td className="px-4 py-4 whitespace-nowrap">
-                          <div className="flex flex-col">
-                            <Link 
-                              href={`/stocks/${stock.symbol}`} 
-                              className="font-medium text-indigo-400 hover:text-indigo-300"
-                            >
-                              {stock.symbol}
-                            </Link>
-                            <span className="text-xs text-gray-500">{stock.ticker_id}</span>
-                          </div>
+                          <Link 
+                            href={`/stocks/${stock.symbol}`} 
+                            className="font-medium text-indigo-400 hover:text-indigo-300"
+                          >
+                            {stock.symbol}
+                          </Link>
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex flex-col">
@@ -1249,6 +1308,38 @@ export default function StocksIndexPage() {
                   </tbody>
                 </table>
               </div>
+
+              {stocks.length > 0 && (
+                <div className="flex flex-col gap-3 border-t border-gray-700 px-4 py-3 md:flex-row md:items-center md:justify-between">
+                  <p className="text-sm text-gray-400">
+                    Showing <span className="text-white">{tableStartIndex + 1}</span> to{' '}
+                    <span className="text-white">{Math.min(tableStartIndex + STOCKS_TABLE_PAGE_SIZE, stocks.length)}</span> of{' '}
+                    <span className="text-white">{stocks.length}</span> stocks
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setStocksTablePage((prev) => Math.max(1, prev - 1))}
+                      disabled={stocksTablePage === 1}
+                      className="rounded-md border border-gray-600 px-3 py-1.5 text-sm text-gray-200 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Previous
+                    </button>
+                    <span className="px-2 text-sm text-gray-300">
+                      Page {stocksTablePage} of {totalStocksPages}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setStocksTablePage((prev) => Math.min(totalStocksPages, prev + 1))}
+                      disabled={stocksTablePage === totalStocksPages}
+                      className="rounded-md border border-gray-600 px-3 py-1.5 text-sm text-gray-200 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -1261,7 +1352,7 @@ export default function StocksIndexPage() {
                     <div>
                       <CardTitle className="text-white">{stock.company_name}</CardTitle>
                       <CardDescription className="text-gray-400">
-                        {stock.symbol} • {stock.ticker_id}
+                        {stock.symbol}
                       </CardDescription>
                     </div>
                     <div className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -1434,7 +1525,7 @@ export default function StocksIndexPage() {
               <div className="chart-container h-64 flex items-center justify-center relative rounded-lg bg-black/20 p-4 mb-6">
                 <canvas ref={sectorChartRef} className="rounded-lg" />
               </div>
-              <div className="space-y-4">{Object.entries(sectorDistribution).map(([sector, count], index) => (
+              <div className="space-y-4">{paginatedSectorEntries.map(([sector, count], index) => (
                   <div key={sector} className="flex justify-between items-center p-3 rounded-lg bg-gray-700/30 hover:bg-gray-700/50 transition-colors">
                     <div className="flex items-center">
                       <span 
@@ -1451,7 +1542,7 @@ export default function StocksIndexPage() {
                             'rgba(168, 85, 247, 0.8)',
                             'rgba(59, 130, 246, 0.8)',
                             'rgba(34, 197, 94, 0.8)'
-                          ][index % 10] 
+                          ][(sectorStartIndex + index) % 10] 
                         }}
                       ></span>
                       <span className="text-gray-200 font-medium">{sector}</span>
@@ -1463,6 +1554,35 @@ export default function StocksIndexPage() {
                   </div>
                 ))}
               </div>
+
+              {sectorEntries.length > SECTOR_CARD_PAGE_SIZE && (
+                <div className="mt-4 flex items-center justify-between border-t border-gray-700/70 pt-3">
+                  <span className="text-xs text-gray-400">
+                    {sectorStartIndex + 1}-{Math.min(sectorStartIndex + SECTOR_CARD_PAGE_SIZE, sectorEntries.length)} of {sectorEntries.length}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSectorCardPage((prev) => Math.max(1, prev - 1))}
+                      disabled={sectorCardPage === 1}
+                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Previous sector page"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <span className="text-xs text-gray-300">{sectorCardPage}/{totalSectorPages}</span>
+                    <button
+                      type="button"
+                      onClick={() => setSectorCardPage((prev) => Math.min(totalSectorPages, prev + 1))}
+                      disabled={sectorCardPage === totalSectorPages}
+                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Next sector page"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
           
@@ -1472,7 +1592,7 @@ export default function StocksIndexPage() {
               <CardDescription className="text-gray-400">Price Change % by Stock</CardDescription>
             </CardHeader>
             <CardContent className="px-0 py-0">
-              {stocks.map((stock) => (
+              {paginatedPerformanceStocks.map((stock) => (
                 <div 
                   key={stock.id} 
                   className="px-6 py-3 border-b border-gray-700 last:border-0"
@@ -1498,6 +1618,35 @@ export default function StocksIndexPage() {
                   </div>
                 </div>
               ))}
+
+              {stocks.length > PERFORMANCE_CARD_PAGE_SIZE && (
+                <div className="flex items-center justify-between border-t border-gray-700 px-6 py-3">
+                  <span className="text-xs text-gray-400">
+                    {performanceStartIndex + 1}-{Math.min(performanceStartIndex + PERFORMANCE_CARD_PAGE_SIZE, stocks.length)} of {stocks.length}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPerformanceCardPage((prev) => Math.max(1, prev - 1))}
+                      disabled={performanceCardPage === 1}
+                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Previous stock performance page"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <span className="text-xs text-gray-300">{performanceCardPage}/{totalPerformancePages}</span>
+                    <button
+                      type="button"
+                      onClick={() => setPerformanceCardPage((prev) => Math.min(totalPerformancePages, prev + 1))}
+                      disabled={performanceCardPage === totalPerformancePages}
+                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Next stock performance page"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
           
@@ -1507,7 +1656,7 @@ export default function StocksIndexPage() {
               <CardDescription className="text-gray-400">Top performers with position indicators</CardDescription>
             </CardHeader>
             <CardContent className="px-0 py-0">
-              {(Array.isArray(highLowData) ? highLowData.slice(0, 5) : []).map((stock, index) => (
+              {paginatedHighLowData.map((stock, index) => (
                 <div 
                   key={stock.symbol || index} 
                   className="px-6 py-3 border-b border-gray-700 last:border-0 hover:bg-gray-700/30 transition-colors"
@@ -1546,14 +1695,43 @@ export default function StocksIndexPage() {
                   )}
                 </div>
               ))}
+
+              {highLowData.length > HIGH_LOW_CARD_PAGE_SIZE && (
+                <div className="flex items-center justify-between border-t border-gray-700 px-6 py-3">
+                  <span className="text-xs text-gray-400">
+                    {highLowStartIndex + 1}-{Math.min(highLowStartIndex + HIGH_LOW_CARD_PAGE_SIZE, highLowData.length)} of {highLowData.length}
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setHighLowCardPage((prev) => Math.max(1, prev - 1))}
+                      disabled={highLowCardPage === 1}
+                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Previous 52-week range page"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <span className="text-xs text-gray-300">{highLowCardPage}/{totalHighLowPages}</span>
+                    <button
+                      type="button"
+                      onClick={() => setHighLowCardPage((prev) => Math.min(totalHighLowPages, prev + 1))}
+                      disabled={highLowCardPage === totalHighLowPages}
+                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Next 52-week range page"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Stock Cards Section - Full Width */}
-      <section className="mb-12">
+      {/* Enhanced Stock Cards Section */}
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
           <CardHeader>
             <CardTitle className="text-white">📈 Detailed Stock Analysis</CardTitle>
@@ -1562,7 +1740,7 @@ export default function StocksIndexPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
               {stocks.slice(0, 18).map((stock) => (
                 <EnhancedStockCard
                   key={stock.id}
@@ -1589,7 +1767,7 @@ export default function StocksIndexPage() {
       </section>
 
       {/* BSE Most Active Section */}
-      <section className="mb-12">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <div className="bg-gray-900/90 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50 shadow-2xl">
           <h2 className="text-3xl font-bold mb-8 text-white flex items-center">
             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full mr-4"></div>
@@ -1631,7 +1809,7 @@ export default function StocksIndexPage() {
           </div>
           
           {/* BSE Stock Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {bseActive.map((stock, index) => (
               <Card key={stock.ticker || index} className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 hover:bg-gray-700/50 transition-colors shadow-lg">
                 <CardHeader className="pb-3">
@@ -1695,7 +1873,7 @@ export default function StocksIndexPage() {
       </section>
 
       {/* NSE Most Active Section */}
-      <section className="mb-12">
+      <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <div className="bg-gray-900/90 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50 shadow-2xl">
           <h2 className="text-3xl font-bold mb-8 text-white flex items-center">
             <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full mr-4"></div>
@@ -1737,7 +1915,7 @@ export default function StocksIndexPage() {
           </div>
           
           {/* NSE Stock Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {nseActive.map((stock, index) => (
               <Card key={stock.ticker || index} className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 hover:bg-gray-700/50 transition-colors shadow-lg">
                 <CardHeader className="pb-3">

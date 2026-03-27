@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { cachedAPI, cacheManager, CacheStrategy } from '../cachedAPI';
+import { logger } from '@/lib/logger';
 
 export interface UseCachedDataOptions {
   strategy?: CacheStrategy;
@@ -327,9 +328,9 @@ export function usePrefetchData() {
     const prefetch = async () => {
       try {
         await cachedAPI.prefetchData();
-        console.log('Background data prefetching completed');
+        logger.debug('Background data prefetching completed');
       } catch (error) {
-        console.warn('Background data prefetching failed:', error);
+        logger.warn('Background data prefetching failed:', error);
       }
     };
 

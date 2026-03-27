@@ -4,6 +4,7 @@ import { ThemeProvider } from '../components/ui/ThemeProvider';
 import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
 import { AnimationProvider } from '../animations/shared/AnimationContext';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import Toasts from '../components/ui/Toasts';
@@ -38,19 +39,21 @@ export default function RootLayout({
           <UIProvider>
             <StockProvider>
               <AnimationProvider>
-            <div className="flex flex-col min-h-screen relative z-20">
-                  <ClientScrollProgressIndicator />
-                <Header />
-              <main className="flex-grow">
-                {children}
-              </main>
-                <Footer />
-              
-                {/* Global UI components */}
-                <Toasts />
-                <ModalContainer />
-                <KeepAlive />
-            </div>
+                <ErrorBoundary>
+                  <div className="flex flex-col min-h-screen relative z-20">
+                    <ClientScrollProgressIndicator />
+                    <Header />
+                    <main className="flex-grow">
+                      {children}
+                    </main>
+                    <Footer />
+                    
+                    {/* Global UI components */}
+                    <Toasts />
+                    <ModalContainer />
+                    <KeepAlive />
+                  </div>
+                </ErrorBoundary>
               </AnimationProvider>
             </StockProvider>
           </UIProvider>

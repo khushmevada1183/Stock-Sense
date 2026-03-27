@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { IpoItem } from '@/types/ipo';
+import { logger } from '@/lib/logger';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import { initIpoPageAnimations } from '@/animations/pages/ipoAnimations';
 import { createCardHoverEffect, createIPOItemHoverEffect } from '@/animations/shared/AnimationUtils';
@@ -855,7 +856,7 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
     
     // Validate that we have at least some basic data to work with
     if (!ipo || (typeof ipo !== 'object')) {
-      console.warn('Received invalid IPO data, using fallback structure');
+      logger.warn('Received invalid IPO data, using fallback structure');
       // Return a minimal valid structure with all required fields
       return {
         company_name: 'Data Unavailable',
@@ -1009,8 +1010,8 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
     
     // For debugging - log only the first few IPOs to avoid console spam
     if (Math.random() < 0.1) { // Increased probability for debugging
-      console.log('Sample processed IPO item:', processedIpo);
-      console.log('Original API data:', ipo);
+      logger.debug('Sample processed IPO item', processedIpo);
+      logger.debug('Original API data', ipo);
     }
     
     return processedIpo;
@@ -1063,7 +1064,7 @@ export default function IpoPage() {
   // Function to fetch IPO data
   const fetchIpoData = async () => {
     try {
-      console.log('Starting to fetch IPO data...');
+      logger.info('Starting to fetch IPO data...');
       setLoading(true);
       if (isRetrying) {
         setError(null);
@@ -1072,7 +1073,7 @@ export default function IpoPage() {
       // Use Promise.allSettled to handle API failures gracefully like stocks/market pages
       const [ipoDataResult] = await Promise.allSettled([
         stockApi.getIPOCalendar().catch(error => {
-          console.warn('IPO API failed, will use fallback data:', error.message);
+          logger.warn('IPO API failed, will use fallback data', error);
           return null;
         })
       ]);
@@ -1082,14 +1083,14 @@ export default function IpoPage() {
       // Extract data from Promise.allSettled result
       if (ipoDataResult.status === 'fulfilled' && ipoDataResult.value && ipoDataResult.value.success) {
         response = ipoDataResult.value as APIResponse;
-        console.log('API Response received:', response);
+        logger.debug('API Response received:', response);
       } else {
-        console.log('API failed or returned invalid data, using fallback');
+        logger.warn('API failed or returned invalid data, using fallback');
       }
       
       // If API failed or returned no data, use comprehensive fallback data
       if (!response || !response.success || !response.data) {
-        console.log('Using fallback IPO data due to API issues');
+        logger.info('Using fallback IPO data due to API issues');
         response = {
           success: true,
           data: {
@@ -1208,7 +1209,7 @@ export default function IpoPage() {
         
       if (response && response.success && response.data) {
         // Set statistics from API response structure
-        console.log('API Response received:', response);
+        logger.debug('API Response received', response);
         const { data } = response;
         
         // Calculate statistics from the actual data arrays
@@ -1218,22 +1219,22 @@ export default function IpoPage() {
           recentlyListed: data.listed?.length || 0
         };
         
-        console.log('Calculated statistics:', statistics);
-        console.log('Found listed IPOs:', data.listed?.length);
+        logger.debug('Calculated statistics', statistics);
+        logger.debug('Found listed IPOs', { count: data.listed?.length });
         
         if (data.listed?.length > 0) {
-          console.log('First listed IPO:', data.listed[0]);
+          logger.debug('First listed IPO', data.listed[0]);
         }
         
         setStatistics(statistics);
         
         // Map API data to our component's expected format
-        console.log('Mapping API data to UI format...');
+        logger.debug('Mapping API data to UI format...');
         const upcoming = (data.upcoming || []).map(mapToIpoItem);
         const active = (data.active || []).map(mapToIpoItem);
         const listed = (data.listed || []).map(mapToIpoItem);
         
-        console.log(`Setting UI data: ${upcoming.length} upcoming, ${active.length} active, ${listed.length} recently listed IPOs`);
+        logger.debug(`Setting UI data: ${upcoming.length} upcoming, ${active.length} active, ${listed.length} recently listed IPOs`);
         
         // Validate Recently Listed IPOs have required fields for UI rendering
         const validListedIpos = listed.filter(ipo => {
@@ -1242,7 +1243,7 @@ export default function IpoPage() {
           
           // Record skipped IPOs with reason for debugging
           if (!hasRequiredFields) {
-            console.warn('Skipping invalid IPO due to missing required fields:', 
+            logger.warn('Skipping invalid IPO due to missing required fields:', 
               JSON.stringify({
                 name: ipo.name,
                 company_name: ipo.company_name,
@@ -1255,22 +1256,22 @@ export default function IpoPage() {
         });
         
         if (validListedIpos.length !== listed.length) {
-          console.warn(`Filtered out ${listed.length - validListedIpos.length} invalid Recently Listed IPOs`);
+          logger.warn(`Filtered out ${listed.length - validListedIpos.length} invalid Recently Listed IPOs`);
         }
         
         if (validListedIpos.length > 0) {
-          console.log('First processed listed IPO:', validListedIpos[0]);
+          logger.debug('First processed listed IPO:', validListedIpos[0]);
           
           // Verify that we have listing gain data in the expected format
           const sampleIpo = validListedIpos[0];
-          console.log('First IPO listing gain data:', {
+          logger.debug('First IPO listing gain data:', {
             listing_gain: sampleIpo.listing_gain,
             listing_gains: sampleIpo.listing_gains,
             issue_price: sampleIpo.issue_price,
             listing_price: sampleIpo.listing_price
           });
         } else {
-          console.warn('No valid Recently Listed IPOs to display!');
+          logger.warn('No valid Recently Listed IPOs to display!');
         }
         
         // Update state with processed data
@@ -1285,13 +1286,13 @@ export default function IpoPage() {
         setIsRetrying(false);
         
         // Log data load success
-        console.log('IPO data loaded successfully');
+        logger.debug('IPO data loaded successfully');
         }
       } catch (err: any) {
-        console.error('Error in IPO data processing:', err);
+        logger.error('Error in IPO data processing:', err);
         
         // Don't show error to user, use fallback data instead (like stocks/market pages)
-        console.log('Using fallback data due to processing error');
+        logger.debug('Using fallback data due to processing error');
         
         // Set fallback data so page still works
         const fallbackData = {
@@ -1388,7 +1389,7 @@ export default function IpoPage() {
 
   // Fetch IPO data when component mounts
   useEffect(() => {
-    console.log('Component mounted, fetching data...');
+    logger.debug('Component mounted, fetching data...');
     fetchIpoData();
     
     // Set up interval for real-time updates if enabled
@@ -1396,7 +1397,7 @@ export default function IpoPage() {
     
     if (FEATURES.ENABLE_REAL_TIME_UPDATES) {
       interval = setInterval(() => {
-        console.log('Real-time update triggered');
+        logger.debug('Real-time update triggered');
         fetchIpoData();
       }, 5 * 60 * 1000); // Refresh every 5 minutes
     }
@@ -1412,15 +1413,15 @@ export default function IpoPage() {
   // Add an effect to check if the data was processed correctly
   useEffect(() => {
     if (dataFetched) {
-      console.log('Data fetched state changed, current IPO counts:');
-      console.log('- Upcoming IPOs:', upcomingIpos.length);
-      console.log('- Active IPOs:', activeIpos.length);
-      console.log('- Recently Listed IPOs:', newListedIpos.length);
+      logger.debug('Data fetched state changed, current IPO counts:');
+      logger.debug('- Upcoming IPOs:', upcomingIpos.length);
+      logger.debug('- Active IPOs:', activeIpos.length);
+      logger.debug('- Recently Listed IPOs:', newListedIpos.length);
       
       if (newListedIpos.length > 0) {
-        console.log('First Recent IPO:', newListedIpos[0]);
+        logger.debug('First Recent IPO:', newListedIpos[0]);
       } else if (statistics.recentlyListed > 0) {
-        console.warn('ISSUE DETECTED: Statistics show listed IPOs but state is empty');
+        logger.warn('ISSUE DETECTED: Statistics show listed IPOs but state is empty');
       }
     }
   }, [dataFetched, upcomingIpos.length, activeIpos.length, newListedIpos.length, statistics]);
@@ -1488,7 +1489,7 @@ export default function IpoPage() {
           }, 1000); // Wait for 1 second to let animations complete
         }
       } catch (error) {
-        console.error('Error initializing animations:', error);
+        logger.error('Error initializing animations:', error);
         // Ensure critical UI elements are visible even if animations fail
         if (faqSectionRef.current) {
           const faqContainer = faqSectionRef.current as HTMLElement;
@@ -1539,18 +1540,18 @@ export default function IpoPage() {
   // Monitor changes to IPO data
   useEffect(() => {
     // Effect runs whenever newListedIpos changes
-    console.log('RECENTLY LISTED IPOs STATE UPDATED:', newListedIpos.length);
-    console.log('Sample IPO data (first item):', newListedIpos[0]);
+    logger.debug('RECENTLY LISTED IPOs STATE UPDATED:', newListedIpos.length);
+    logger.debug('Sample IPO data (first item):', newListedIpos[0]);
   }, [newListedIpos]);
 
   // Directly monitor dataFetched state
   useEffect(() => {
     if (dataFetched) {
-      console.log('=== DATA FETCHED STATE CHANGED ===');
-      console.log('Statistics:', statistics);
-      console.log('Upcoming IPOs:', upcomingIpos.length);
-      console.log('Active IPOs:', activeIpos.length);
-      console.log('Recently Listed IPOs:', newListedIpos.length);
+      logger.debug('=== DATA FETCHED STATE CHANGED ===');
+      logger.debug('Statistics:', statistics);
+      logger.debug('Upcoming IPOs:', upcomingIpos.length);
+      logger.debug('Active IPOs:', activeIpos.length);
+      logger.debug('Recently Listed IPOs:', newListedIpos.length);
     }
   }, [dataFetched, statistics, upcomingIpos.length, activeIpos.length, newListedIpos.length]);
 

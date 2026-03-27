@@ -6,6 +6,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip
 } from 'recharts';
 import * as stockApi from '@/api/api';
+import { logger } from '@/lib/logger';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import homeAnimations from '@/animations/pages/homeAnimations';
 import marketAnimations from '@/animations/pages/marketAnimations';
@@ -799,7 +800,7 @@ export default function MarketPage() {
       setMarketData(structuredData);
 
     } catch (error) {
-      console.error('Error fetching market data:', error);
+      logger.error('Error fetching market data', error);
       setError('Failed to load market data from API.');
     } finally {
       setLoading(false);

@@ -301,7 +301,7 @@ export const createPageTransitions = (refs) => {
     paused: true,
     onComplete: () => {
       // This would typically trigger the actual page navigation
-      console.log('Page transition out complete');
+      // Page transition out complete - debug logging disabled
     }
   });
   
@@ -320,7 +320,7 @@ export const createPageTransitions = (refs) => {
   const transitionInTl = gsap.timeline({
     paused: true,
     onComplete: () => {
-      console.log('Page transition in complete');
+      // Page transition in complete - debug logging disabled
     }
   });
   

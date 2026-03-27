@@ -21,6 +21,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import * as stockApi from '@/api/api';
+import { logger } from '@/lib/logger';
 
 // Helper function to format currency
 const formatCurrency = (value: number): string => {

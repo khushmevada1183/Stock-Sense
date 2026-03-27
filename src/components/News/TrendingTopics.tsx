@@ -93,7 +93,7 @@ export default function TrendingTopics() {
           setLoading(false);
         }, 800);
       } catch (error) {
-        console.error('Error fetching trending topics:', error);
+        logger.error('Error fetching trending topics:', error);
         // Use mock data on error
         setTrendingTopics(MOCK_TRENDING_TOPICS);
         setLoading(false);

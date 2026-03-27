@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import ScrollProgressIndicator from './ScrollProgressIndicator';
+import { logger } from '@/lib/logger';
 
 export default function ClientScrollProgressIndicator() {
   const [mounted, setMounted] = useState(false);
@@ -11,7 +12,7 @@ export default function ClientScrollProgressIndicator() {
     try {
       setMounted(true);
     } catch (error) {
-      console.error('Error mounting ScrollProgressIndicator:', error);
+      logger.error('Error mounting ScrollProgressIndicator:', error);
       setHasError(true);
     }
   }, []);
@@ -28,7 +29,7 @@ export default function ClientScrollProgressIndicator() {
   try {
     return <ScrollProgressIndicator />;
   } catch (error) {
-    console.error('Error rendering ScrollProgressIndicator:', error);
+    logger.error('Error rendering ScrollProgressIndicator:', error);
     return null;
   }
 }

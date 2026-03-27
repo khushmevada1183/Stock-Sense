@@ -42,7 +42,7 @@ const WatchlistSection = ({ watchlist, loading }: WatchlistSectionProps) => {
       // Refresh the page to update the watchlist - better to use state management or context
       window.location.reload();
     } catch (error) {
-      console.error('Error removing stock from watchlist:', error);
+      logger.error('Error removing stock from watchlist:', error);
     } finally {
       setRemoving(null);
     }

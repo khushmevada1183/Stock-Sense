@@ -20,12 +20,22 @@ const MetricCard: React.FC<MetricCardProps> = ({
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isAnimated && cardRef.current) {
-      gsap.fromTo(cardRef.current, 
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, delay: delay, ease: "power3.out" }
-      );
-    }
+    if (!isAnimated || !cardRef.current) return;
+
+    const element = cardRef.current;
+    gsap.killTweensOf(element);
+    gsap.set(element, { clearProps: 'opacity,transform,filter' });
+
+    const tween = gsap.fromTo(
+      element,
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.6, delay: delay, ease: "power3.out", overwrite: "auto" }
+    );
+
+    return () => {
+      tween.kill();
+      gsap.set(element, { clearProps: 'opacity,transform,filter' });
+    };
   }, [isAnimated, delay]);
 
   return (

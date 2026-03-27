@@ -1,4 +1,5 @@
 'use client';
+import { logger } from '@/lib/logger';
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
@@ -72,7 +73,7 @@ export default function FeaturedStocks() {
     const fetchFeaturedStocks = async () => {
       try {
         const response = await stockApi.getTrendingStocks();
-        console.log('Trending stocks response:', response);
+        logger.debug('Trending stocks response:', response);
 
         // Actual API shape: { success, data: { stocks: [...] } }
         // Fallback shapes: { success, data: [...] } or { success, data: { trending_stocks: {...} } }
@@ -91,11 +92,11 @@ export default function FeaturedStocks() {
         if (rawStocks.length > 0) {
           setStocks(rawStocks.slice(0, 6).map(normalizeStock));
         } else {
-          console.log('No stocks returned from API — using fallback');
+          logger.debug('No stocks returned from API — using fallback');
           setStocks(fallbackStocks);
         }
       } catch (err) {
-        console.error('Failed to fetch featured stocks:', err);
+        logger.error('Failed to fetch featured stocks:', err);
         setError('Failed to fetch featured stocks');
         setStocks(fallbackStocks.slice(0, 3));
       } finally {

@@ -399,22 +399,13 @@ export const animateStocksDashboard = (refs) => {
       ease: "power2.out"
     });
     
-    // Animate table rows if they exist
+    // Keep data table static (no row animation / no hover FX)
     const table = stocksSection.querySelector('table');
     if (table) {
       const rows = table.querySelectorAll('tbody tr');
-      
+
       if (rows.length > 0) {
-        stocksTl.from(rows, {
-          opacity: 0,
-          y: 15,
-          stagger: 0.03,
-          duration: 0.4,
-          ease: "power1.out"
-        }, "-=0.3");
-        
-        // Add row hover effects
-        createTableRowHoverEffect(rows);
+        gsap.set(rows, { clearProps: 'opacity,transform,filter' });
       }
     }
     

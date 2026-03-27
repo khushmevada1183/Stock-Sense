@@ -71,7 +71,7 @@ const TargetPriceAnalysis: React.FC<TargetPriceProps> = ({ symbol, currentPrice 
         const data = await getStockTargetPrice(symbol);
         setTargetPriceData(data);
       } catch (err) {
-        console.error('Error fetching target price:', err);
+        logger.error('Error fetching target price:', err);
         setError('Failed to load target price data');
       } finally {
         setLoading(false);

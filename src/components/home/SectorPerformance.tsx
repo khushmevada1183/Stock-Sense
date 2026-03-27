@@ -33,7 +33,7 @@ export default function SectorPerformance() {
           setSectors(sectorData);
         } else {
           setSectors(mockSectors);
-          console.log('API returned unexpected data structure for sectors, using fallback');
+          logger.debug('API returned unexpected data structure for sectors, using fallback');
         }
       } catch (err) {
         console.error('Failed to fetch sector performance:', err);

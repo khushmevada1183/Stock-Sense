@@ -27,7 +27,7 @@ const HighLowTable = () => {
 
   const fetchData = async () => {
     setIsLoading(true); // Briefly show loading spinner for user feedback on refresh
-    console.log('Refreshing top gainers and losers...');
+    logger.debug('Refreshing top gainers and losers...');
     
     // Simulate a small delay as if an API call was made
     await new Promise(resolve => setTimeout(resolve, 300)); 

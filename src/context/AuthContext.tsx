@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
-        console.error('Auth initialization error:', err.response?.data?.message || err.message);
+        logger.error('Auth initialization error:', err.response?.data?.message || err.message);
       } finally {
         setLoading(false);
       }

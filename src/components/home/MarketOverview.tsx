@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import * as stockApi from '@/api/api';
 import { IndexData } from '@/types/market';
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 export default function MarketOverview() {
   const [indices, setIndices] = useState<IndexData[]>([]);

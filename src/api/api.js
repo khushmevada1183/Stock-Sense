@@ -1,6 +1,8 @@
 // Single API file for Stock Sense - Calls deployed backend on Render
 // This file imports the backend URL from .env and handles all API calls
 
+import { logger } from '@/lib/logger';
+
 // Import the deployed backend URL from environment variables
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
 
@@ -27,7 +29,7 @@ async function fetchApi(endpoint, params = {}) {
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error(`Error fetching from ${endpoint}:`, error);
+    logger.error(`Error fetching from ${endpoint}`, error);
     throw error;
   }
 }
@@ -35,7 +37,7 @@ async function fetchApi(endpoint, params = {}) {
 // ===== STOCK DATA ENDPOINTS =====
 
 export async function getStockDetails(stockName) {
-  console.log(`🔍 API Call: /stock?name=${stockName}`);
+  logger.debug(`API Call: /stock?name=${stockName}`);
   return fetchApi('/stock', { name: stockName });
 }
 
@@ -52,7 +54,7 @@ export async function getHistoricalData(stockName, period = '6m', filter = 'pric
 }
 
 export async function getFinancialStatement(stockName, stats) {
-  console.warn(`⚠️  DEPRECATED: getFinancialStatement called - should use /stock endpoint instead`);
+  logger.warn('DEPRECATED: getFinancialStatement called - should use /stock endpoint instead');
   return fetchApi('/statement', { 
     stock_name: stockName, 
     stats: stats 
@@ -166,12 +168,12 @@ export async function searchIndustry(query) {
 
 // Legacy function names for backward compatibility
 export const getUpcomingIPOs = () => {
-  console.warn('getUpcomingIPOs is deprecated. Use getIPOData() instead.');
+  logger.warn('getUpcomingIPOs is deprecated. Use getIPOData() instead.');
   return getIPOData();
 };
 
 export const getIPOCalendar = () => {
-  console.warn('getIPOCalendar is deprecated. Use getIPOData() instead.');
+  logger.warn('getIPOCalendar is deprecated. Use getIPOData() instead.');
   return getIPOData();
 };
 
@@ -205,39 +207,39 @@ export async function getMarketMovers() {
 // ===== PORTFOLIO FUNCTIONS (NOT AVAILABLE) =====
 
 export async function getUserPortfolios() {
-  console.warn("Portfolio API not available in the current API version");
+  logger.warn("Portfolio API not available in the current API version");
   return { portfolios: [] };
 }
 
 export async function getPortfolioDetails() {
-  console.warn("Portfolio API not available in the current API version");
+  logger.warn("Portfolio API not available in the current API version");
   return { details: {} };
 }
 
 export async function createPortfolio(portfolioData) {
-  console.warn("Portfolio API not available in the current API version");
-  console.log("Would create portfolio with data:", portfolioData);
+  logger.warn("Portfolio API not available in the current API version");
+  logger.info("Would create portfolio with data:", portfolioData);
   return { success: true, portfolioId: Math.random().toString(36).substr(2, 9) };
 }
 
 export async function updatePortfolio(portfolioId, portfolioData) {
-  console.warn("Portfolio API not available in the current API version");
-  console.log("Would update portfolio", portfolioId, "with data:", portfolioData);
+  logger.warn("Portfolio API not available in the current API version");
+  logger.info("Would update portfolio", portfolioId, "with data:", portfolioData);
   return { success: true };
 }
 
 export async function deletePortfolio() {
-  console.warn("Portfolio API not available in the current API version");
+  logger.warn("Portfolio API not available in the current API version");
   return { success: false, message: "API not available" };
 }
 
 export async function getPortfolioHoldings() {
-  console.warn("Portfolio API not available in the current API version");
+  logger.warn("Portfolio API not available in the current API version");
   return { holdings: [] };
 }
 
 export async function getPortfolioSummary() {
-  console.warn("Portfolio API not available in the current API version");
+  logger.warn("Portfolio API not available in the current API version");
   return { summary: {} };
 }
 
@@ -248,7 +250,7 @@ export async function getHealthStatus() {
     const response = await fetch(BASE_URL.replace('/api', '/health'));
     return await response.json();
   } catch (error) {
-    console.error('Health check failed:', error);
+    logger.error('Health check failed:', error);
     return { status: 'error', message: 'Backend unavailable' };
   }
 }

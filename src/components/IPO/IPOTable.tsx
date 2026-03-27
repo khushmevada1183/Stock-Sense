@@ -28,11 +28,11 @@ const IPOTable = () => {
     const fetchIPOs = async () => {
       try {
         setIsLoading(true);
-        console.log('Fetching IPO data using stockApi.getIPOData()...');
+        logger.debug('Fetching IPO data using stockApi.getIPOData()...');
         
         // Use the consolidated API function
         const ipoData = await stockApi.getIPOData();
-        console.log('IPO response:', ipoData);
+        logger.debug('IPO response:', ipoData);
         
         // Transform the data to match our component's expected format
         let formattedIpos: IPO[] = [];
@@ -98,11 +98,11 @@ const IPOTable = () => {
           }
         }
         
-        console.log(`Processed ${formattedIpos.length} IPO records`);
+        logger.info(`Processed ${formattedIpos.length} IPO records`);
         setIpos(formattedIpos);
         setError('');
       } catch (err) {
-        console.error('Error fetching IPOs:', err);
+        logger.error('Error fetching IPOs:', err);
         setError('Failed to load IPO data. Please try again later.');
         
         // Set fallback IPO data

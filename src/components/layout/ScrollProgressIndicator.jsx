@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useAnimation } from '../../animations/shared/AnimationContext';
 import { createScrollProgressAnimation } from '../../animations/layout/navigationAnimations';
+import { logger } from '@/lib/logger';
 
 const ScrollProgressIndicator = () => {
   const progressBarRef = useRef(null);
@@ -10,7 +11,7 @@ const ScrollProgressIndicator = () => {
   const { isAnimationEnabled } = useAnimation();
   
   useEffect(() => {
-    console.log('ScrollProgressIndicator is rendering');
+    // ScrollProgressIndicator is rendering
   }, []);
   
   useEffect(() => {

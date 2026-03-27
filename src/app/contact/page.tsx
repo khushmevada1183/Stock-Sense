@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, FormEvent, ChangeEvent } from 'reac
 import { gsap } from 'gsap';
 import { Mail, Phone, MapPin, MessageSquare, Send, Clock, CheckCircle } from 'lucide-react';
 import PageBackground from '@/components/layout/PageBackground';
+import { logger } from '@/lib/logger';
 
 export default function ContactPage() {
   const mainRef = useRef(null);
@@ -68,7 +69,7 @@ export default function ContactPage() {
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // In a real app, you would send the form data to your backend here
-    console.log('Form submitted:', formData);
+    logger.info('Form submitted:', formData);
     
     // Show success message
     setFormSubmitted(true);

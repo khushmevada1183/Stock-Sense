@@ -41,7 +41,7 @@ const HighLowTable: React.FC = () => {
         const data = await stockApi.get52WeekHighLow();
         setHighLowData(data);
       } catch (err) {
-        console.error('Error fetching 52-week high/low data:', err);
+        logger.error('Error fetching 52-week high/low data:', err);
         setError('Failed to load 52-week high/low data');
       } finally {
         setLoading(false);

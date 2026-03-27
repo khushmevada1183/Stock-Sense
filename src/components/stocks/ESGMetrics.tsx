@@ -170,20 +170,30 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
 
   // Animation effect
   useEffect(() => {
-    if (!loading && containerRef.current) {
-      const cards = containerRef.current.querySelectorAll('.esg-card');
-      
-      gsap.fromTo(cards, {
-        y: 30,
-        opacity: 0
-      }, {
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power3.out"
-      });
-    }
+    if (loading || !containerRef.current) return;
+
+    const cards = Array.from(containerRef.current.querySelectorAll('.esg-card'));
+    if (!cards.length) return;
+
+    gsap.killTweensOf(cards);
+    gsap.set(cards, { clearProps: 'opacity,transform,filter' });
+
+    const tween = gsap.fromTo(cards, {
+      y: 30,
+      opacity: 0
+    }, {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.1,
+      ease: "power3.out",
+      overwrite: "auto"
+    });
+
+    return () => {
+      tween.kill();
+      gsap.set(cards, { clearProps: 'opacity,transform,filter' });
+    };
   }, [loading]);
 
   const getScoreColor = (score: number): string => {

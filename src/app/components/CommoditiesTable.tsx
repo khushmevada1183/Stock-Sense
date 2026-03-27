@@ -64,7 +64,7 @@ const CommoditiesTable: React.FC = () => {
           setError('Invalid commodity data format');
         }
       } catch (err) {
-        console.error('Error fetching commodities:', err);
+        logger.error('Error fetching commodities:', err);
         setError('Failed to load commodities data');
       } finally {
         setLoading(false);

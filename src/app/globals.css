@@ -8,6 +8,17 @@ body {
 
 @layer base {
   :root {
+    /* App-level semantic tokens (light) */
+    --app-bg: #f5f7fb;
+    --app-bg-elevated: #ffffff;
+    --app-surface-2: #eef2f7;
+    --app-border: rgba(15, 23, 42, 0.10);
+    --app-text-1: #0f172a;
+    --app-text-2: #334155;
+    --app-text-3: #64748b;
+    --app-accent: #16a34a;
+    --app-accent-soft: rgba(22, 163, 74, 0.12);
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -36,6 +47,17 @@ body {
   }
  
   .dark {
+    /* App-level semantic tokens (dark) */
+    --app-bg: #0d1117;
+    --app-bg-elevated: #161b22;
+    --app-surface-2: #1c2128;
+    --app-border: rgba(48, 54, 61, 0.85);
+    --app-text-1: #e6edf3;
+    --app-text-2: #c9d1d9;
+    --app-text-3: #8b949e;
+    --app-accent: #39ff14;
+    --app-accent-soft: rgba(57, 255, 20, 0.14);
+
     /* Dark theme with neon green accents */
     --background: 0 0% 2%;
     --background-secondary: 0 0% 7%;
@@ -77,7 +99,7 @@ body {
    Text    : #0F172A  primary  |  #475569 secondary  |  #94A3B8 muted
    ─────────────────────────────────────────────────────────────────────────*/
 html {
-  background: #EEF2F6;
+  background: var(--app-bg);
   color-scheme: light;
   transition: background 0.25s ease, color 0.25s ease;
 }
@@ -89,7 +111,7 @@ html {
    Text    : #E6EDF3  primary  |  #8B949E secondary  |  #484F58 muted
    ─────────────────────────────────────────────────────────────────────────*/
 html.dark {
-  background: #0D1117;
+  background: var(--app-bg);
   background-image:
     radial-gradient(ellipse 80% 50% at 50% -10%, rgba(57,255,20,0.06) 0%, transparent 60%);
   color-scheme: dark;
@@ -112,8 +134,8 @@ html.dark {
 }
 .header-pill {
   background: rgba(255, 255, 255, 0.96);
-  border-color: rgba(0,0,0,0.09);
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+  border-color: var(--app-border);
+  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
   backdrop-filter: blur(20px);
 }
 
@@ -191,6 +213,10 @@ html:not(.dark) .text-white  { color: #0F172A !important; }
 html:not(.dark) .text-gray-300 { color: #334155 !important; }
 html:not(.dark) .text-gray-400 { color: #475569 !important; }
 html:not(.dark) .text-gray-500 { color: #64748B !important; }
+
+/* Improve readability in light mode for commonly muted nav/body text */
+html:not(.dark) .text-gray-600 { color: #4b5563 !important; }
+html:not(.dark) .text-gray-700 { color: #334155 !important; }
 /* Borders */
 html:not(.dark) .border-gray-700\/50,
 html:not(.dark) .border-gray-800\/30,
@@ -203,6 +229,95 @@ html:not(.dark) .divide-gray-700\/50 > * {
 }
 html:not(.dark) .hover\:bg-gray-800\/30:hover {
   background-color: rgba(99,102,241,0.05) !important;
+}
+
+/* ==========================================================================
+   LIGHT MODE ACCENT REMAP
+   Keep neon styling in dark mode, but tone it down on white backgrounds.
+   ========================================================================== */
+html:not(.dark) .text-neon-500,
+html:not(.dark) .text-neon-400,
+html:not(.dark) .text-neon-300,
+html:not(.dark) .hover\:text-neon-500:hover,
+html:not(.dark) .hover\:text-neon-400:hover,
+html:not(.dark) .hover\:text-neon-300:hover {
+  color: #166534 !important;
+}
+
+html:not(.dark) .bg-neon-400,
+html:not(.dark) .hover\:bg-neon-400:hover,
+html:not(.dark) .hover\:bg-neon-300:hover {
+  background-color: #16a34a !important;
+}
+
+html:not(.dark) .bg-neon-400\/\[0\.05\],
+html:not(.dark) .bg-neon-400\/\[0\.04\],
+html:not(.dark) .bg-neon-400\/10,
+html:not(.dark) .bg-neon-400\/15,
+html:not(.dark) .bg-neon-400\/20,
+html:not(.dark) .hover\:bg-neon-400\/10:hover,
+html:not(.dark) .hover\:bg-neon-400\/15:hover,
+html:not(.dark) .hover\:bg-neon-400\/20:hover {
+  background-color: rgba(22, 163, 74, 0.12) !important;
+}
+
+html:not(.dark) .border-neon-400,
+html:not(.dark) .border-neon-400\/10,
+html:not(.dark) .border-neon-400\/20,
+html:not(.dark) .border-neon-400\/30,
+html:not(.dark) .hover\:border-neon-400\/20:hover,
+html:not(.dark) .hover\:border-neon-400\/30:hover {
+  border-color: rgba(21, 128, 61, 0.35) !important;
+}
+
+html:not(.dark) .focus\:border-neon-400:focus {
+  border-color: rgba(21, 128, 61, 0.55) !important;
+}
+
+html:not(.dark) .focus\:ring-neon-400:focus,
+html:not(.dark) .focus\:ring-1:focus,
+html:not(.dark) .focus\:ring-2:focus {
+  --tw-ring-color: rgba(21, 128, 61, 0.28) !important;
+}
+
+html:not(.dark) .from-neon-400,
+html:not(.dark) .from-neon-400\/60 {
+  --tw-gradient-from: rgb(21 128 61 / 0.9) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(21 128 61 / 0) var(--tw-gradient-to-position) !important;
+}
+
+html:not(.dark) .via-neon-400,
+html:not(.dark) .via-neon-400\/60 {
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(21 128 61 / 0.75) var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
+}
+
+html:not(.dark) .to-neon-400,
+html:not(.dark) .to-neon-400\/60 {
+  --tw-gradient-to: rgb(21 128 61 / 0.88) var(--tw-gradient-to-position) !important;
+}
+
+html:not(.dark) .shadow-neon,
+html:not(.dark) .shadow-neon-sm,
+html:not(.dark) .shadow-neon-lg,
+html:not(.dark) .hover\:shadow-neon:hover,
+html:not(.dark) .hover\:shadow-neon-sm:hover,
+html:not(.dark) .hover\:shadow-neon-lg:hover {
+  box-shadow: 0 10px 24px rgba(21, 128, 61, 0.18) !important;
+}
+
+/* Premium table row hover (used on data-heavy tables like /stocks) */
+.table-row-premium-hover {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+html.dark .table-row-premium-hover:hover {
+  background-color: rgba(22, 27, 34, 0.86) !important;
+  box-shadow: inset 3px 0 0 rgba(57, 255, 20, 0.4);
+}
+
+html:not(.dark) .table-row-premium-hover:hover {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+  box-shadow: inset 3px 0 0 rgba(59, 130, 246, 0.32);
 }
 /* Grid overlay design-for-dark — hide in light */
 html:not(.dark) .bg-grid-white\/\[0\.02\] {
@@ -324,6 +439,37 @@ html.dark .text-gray-200 {
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
+/* Light-mode overrides for glass surfaces to avoid dark cards with dark text */
+html:not(.dark) .glass,
+html:not(.dark) .glass-premium,
+html:not(.dark) .glass-card {
+  background: var(--app-bg-elevated) !important;
+  border: 1px solid var(--app-border) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.05) !important;
+}
+
+html:not(.dark) .glass-card:hover,
+html:not(.dark) .glass-premium:hover {
+  border-color: rgba(22, 163, 74, 0.32) !important;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10), 0 0 0 1px rgba(22, 163, 74, 0.14) !important;
+}
+
+/* Ensure text on glass cards remains high contrast in light theme */
+html:not(.dark) .glass-card .text-white,
+html:not(.dark) .glass-premium .text-white {
+  color: var(--app-text-1) !important;
+}
+
+html:not(.dark) .glass-card .text-gray-400,
+html:not(.dark) .glass-premium .text-gray-400 {
+  color: #52627a !important;
+}
+
+html:not(.dark) .glass-card .text-gray-500,
+html:not(.dark) .glass-premium .text-gray-500 {
+  color: #64748b !important;
+}
+
 /* Enhanced glass card with hover state */
 /* Performance-first glass card — uses solid dark bg instead of expensive blur */
 .glass-card {
@@ -392,6 +538,12 @@ html.dark .text-gray-200 {
   text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
 }
 
+/* Light mode should keep accent crisp, not glowing/noisy */
+html:not(.dark) .neon-glow-text {
+  text-shadow: none !important;
+  color: #16a34a !important;
+}
+
 .neon-border {
   border: 1px solid rgba(57, 255, 20, 0.5);
   box-shadow: 0 0 5px rgba(57, 255, 20, 0.3);
@@ -405,6 +557,13 @@ html.dark .text-gray-200 {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   /* animation removed: gradient-shift every 6s was burning GPU on every text element */
+}
+
+html:not(.dark) .gradient-text {
+  background: linear-gradient(135deg, #15803d 0%, #0f766e 55%, #16a34a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Section glow accent (for behind important sections) */

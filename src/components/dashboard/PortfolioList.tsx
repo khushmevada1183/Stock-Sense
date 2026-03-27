@@ -33,7 +33,7 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
       setError('');
     } catch (err) {
       setError('Failed to load portfolios. Please try again later.');
-      console.error('Error fetching portfolios:', err);
+      logger.error('Error fetching portfolios:', err);
     } finally {
       setIsLoading(false);
     }
@@ -86,11 +86,11 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
         setPortfolios(portfolios.filter(p => p.id !== portfolioId));
         
         if (!response.success) {
-          console.warn('Mock API: Portfolio deletion simulated locally');
+          logger.warn('Mock API: Portfolio deletion simulated locally');
         }
       } catch (err) {
         setError('An error occurred while deleting the portfolio.');
-        console.error('Error deleting portfolio:', err);
+        logger.error('Error deleting portfolio:', err);
       }
     }
   };

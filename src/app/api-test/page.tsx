@@ -43,7 +43,7 @@ export default function ApiTestPage() {
     
     for (const testCase of tests) {
       try {
-        console.log(`Testing ${testCase.name}...`);
+        logger.info(`Testing ${testCase.name}...`);
         const startTime = Date.now();
         const result = await testCase.test();
         const endTime = Date.now();

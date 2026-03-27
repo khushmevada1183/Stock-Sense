@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { gsap } from 'gsap';
 
 // Debug flag - set to true to enable animation debugging
@@ -13,7 +14,7 @@ const DEBUG_ANIMATIONS = false;
 const debugAnimation = (element, action, props) => {
   if (!DEBUG_ANIMATIONS) return;
   
-  console.log(`Animation ${action}:`, {
+  logger.debug(`Animation ${action}:`, {
     element: element,
     className: element.className,
     id: element.id,
@@ -136,13 +137,24 @@ export const createHoverEffect = (elements, enterProps, leaveProps, condition = 
  * @returns {Function} Cleanup function
  */
 export const createTableRowHoverEffect = (rows) => {
+  const isDarkMode = document.documentElement.classList.contains('dark') || 
+                     window.matchMedia('(prefers-color-scheme: dark)').matches;
+
   return createHoverEffect(
     rows,
-    { 
-      backgroundColor: 'rgba(243, 244, 246, 0.5)',
-      boxShadow: '0 0 8px rgba(59, 130, 246, 0.3)', 
-      duration: 0.2 
-    },
+    isDarkMode
+      ? {
+          // Dark mode: premium, subtle surface lift with neon edge
+          backgroundColor: 'rgba(28, 33, 40, 0.9)',
+          boxShadow: 'inset 3px 0 0 rgba(57, 255, 20, 0.45), 0 0 0 1px rgba(57, 255, 20, 0.14)',
+          duration: 0.2
+        }
+      : {
+          // Light mode: soft slate tint (no harsh white flash)
+          backgroundColor: 'rgba(15, 23, 42, 0.045)',
+          boxShadow: 'inset 3px 0 0 rgba(59, 130, 246, 0.35)',
+          duration: 0.2
+        },
     { 
       backgroundColor: 'transparent',
       boxShadow: 'none', 
@@ -295,7 +307,7 @@ export const createIPOItemHoverEffect = (ipoItems) => {
  */
 export const setAnimationDebugging = (enable) => {
   window.DEBUG_ANIMATIONS = enable;
-  console.log(`Animation debugging ${enable ? 'enabled' : 'disabled'}`);
+  // Animation debug mode toggled - logging disabled in production
 };
 
 export default {

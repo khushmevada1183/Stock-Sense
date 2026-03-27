@@ -24,7 +24,7 @@ const Footer: React.FC = () => {
           setApiStatus('error');
         }
       } catch (error) {
-        console.error('Error checking API status:', error);
+        logger.error('Error checking API status:', error);
         setApiStatus('error');
       }
     };

@@ -102,7 +102,19 @@ export const initGSAP = () => {
   // Setup any global GSAP defaults here
   gsap.defaults({
     ease: "power2.out",
-    duration: 0.7
+    duration: 0.7,
+    // Prevent from() tweens from immediately applying hidden states
+    // before their trigger actually runs.
+    immediateRender: false,
+    overwrite: "auto"
+  });
+
+  // Keep GSAP quiet for null targets and avoid noisy console output.
+  gsap.config({ nullTargetWarn: false });
+
+  // Global ScrollTrigger behavior tuned for route-based apps.
+  ScrollTrigger.defaults({
+    invalidateOnRefresh: true
   });
 
   // Register ScrollTrigger plugin if not already registered

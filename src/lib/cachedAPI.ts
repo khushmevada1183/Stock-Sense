@@ -6,6 +6,7 @@
 
 import { cacheManager, CacheStrategy } from './cache/CacheManager';
 import * as apiUtils from '../utils/api';
+import { logger } from '@/lib/logger';
 
 // Cache TTL configurations for different data types
 const CACHE_CONFIG = {
@@ -354,7 +355,7 @@ class CachedAPI {
   async clearCache(pattern?: string) {
     if (pattern) {
       // Clear specific pattern - this would require implementing pattern matching in CacheManager
-      console.log(`Clearing cache for pattern: ${pattern}`);
+      logger.debug(`Clearing cache for pattern: ${pattern}`);
     } else {
       // Clear all cache
       await cacheManager.clear();
@@ -382,9 +383,9 @@ class CachedAPI {
         this.getMarketMovers()
       ]);
       
-      console.log('Data prefetching completed');
+      logger.debug('Data prefetching completed');
     } catch (error) {
-      console.warn('Data prefetching failed:', error);
+      logger.warn('Data prefetching failed:', error);
     }
   }
 }

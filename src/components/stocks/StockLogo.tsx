@@ -1,4 +1,5 @@
 'use client';
+import { logger } from '@/lib/logger';
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -49,10 +50,10 @@ const StockLogo: React.FC<StockLogoProps> = ({ symbol, size = 40, className = ''
             setLogoUrl(companyData.logo);
           }
         } catch (profileError) {
-          console.warn('Could not fetch company profile for logo:', profileError);
+          logger.warn('Could not fetch company profile for logo:', profileError);
         }
       } catch (err) {
-        console.error('Error fetching logo:', err);
+        logger.error('Error fetching logo:', err);
         setError(true);
         setLogoUrl(defaultFallback);
       } finally {
@@ -64,7 +65,7 @@ const StockLogo: React.FC<StockLogoProps> = ({ symbol, size = 40, className = ''
   }, [symbol, imageUrl]);
 
   const handleImageError = () => {
-    console.log(`Image error for ${symbol}, using fallback`);
+    logger.debug(`Image error for ${symbol}, using fallback`);
     setError(true);
     setLogoUrl(fallbackUrl || `https://ui-avatars.com/api/?name=${symbol}&background=random&size=128`);
   };

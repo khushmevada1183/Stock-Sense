@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogIn, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
+import { logger } from '@/lib/logger';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ const LoginPage: React.FC = () => {
 
     try {
       // Add your authentication logic here
-      console.log('Login attempt:', { email, password });
+      logger.debug('Login attempt:', { email, password });
       // For now, just simulate a login
       setTimeout(() => {
         setLoading(false);

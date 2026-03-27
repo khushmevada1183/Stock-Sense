@@ -3,6 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useRef, useState } from 'react';
+import { logger } from '@/lib/logger';
 import { useParams } from 'next/navigation';
 import { gsap } from 'gsap';
 import { Chart, registerables } from 'chart.js';
@@ -82,10 +83,12 @@ export default function Page() {
   const aboutRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
   const chartContainerRef = useRef<HTMLDivElement>(null);
+  const tabContentRef = useRef<HTMLDivElement>(null);
   const sectorDistributionChartRef = useRef<HTMLCanvasElement>(null);
   const performanceChartRef = useRef<HTMLCanvasElement>(null);
   const financialRatiosRef = useRef<HTMLDivElement>(null); 
   const financialStatementsRef = useRef<HTMLDivElement>(null);
+  const animationTimerRef = useRef<number | null>(null);
   
   // Refs to store chart instances
   const sectorChartInstanceRef = useRef<Chart | null>(null);
@@ -126,16 +129,16 @@ export default function Page() {
     const fetchStockData = async () => {
       try {
         setLoading(true);
-        console.log(`Fetching stock data for symbol: ${symbol}`);
+        logger.debug(`Fetching stock data for symbol: ${symbol}`);
         
         const raw = await apiHelpers.getStockDetails(symbol);
         
         if (raw) {
-          console.log('Raw stock data received:', raw);
+          logger.debug('Raw stock data received:', raw);
           setStockData(raw);
           // Normalize the nested NSE India structure into a flat object
           const normalized = normalizeStockData(raw);
-          console.log('Normalized stock data:', normalized);
+          logger.debug('Normalized stock data:', normalized);
           setStock(normalized);
           if (!normalized) {
             setError(`Could not parse data for "${symbol}". Unexpected data format.`);
@@ -144,7 +147,7 @@ export default function Page() {
           setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
         }
       } catch (err: any) {
-        console.error('Error fetching stock data:', err);
+        logger.error('Error fetching stock data:', err);
         setError(
           err.response?.status === 404
             ? `Stock "${symbol}" not found. Please check the name or symbol and try again.`
@@ -161,39 +164,77 @@ export default function Page() {
   
   // Initialize animations after data is loaded — use fromTo so elements always end visible
   useEffect(() => {
-    if (!loading && stockData && !error) {
-      const timeline = gsap.timeline();
-      
-      if (headerRef.current)
-        timeline.fromTo(headerRef.current,
-          { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" });
-      
-      if (priceRef.current)
-        timeline.fromTo(priceRef.current,
-          { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.3");
-      
-      if (rangeRef.current)
-        timeline.fromTo(rangeRef.current,
-          { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.4");
-      
-      if (aboutRef.current)
-        timeline.fromTo(aboutRef.current,
-          { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.3");
+    if (loading || !stockData || error) return;
 
-      if (financialRatiosRef.current)
-        timeline.fromTo(financialRatiosRef.current,
-          { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.2");
+    const animatedRefs = [
+      headerRef.current,
+      priceRef.current,
+      rangeRef.current,
+      aboutRef.current,
+      financialRatiosRef.current,
+      financialStatementsRef.current
+    ].filter(Boolean) as HTMLElement[];
 
-      if (financialStatementsRef.current)
-        timeline.fromTo(financialStatementsRef.current,
-          { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.2");
-      
-      // Initialize charts with animations
-      setTimeout(() => {
-      initializeCharts();
-      }, 100);
+    if (animatedRefs.length) {
+      gsap.killTweensOf(animatedRefs);
+      gsap.set(animatedRefs, { clearProps: 'opacity,transform,filter' });
     }
+
+    const timeline = gsap.timeline({ defaults: { overwrite: 'auto' } });
+
+    if (headerRef.current)
+      timeline.fromTo(headerRef.current,
+        { y: -20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" });
+
+    if (priceRef.current)
+      timeline.fromTo(priceRef.current,
+        { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.3");
+
+    if (rangeRef.current)
+      timeline.fromTo(rangeRef.current,
+        { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.4");
+
+    if (aboutRef.current)
+      timeline.fromTo(aboutRef.current,
+        { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.3");
+
+    if (financialRatiosRef.current)
+      timeline.fromTo(financialRatiosRef.current,
+        { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.2");
+
+    if (financialStatementsRef.current)
+      timeline.fromTo(financialStatementsRef.current,
+        { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, "-=0.2");
+
+    // Initialize charts with animations
+    animationTimerRef.current = window.setTimeout(() => {
+      initializeCharts();
+    }, 100);
+
+    return () => {
+      timeline.kill();
+
+      if (animationTimerRef.current !== null) {
+        window.clearTimeout(animationTimerRef.current);
+        animationTimerRef.current = null;
+      }
+
+      if (animatedRefs.length) {
+        gsap.set(animatedRefs, { clearProps: 'opacity,transform,filter' });
+      }
+    };
   }, [loading, stockData, error]);
+
+  // Prevent stale GSAP inline styles from previous tab content from leaving cards dimmed
+  useEffect(() => {
+    if (!tabContentRef.current) return;
+
+    const nodes = Array.from(tabContentRef.current.querySelectorAll('*'));
+    if (!nodes.length) return;
+
+    gsap.killTweensOf(nodes);
+    gsap.set(nodes, { clearProps: 'opacity,transform,filter' });
+  }, [activeTab]);
   
   // Initialize the charts
   const initializeCharts = () => {
@@ -206,7 +247,7 @@ export default function Page() {
     setTimeout(() => {
       // First, make sure the canvas elements exist and are accessible
       if (!sectorDistributionChartRef.current || !performanceChartRef.current) {
-        console.log('Canvas elements not available yet');
+        logger.debug('Canvas elements not available yet');
         return;
       }
     
@@ -265,7 +306,7 @@ export default function Page() {
         }
       });
         } catch (error) {
-          console.error('Error creating sector chart:', error);
+          logger.error('Error creating sector chart:', error);
         }
     }
     
@@ -360,7 +401,7 @@ export default function Page() {
         }
       });
         } catch (error) {
-          console.error('Error creating performance chart:', error);
+          logger.error('Error creating performance chart:', error);
         }
     }
     }, 300); // Slightly longer delay to ensure DOM is ready
@@ -858,7 +899,7 @@ export default function Page() {
           </div>
 
           {/* Tab Content */}
-          <div className="p-6">
+          <div ref={tabContentRef} className="p-6">
             {activeTab === 'overview' && (
               <Overview 
                 stockData={stock?._raw || stockData?.data || stockData}

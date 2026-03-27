@@ -132,7 +132,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           }
         }
       } catch (err) {
-        console.error('Search error:', err);
+        logger.error('Search error:', err);
         setResults([]);
         setError('Error searching stocks. Please try again.');
         
@@ -210,7 +210,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         const newHistory = [searchTerm, ...searchHistory.filter((h: string) => h !== searchTerm)].slice(0, 10);
         localStorage.setItem('stockSearchHistory', JSON.stringify(newHistory));
       } catch (error) {
-        console.error('Error updating search history:', error);
+        logger.error('Error updating search history:', error);
       }
     }
   };
@@ -229,7 +229,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
       const newHistory = [symbol, ...searchHistory.filter((h: string) => h !== symbol)].slice(0, 10);
       localStorage.setItem('stockSearchHistory', JSON.stringify(newHistory));
     } catch (error) {
-      console.error('Error updating search history:', error);
+      logger.error('Error updating search history:', error);
     }
     
     // Notify parent when navigating away

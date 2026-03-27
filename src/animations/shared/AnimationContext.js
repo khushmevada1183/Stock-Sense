@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initGSAP } from './gsapConfig';
@@ -32,6 +33,33 @@ const AnimationContext = createContext({
 export const AnimationProvider = ({ children }) => {
   const [isAnimationEnabled, setAnimationEnabled] = useState(true);
   const [isInitialized, setIsInitialized] = useState(false);
+  const pathname = usePathname();
+
+  // Clears stale inline animation styles that can leave elements dim/invisible
+  // when route transitions interrupt active timelines.
+  const normalizeAnimationVisibility = () => {
+    if (typeof window === 'undefined') return;
+
+    const styledNodes = document.querySelectorAll('[style*="opacity"], [style*="visibility"], [style*="filter"]');
+    styledNodes.forEach((node) => {
+      const element = /** @type {HTMLElement} */ (node);
+      // Only touch elements that GSAP has animated.
+      if (!element || !element._gsap) return;
+
+      const inlineOpacity = element.style.opacity;
+      if (inlineOpacity && Number(inlineOpacity) < 1) {
+        element.style.opacity = '';
+      }
+
+      if (element.style.visibility === 'hidden') {
+        element.style.visibility = '';
+      }
+
+      if (element.style.filter && element.style.filter.includes('blur')) {
+        element.style.filter = '';
+      }
+    });
+  };
 
   // Initialize GSAP once on client
   useEffect(() => {
@@ -58,6 +86,22 @@ export const AnimationProvider = ({ children }) => {
       };
     }
   }, [isInitialized]);
+
+  // Route-level animation hard reset to prevent stale/partial render states.
+  useEffect(() => {
+    if (typeof window === 'undefined' || !isInitialized) return;
+
+    const rafId = window.requestAnimationFrame(() => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill(true));
+      gsap.killTweensOf('*');
+      normalizeAnimationVisibility();
+      ScrollTrigger.refresh();
+    });
+
+    return () => {
+      window.cancelAnimationFrame(rafId);
+    };
+  }, [pathname, isInitialized]);
 
   // Function to manually refresh ScrollTrigger
   const refreshScrollTrigger = () => {

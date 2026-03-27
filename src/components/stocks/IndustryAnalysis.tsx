@@ -206,22 +206,38 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       setCompetitors(mockCompetitors);
       setTrends(mockTrends);
     } catch (error) {
-      console.error('Error fetching industry data:', error);
+      logger.error('Error fetching industry data:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (!loading && containerRef.current) {
-      gsap.from(containerRef.current.children, {
-        y: 20,
-        opacity: 0,
+    if (loading || !containerRef.current) return;
+
+    const elements = Array.from(containerRef.current.children);
+    if (!elements.length) return;
+
+    gsap.killTweensOf(elements);
+    gsap.set(elements, { clearProps: 'opacity,transform,filter' });
+
+    const tween = gsap.fromTo(
+      elements,
+      { y: 20, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
         duration: 0.6,
         stagger: 0.1,
-        ease: "power3.out"
-      });
-    }
+        ease: "power3.out",
+        overwrite: "auto"
+      }
+    );
+
+    return () => {
+      tween.kill();
+      gsap.set(elements, { clearProps: 'opacity,transform,filter' });
+    };
   }, [loading]);
 
   const getImpactColor = (impact: 'positive' | 'negative' | 'neutral') => {
