@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
 
@@ -20,12 +20,31 @@ interface NewsItem {
 }
 
 interface MarketNewsProps {
-  newsData: NewsItem[];
-  loading: boolean;
-  error: string;
+  newsData?: NewsItem[];
+  loading?: boolean;
+  error?: string;
 }
 
-const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
+const NEWS_PER_PAGE = 4;
+
+const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsProps) => {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const normalizedNews = useMemo(
+    () => (Array.isArray(newsData) ? newsData : []),
+    [newsData]
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [normalizedNews.length]);
+
+  const totalPages = Math.max(1, Math.ceil(normalizedNews.length / NEWS_PER_PAGE));
+  const startIndex = (currentPage - 1) * NEWS_PER_PAGE;
+  const endIndex = startIndex + NEWS_PER_PAGE;
+  const visibleNews = normalizedNews.slice(startIndex, endIndex);
+  const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
+
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'Unknown date';
     
@@ -61,13 +80,13 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
             <p>{error}</p>
           </div>
-        ) : !Array.isArray(newsData) || newsData.length === 0 ? (
+        ) : normalizedNews.length === 0 ? (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             No market news available at the moment.
           </div>
         ) : (
           <div className="space-y-4">
-            {newsData.map((item, index) => (
+            {visibleNews.map((item, index) => (
               <div key={item.id || index} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
                 <a 
                   href={item.url} 
@@ -89,6 +108,12 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
                         src={item.image_url || item.imageUrl} 
                         alt={item.title}
                         className="w-full h-32 object-cover rounded-md"
+                        loading="lazy"
+                        onError={(e) => {
+                          const target = e.currentTarget;
+                          target.onerror = null;
+                          target.style.display = 'none';
+                        }}
                       />
                     </div>
                   )}
@@ -98,6 +123,48 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
                 </a>
               </div>
             ))}
+
+            {totalPages > 1 && (
+              <div className="pt-2 flex flex-col items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:text-white hover:border-neon-400/40 transition-colors"
+                  >
+                    Prev
+                  </button>
+
+                  {pageNumbers.map((pageNum) => (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`px-3 py-1.5 rounded-lg border transition-colors ${
+                        pageNum === currentPage
+                          ? 'bg-neon-400 text-black border-neon-400'
+                          : 'bg-gray-900/90 backdrop-blur-lg border-gray-700/50 text-gray-200 hover:text-white hover:border-neon-400/40'
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:text-white hover:border-neon-400/40 transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, normalizedNews.length)} of {normalizedNews.length}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </CardContent>

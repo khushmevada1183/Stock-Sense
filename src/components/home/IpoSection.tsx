@@ -278,8 +278,6 @@ export default function IpoSection() {
                 </div>
               ))}
             </div>
-            {/* Fade effect */}
-            <div className="absolute right-0 top-0 h-full w-20 bg-gradient-to-l from-gray-950/80 to-transparent pointer-events-none" />
           </div>
 
           {/* Carousel navigation buttons */}

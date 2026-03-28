@@ -25,12 +25,12 @@ interface SectorNewsMap {
 }
 
 interface SectorNewsProps {
-  newsData: SectorNewsItem[];
-  loading: boolean;
-  error: string;
+  newsData?: SectorNewsItem[];
+  loading?: boolean;
+  error?: string;
 }
 
-export default function SectorNews({ newsData, loading, error }: SectorNewsProps) {
+export default function SectorNews({ newsData = [], loading = false, error = '' }: SectorNewsProps) {
   const [sectorNews, setSectorNews] = useState<SectorNewsMap>({});
   const [activeSector, setActiveSector] = useState('technology');
   const [sectors, setSectors] = useState<string[]>([]);

@@ -11,19 +11,15 @@ import CtaSection from '../components/home/CtaSection';
 
 // Dynamically import heavy UI components to reduce initial bundle size and speed up perceived loading
 const MarketOverview = dynamic(() => import('../components/home/MarketOverview'), { 
-  ssr: false, 
   loading: () => <div className="h-64 rounded-xl mb-3 shimmer w-full" />
 });
 const SectorPerformance = dynamic(() => import('../components/home/SectorPerformance'), { 
-  ssr: false, 
   loading: () => <div className="h-48 rounded-xl mb-3 shimmer w-full" />
 });
 const FeaturedStocks = dynamic(() => import('../components/home/FeaturedStocks'), { 
-  ssr: false, 
   loading: () => <div className="h-64 rounded-xl mb-3 shimmer w-full" />
 });
 const IpoSection = dynamic(() => import('../components/home/IpoSection'), { 
-  ssr: false, 
   loading: () => <div className="h-48 rounded-xl mb-3 shimmer w-full" />
 });
 

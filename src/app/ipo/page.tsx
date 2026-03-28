@@ -1692,18 +1692,13 @@ export default function IpoPage() {
                       </div>
                     </div>
                     ) : (
-                    <div className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
+                    <div className="flex w-max gap-6 p-4 scroll-smooth snap-x snap-mandatory">
                       {upcomingIpos.map((ipo, index) => (
-                        <div key={`ipo-upcoming-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
+                        <div key={`ipo-upcoming-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0 snap-start">
                           <UpcomingIpoCard ipo={ipo} />
             </div>
                       ))}
                     </div>
-                  )}
-                  
-            {/* Fade effect for scrolling indication */}
-                  {upcomingIpos.length > 0 && (
-                  <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
                   )}
           </div>
           
@@ -1743,17 +1738,15 @@ export default function IpoPage() {
                 </div>
                 
                 <div className="relative">
-                  <div className="overflow-x-auto pb-6 relative"
+                  <div ref={activeCarouselRef} className="overflow-x-auto pb-6 relative"
                         style={{ minHeight: activeIpos.length === 0 ? '120px' : '350px' }}>
-                    <div ref={activeCarouselRef} className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
+                    <div className="flex w-max gap-6 p-4 scroll-smooth snap-x snap-mandatory">
                       {activeIpos.map((ipo, index) => (
-                        <div key={`ipo-active-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
+                        <div key={`ipo-active-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0 snap-start">
                           <ActiveIpoCard ipo={ipo} />
                         </div>
                       ))}
                     </div>
-                    {/* Fade effect for scrolling indication */}
-                    <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
                   </div>
                   
                   {/* Carousel navigation buttons */}
@@ -1821,18 +1814,13 @@ export default function IpoPage() {
                       </div>
                       </div>
                     ) : (
-                    <div className="flex gap-6 p-4 overflow-x-auto scroll-smooth" style={{ width: '100%', position: 'relative' }}>
+                    <div className="flex w-max gap-6 p-4 scroll-smooth snap-x snap-mandatory">
                       {newListedIpos.map((ipo, index) => (
-                        <div key={`ipo-listed-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0">
+                        <div key={`ipo-listed-${index}-${ipo.symbol || 'unknown'}`} className="min-w-[320px] w-[320px] flex-shrink-0 snap-start">
                           <SimpleIpoCard ipo={ipo} />
             </div>
                       ))}
                     </div>
-                  )}
-                  
-            {/* Fade effect for scrolling indication */}
-                  {newListedIpos.length > 0 && (
-                  <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-white dark:from-gray-800 to-transparent pointer-events-none"></div>
                   )}
           </div>
           

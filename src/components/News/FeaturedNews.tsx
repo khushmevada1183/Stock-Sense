@@ -18,12 +18,14 @@ interface FeaturedNewsItem extends NewsItem {
 }
 
 interface FeaturedNewsProps {
-  newsData: FeaturedNewsItem[];
-  loading: boolean;
-  error: string;
+  newsData?: FeaturedNewsItem[];
+  loading?: boolean;
+  error?: string;
 }
 
-export default function FeaturedNews({ newsData, loading, error }: FeaturedNewsProps) {
+const FALLBACK_NEWS_IMAGE = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"%3E%3Crect width="1200" height="675" fill="%23111827"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial,sans-serif" font-size="44" fill="%239ca3af"%3ENews%20Image%3C/text%3E%3C/svg%3E';
+
+export default function FeaturedNews({ newsData = [], loading = false, error = '' }: FeaturedNewsProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sectionRef = useRef<HTMLDivElement>(null);
   const slideRef = useRef<HTMLDivElement>(null);
@@ -116,13 +118,13 @@ export default function FeaturedNews({ newsData, loading, error }: FeaturedNewsP
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src={currentNews.image_url || currentNews.imageUrl || '/images/news-placeholder.jpg'}
+            src={currentNews.image_url || currentNews.imageUrl || FALLBACK_NEWS_IMAGE}
             alt={currentNews.title}
             className="w-full h-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.onerror = null; // Prevent infinite loop if placeholder also fails
-              target.src = '/images/news-placeholder.jpg';
+              target.src = FALLBACK_NEWS_IMAGE;
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
