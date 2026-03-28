@@ -1,16 +1,32 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
+
 import HeroSection from '../components/home/HeroSection';
-import FeaturedStocks from '../components/home/FeaturedStocks';
-import MarketOverview from '../components/home/MarketOverview';
-import SectorPerformance from '../components/home/SectorPerformance';
 import AnalysisFeatures from '../components/home/AnalysisFeatures';
-import IpoSection from '../components/home/IpoSection';
 import CtaSection from '../components/home/CtaSection';
+
+// Dynamically import heavy UI components to reduce initial bundle size and speed up perceived loading
+const MarketOverview = dynamic(() => import('../components/home/MarketOverview'), { 
+  ssr: false, 
+  loading: () => <div className="h-64 rounded-xl mb-3 shimmer w-full" />
+});
+const SectorPerformance = dynamic(() => import('../components/home/SectorPerformance'), { 
+  ssr: false, 
+  loading: () => <div className="h-48 rounded-xl mb-3 shimmer w-full" />
+});
+const FeaturedStocks = dynamic(() => import('../components/home/FeaturedStocks'), { 
+  ssr: false, 
+  loading: () => <div className="h-64 rounded-xl mb-3 shimmer w-full" />
+});
+const IpoSection = dynamic(() => import('../components/home/IpoSection'), { 
+  ssr: false, 
+  loading: () => <div className="h-48 rounded-xl mb-3 shimmer w-full" />
+});
 
 // Framer Motion viewport animation wrapper
 const SectionReveal = ({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (

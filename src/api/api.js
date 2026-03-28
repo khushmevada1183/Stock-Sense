@@ -20,7 +20,10 @@ async function fetchApi(endpoint, params = {}) {
   }
   
   try {
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), {
+      // Add Incremental Static Regeneration caching (60 seconds)
+      next: { revalidate: 60 }
+    });
     
     if (!response.ok) {
       throw new Error(`API error ${response.status}: ${response.statusText}`);
