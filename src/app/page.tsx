@@ -1,10 +1,9 @@
-'use client';
-
-import { useRef, Suspense } from 'react';
+import { Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
+
 import dynamic from 'next/dynamic';
+import { SectionReveal } from '../components/ui/SectionReveal';
 
 import HeroSection from '../components/home/HeroSection';
 import AnalysisFeatures from '../components/home/AnalysisFeatures';
@@ -28,34 +27,15 @@ const IpoSection = dynamic(() => import('../components/home/IpoSection'), {
   loading: () => <div className="h-48 rounded-xl mb-3 shimmer w-full" />
 });
 
-// Framer Motion viewport animation wrapper
-const SectionReveal = ({ children, className = '', delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: '-60px' }}
-    transition={{ duration: 0.7, delay, ease: [0.16, 1, 0.3, 1] }}
-    className={className}
-  >
-    {children}
-  </motion.div>
-);
 
 export default function Home() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const marketOverviewRef = useRef<HTMLElement>(null);
-  const sectorPerformanceRef = useRef<HTMLElement>(null);
-  const featuredStocksRef = useRef<HTMLElement>(null);
-  const ipoSectionRef = useRef<HTMLElement>(null);
-  const analysisFeaturesRef = useRef<HTMLDivElement>(null);
-  const ctaSectionRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="pb-16">
       {/* Grid overlay is applied globally via html in globals.css — no duplicate here */}
 
       {/* Hero Section */}
-      <div ref={heroRef}>
+      <div>
         <HeroSection />
       </div>
 
@@ -64,7 +44,7 @@ export default function Home() {
 
       {/* Market Overview */}
       <SectionReveal>
-        <section ref={marketOverviewRef} className="py-14 relative z-10 section-glow">
+        <section className="py-14 relative z-10 section-glow">
           <div className="container mx-auto px-4 max-w-[1440px] overflow-x-visible">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-10 text-white">
               Market <span className="gradient-text">Overview</span>
@@ -80,7 +60,7 @@ export default function Home() {
       
       {/* Sector Performance */}
       <SectionReveal delay={0.05}>
-        <section ref={sectorPerformanceRef} className="py-14 relative z-10">
+        <section className="py-14 relative z-10">
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center mb-10">
               <h2 className="text-lg md:text-xl font-bold text-white">
@@ -99,7 +79,7 @@ export default function Home() {
 
       {/* Featured Stocks */}
       <SectionReveal delay={0.05}>
-        <section ref={featuredStocksRef} className="py-14 relative z-10 section-glow">
+        <section className="py-14 relative z-10 section-glow">
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center mb-10">
               <h2 className="text-lg md:text-xl font-bold text-white">
@@ -118,7 +98,7 @@ export default function Home() {
 
       {/* IPO Section */}
       <SectionReveal delay={0.05}>
-        <section ref={ipoSectionRef} className="py-14 relative z-10">
+        <section className="py-14 relative z-10">
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center mb-10">
               <h2 className="text-lg md:text-xl font-bold text-white">
@@ -137,7 +117,7 @@ export default function Home() {
 
       {/* Analysis Features */}
       <SectionReveal delay={0.05}>
-        <section ref={analysisFeaturesRef} className="py-14 relative z-10 section-glow">
+        <section className="py-14 relative z-10 section-glow">
           <div className="container mx-auto px-4">
             <AnalysisFeatures />
           </div>
@@ -146,7 +126,7 @@ export default function Home() {
 
       {/* Call to Action */}
       <SectionReveal delay={0.05}>
-        <section ref={ctaSectionRef} className="py-14 relative z-10">
+        <section className="py-14 relative z-10">
           <div className="container mx-auto px-4">
             <CtaSection />
           </div>

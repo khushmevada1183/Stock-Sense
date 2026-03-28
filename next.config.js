@@ -63,7 +63,7 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
       },
     ],
-    unoptimized: process.env.NODE_ENV === 'production'
+    unoptimized: false
   },
   // Environment variables
   env: {
