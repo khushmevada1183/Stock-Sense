@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Calendar } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface IPO {
   id: string;
@@ -17,6 +18,43 @@ interface IPO {
   closeDate: string;
   listingDate: string;
   status: 'upcoming' | 'active' | 'closed' | 'listed';
+}
+
+type IpoStatus = IPO['status'];
+
+interface RawIpo {
+  company_name?: string;
+  name?: string;
+  companyName?: string;
+  symbol?: string;
+  issue_price?: string;
+  price_range?: string;
+  priceRange?: string;
+  issuePrice?: string;
+  issue_size?: string;
+  size?: string;
+  issueSize?: string;
+  open?: string;
+  date?: string;
+  bidding_start_date?: string;
+  openDate?: string;
+  close?: string;
+  bidding_end_date?: string;
+  closeDate?: string;
+  listing_date?: string;
+  listingDate?: string;
+  status?: IpoStatus;
+}
+
+interface IpoDataResponse {
+  ipos?: RawIpo[];
+  upcoming?: RawIpo[];
+  upcomingIPOs?: RawIpo[];
+  active?: RawIpo[];
+  activeIPOs?: RawIpo[];
+  recent?: RawIpo[];
+  recentlyListedIPOs?: RawIpo[];
+  listed?: RawIpo[];
 }
 
 const IPOTable = () => {
@@ -36,40 +74,32 @@ const IPOTable = () => {
         
         // Transform the data to match our component's expected format
         let formattedIpos: IPO[] = [];
+        const mapRawIpo = (ipo: RawIpo, id: string, fallbackStatus: IpoStatus = 'upcoming'): IPO => ({
+          id,
+          companyName: ipo.company_name || ipo.name || ipo.companyName || 'Unknown Company',
+          symbol: ipo.symbol || 'N/A',
+          issuePrice: ipo.issue_price || ipo.price_range || ipo.priceRange || ipo.issuePrice || 'TBA',
+          issueSize: ipo.issue_size || ipo.size || ipo.issueSize || 'TBA',
+          openDate: ipo.open || ipo.date || ipo.bidding_start_date || ipo.openDate || '',
+          closeDate: ipo.close || ipo.bidding_end_date || ipo.closeDate || '',
+          listingDate: ipo.listing_date || ipo.listingDate || '',
+          status: ipo.status || fallbackStatus
+        });
         
         // Handle different possible response structures from the /ipo endpoint
         if (Array.isArray(ipoData)) {
           // Direct array response
-          formattedIpos = ipoData.map((ipo: any, index: number) => ({
-            id: `ipo-${index}`,
-            companyName: ipo.company_name || ipo.name || ipo.companyName || 'Unknown Company',
-            symbol: ipo.symbol || 'N/A',
-            issuePrice: ipo.issue_price || ipo.price_range || ipo.priceRange || ipo.issuePrice || 'TBA',
-            issueSize: ipo.issue_size || ipo.size || ipo.issueSize || 'TBA',
-            openDate: ipo.open || ipo.date || ipo.bidding_start_date || ipo.openDate || '',
-            closeDate: ipo.close || ipo.bidding_end_date || ipo.closeDate || '',
-            listingDate: ipo.listing_date || ipo.listingDate || '',
-            status: (ipo.status || 'upcoming') as 'upcoming' | 'active' | 'closed' | 'listed'
-          }));
+          formattedIpos = ipoData.map((ipo: RawIpo, index: number) => mapRawIpo(ipo, `ipo-${index}`, 'upcoming'));
         } else if (ipoData && typeof ipoData === 'object') {
+          const dataObject = ipoData as IpoDataResponse;
           // Object response with nested data
           
           // Check for direct 'ipos' array (mock data structure)
-          if (ipoData.ipos && Array.isArray(ipoData.ipos)) {
-            formattedIpos = ipoData.ipos.map((ipo: any, index: number) => ({
-              id: `mock-${index}`,
-              companyName: ipo.name || ipo.company_name || 'Unknown Company',
-              symbol: ipo.symbol || 'N/A',
-              issuePrice: ipo.priceRange || ipo.issue_price || 'TBA',
-              issueSize: ipo.size || ipo.issue_size || 'TBA',
-              openDate: ipo.date || ipo.open || '',
-              closeDate: ipo.close || '',
-              listingDate: ipo.listing_date || '',
-              status: (ipo.status || 'upcoming') as 'upcoming' | 'active' | 'closed' | 'listed'
-            }));
+          if (Array.isArray(dataObject.ipos)) {
+            formattedIpos = dataObject.ipos.map((ipo, index) => mapRawIpo(ipo, `mock-${index}`, 'upcoming'));
           } else {
             // Check for categorized IPO data (upcoming, active, recent, etc.)
-            const categories = [
+            const categories: Array<{ key: keyof IpoDataResponse; status: IpoStatus }> = [
               { key: 'upcoming', status: 'upcoming' },
               { key: 'upcomingIPOs', status: 'upcoming' },
               { key: 'active', status: 'active' },
@@ -80,18 +110,9 @@ const IPOTable = () => {
             ];
             
             categories.forEach(({ key, status }) => {
-              if (ipoData[key] && Array.isArray(ipoData[key])) {
-                const categoryIpos = ipoData[key].map((ipo: any, index: number) => ({
-                  id: `${key}-${index}`,
-                  companyName: ipo.company_name || ipo.name || ipo.companyName || 'Unknown Company',
-                  symbol: ipo.symbol || 'N/A',
-                  issuePrice: ipo.issue_price || ipo.price_range || ipo.priceRange || ipo.issuePrice || 'TBA',
-                  issueSize: ipo.issue_size || ipo.size || ipo.issueSize || 'TBA',
-                  openDate: ipo.open || ipo.date || ipo.bidding_start_date || ipo.openDate || '',
-                  closeDate: ipo.close || ipo.bidding_end_date || ipo.closeDate || '',
-                  listingDate: ipo.listing_date || ipo.listingDate || '',
-                  status: (ipo.status || status) as 'upcoming' | 'active' | 'closed' | 'listed'
-                }));
+              const categoryData = dataObject[key];
+              if (Array.isArray(categoryData)) {
+                const categoryIpos = categoryData.map((ipo, index) => mapRawIpo(ipo, `${key}-${index}`, status));
                 formattedIpos = [...formattedIpos, ...categoryIpos];
               }
             });

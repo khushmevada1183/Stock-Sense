@@ -6,31 +6,67 @@ import { TrendingUp, Clock } from 'lucide-react';
 import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 import SearchBar from '@/app/components/SearchBar';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/logger';
+
+interface PopularStock {
+  ticker_id?: string;
+  percent_change?: number | string;
+  changePercent?: number | string;
+  [key: string]: unknown;
+}
+
+interface TrendingResponse {
+  success?: boolean;
+  data?: {
+    trending_stocks?: {
+      top_gainers?: PopularStock[];
+      top_losers?: PopularStock[];
+    };
+  };
+}
 
 const StockSearchPage: React.FC = () => {
-  const [popularStocks, setPopularStocks] = useState<any[]>([]);
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
-  const router = useRouter();
-
-  useEffect(() => {
-    // Load search history from localStorage
-    const history = localStorage.getItem('stockSearchHistory');
-    if (history) {
-      setSearchHistory(JSON.parse(history));
+  const [popularStocks, setPopularStocks] = useState<PopularStock[]>([]);
+  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+    if (typeof window === 'undefined') {
+      return [];
     }
 
-    // Fetch popular stocks
-    fetchPopularStocks();
-  }, []);
+    try {
+      const history = localStorage.getItem('stockSearchHistory');
+      if (!history) {
+        return [];
+      }
+
+      const parsed: unknown = JSON.parse(history);
+      return Array.isArray(parsed)
+        ? parsed.filter((item): item is string => typeof item === 'string')
+        : [];
+    } catch {
+      return [];
+    }
+  });
+  const router = useRouter();
+
+  const toNumber = (value: number | string | undefined) => {
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string') {
+      const parsed = parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    }
+    return 0;
+  };
 
   const fetchPopularStocks = async () => {
     try {
       const response = await fetch('/api/trending');
-      const data = await response.json();
+      const payload: unknown = await response.json();
+      const data = payload as TrendingResponse;
+
       if (data.success) {
         const popular = [
-          ...(data.data.trending_stocks?.top_gainers?.slice(0, 3) || []),
-          ...(data.data.trending_stocks?.top_losers?.slice(0, 3) || [])
+          ...(data.data?.trending_stocks?.top_gainers?.slice(0, 3) || []),
+          ...(data.data?.trending_stocks?.top_losers?.slice(0, 3) || [])
         ];
         setPopularStocks(popular);
       }
@@ -38,6 +74,16 @@ const StockSearchPage: React.FC = () => {
       logger.error('Error fetching popular stocks:', error);
     }
   };
+
+  useEffect(() => {
+    const timerId = window.setTimeout(() => {
+      void fetchPopularStocks();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, []);
 
   // This function will be passed to the SearchBar component
   const handleSearchComplete = (stockSymbol: string) => {
@@ -120,7 +166,7 @@ const StockSearchPage: React.FC = () => {
                   key={`popular-${stock.ticker_id || index}`} 
                   stock={stock} 
                   showAllData={true}
-                  price_change_percentage={stock.percent_change || stock.changePercent || 0}
+                  price_change_percentage={toNumber(stock.percent_change ?? stock.changePercent)}
                 />
               ))}
             </div>

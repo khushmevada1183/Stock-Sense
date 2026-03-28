@@ -8,18 +8,74 @@ import { StockData as Stock } from '@/types/stocks';
 import { gsap } from 'gsap';
 import { TrendingUp, TrendingDown, BarChart2, ArrowRight } from 'lucide-react';
 
+interface StockLike {
+  id?: string;
+  symbol?: string;
+  company_name?: string;
+  companyName?: string;
+  sector_name?: string;
+  sector?: string;
+  price_change_percentage?: number | string;
+  changePercent?: number | string;
+  change_percent?: number | string;
+  change?: number | string;
+  current_price?: number | string;
+  latestPrice?: number | string;
+  price?: number | string;
+}
+
+interface TrendingStocksResponse {
+  success?: boolean;
+  data?:
+    | {
+        stocks?: unknown[];
+        trending_stocks?: {
+          top_gainers?: unknown[];
+          top_losers?: unknown[];
+        };
+      }
+    | unknown[];
+}
+
+const asStockLike = (value: unknown): StockLike => {
+  if (typeof value !== 'object' || value === null) {
+    return {};
+  }
+
+  return value as StockLike;
+};
+
+const toNumber = (value: unknown): number => {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const parsed = parseFloat(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  return 0;
+};
+
 // Helper function to normalize stock data across different formats
-const normalizeStock = (stock: any): Stock => {
+const normalizeStock = (value: unknown): Stock => {
+  const stock = asStockLike(value);
+
   return {
     id: stock.id || stock.symbol || '',
     symbol: stock.symbol || '',
     company_name: stock.company_name || stock.companyName || '',
     sector_name: stock.sector_name || stock.sector || '',
-    price_change_percentage: stock.price_change_percentage || 
-                             stock.changePercent || 
-                             stock.change_percent || 
-                             stock.change || 0,
-    current_price: stock.current_price || stock.latestPrice || stock.price || 0
+    price_change_percentage:
+      toNumber(stock.price_change_percentage) ||
+      toNumber(stock.changePercent) ||
+      toNumber(stock.change_percent) ||
+      toNumber(stock.change),
+    current_price:
+      toNumber(stock.current_price) ||
+      toNumber(stock.latestPrice) ||
+      toNumber(stock.price)
   };
 };
 
@@ -72,16 +128,28 @@ export default function FeaturedStocks() {
   useEffect(() => {
     const fetchFeaturedStocks = async () => {
       try {
-        const response = await stockApi.getTrendingStocks();
+        const response = (await stockApi.getTrendingStocks()) as TrendingStocksResponse;
         logger.debug('Trending stocks response:', response);
 
         // Actual API shape: { success, data: { stocks: [...] } }
         // Fallback shapes: { success, data: [...] } or { success, data: { trending_stocks: {...} } }
-        let rawStocks: any[] = [];
+        let rawStocks: unknown[] = [];
 
-        if (response?.success && Array.isArray(response?.data?.stocks)) {
+        if (
+          response?.success &&
+          typeof response.data === 'object' &&
+          response.data !== null &&
+          !Array.isArray(response.data) &&
+          Array.isArray(response.data.stocks)
+        ) {
           rawStocks = response.data.stocks;
-        } else if (response?.success && response?.data?.trending_stocks) {
+        } else if (
+          response?.success &&
+          typeof response.data === 'object' &&
+          response.data !== null &&
+          !Array.isArray(response.data) &&
+          response.data.trending_stocks
+        ) {
           const g = response.data.trending_stocks.top_gainers || [];
           const l = response.data.trending_stocks.top_losers || [];
           rawStocks = [...g, ...l];

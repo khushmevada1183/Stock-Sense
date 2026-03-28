@@ -1,6 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { createButtonHoverEffect, createCardHoverEffect, createNewsItemHoverEffect } from '../shared/AnimationUtils';
+import { createButtonHoverEffect, createCardHoverEffect } from '../shared/AnimationUtils';
 
 // Ensure plugins are registered
 gsap.registerPlugin(ScrollTrigger);
@@ -313,7 +313,7 @@ export const initNewsPageAnimations = (refs) => {
   return masterTimeline;
 };
 
-export default {
+const newsAnimations = {
   animateNewsHeader,
   animateNewsTabs,
   animateFeaturedNews,
@@ -323,3 +323,5 @@ export default {
   animateNewsArticle,
   initNewsPageAnimations
 }; 
+
+export default newsAnimations;

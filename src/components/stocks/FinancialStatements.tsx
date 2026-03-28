@@ -60,7 +60,7 @@ const FinancialStatements: React.FC<FinancialStatementsProps> = ({ financialData
         month: 'short',
         day: 'numeric'
       });
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };

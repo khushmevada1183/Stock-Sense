@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { gsap } from 'gsap';
 import { Chart, registerables } from 'chart.js';
 import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, DollarSign, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { useAnimation } from '@/animations/shared/AnimationContext';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 import { logger } from '@/lib/logger';
 import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
@@ -55,6 +54,78 @@ interface HighLowData {
   current_price: number;
 }
 
+interface LooseStock {
+  id?: string | number;
+  ticker_id?: string;
+  tickerId?: string;
+  ticker?: string;
+  symbol?: string;
+  nseCode?: string;
+  ric?: string;
+  company?: string;
+  company_name?: string;
+  displayName?: string;
+  name?: string;
+  sector_name?: string;
+  sector?: string;
+  industry?: string;
+  current_price?: number;
+  last_price?: number;
+  ltp?: number;
+  price?: number;
+  market_cap?: number | string;
+  marketCap?: number | string;
+  averagePrice?: number;
+  price_change_percentage?: number;
+  percent_change?: number;
+  percentChange?: number;
+  change?: number;
+  net_change?: number;
+  netChange?: number;
+  bid?: number;
+  bidSize?: number;
+  ask?: number;
+  askSize?: number;
+  high?: number;
+  low?: number;
+  open?: number;
+  close?: number;
+  volume?: number;
+  bid_size?: number;
+  ask_size?: number;
+  low_circuit_limit?: number;
+  lowCircuitLimit?: number;
+  up_circuit_limit?: number;
+  upCircuitLimit?: number;
+  exchange_type?: string;
+  exchangeType?: string;
+  lot_size?: number;
+  lotSize?: number;
+  overall_rating?: string;
+  overallRating?: string;
+  short_term_trend?: string;
+  short_term_trends?: string;
+  shortTermTrends?: string;
+  long_term_trend?: string;
+  long_term_trends?: string;
+  longTermTrends?: string;
+  year_low?: number;
+  ylow?: number;
+  low_52_week?: number;
+  '52_week_low'?: number;
+  year_high?: number;
+  yhigh?: number;
+  high_52_week?: number;
+  '52_week_high'?: number;
+  deviation?: number;
+  actualDeviation?: number;
+  description?: string;
+  isin?: string;
+  isInId?: string;
+  date?: string;
+  time?: string;
+}
+
 const STOCKS_TABLE_PAGE_SIZE = 10;
 const SECTOR_CARD_PAGE_SIZE = 6;
 const PERFORMANCE_CARD_PAGE_SIZE = 8;
@@ -63,9 +134,9 @@ const HIGH_LOW_CARD_PAGE_SIZE = 4;
 export default function StocksIndexPage() {
   // API Data States
   const [stocks, setStocks] = useState<Stock[]>([]);
-  const [trendingStocks, setTrendingStocks] = useState<any[]>([]);
-  const [bseActive, setBseActive] = useState<any[]>([]);
-  const [nseActive, setNseActive] = useState<any[]>([]);
+  const [trendingStocks, setTrendingStocks] = useState<LooseStock[]>([]);
+  const [bseActive, setBseActive] = useState<LooseStock[]>([]);
+  const [nseActive, setNseActive] = useState<LooseStock[]>([]);
   const [highLowData, setHighLowData] = useState<HighLowData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -182,7 +253,7 @@ export default function StocksIndexPage() {
         // ---- Trending stocks -----------------------------------------------
         // Actual shape: { success, data: { stocks: [...] } }
         // Each item: { id, symbol, company_name, sector_name, current_price, price_change_percentage }
-        let allTrendingStocks: any[] = [];
+        let allTrendingStocks: LooseStock[] = [];
 
         if (trendingRes?.success && Array.isArray(trendingRes?.data?.stocks)) {
           allTrendingStocks = trendingRes.data.stocks;
@@ -207,17 +278,23 @@ export default function StocksIndexPage() {
         // ---- BSE / NSE most active -----------------------------------------
         // Actual shape when data exists: { success, data: { success, data: [...] } }  (double-wrapped)
         // Current mock returns: { success, data: { success, message, data: {} } }
-        const unwrap = (res: any): any[] => {
+        const unwrap = (res: unknown): LooseStock[] => {
+          const response = res as {
+            data?: {
+              data?: unknown[] | Record<string, unknown>;
+            } | unknown[];
+          } | unknown[];
+
           if (!res) return [];
           // Try double-unwrap first (real data format)
-          const inner = res?.data?.data;
-          if (Array.isArray(inner)) return inner;
+          const inner = (response as { data?: { data?: unknown[] | Record<string, unknown> } })?.data?.data;
+          if (Array.isArray(inner)) return inner as LooseStock[];
           if (inner && typeof inner === 'object' && Object.keys(inner).length > 0) {
-            return Object.values(inner) as any[];
+            return Object.values(inner) as LooseStock[];
           }
           // Single-unwrap
-          if (Array.isArray(res?.data)) return res.data;
-          if (Array.isArray(res)) return res;
+          if (Array.isArray((response as { data?: unknown[] })?.data)) return (response as { data: LooseStock[] }).data;
+          if (Array.isArray(response)) return response as LooseStock[];
           return [];
         };
 
@@ -225,7 +302,7 @@ export default function StocksIndexPage() {
         const nseData = unwrap(nseRes);
 
         // ---- Price shockers ------------------------------------------------
-        let priceShockers: any[] = [];
+        let priceShockers: LooseStock[] = [];
         if (priceShockersRes?.success && priceShockersRes?.data) {
           priceShockers = [
             ...(priceShockersRes.data.BSE_PriceShocker || []),
@@ -253,6 +330,16 @@ export default function StocksIndexPage() {
           ...priceShockers.slice(0, 10)
         ];
 
+        const toNumber = (value: string | number | undefined) => {
+          if (typeof value === 'number') return value;
+          return Number.parseFloat(value ?? '0') || 0;
+        };
+
+        const toInteger = (value: string | number | undefined) => {
+          if (typeof value === 'number') return Math.trunc(value);
+          return Number.parseInt(value ?? '0', 10) || 0;
+        };
+
 
         // Transform API data to include ALL available fields with enhanced mapping
         const transformedStocks = allStocksData.map((stock, index) => {
@@ -269,29 +356,29 @@ export default function StocksIndexPage() {
             sector_name: stock.sector_name || stock.sector || stock.industry || 'General',
             
             // Price data with comprehensive mapping
-            current_price: parseFloat(stock.price || stock.current_price || stock.ltp || stock.last_price || 0),
-            price_change_percentage: parseFloat(stock.percent_change || stock.percentChange || (stock.price_change_percentage || stock.percent_change || 0) || 0),
-            percent_change: parseFloat(stock.percent_change || stock.percentChange || (stock.price_change_percentage || stock.percent_change || 0) || 0),
-            net_change: parseFloat(stock.net_change || stock.netChange || stock.change || 0),
+            current_price: toNumber(stock.price || stock.current_price || stock.ltp || stock.last_price),
+            price_change_percentage: toNumber(stock.percent_change || stock.percentChange || stock.price_change_percentage),
+            percent_change: toNumber(stock.percent_change || stock.percentChange || stock.price_change_percentage),
+            net_change: toNumber(stock.net_change || stock.netChange || stock.change),
             
             // Trading data
-            bid: parseFloat(stock.bid || 0),
-            ask: parseFloat(stock.ask || 0),
-            high: parseFloat(stock.high || 0),
-            low: parseFloat(stock.low || 0),
-            open: parseFloat(stock.open || 0),
-            close: parseFloat(stock.close || 0),
-            volume: parseInt(stock.volume || 0),
+            bid: toNumber(stock.bid),
+            ask: toNumber(stock.ask),
+            high: toNumber(stock.high),
+            low: toNumber(stock.low),
+            open: toNumber(stock.open),
+            close: toNumber(stock.close),
+            volume: toInteger(stock.volume),
             
             // Size and limit data
-            bid_size: parseInt(stock.bid_size || stock.bidSize || 0),
-            ask_size: parseInt(stock.ask_size || stock.askSize || 0),
-            low_circuit_limit: parseFloat(stock.low_circuit_limit || stock.lowCircuitLimit || 0),
-            up_circuit_limit: parseFloat(stock.up_circuit_limit || stock.upCircuitLimit || 0),
+            bid_size: toInteger(stock.bid_size || stock.bidSize),
+            ask_size: toInteger(stock.ask_size || stock.askSize),
+            low_circuit_limit: toNumber(stock.low_circuit_limit || stock.lowCircuitLimit),
+            up_circuit_limit: toNumber(stock.up_circuit_limit || stock.upCircuitLimit),
             
             // Exchange and lot data
             exchange_type: stock.exchange_type || stock.exchangeType || 'NSE',
-            lot_size: parseFloat(stock.lot_size || stock.lotSize || 1),
+            lot_size: toNumber(stock.lot_size || stock.lotSize || 1),
             
             // Rating and trend data
             overall_rating: stock.overall_rating || stock.overallRating || 'Neutral',
@@ -299,8 +386,8 @@ export default function StocksIndexPage() {
             long_term_trends: stock.long_term_trends || stock.long_term_trend || stock.longTermTrends || 'Neutral',
             
             // 52-week range data
-            year_low: parseFloat(stock.year_low || stock.ylow || stock['52_week_low'] || 0),
-            year_high: parseFloat(stock.year_high || stock.yhigh || stock['52_week_high'] || 0),
+            year_low: toNumber(stock.year_low || stock.ylow || stock['52_week_low']),
+            year_high: toNumber(stock.year_high || stock.yhigh || stock['52_week_high']),
             
             // Timestamp data
             date: stock.date || new Date().toISOString().split('T')[0],
@@ -396,7 +483,7 @@ export default function StocksIndexPage() {
     // Cleanup: destroy any chart tracked in our ref AND any orphaned charts
     // still attached to canvas elements (handles React Strict Mode double-invoke)
     chartInstances.current.forEach(chart => {
-      try { chart?.destroy(); } catch (_) {}
+      try { chart?.destroy(); } catch {}
     });
     chartInstances.current = [];
 
@@ -404,7 +491,7 @@ export default function StocksIndexPage() {
     const safeGetCtx = (ref: React.RefObject<HTMLCanvasElement>) => {
       if (!ref.current) return null;
       const existing = Chart.getChart(ref.current);
-      if (existing) { try { existing.destroy(); } catch (_) {} }
+      if (existing) { try { existing.destroy(); } catch {} }
       return ref.current.getContext('2d');
     };
 
@@ -456,7 +543,7 @@ export default function StocksIndexPage() {
                 borderColor: 'rgba(75, 85, 99, 1)',
                 borderWidth: 1,
                 callbacks: {
-                  label: (context: any) => `${context.label}: ${context.raw} stocks (${((Number(Number(context.raw)) / sectorValues.reduce((a, b) => a + b, 0)) * 100).toFixed(1)}%)`
+                  label: (context) => `${context.label}: ${context.raw} stocks (${((Number(Number(context.raw)) / sectorValues.reduce((a, b) => a + b, 0)) * 100).toFixed(1)}%)`
                 }
               }
             },
@@ -508,7 +595,7 @@ export default function StocksIndexPage() {
                 borderColor: 'rgba(75, 85, 99, 1)',
                 borderWidth: 1,
                 callbacks: {
-                  label: (context: any) => `${context.label}: ${context.raw} stocks`
+                  label: (context) => `${context.label}: ${context.raw} stocks`
                 }
               }
             },
@@ -595,7 +682,7 @@ export default function StocksIndexPage() {
                 borderColor: 'rgba(75, 85, 99, 1)',
                 borderWidth: 1,
                 callbacks: {
-                  label: (context: any) => `${context.label}: ₹${(Number(context.raw) * 100).toFixed(2)}`
+                  label: (context) => `${context.label}: ₹${(Number(context.raw) * 100).toFixed(2)}`
                 }
               }
             },
@@ -634,7 +721,7 @@ export default function StocksIndexPage() {
       // BSE Volume Chart (bar chart showing volume by stock)
       const bseVolumeCtx = safeGetCtx(bseVolumeChartRef);
       if (bseVolumeCtx && bseActive.length > 0) {
-        const bseVolumes = bseActive.slice(0, 5).map(stock => stock.volume / 1000000); // Convert to millions
+        const bseVolumes = bseActive.slice(0, 5).map(stock => (stock.volume ?? 0) / 1000000); // Convert to millions
         const bseSymbols = bseActive.slice(0, 5).map(stock => stock.ticker?.split('.')[0] || stock.company?.substring(0, 8));
         
         const bseVolumeChart = new Chart(bseVolumeCtx, {
@@ -677,7 +764,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context: any) => `Volume: ${Number(context.raw).toFixed(2)}M`
+                  label: (context) => `Volume: ${Number(context.raw).toFixed(2)}M`
                 }
               }
             },
@@ -717,7 +804,7 @@ export default function StocksIndexPage() {
       // NSE Volume Chart (bar chart)
       const nseVolumeCtx = safeGetCtx(nseVolumeChartRef);
       if (nseVolumeCtx && nseActive.length > 0) {
-        const nseVolumes = nseActive.slice(0, 5).map(stock => stock.volume / 1000000);
+        const nseVolumes = nseActive.slice(0, 5).map(stock => (stock.volume ?? 0) / 1000000);
         const nseSymbols = nseActive.slice(0, 5).map(stock => stock.ticker?.split('.')[0] || stock.company?.substring(0, 8));
         
         const nseVolumeChart = new Chart(nseVolumeCtx, {
@@ -760,7 +847,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context: any) => `Volume: ${Number(context.raw).toFixed(2)}M`
+                  label: (context) => `Volume: ${Number(context.raw).toFixed(2)}M`
                 }
               }
             },
@@ -847,7 +934,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context: any) => `Change: ${Number(context.raw).toFixed(2)}%`
+                  label: (context) => `Change: ${Number(context.raw).toFixed(2)}%`
                 }
               }
             },
@@ -932,7 +1019,7 @@ export default function StocksIndexPage() {
                 borderWidth: 1,
                 cornerRadius: 8,
                 callbacks: {
-                  label: (context: any) => `Change: ${Number(context.raw).toFixed(2)}%`
+                  label: (context) => `Change: ${Number(context.raw).toFixed(2)}%`
                 }
               }
             },
@@ -1823,14 +1910,14 @@ export default function StocksIndexPage() {
                     <div className="text-right">
                       <div className="text-xl font-bold text-white">₹{stock.price?.toFixed(2)}</div>
                       <div className={`text-sm font-medium flex items-center ${
-                        stock.percent_change >= 0 ? 'text-green-400' : 'text-red-400'
+                        (stock.percent_change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'
                       }`}>
-                        {stock.percent_change >= 0 ? (
+                        {(stock.percent_change ?? 0) >= 0 ? (
                           <ArrowUp className="w-3 h-3 mr-1" />
                         ) : (
                           <ArrowDown className="w-3 h-3 mr-1" />
                         )}
-                        {stock.percent_change?.toFixed(2)}%
+                        {(stock.percent_change ?? 0).toFixed(2)}%
                       </div>
                     </div>
                   </div>
@@ -1929,14 +2016,14 @@ export default function StocksIndexPage() {
                     <div className="text-right">
                       <div className="text-xl font-bold text-white">₹{stock.price?.toFixed(2)}</div>
                       <div className={`text-sm font-medium flex items-center ${
-                        stock.percent_change >= 0 ? 'text-green-400' : 'text-red-400'
+                        (stock.percent_change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'
                       }`}>
-                        {stock.percent_change >= 0 ? (
+                        {(stock.percent_change ?? 0) >= 0 ? (
                           <ArrowUp className="w-3 h-3 mr-1" />
                         ) : (
                           <ArrowDown className="w-3 h-3 mr-1" />
                         )}
-                        {stock.percent_change?.toFixed(2)}%
+                        {(stock.percent_change ?? 0).toFixed(2)}%
                       </div>
                     </div>
                   </div>
@@ -2076,7 +2163,7 @@ export default function StocksIndexPage() {
                                 <span className="text-green-400 font-bold">+{topBseGainer.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">
-                                ₹{topBseGainer.price?.toFixed(2)} • Vol: {(topBseGainer.volume / 1000000).toFixed(1)}M
+                                ₹{topBseGainer.price?.toFixed(2)} • Vol: {((topBseGainer.volume ?? 0) / 1000000).toFixed(1)}M
                               </div>
                             </div>
                           ) : <div className="text-gray-500">No data available</div>;
@@ -2092,7 +2179,7 @@ export default function StocksIndexPage() {
                                 <span className="text-red-400 font-bold">{topBseLoser.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">
-                                ₹{topBseLoser.price?.toFixed(2)} • Vol: {(topBseLoser.volume / 1000000).toFixed(1)}M
+                                ₹{topBseLoser.price?.toFixed(2)} • Vol: {((topBseLoser.volume ?? 0) / 1000000).toFixed(1)}M
                               </div>
                             </div>
                           ) : <div className="text-gray-500">No data available</div>;
@@ -2111,7 +2198,7 @@ export default function StocksIndexPage() {
                                 <span className="text-green-400 font-bold">+{topNseGainer.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">
-                                ₹{topNseGainer.price?.toFixed(2)} • Vol: {(topNseGainer.volume / 1000000).toFixed(1)}M
+                                ₹{topNseGainer.price?.toFixed(2)} • Vol: {((topNseGainer.volume ?? 0) / 1000000).toFixed(1)}M
                               </div>
                             </div>
                           ) : <div className="text-gray-500">No data available</div>;
@@ -2127,7 +2214,7 @@ export default function StocksIndexPage() {
                                 <span className="text-red-400 font-bold">{topNseLoser.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">
-                                ₹{topNseLoser.price?.toFixed(2)} • Vol: {(topNseLoser.volume / 1000000).toFixed(1)}M
+                                ₹{topNseLoser.price?.toFixed(2)} • Vol: {((topNseLoser.volume ?? 0) / 1000000).toFixed(1)}M
                               </div>
                             </div>
                           ) : <div className="text-gray-500">No data available</div>;

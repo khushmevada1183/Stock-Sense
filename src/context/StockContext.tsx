@@ -5,8 +5,7 @@ import * as api from '@/api/api';
 import { 
   searchStocks, 
   fetchStockDetails, 
-  fetchHistoricalData,
-  fetchMarketNews 
+  fetchHistoricalData
 } from '@/api/api';
 
 // Simplified unified type, as backend now provides a consistent format
@@ -18,13 +17,23 @@ interface StockDetails {
   changePercent?: number;
   sector?: string;
   industry?: string;
-  [key: string]: any; 
+  [key: string]: unknown;
 }
 
 // Simplified types, as we have a unified API
 type SearchResult = Pick<StockDetails, 'symbol' | 'companyName' | 'latestPrice'>;
 type HistoricalDataPoint = { date: string; close: number };
 type NewsItem = { title: string; url: string; source: string; summary: string; publishedAt: string };
+
+interface PriceShocker {
+  symbol?: string;
+  tickerId?: string;
+  company_name?: string;
+  companyName?: string;
+  current_price?: number;
+  change_percent?: string | number;
+  sector?: string;
+}
 
 interface StockContextValue {
   searchQuery: string;
@@ -143,15 +152,23 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setMarketDataError(null);
     try {
       // Use the price shockers API instead since the gainers/losers APIs are not available
-      const priceShockers = await api.getPriceShockers();
+      const priceShockersResponse = await api.getPriceShockers();
+      const priceShockers: PriceShocker[] = Array.isArray(priceShockersResponse) ? priceShockersResponse : [];
+      const toStockDetails = (stock: PriceShocker): StockDetails => ({
+        symbol: stock.symbol || stock.tickerId || 'N/A',
+        companyName: stock.company_name || stock.companyName || stock.symbol || stock.tickerId || 'Unknown Company',
+        latestPrice: stock.current_price,
+        changePercent: stock.change_percent !== undefined ? parseFloat(stock.change_percent.toString()) : undefined,
+        sector: stock.sector
+      });
       
       // Split the price shockers into gainers and losers based on their change
-      const gainers = priceShockers.filter((stock: any) => 
-        stock.change_percent && parseFloat(stock.change_percent) > 0
-      );
-      const losers = priceShockers.filter((stock: any) => 
-        stock.change_percent && parseFloat(stock.change_percent) < 0
-      );
+      const gainers = priceShockers
+        .filter((stock) => stock.change_percent !== undefined && parseFloat(stock.change_percent.toString()) > 0)
+        .map(toStockDetails);
+      const losers = priceShockers
+        .filter((stock) => stock.change_percent !== undefined && parseFloat(stock.change_percent.toString()) < 0)
+        .map(toStockDetails);
       
       setTopGainers(gainers);
       setTopLosers(losers);

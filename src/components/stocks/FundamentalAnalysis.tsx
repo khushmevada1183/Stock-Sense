@@ -3,12 +3,27 @@
 import React from 'react';
 import { BarChart4 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import FinancialStatements from '@/components/stocks/FinancialStatements';
+import FinancialStatements, { type FinancialPeriod } from '@/components/stocks/FinancialStatements';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
+interface FinancialRatios {
+  peRatio?: string | number;
+  pbRatio?: string | number;
+  dividendYield?: string | number;
+  debtToEquity?: string | number;
+  roe?: string | number;
+  roce?: string | number;
+  eps?: string | number;
+  bookValue?: string | number;
+  currentRatio?: string | number;
+  quickRatio?: string | number;
+  promoterHolding?: string | number;
+  pledgedPercentage?: string | number;
+}
+
 interface FundamentalAnalysisProps {
-  financialRatios: any;
-  financialStatements: any;
+  financialRatios: FinancialRatios | null;
+  financialStatements: unknown;
   companyName: string;
   pe: string | number;
   eps: string | number;
@@ -19,7 +34,7 @@ interface FundamentalAnalysisProps {
   errorRatios: string | null;
   loadingStatements: boolean;
   errorStatements: string | null;
-  transformFetchedFinancialStatements: (data: any) => any;
+  transformFetchedFinancialStatements: (data: unknown) => FinancialPeriod[];
 }
 
 const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
@@ -83,7 +98,7 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
         </Card>
       )}
       {loadingRatios && <LoadingSpinner />}
-      {!loadingRatios && errorRatios && (
+      {!loadingRatios && typeof errorRatios === 'string' && errorRatios.length > 0 && (
         <Card glass>
           <CardContent className="p-6">
             <p className="text-red-400 text-sm">{errorRatios}</p>
@@ -92,13 +107,13 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
       )}
 
       {/* Financial Statements Section */}
-      {!loadingStatements && financialStatements && (
+      {!loadingStatements && financialStatements != null && (
         <FinancialStatements 
           financialData={transformFetchedFinancialStatements(financialStatements)}
         />
       )}
       {loadingStatements && <LoadingSpinner />}
-      {!loadingStatements && errorStatements && (
+      {!loadingStatements && typeof errorStatements === 'string' && errorStatements.length > 0 && (
         <Card glass>
           <CardContent className="p-6">
             <p className="text-red-400 text-sm">{errorStatements}</p>

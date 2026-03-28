@@ -1,6 +1,5 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { createCardHoverEffect, createIPOItemHoverEffect } from '../shared/AnimationUtils';
 
 // Ensure plugins are registered
 gsap.registerPlugin(ScrollTrigger);
@@ -353,7 +352,9 @@ export const createIpoCarousel = (carouselRef, options = {}) => {
   };
 };
 
-export default {
+const ipoSectionAnimations = {
   initIpoSectionAnimations,
   createIpoCarousel
 }; 
+
+export default ipoSectionAnimations;

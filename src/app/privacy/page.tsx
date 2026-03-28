@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
+  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
 import { Shield, Lock, Eye, Server, User, Database, Clock, CheckCircle2 } from 'lucide-react';
 import PageBackground from '@/components/layout/PageBackground';
@@ -35,13 +35,9 @@ const securityMeasures = [
   { subject: 'Vulnerability Testing', A: 85, fullMark: 100 },
 ];
 
-const COLORS = ['#3b82f6', '#10b981', '#6366f1', '#f59e0b', '#ef4444'];
-
 export default function PrivacyPage() {
   const mainRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
-  const sectionHeadingsRef = useRef<HTMLElement[]>([]);
   const sectionContentsRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
@@ -83,13 +79,6 @@ export default function PrivacyPage() {
   const addToSectionsRef = (el: HTMLElement | null) => {
     if (el && !sectionsRef.current.includes(el)) {
       sectionsRef.current.push(el);
-    }
-  };
-
-  // Function to add to section headings refs
-  const addToSectionHeadingsRef = (el: HTMLElement | null) => {
-    if (el && !sectionHeadingsRef.current.includes(el)) {
-      sectionHeadingsRef.current.push(el);
     }
   };
 

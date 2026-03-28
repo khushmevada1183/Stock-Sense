@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { Building, LineChart, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import FinancialHighlights from '@/components/stocks/FinancialHighlights';
@@ -8,7 +8,7 @@ import ManagementInfo from '@/components/stocks/ManagementInfo';
 import StockNewsSection from '@/components/stocks/StockNewsSection';
 
 interface OverviewProps {
-  stockData: any;
+  stockData: unknown;
   symbol: string;
   companyName: string;
   industry: string;
@@ -21,9 +21,9 @@ interface OverviewProps {
   dividendYield: number | string | undefined;
   debtToEquity: number | string | undefined;
   description: string;
-  financialData: any[];
-  recentNews: any[];
-  officers: any[];
+  financialData: React.ComponentProps<typeof FinancialHighlights>['financialData'];
+  recentNews: React.ComponentProps<typeof StockNewsSection>['news'];
+  officers: React.ComponentProps<typeof ManagementInfo>['officers'];
   // Chart refs
   performanceChartRef: React.RefObject<HTMLCanvasElement>;
   sectorDistributionChartRef: React.RefObject<HTMLCanvasElement>;
@@ -32,16 +32,8 @@ interface OverviewProps {
 }
 
 const Overview: React.FC<OverviewProps> = ({
-  stockData,
-  symbol,
-  companyName,
-  industry,
-  price,
-  yearHigh,
-  yearLow,
   volume,
   marketCap,
-  avgVolume,
   dividendYield,
   debtToEquity,
   description,

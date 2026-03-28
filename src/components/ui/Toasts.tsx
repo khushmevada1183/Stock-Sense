@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import { X, AlertCircle, CheckCircle, Info, AlertTriangle } from 'lucide-react';
 import { useUI } from '../../context/UIContext';
 import { Toast as ToastType } from '../../context/UIContext';
@@ -65,14 +64,6 @@ const Toast = ({ toast, onClose }: { toast: ToastType; onClose: (id: string) => 
 // Toasts container component
 const Toasts = () => {
   const { toasts, removeToast } = useUI();
-  const [mounted, setMounted] = useState(false);
-  
-  // Ensure component is mounted on the client
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  if (!mounted) return null;
   
   if (toasts.length === 0) return null;
   

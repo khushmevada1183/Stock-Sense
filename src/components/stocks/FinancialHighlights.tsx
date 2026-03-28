@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, Scale, DollarSign, BarChart4, Percent } from 'lucide-react';
+import { TrendingUp, TrendingDown, Scale, DollarSign, BarChart4 } from 'lucide-react';
 
 interface FinancialItem {
   displayName: string;

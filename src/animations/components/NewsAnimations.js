@@ -301,8 +301,10 @@ export const createNewsRefreshAnimation = (newsContainerRef, fetchNews) => {
   };
 };
 
-export default {
+const newsAnimations = {
   initNewsAnimations,
   createNewsLoadingAnimation,
   createNewsRefreshAnimation
 }; 
+
+export default newsAnimations;

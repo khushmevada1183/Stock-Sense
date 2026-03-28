@@ -6,9 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Globe, 
   TrendingUp, 
-  TrendingDown, 
   DollarSign, 
-  Percent,
   Building,
   BarChart3,
   PieChart,
@@ -366,7 +364,9 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
         <CardContent>
           <div className="text-center py-8">
             <div className="text-4xl font-bold text-green-400 mb-2">75/100</div>
-            <div className="text-gray-400 mb-4">Strong Economic Fundamentals</div>
+            <div className="text-gray-400 mb-4">
+              Strong Economic Fundamentals{sector ? ` for ${sector}` : ''}
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
               <div className="glass-card rounded-xl p-3">
                 <div className="text-green-400 font-bold">Good</div>

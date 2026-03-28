@@ -30,6 +30,56 @@ interface StockTechnicalChartProps {
   symbol: string;
 }
 
+interface PriceTooltipPayloadItem {
+  color?: string;
+  name?: string;
+  value?: number;
+  payload?: PricePoint;
+}
+
+interface PriceTooltipProps {
+  active?: boolean;
+  payload?: PriceTooltipPayloadItem[];
+  label?: number | string;
+}
+
+const formatChartDate = (date?: string) => {
+  if (!date) return '';
+
+  try {
+    return new Date(date).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch {
+    return date;
+  }
+};
+
+const PriceTooltip = ({ active, payload, label }: PriceTooltipProps) => {
+  if (active && payload && payload.length) {
+    const dataPoint = payload[0]?.payload;
+
+    return (
+      <div className="bg-white bg-gray-900/90 backdrop-blur-lg p-3 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
+        <p className="font-medium">{formatChartDate(dataPoint?.date) || `Day ${label}`}</p>
+        {payload.map((entry, index) => {
+          const value = typeof entry.value === 'number' ? entry.value : 0;
+
+          return (
+            <p key={`tooltip-${index}`} style={{ color: entry.color }}>
+              {entry.name}: ₹{value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
+            </p>
+          );
+        })}
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const StockTechnicalChart = ({ technicalData, symbol }: StockTechnicalChartProps) => {
   const [selectedPeriod, setSelectedPeriod] = useState<5 | 10 | 20 | 50 | 100 | 300>(50);
   
@@ -38,42 +88,8 @@ const StockTechnicalChart = ({ technicalData, symbol }: StockTechnicalChartProps
     .filter(point => point.day <= selectedPeriod)
     .sort((a, b) => a.day - b.day);
   
-  // Format date for tooltip
-  const formatDate = (date?: string) => {
-    if (!date) return '';
-    try {
-      return new Date(date).toLocaleDateString('en-IN', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric'
-      });
-    } catch (e) {
-      return date;
-    }
-  };
-  
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      const dataPoint = payload[0].payload;
-      
-      return (
-        <div className="bg-white bg-gray-900/90 backdrop-blur-lg p-3 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
-          <p className="font-medium">{formatDate(dataPoint.date) || `Day ${label}`}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={`tooltip-${index}`} style={{ color: entry.color }}>
-              {entry.name}: ₹{entry.value.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
-            </p>
-          ))}
-        </div>
-      );
-    }
-    
-    return null;
-  };
-  
   // Period options
-  const periodOptions = [
+  const periodOptions: Array<{ value: 5 | 10 | 20 | 50 | 100 | 300; label: string }> = [
     { value: 5, label: '5 Days' },
     { value: 10, label: '10 Days' },
     { value: 20, label: '20 Days' },
@@ -100,7 +116,7 @@ const StockTechnicalChart = ({ technicalData, symbol }: StockTechnicalChartProps
               {periodOptions.map(option => (
                 <button
                   key={option.value}
-                  onClick={() => setSelectedPeriod(option.value as any)}
+                  onClick={() => setSelectedPeriod(option.value)}
                   className={`px-3 py-1 text-sm rounded ${
                     selectedPeriod === option.value 
                       ? 'bg-blue-600 text-white' 
@@ -129,7 +145,7 @@ const StockTechnicalChart = ({ technicalData, symbol }: StockTechnicalChartProps
                     label={{ value: 'Price (₹)', angle: -90, position: 'insideLeft' }}
                     tickFormatter={(value) => `₹${value}`}
                   />
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip content={<PriceTooltip />} />
                   <Legend />
                   {filteredData.some(d => d.bsePrice !== undefined) && (
                     <Line 

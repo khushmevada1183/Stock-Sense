@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
 
 interface Commodity {
   id: string;

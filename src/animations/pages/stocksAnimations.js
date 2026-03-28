@@ -279,7 +279,7 @@ export const animateStockDetails = (refs) => {
 };
 
 // Animation for the dashboard cards
-export const animateDashboardCards = (cardsRefs) => {
+export const animateDashboardCards = () => {
   const cardsElements = document.querySelectorAll('.metric-card');
   
   if (cardsElements.length === 0) return;
@@ -318,7 +318,6 @@ export const animateChartContainers = () => {
 // Animation for the stocks dashboard
 export const animateStocksDashboard = (refs) => {
   const {
-    dashboardRef,
     headerRef,
     metricsRef,
     sectorsRef,
@@ -497,7 +496,7 @@ export const initStocksPageAnimations = (refs) => {
   return masterTimeline;
 };
 
-export default {
+const stocksAnimations = {
   animateStocksHeader,
   animateStocksTable,
   animateNoticeBox,
@@ -508,3 +507,5 @@ export default {
   animateChartContainers,
   animateStocksDashboard
 }; 
+
+export default stocksAnimations;

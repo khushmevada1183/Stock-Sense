@@ -349,8 +349,10 @@ export const createIndexUpdateAnimation = (indexElements) => {
   };
 };
 
-export default {
+const marketOverviewAnimations = {
   initMarketOverviewAnimations,
   createChartUpdateAnimation,
   createIndexUpdateAnimation
 }; 
+
+export default marketOverviewAnimations;

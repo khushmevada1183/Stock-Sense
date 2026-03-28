@@ -8,7 +8,6 @@ import {
   TrendingUp, 
   TrendingDown, 
   DollarSign, 
-  Percent, 
   BarChart3, 
   PieChart, 
   Target,
@@ -21,7 +20,34 @@ import {
   RefreshCw
 } from 'lucide-react';
 import * as stockApi from '@/api/api';
-import { logger } from '@/lib/logger';
+
+interface PortfolioHolding {
+  symbol: string;
+  lastPrice: number;
+  change: number;
+  changePercent?: number;
+  quantity: number;
+  marketValue: number;
+  profitLoss: number;
+  profitLossPercent: number;
+  pe?: number;
+}
+
+interface SectorAllocation {
+  name: string;
+  percentage: number;
+}
+
+interface PortfolioSummary {
+  totalValue?: number;
+  totalProfitLoss?: number;
+  totalProfitLossPercent?: number;
+  dayGain?: number;
+  dayGainPercent?: number;
+  riskProfile?: string;
+  valuationScore?: number;
+  sectorAllocation?: SectorAllocation[];
+}
 
 // Helper function to format currency
 const formatCurrency = (value: number): string => {
@@ -54,8 +80,8 @@ const formatLargeNumber = (value: number): string => {
 };
 
 const PortfolioDashboard = () => {
-  const [holdings, setHoldings] = useState<any[]>([]); // Changed type to any[] as StockHolding is removed
-  const [summary, setSummary] = useState<any | null>(null); // Changed type to any | null
+  const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
+  const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const dashboardRef = useRef<HTMLDivElement>(null);
   
@@ -70,8 +96,8 @@ const PortfolioDashboard = () => {
         const holdingsData = await stockApi.getPortfolioHoldings();
         const summaryData = await stockApi.getPortfolioSummary();
         
-        setHoldings(holdingsData.holdings || []);
-        setSummary(summaryData.summary || null);
+        setHoldings(Array.isArray(holdingsData.holdings) ? holdingsData.holdings as PortfolioHolding[] : []);
+        setSummary(summaryData.summary ? summaryData.summary as PortfolioSummary : null);
       } catch (error) {
         console.error('Error fetching portfolio data:', error);
       } finally {

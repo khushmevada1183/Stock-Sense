@@ -9,13 +9,13 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { cachedAPI, cacheManager, CacheStrategy } from '../cachedAPI';
 import { logger } from '@/lib/logger';
 
-export interface UseCachedDataOptions {
+export interface UseCachedDataOptions<T = unknown> {
   strategy?: CacheStrategy;
   ttl?: number;
   enableBackground?: boolean;
   refreshInterval?: number;
   onError?: (error: Error) => void;
-  onSuccess?: (data: any) => void;
+  onSuccess?: (data: T) => void;
   enabled?: boolean;
 }
 
@@ -25,7 +25,7 @@ export interface UseCachedDataOptions {
 export function useCachedData<T>(
   key: string,
   fetcher: () => Promise<T>,
-  options: UseCachedDataOptions = {}
+  options: UseCachedDataOptions<T> = {}
 ) {
   const {
     strategy = CacheStrategy.HYBRID,
@@ -340,7 +340,7 @@ export function usePrefetchData() {
   }, []);
 }
 
-export default {
+const cachedDataHooks = {
   useCachedData,
   useCachedStockDetails,
   useCachedHistoricalData,
@@ -354,3 +354,5 @@ export default {
   useCache,
   usePrefetchData
 };
+
+export default cachedDataHooks;

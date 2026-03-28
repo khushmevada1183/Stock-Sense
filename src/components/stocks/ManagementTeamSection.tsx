@@ -46,7 +46,7 @@ const OfficerCard = ({ officer }: { officer: Officer }) => {
         month: 'short',
         day: 'numeric'
       });
-    } catch (e) {
+    } catch {
       return dateString; // Return original if parsing fails
     }
   };

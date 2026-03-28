@@ -157,7 +157,9 @@ export const createStocksCarousel = (carouselRef, options = {}) => {
   };
 };
 
-export default {
+const featuredStocksAnimations = {
   initFeaturedStocksAnimations,
   createStocksCarousel
 }; 
+
+export default featuredStocksAnimations;

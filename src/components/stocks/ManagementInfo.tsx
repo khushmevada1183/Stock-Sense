@@ -15,12 +15,13 @@ interface Officer {
   firstName?: string;
   lastName?: string;
   title?: string | OfficerTitle;
+  education?: string;
   since?: string;
   rank?: number;
   startYear?: string;
   startMonth?: string;
   startDay?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface ManagementInfoProps {
@@ -75,7 +76,7 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers }) => {
     try {
       const date = new Date(dateString);
       return date.toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };

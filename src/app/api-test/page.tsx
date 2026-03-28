@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import * as api from '@/api/api';
+import { logger } from '@/lib/logger';
 
 interface TestResult {
   name: string;
@@ -16,7 +17,7 @@ export default function ApiTestPage() {
   const [testResults, setTestResults] = useState<TestResult[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const runApiTests = async () => {
+  const runApiTests = useCallback(async () => {
     setLoading(true);
     setTestResults([]);
     
@@ -68,11 +69,17 @@ export default function ApiTestPage() {
     
     setTestResults(results);
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
-    runApiTests();
-  }, []);
+    const timerId = window.setTimeout(() => {
+      void runApiTests();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [runApiTests]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-8">

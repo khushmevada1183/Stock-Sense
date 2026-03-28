@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import * as stockApi from '@/api/api';
 import LoadingSpinner from './LoadingSpinner';
 import Link from 'next/link';
+import { logger } from '@/lib/logger';
 
 interface StockData {
   ticker: string;

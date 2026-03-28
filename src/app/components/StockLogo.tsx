@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { getCompanyProfile } from '@/api/api';
+import { logger } from '@/lib/logger';
 
 interface StockLogoProps {
   symbol: string;

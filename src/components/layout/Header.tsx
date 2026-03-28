@@ -1,21 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, Search, BarChart2, TrendingUp, Briefcase, Newspaper, Home } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, BarChart2, TrendingUp, Briefcase, Newspaper, Home } from 'lucide-react';
 import { useUI } from '../../context/UIContext';
 import ThemeToggle from '../ui/ThemeToggle';
 import SearchBar from '../../app/components/SearchBar';
 
+const subscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 const Header = () => {
   const pathname = usePathname();
   const { isMobileMenuOpen, setMobileMenuOpen } = useUI();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
   
   const navItems = [
     { name: 'Home', href: '/', icon: Home },
@@ -78,7 +78,7 @@ const Header = () => {
             
             {/* Search Bar (Desktop) */}
             <div className="hidden md:block relative w-72 lg:w-80">
-              <SearchBar compact={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
+              <SearchBar compact={true} showDetailsInline={false} onSearchComplete={() => {}} />
             </div>
             
             {/* Actions */}
@@ -130,7 +130,7 @@ const Header = () => {
               
               {/* Search Bar (Mobile) */}
               <div className="mt-4 px-1">
-                <SearchBar compact={true} isMobile={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
+                <SearchBar compact={true} isMobile={true} showDetailsInline={false} onSearchComplete={() => {}} />
               </div>
             </div>
           )}

@@ -52,18 +52,23 @@ class CachedAPI {
   /**
    * Get cached historical prices
    */
-  async getHistoricalPrices(symbol: string, period: string = '1Y', useCache: boolean = true) {
-    const cacheKey = `historical_${symbol}_${period}`;
+  async getHistoricalPrices(
+    symbol: string,
+    period: string = '1Y',
+    filter: string = 'price',
+    useCache: boolean = true
+  ) {
+    const cacheKey = `historical_${symbol}_${period}_${filter}`;
     
     if (!useCache) {
-      const data = await apiUtils.getHistoricalPrices(symbol, period);
+      const data = await apiUtils.getHistoricalData(symbol, period, filter);
       await cacheManager.set(cacheKey, data, CacheStrategy.LOCAL_STORAGE, CACHE_CONFIG.HISTORICAL_DATA);
       return data;
     }
     
     return cacheManager.withCache(
       cacheKey,
-      () => apiUtils.getHistoricalPrices(symbol, period),
+      () => apiUtils.getHistoricalData(symbol, period, filter),
       CacheStrategy.LOCAL_STORAGE, // Use local storage for historical data
       CACHE_CONFIG.HISTORICAL_DATA
     );

@@ -1,14 +1,13 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ExternalLink, ChevronRight } from 'lucide-react';
-import { NewsItem } from '@/types/news';
 import { gsap } from 'gsap';
 
 interface SectorNewsItem {
   sector?: string;
-  id?: string;
+  id?: string | number;
   title: string;
   description?: string;
   summary?: string;
@@ -16,8 +15,8 @@ interface SectorNewsItem {
   date?: string;
   pub_date?: string;
   source: string;
-  imageUrl?: string;
-  image_url?: string;
+  imageUrl?: string | null;
+  image_url?: string | null;
 }
 
 interface SectorNewsMap {
@@ -31,51 +30,45 @@ interface SectorNewsProps {
 }
 
 export default function SectorNews({ newsData, loading, error }: SectorNewsProps) {
-  const [sectorNews, setSectorNews] = useState<SectorNewsMap>({});
   const [activeSector, setActiveSector] = useState('technology');
-  const [sectors, setSectors] = useState<string[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Process news data into sectors
-  useEffect(() => {
-    if (newsData.length > 0) {
-      // Since the API doesn't provide sector information, we'll categorize based on keywords
-      const categorizedNews: SectorNewsMap = {
-        technology: [],
-        finance: [],
-        healthcare: [],
-        energy: [],
-        general: []
-      };
+  const sectorNews = useMemo<SectorNewsMap>(() => {
+    const categorizedNews: SectorNewsMap = {
+      technology: [],
+      finance: [],
+      healthcare: [],
+      energy: [],
+      general: []
+    };
 
-      newsData.forEach((item) => {
-        const title = item.title.toLowerCase();
-        const summary = (item.summary || item.description || '').toLowerCase();
-        const content = `${title} ${summary}`;
+    newsData.forEach((item) => {
+      const title = item.title.toLowerCase();
+      const summary = (item.summary || item.description || '').toLowerCase();
+      const content = `${title} ${summary}`;
 
-        if (content.includes('tech') || content.includes('software') || content.includes('digital') || content.includes('ai') || content.includes('cyber')) {
-          categorizedNews.technology.push(item);
-        } else if (content.includes('bank') || content.includes('finance') || content.includes('market') || content.includes('stock') || content.includes('investment')) {
-          categorizedNews.finance.push(item);
-        } else if (content.includes('health') || content.includes('pharma') || content.includes('medical') || content.includes('drug')) {
-          categorizedNews.healthcare.push(item);
-        } else if (content.includes('energy') || content.includes('oil') || content.includes('gas') || content.includes('renewable') || content.includes('coal')) {
-          categorizedNews.energy.push(item);
-        } else {
-          categorizedNews.general.push(item);
-        }
-      });
-
-      setSectorNews(categorizedNews);
-      setSectors(Object.keys(categorizedNews).filter(sector => categorizedNews[sector].length > 0));
-      
-      // Set first available sector as active
-      const availableSectors = Object.keys(categorizedNews).filter(sector => categorizedNews[sector].length > 0);
-      if (availableSectors.length > 0) {
-        setActiveSector(availableSectors[0]);
+      if (content.includes('tech') || content.includes('software') || content.includes('digital') || content.includes('ai') || content.includes('cyber')) {
+        categorizedNews.technology.push(item);
+      } else if (content.includes('bank') || content.includes('finance') || content.includes('market') || content.includes('stock') || content.includes('investment')) {
+        categorizedNews.finance.push(item);
+      } else if (content.includes('health') || content.includes('pharma') || content.includes('medical') || content.includes('drug')) {
+        categorizedNews.healthcare.push(item);
+      } else if (content.includes('energy') || content.includes('oil') || content.includes('gas') || content.includes('renewable') || content.includes('coal')) {
+        categorizedNews.energy.push(item);
+      } else {
+        categorizedNews.general.push(item);
       }
-    }
+    });
+
+    return categorizedNews;
   }, [newsData]);
+
+  const sectors = useMemo(
+    () => Object.keys(sectorNews).filter((sector) => sectorNews[sector].length > 0),
+    [sectorNews]
+  );
+
+  const activeSectorKey = sectors.includes(activeSector) ? activeSector : sectors[0] || 'general';
 
   // Initialize animations
   useEffect(() => {
@@ -105,7 +98,7 @@ export default function SectorNews({ newsData, loading, error }: SectorNewsProps
         day: 'numeric',
         month: 'short',
       });
-    } catch (error) {
+    } catch {
       return 'Invalid date';
     }
   };
@@ -151,7 +144,7 @@ export default function SectorNews({ newsData, loading, error }: SectorNewsProps
     );
   }
 
-  const currentSectorNews = sectorNews[activeSector] || [];
+  const currentSectorNews = sectorNews[activeSectorKey] || [];
 
   return (
     <div ref={sectionRef} className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-6 glass">
@@ -162,7 +155,7 @@ export default function SectorNews({ newsData, loading, error }: SectorNewsProps
             key={sector}
             onClick={() => setActiveSector(sector)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-              activeSector === sector
+              activeSectorKey === sector
                 ? 'bg-neon-400 text-black shadow-neon-sm'
                 : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 hover:text-white border border-gray-700/50'
             }`}
@@ -181,7 +174,7 @@ export default function SectorNews({ newsData, loading, error }: SectorNewsProps
       <div className="space-y-4">
         {currentSectorNews.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
-            No news available for {getSectorDisplayName(activeSector)} sector.
+            No news available for {getSectorDisplayName(activeSectorKey)} sector.
           </div>
         ) : (
           currentSectorNews.slice(0, 6).map((item, index) => (
@@ -191,7 +184,7 @@ export default function SectorNews({ newsData, loading, error }: SectorNewsProps
                   {(item.image_url || item.imageUrl) && (
                     <div className="flex-shrink-0">
                       <img
-                        src={item.image_url || item.imageUrl}
+                        src={item.image_url || item.imageUrl || undefined}
                         alt={item.title}
                         className="w-20 h-16 object-cover rounded-lg"
                       />
@@ -238,7 +231,7 @@ export default function SectorNews({ newsData, loading, error }: SectorNewsProps
       {currentSectorNews.length > 6 && (
         <div className="text-center mt-6">
           <button className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-white rounded-lg transition-all duration-200 border border-gray-700/50">
-            View All {getSectorDisplayName(activeSector)} News
+            View All {getSectorDisplayName(activeSectorKey)} News
             <ExternalLink size={14} />
           </button>
         </div>

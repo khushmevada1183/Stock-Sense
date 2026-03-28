@@ -45,9 +45,6 @@ export const createHoverEffect = (elements, enterProps, leaveProps, condition = 
   const elementsArray = Array.from(elements);
   const eventListeners = [];
   
-  // Create a single timeline for all hover effects
-  const mainTimeline = gsap.timeline({ paused: true });
-  
   elementsArray.forEach(element => {
     if (!element) return;
     
@@ -56,24 +53,6 @@ export const createHoverEffect = (elements, enterProps, leaveProps, condition = 
       ...leaveProps,
       clearProps: "boxShadow,backgroundColor,scale,y,x" // Clear any existing styles
     });
-    
-    // Pre-create the animation instances
-    const enterTween = gsap.to(element, { 
-      ...enterProps,
-      duration: enterProps.duration || 0.3,
-      ease: enterProps.ease || "power1.out",
-      overwrite: "auto"
-    });
-    
-    const leaveTween = gsap.to(element, { 
-      ...leaveProps,
-      duration: leaveProps.duration || 0.3,
-      ease: leaveProps.ease || "power1.out",
-      overwrite: "auto"
-    });
-    
-    // Add tweens to main timeline
-    mainTimeline.add(enterTween, 0);
     
     // Event handlers with better performance
     const handleMouseEnter = () => {
@@ -310,7 +289,7 @@ export const setAnimationDebugging = (enable) => {
   // Animation debug mode toggled - logging disabled in production
 };
 
-export default {
+const animationUtils = {
   createHoverEffect,
   createTableRowHoverEffect,
   createCardHoverEffect,
@@ -319,3 +298,5 @@ export default {
   createIPOItemHoverEffect,
   setAnimationDebugging
 }; 
+
+export default animationUtils;

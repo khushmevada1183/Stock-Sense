@@ -9,6 +9,27 @@ const FeaturedNews = dynamic(() => import('@/components/News/FeaturedNews'), { s
 const NewsCategoryTabs = dynamic(() => import('@/components/News/NewsCategoryTabs'), { ssr: false });
 const TrendingTopics = dynamic(() => import('@/components/News/TrendingTopics'), { ssr: false });
 
+const marketIndicesData = [
+  { name: 'NIFTY 50', percent: '+1.24%', points: '↑ 92', value: '22,451' },
+  { name: 'SENSEX', percent: '+0.88%', points: '↑ 611', value: '73,829' },
+  { name: 'NIFTY BANK', percent: '+1.03%', points: '↑ 418', value: '48,660' },
+  { name: 'NIFTY IT', percent: '-0.82%', points: '↓ 129', value: '15,604' },
+  { name: 'NIFTY AUTO', percent: '-0.46%', points: '↓ 84', value: '18,267' },
+  { name: 'NIFTY PHARMA', percent: '+0.72%', points: '↑ 101', value: '14,082' }
+];
+
+const topGainers = [
+  { name: 'HDFC Bank', percent: '+3.42%' },
+  { name: 'Reliance', percent: '+2.87%' },
+  { name: 'TCS', percent: '+1.94%' }
+];
+
+const topLosers = [
+  { name: 'Infosys', percent: '-2.31%' },
+  { name: 'Maruti', percent: '-1.78%' },
+  { name: 'Wipro', percent: '-1.25%' }
+];
+
 export default function MarketsNewsPageClient() {
   return (
     <div className="container mx-auto px-4 py-6">
@@ -54,25 +75,23 @@ export default function MarketsNewsPageClient() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {/* Index Cards */}
-              {['NIFTY 50', 'SENSEX', 'NIFTY BANK', 'NIFTY IT', 'NIFTY AUTO', 'NIFTY PHARMA'].map((index) => (
-                <div key={index} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+              {marketIndicesData.map((index) => (
+                <div key={index.name} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
                   <div className="flex justify-between items-start mb-3">
-                    <h3 className="font-medium text-white">{index}</h3>
+                    <h3 className="font-medium text-white">{index.name}</h3>
                     <span className={`text-xs px-2 py-1 rounded ${
-                      index === 'NIFTY IT' || index === 'NIFTY AUTO' 
+                      index.percent.startsWith('-')
                         ? 'bg-red-900/30 text-red-400 border border-red-800' 
                         : 'bg-green-900/30 text-green-400 border border-green-800'
                     }`}>
-                      {index === 'NIFTY IT' || index === 'NIFTY AUTO' ? '-0.82%' : '+1.24%'}
+                      {index.percent}
                     </span>
                   </div>
                   <div className="text-2xl font-bold text-white mb-1">
-                    {Math.floor(Math.random() * 10000) + 15000}
+                    {index.value}
                   </div>
                   <div className="text-sm text-gray-400">
-                    {index === 'NIFTY IT' || index === 'NIFTY AUTO' 
-                      ? `↓ ${Math.floor(Math.random() * 100) + 50}` 
-                      : `↑ ${Math.floor(Math.random() * 100) + 50}`}
+                    {index.points}
                   </div>
                 </div>
               ))}
@@ -114,10 +133,10 @@ export default function MarketsNewsPageClient() {
               <div>
                 <h4 className="text-sm text-green-400 font-medium mb-2">Top Gainers</h4>
                 <div className="space-y-2">
-                  {['HDFC Bank', 'Reliance', 'TCS'].map((stock) => (
-                    <div key={stock} className="flex justify-between items-center">
-                      <span className="text-sm text-gray-300">{stock}</span>
-                      <span className="text-xs text-green-400">+{(Math.random() * 5 + 1).toFixed(2)}%</span>
+                  {topGainers.map((stock) => (
+                    <div key={stock.name} className="flex justify-between items-center">
+                      <span className="text-sm text-gray-300">{stock.name}</span>
+                      <span className="text-xs text-green-400">{stock.percent}</span>
                     </div>
                   ))}
                 </div>
@@ -125,10 +144,10 @@ export default function MarketsNewsPageClient() {
               <div>
                 <h4 className="text-sm text-red-400 font-medium mb-2">Top Losers</h4>
                 <div className="space-y-2">
-                  {['Infosys', 'Maruti', 'Wipro'].map((stock) => (
-                    <div key={stock} className="flex justify-between items-center">
-                      <span className="text-sm text-gray-300">{stock}</span>
-                      <span className="text-xs text-red-400">-{(Math.random() * 5 + 1).toFixed(2)}%</span>
+                  {topLosers.map((stock) => (
+                    <div key={stock.name} className="flex justify-between items-center">
+                      <span className="text-sm text-gray-300">{stock.name}</span>
+                      <span className="text-xs text-red-400">{stock.percent}</span>
                     </div>
                   ))}
                 </div>

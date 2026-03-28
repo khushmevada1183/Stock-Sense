@@ -1,6 +1,4 @@
-import { Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 import dynamic from 'next/dynamic';
 import { SectionReveal } from '../components/ui/SectionReveal';

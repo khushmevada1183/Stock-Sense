@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
         setLoading(false);
         // Redirect or handle success
       }, 1000);
-    } catch (err) {
+    } catch {
       setError('Login failed. Please check your credentials.');
       setLoading(false);
     }

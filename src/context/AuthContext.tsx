@@ -2,9 +2,10 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { logger } from '@/lib/logger';
 
 // API URL from environment variables
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
 
 // User type definition
 export interface User {
@@ -49,6 +50,30 @@ interface RegisterData {
   last_name?: string;
 }
 
+const getErrorMessage = (error: unknown, fallback: string): string => {
+  if (axios.isAxiosError(error)) {
+    const responseData = error.response?.data;
+    if (
+      responseData &&
+      typeof responseData === 'object' &&
+      'message' in responseData &&
+      typeof (responseData as { message?: unknown }).message === 'string'
+    ) {
+      return (responseData as { message: string }).message;
+    }
+
+    if (error.message) {
+      return error.message;
+    }
+  }
+
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return fallback;
+};
+
 // Create auth context
 const AuthContext = createContext<AuthState>(defaultAuthContext);
 
@@ -81,13 +106,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         
         setUser(response.data.user);
         setIsAuthenticated(true);
-      } catch (err: any) {
+      } catch (err: unknown) {
         // Clear invalid token
         localStorage.removeItem('token');
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
-        logger.error('Auth initialization error:', err.response?.data?.message || err.message);
+        logger.error('Auth initialization error:', getErrorMessage(err, 'Failed to initialize authentication.'));
       } finally {
         setLoading(false);
       }
@@ -118,8 +143,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       return user;
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Login failed. Please check your credentials and try again.';
+    } catch (err: unknown) {
+      const errorMessage = getErrorMessage(err, 'Login failed. Please check your credentials and try again.');
       setError(errorMessage);
       setToken(null);
       setUser(null);
@@ -152,8 +177,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       
       return user;
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || 'Registration failed. Please try again with a different email.';
+    } catch (err: unknown) {
+      const errorMessage = getErrorMessage(err, 'Registration failed. Please try again with a different email.');
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

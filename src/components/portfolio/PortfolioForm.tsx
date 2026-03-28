@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import * as stockApi from '@/api/api';
 import { X, PlusCircle, Save } from 'lucide-react';
-import { logger } from '@/lib/logger';
 
 interface Stock {
   symbol: string;
@@ -20,6 +19,13 @@ interface PortfolioFormProps {
     stocks: Stock[];
   };
   userId?: string;
+}
+
+interface SearchStockApiResult {
+  symbol?: string;
+  tickerId?: string;
+  company_name?: string;
+  companyName?: string;
 }
 
 const PortfolioForm = ({ 
@@ -73,9 +79,9 @@ const PortfolioForm = ({
       const response = await stockApi.searchStocks(query);
       
       if (response.data && response.data.data) {
-        const results = response.data.data.map((stock: any) => ({
-          symbol: stock.symbol || stock.tickerId,
-          name: stock.company_name || stock.companyName
+        const results = response.data.data.map((stock: SearchStockApiResult) => ({
+          symbol: stock.symbol || stock.tickerId || '',
+          name: stock.company_name || stock.companyName || 'Unknown Company'
         })).slice(0, 5);
         
         setSymbolSearchResults(results);
@@ -163,11 +169,9 @@ const PortfolioForm = ({
       let response;
       
       if (isEditing) {
-        // TypeScript might show an error here, but the function accepts parameters at runtime
-        response = await (stockApi.updatePortfolio as any)(portfolioId, portfolioData);
+        response = await stockApi.updatePortfolio(portfolioId, portfolioData);
       } else {
-        // TypeScript might show an error here, but the function accepts parameters at runtime  
-        response = await (stockApi.createPortfolio as any)(portfolioData);
+        response = await stockApi.createPortfolio(portfolioData);
       }
       
       if (response) {

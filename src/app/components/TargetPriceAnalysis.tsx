@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { getStockTargetPrice } from '@/api/api';
 import LoadingSpinner from './LoadingSpinner';
 import { Progress } from '@/components/ui/progress';
+import { logger } from '@/lib/logger';
 
 interface TargetPriceProps {
   symbol: string;

@@ -507,11 +507,13 @@ export const createScrollProgressAnimation = (progressBarRef, options = {}) => {
   };
 };
 
-export default {
+const navigationAnimations = {
   initNavigationAnimations,
   createPageTransitions,
   createHeaderScrollAnimation,
   createScrollProgressAnimation
 };
+
+export default navigationAnimations;
 
 // No need to re-export - the function is already exported above 

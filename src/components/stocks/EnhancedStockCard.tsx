@@ -2,33 +2,85 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowUp, ArrowDown, TrendingUp, TrendingDown, Volume, Target, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowUp, ArrowDown, Volume, Info, ChevronDown, ChevronUp } from 'lucide-react';
+
+type NumericInput = number | string | undefined;
+
+interface EnhancedStockData {
+  company_name?: string;
+  displayName?: string;
+  name?: string;
+  nseCode?: string;
+  ric?: string;
+  symbol?: string;
+  ticker_id?: string;
+  exchange_type?: string;
+  exchangeType?: string;
+  price?: NumericInput;
+  current_price?: NumericInput;
+  percent_change?: NumericInput;
+  percentChange?: NumericInput;
+  low?: NumericInput;
+  high?: NumericInput;
+  volume?: NumericInput;
+  overall_rating?: string;
+  overallRating?: string;
+  low_circuit_limit?: NumericInput;
+  up_circuit_limit?: NumericInput;
+  '52_week_low'?: NumericInput;
+  year_low?: NumericInput;
+  '52_week_high'?: NumericInput;
+  year_high?: NumericInput;
+  bid?: NumericInput;
+  ask?: NumericInput;
+  bid_size?: NumericInput;
+  ask_size?: NumericInput;
+  open?: NumericInput;
+  close?: NumericInput;
+  short_term_trends?: string;
+  short_term_trend?: string;
+  shortTermTrends?: string;
+  long_term_trends?: string;
+  long_term_trend?: string;
+  longTermTrends?: string;
+  date?: string;
+  time?: string;
+  lot_size?: NumericInput;
+  lotSize?: NumericInput;
+  net_change?: NumericInput;
+  marketCap?: NumericInput;
+  market_cap?: NumericInput;
+  description?: string;
+}
 
 interface EnhancedStockCardProps {
-  stock: any; // Raw API response with all fields
+  stock: EnhancedStockData; // Raw API response with all fields
   price_change_percentage: number;
   showAllData?: boolean;
 }
 
-const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, showAllData = false, price_change_percentage }) => {
+const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_change_percentage }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const percentChange = parseFloat(stock.percent_change || stock.percentChange || price_change_percentage || 0);
+  const percentChange = parseFloat((stock.percent_change ?? stock.percentChange ?? price_change_percentage ?? 0).toString());
   const isPositive = percentChange >= 0;
+  const rating = stock.overall_rating || stock.overallRating;
+  const shortTrend = stock.short_term_trends || stock.short_term_trend || stock.shortTermTrends;
+  const longTrend = stock.long_term_trends || stock.long_term_trend || stock.longTermTrends;
   
-  const formatCurrency = (value: any) => {
-    const num = parseFloat(value || 0);
+  const formatCurrency = (value: NumericInput) => {
+    const num = parseFloat((value ?? 0).toString());
     return `₹${num.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`;
   };
   
-  const formatVolume = (volume: any) => {
-    const num = parseInt(volume || 0);
+  const formatVolume = (volume: NumericInput) => {
+    const num = parseInt((volume ?? 0).toString(), 10);
     if (num >= 10000000) return `${(num / 10000000).toFixed(1)}Cr`;
     if (num >= 100000) return `${(num / 100000).toFixed(1)}L`;
     return num.toLocaleString();
   };
 
-  const formatMarketCap = (marketCap: any) => {
-    const num = parseFloat(marketCap || 0);
+  const formatMarketCap = (marketCap: NumericInput) => {
+    const num = parseFloat((marketCap ?? 0).toString());
     if (num >= 10000000) return `₹${(num / 10000000).toFixed(2)}Cr`;
     if (num >= 100000) return `₹${(num / 100000).toFixed(2)}L`;
     return formatCurrency(num);
@@ -99,10 +151,10 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, showAllDat
         </div>
 
         {/* Rating */}
-        {(stock.overall_rating || stock.overallRating) && (
+        {rating && (
           <div className="flex justify-center">
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRatingColor(stock.overall_rating || stock.overallRating)}`}>
-              {stock.overall_rating || stock.overallRating}
+            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRatingColor(rating)}`}>
+              {rating}
             </span>
           </div>
         )}
@@ -184,16 +236,16 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, showAllDat
             )}
 
             {/* Trends */}
-            {(stock.short_term_trends || stock.long_term_trends) && (
+            {(shortTrend || longTrend) && (
               <div className="flex flex-wrap gap-2 justify-center">
-                {(stock.short_term_trends || stock.short_term_trend || stock.shortTermTrends) && (
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRatingColor(stock.short_term_trends || stock.short_term_trend || stock.shortTermTrends)}`}>
-                    ST: {stock.short_term_trends || stock.short_term_trend || stock.shortTermTrends}
+                {shortTrend && (
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRatingColor(shortTrend)}`}>
+                    ST: {shortTrend}
                   </span>
                 )}
-                {(stock.long_term_trends || stock.long_term_trend || stock.longTermTrends) && (
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRatingColor(stock.long_term_trends || stock.long_term_trend || stock.longTermTrends)}`}>
-                    LT: {stock.long_term_trends || stock.long_term_trend || stock.longTermTrends}
+                {longTrend && (
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRatingColor(longTrend)}`}>
+                    LT: {longTrend}
                   </span>
                 )}
               </div>

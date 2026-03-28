@@ -14,16 +14,54 @@ import {
 } from 'lucide-react';
 
 interface RiskAssessmentProps {
-  stock: any;
+  stock: RiskAssessmentStock;
   className?: string;
 }
 
+interface RiskAssessmentStock {
+  high?: string | number;
+  low?: string | number;
+  price?: string | number;
+  low_circuit_limit?: string | number;
+  lowCircuitLimit?: string | number;
+  up_circuit_limit?: string | number;
+  upCircuitLimit?: string | number;
+  overall_rating?: string;
+  overallRating?: string;
+  short_term_trends?: string;
+  short_term_trend?: string;
+  shortTermTrends?: string;
+  long_term_trends?: string;
+  long_term_trend?: string;
+  longTermTrends?: string;
+  deviation?: string | number;
+  actualDeviation?: string | number;
+  volume?: string | number;
+  averageVolume?: string | number;
+  year_high?: string | number;
+  yhigh?: string | number;
+  year_low?: string | number;
+  ylow?: string | number;
+  '52_week_high'?: string | number;
+  '52_week_low'?: string | number;
+}
+
 const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }) => {
+  const toNumber = (value: string | number | undefined) => {
+    if (typeof value === 'number') return value;
+    return Number.parseFloat(value ?? '0') || 0;
+  };
+
+  const toInteger = (value: string | number | undefined) => {
+    if (typeof value === 'number') return Math.trunc(value);
+    return Number.parseInt(value ?? '0', 10) || 0;
+  };
+
   // Calculate risk metrics
   const calculateVolatilityRisk = () => {
-    const high = parseFloat(stock.high || 0);
-    const low = parseFloat(stock.low || 0);
-    const price = parseFloat(stock.price || 0);
+    const high = toNumber(stock.high);
+    const low = toNumber(stock.low);
+    const price = toNumber(stock.price);
     
     if (!price) return 0;
     
@@ -32,9 +70,9 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
   };
 
   const calculateCircuitRisk = () => {
-    const price = parseFloat(stock.price || 0);
-    const lowerCircuit = parseFloat(stock.low_circuit_limit || stock.lowCircuitLimit || 0);
-    const upperCircuit = parseFloat(stock.up_circuit_limit || stock.upCircuitLimit || 0);
+    const price = toNumber(stock.price);
+    const lowerCircuit = toNumber(stock.low_circuit_limit || stock.lowCircuitLimit);
+    const upperCircuit = toNumber(stock.up_circuit_limit || stock.upCircuitLimit);
     
     if (!price || !lowerCircuit || !upperCircuit) return 0;
     
@@ -70,13 +108,13 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
   };
 
   const calculateDeviationRisk = () => {
-    const deviation = Math.abs(parseFloat(stock.deviation || stock.actualDeviation || 0));
+    const deviation = Math.abs(toNumber(stock.deviation || stock.actualDeviation));
     return Math.min(deviation * 2, 100); // Scale deviation to risk percentage
   };
 
   const calculateVolumeRisk = () => {
-    const volume = parseInt(stock.volume || 0);
-    const avgVolume = parseInt(stock.averageVolume || 0);
+    const volume = toInteger(stock.volume);
+    const avgVolume = toInteger(stock.averageVolume);
     
     if (!volume) return 50; // Medium risk if no volume data
     if (!avgVolume) return 30; // Lower risk assumption if no average
@@ -92,9 +130,9 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
   };
 
   const calculate52WeekRisk = () => {
-    const price = parseFloat(stock.price || 0);
-    const yearHigh = parseFloat(stock.year_high || stock.yhigh || stock['52_week_high'] || 0);
-    const yearLow = parseFloat(stock.year_low || stock.ylow || stock['52_week_low'] || 0);
+    const price = toNumber(stock.price);
+    const yearHigh = toNumber(stock.year_high || stock.yhigh || stock['52_week_high']);
+    const yearLow = toNumber(stock.year_low || stock.ylow || stock['52_week_low']);
     
     if (!price || !yearHigh || !yearLow) return 50;
     

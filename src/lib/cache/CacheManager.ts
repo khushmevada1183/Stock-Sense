@@ -35,7 +35,7 @@ export enum CacheStrategy {
 }
 
 class AdvancedCacheManager {
-  private memoryCache = new Map<string, CacheItem<any>>();
+  private memoryCache = new Map<string, CacheItem<unknown>>();
   private config: CacheConfig;
   private isClient: boolean;
 
@@ -67,14 +67,14 @@ class AdvancedCacheManager {
   /**
    * Calculate size of data in bytes
    */
-  private calculateSize(data: any): number {
+  private calculateSize(data: unknown): number {
     return new Blob([JSON.stringify(data)]).size;
   }
 
   /**
    * Compress data if it exceeds threshold
    */
-  private async compressData(data: any): Promise<string> {
+  private async compressData(data: unknown): Promise<string> {
     const jsonString = JSON.stringify(data);
     const size = new Blob([jsonString]).size;
     
@@ -102,7 +102,7 @@ class AdvancedCacheManager {
   /**
    * Decompress data
    */
-  private async decompressData(compressedData: string): Promise<any> {
+  private async decompressData<T>(compressedData: string): Promise<T> {
     // Check if data is compressed (base64 encoded)
     try {
       if ('DecompressionStream' in window && compressedData.match(/^[A-Za-z0-9+/]*={0,2}$/)) {
@@ -121,13 +121,13 @@ class AdvancedCacheManager {
           }).pipeThrough(stream)
         ).text();
         
-        return JSON.parse(decompressed);
+        return JSON.parse(decompressed) as T;
       }
-    } catch (error) {
+    } catch {
       // Fall back to treating as uncompressed JSON
     }
     
-    return JSON.parse(compressedData);
+    return JSON.parse(compressedData) as T;
   }
 
   /**
@@ -166,7 +166,7 @@ class AdvancedCacheManager {
       return null;
     }
     
-    return item.data;
+    return item.data as T;
   }
 
   /**
@@ -178,8 +178,8 @@ class AdvancedCacheManager {
     try {
       const cacheKey = this.generateKey(key, CacheStrategy.SESSION_STORAGE);
       const compressedData = await this.compressData(data);
-      const item: CacheItem<T> = {
-        data: compressedData as any,
+      const item: CacheItem<string> = {
+        data: compressedData,
         timestamp: Date.now(),
         expiry: Date.now() + ttl,
         key: cacheKey
@@ -203,14 +203,14 @@ class AdvancedCacheManager {
       
       if (!cached) return null;
       
-      const item: CacheItem<any> = JSON.parse(cached);
+      const item = JSON.parse(cached) as CacheItem<string>;
       
       if (Date.now() > item.expiry) {
         sessionStorage.removeItem(cacheKey);
         return null;
       }
       
-      return await this.decompressData(item.data);
+      return await this.decompressData<T>(item.data);
     } catch (error) {
       logger.warn('Failed to get session storage cache:', error);
       return null;
@@ -226,8 +226,8 @@ class AdvancedCacheManager {
     try {
       const cacheKey = this.generateKey(key, CacheStrategy.LOCAL_STORAGE);
       const compressedData = await this.compressData(data);
-      const item: CacheItem<T> = {
-        data: compressedData as any,
+      const item: CacheItem<string> = {
+        data: compressedData,
         timestamp: Date.now(),
         expiry: Date.now() + ttl,
         key: cacheKey
@@ -251,14 +251,14 @@ class AdvancedCacheManager {
       
       if (!cached) return null;
       
-      const item: CacheItem<any> = JSON.parse(cached);
+      const item = JSON.parse(cached) as CacheItem<string>;
       
       if (Date.now() > item.expiry) {
         localStorage.removeItem(cacheKey);
         return null;
       }
       
-      return await this.decompressData(item.data);
+      return await this.decompressData<T>(item.data);
     } catch (error) {
       logger.warn('Failed to get local storage cache:', error);
       return null;
@@ -396,7 +396,7 @@ class AdvancedCacheManager {
             if (now > item.expiry) {
               sessionStorage.removeItem(key);
             }
-          } catch (error) {
+          } catch {
             sessionStorage.removeItem(key);
           }
         }
@@ -415,7 +415,7 @@ class AdvancedCacheManager {
             if (now > item.expiry) {
               localStorage.removeItem(key);
             }
-          } catch (error) {
+          } catch {
             localStorage.removeItem(key);
           }
         }
@@ -434,8 +434,8 @@ class AdvancedCacheManager {
       totalSize: Array.from(this.memoryCache.values()).reduce((acc, item) => acc + (item.size || 0), 0)
     };
 
-    let sessionStats = { items: 0, totalSize: 0 };
-    let localStats = { items: 0, totalSize: 0 };
+    const sessionStats = { items: 0, totalSize: 0 };
+    const localStats = { items: 0, totalSize: 0 };
 
     if (this.isClient) {
       // Session storage stats

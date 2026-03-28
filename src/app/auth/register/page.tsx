@@ -51,7 +51,7 @@ const RegisterPage: React.FC = () => {
         setLoading(false);
         // Redirect or handle success
       }, 1000);
-    } catch (err) {
+    } catch {
       setError('Registration failed. Please try again.');
       setLoading(false);
     }

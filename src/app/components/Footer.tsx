@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Heart, Github, Check, AlertCircle } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 const Footer: React.FC = () => {
   const [apiStatus, setApiStatus] = useState<'loading' | 'active' | 'error'>('loading');

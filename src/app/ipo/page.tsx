@@ -1,8 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -13,7 +11,6 @@ import { initIpoPageAnimations } from '@/animations/pages/ipoAnimations';
 import { createCardHoverEffect, createIPOItemHoverEffect } from '@/animations/shared/AnimationUtils';
 import * as stockApi from '@/api/api';
 import { FEATURES, API_CONFIG } from '@/services/config.js';
-import { gsap } from 'gsap';
 
 const IPO_NEWS = [
   { title: "Mouri Tech refiles DRHP with SEBI", date: "8 May, 2:56 PM" },
@@ -42,239 +39,28 @@ const FAQS = [
   { question: "What is the difference between RHP and DRHP?", answer: "DRHP (Draft Red Herring Prospectus) is the preliminary document filed with SEBI, while RHP (Red Herring Prospectus) is the final offer document with all details before the IPO opens." }
 ];
 
-interface IPO {
-  company_name: string;
-  symbol: string;
-  issue_size: string | number;
-  issue_price?: number;
-  listing_price?: number;
-  listing_gains?: number;
-  listing_gain?: string;
-  min_price?: number | undefined;
-  max_price?: number | undefined;
-  listing_date?: string | undefined;
-  open?: string | undefined;
-  close?: string | undefined;
-  bidding_start_date?: string | undefined;
-  bidding_end_date?: string | undefined;
-  document_url?: string | undefined;
-  rhpLink?: string | undefined;
-  drhpLink?: string | undefined;
-  issue_type?: string;
-  is_sme?: boolean;
-  additional_text?: string | undefined;
-  subscription_status?: string;
-  status?: string;
-  logo?: string;
-  name?: string;
-  lot_size?: number;
-}
-
-interface IPOCardProps {
-  data: {
-    companyName: string;
-    issueSize: number;
-    issuePrice: string | number;
-    listingDate: string;
-    listingGainValue: number | null;
-    subscriptionRate: number;
-    status: string;
-  };
-}
+type IpoCardData = IpoItem & {
+  subscription_percentage?: number;
+};
 
 interface APIResponse {
   success: boolean;
   data: {
-    upcoming: any[];
-    active: any[];
-    listed: any[];
-    closed?: any[];
+    upcoming: IpoCardData[];
+    active: IpoCardData[];
+    listed: IpoCardData[];
+    closed?: IpoCardData[];
   };
 }
 
-const defaultIpo: IPO = {
-  company_name: 'Unknown Company',
-  symbol: 'N/A',
-  issue_size: 'Size TBA',
-  issue_type: 'Book Built',
-  min_price: undefined,
-  max_price: undefined,
-  open: undefined,
-  close: undefined,
-  listing_date: undefined,
-  document_url: undefined,
-  rhpLink: undefined,
-  drhpLink: undefined,
-  additional_text: undefined,
-  subscription_status: undefined,
-  status: undefined
-};
-
-const IPOCard: React.FC<IPOCardProps> = ({ data }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // Simplified hover effect without 3D transform
-    const card = cardRef.current;
-
-    const mouseEnter = () => {
-      if (!card) return;
-      gsap.to(card, {
-        duration: 0.3,
-        y: -5,
-        boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
-        ease: "power2.out"
-      });
-    };
-
-    const mouseLeave = () => {
-      if (!card) return;
-      gsap.to(card, {
-        duration: 0.3,
-        y: 0,
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-        ease: "power2.out"
-      });
-    };
-
-    if (card) {
-    card.addEventListener('mouseenter', mouseEnter);
-    card.addEventListener('mouseleave', mouseLeave);
-    }
-
-    return () => {
-      if (card) {
-      card.removeEventListener('mouseenter', mouseEnter);
-      card.removeEventListener('mouseleave', mouseLeave);
-      }
-    };
-  }, []);
-
-  const normalizedData = {
-    companyName: data.companyName,
-    issueSize: data.issueSize,
-    issuePrice: data.issuePrice,
-    listingDate: data.listingDate,
-    listingGainValue: data.listingGainValue,
-    subscriptionRate: data.subscriptionRate,
-    status: data.status
-  };
-
-  return (
-    <div 
-      ref={cardRef}
-      className="bg-gray-900/90 backdrop-blur-lg rounded-xl p-6 shadow-lg border border-gray-700"
-    >
-      <h3 className="text-xl font-semibold mb-4">{normalizedData.companyName}</h3>
-      
-      <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-          <p className="text-sm text-gray-400">Issue Size</p>
-          <p className="font-medium">₹{normalizedData.issueSize.toLocaleString()}</p>
-            </div>
-            <div>
-          <p className="text-sm text-gray-400">Issue Price</p>
-          <p className="font-medium">₹{normalizedData.issuePrice}</p>
-            </div>
-            </div>
-      
-      <div className="grid grid-cols-2 gap-4 mb-4">
-            <div>
-          <p className="text-sm text-gray-400">Listing Date</p>
-          <p className="font-medium">{normalizedData.listingDate}</p>
-            </div>
-            <div>
-          <p className="text-sm text-gray-400">Listing Gain</p>
-          <p className={`font-medium ${
-            normalizedData.listingGainValue && normalizedData.listingGainValue > 0 
-              ? 'text-green-400' 
-              : normalizedData.listingGainValue && normalizedData.listingGainValue < 0 
-                ? 'text-red-400' 
-                : ''
-          }`}>
-            {normalizedData.listingGainValue 
-              ? `${normalizedData.listingGainValue > 0 ? '+' : ''}${Number(normalizedData.listingGainValue).toFixed(3)}%` 
-              : 'N/A'
-            }
-          </p>
-              </div>
-            </div>
-      
-      <div className="mb-4">
-        <p className="text-sm text-gray-400">Subscription Rate</p>
-        <div className="relative pt-1">
-          <div className="overflow-hidden h-2 text-xs flex rounded bg-gray-700">
-            <div
-              style={{ width: `${Math.min(normalizedData.subscriptionRate, 100)}%` }}
-              className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
-            ></div>
-            </div>
-          <p className="text-sm mt-1">{normalizedData.subscriptionRate}x</p>
-            </div>
-      </div>
-      
-      <div className="flex justify-between items-center">
-        <span className={`px-3 py-1 rounded-full text-sm ${
-          normalizedData.status === 'Open' 
-            ? 'bg-green-900/30 text-green-400' 
-            : normalizedData.status === 'Upcoming' 
-              ? 'bg-blue-900/30 text-blue-400'
-              : 'bg-gray-900/30 text-gray-400'
-        }`}>
-          {normalizedData.status}
-        </span>
-        <button className="text-blue-400 hover:text-blue-300 transition-colors text-center">
-          View Details →
-        </button>
-      </div>
-    </div>
-  );
-};
-
-// Convert API response to normalized data
-const normalizeIpoData = (ipo: IpoItem): IPOCardProps['data'] => {
-  // Ensure that listingGainValue is a number or null
-  let listingGainValue: number | null = null;
-  
-  if (typeof ipo.listing_gains === 'number') {
-    listingGainValue = ipo.listing_gains;
-  } else if (ipo.listing_gains !== undefined) {
-    const parsedValue = parseFloat(String(ipo.listing_gains));
-    if (!isNaN(parsedValue)) {
-      listingGainValue = parsedValue;
-    }
-  }
-  
-  // Format price range for display
-  const formatPriceRange = () => {
-    if (ipo.min_price && ipo.max_price) {
-      if (ipo.min_price === ipo.max_price) {
-        return ipo.min_price;
-      }
-      return `${ipo.min_price}-${ipo.max_price}`;
-    }
-    return ipo.issue_price || 'TBA';
-  };
-  
-  return {
-    companyName: ipo.company_name || ipo.name || '',
-    issueSize: typeof ipo.issue_size === 'number' ? ipo.issue_size : 0,
-    issuePrice: formatPriceRange(),
-    listingDate: ipo.listing_date || ipo.additional_text || 'TBA',
-    listingGainValue: listingGainValue,
-    subscriptionRate: 0, // API doesn't provide subscription rate yet
-    status: ipo.status || 'Unknown'
-  };
-};
-
 // Enhanced Upcoming IPO card component with consistent layout
-const UpcomingIpoCard = ({ ipo }: { ipo: any }) => {
-  const formatPrice = (price: any) => {
+const UpcomingIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
+  const formatPrice = (price: string | number | null | undefined) => {
     if (!price) return "N/A";
     return price.toString().startsWith('₹') ? price : `₹${price}`;
   };
 
-  const formatDate = (dateString: any) => {
+  const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "N/A";
     try {
       const date = new Date(dateString);
@@ -286,7 +72,7 @@ const UpcomingIpoCard = ({ ipo }: { ipo: any }) => {
         });
       }
       return dateString;
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };
@@ -410,13 +196,13 @@ const UpcomingIpoCard = ({ ipo }: { ipo: any }) => {
 };
 
 // Enhanced Active IPO card component with consistent layout
-const ActiveIpoCard = ({ ipo }: { ipo: any }) => {
-  const formatPrice = (price: any) => {
+const ActiveIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
+  const formatPrice = (price: string | number | null | undefined) => {
     if (!price) return "N/A";
     return price.toString().startsWith('₹') ? price : `₹${price}`;
   };
 
-  const formatDate = (dateString: any) => {
+  const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "N/A";
     try {
       const date = new Date(dateString);
@@ -428,7 +214,7 @@ const ActiveIpoCard = ({ ipo }: { ipo: any }) => {
         });
       }
       return dateString;
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };
@@ -577,39 +363,42 @@ const ActiveIpoCard = ({ ipo }: { ipo: any }) => {
   );
 };
 // Enhanced Listed IPO card component with consistent layout
-const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
+const SimpleIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
+  const listingGains = ipo.listing_gains;
+  const hasListingGains = typeof listingGains === 'number';
+
   // Helper function to determine color class based on gain value
   const getGainColorClass = () => {
-    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "text-gray-400";
+    if (!hasListingGains) return "text-gray-400";
     
-    if (ipo.listing_gains > 0) return "text-green-400";
-    if (ipo.listing_gains < 0) return "text-red-400";
+    if (listingGains > 0) return "text-green-400";
+    if (listingGains < 0) return "text-red-400";
     return "text-gray-400";
   };
 
   // Helper function for gain background color
   const getGainBgClass = () => {
-    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "bg-gray-500/10 border-gray-500/20";
+    if (!hasListingGains) return "bg-gray-500/10 border-gray-500/20";
     
-    if (ipo.listing_gains > 0) return "bg-green-500/10 border-green-500/20";
-    if (ipo.listing_gains < 0) return "bg-red-500/10 border-red-500/20";
+    if (listingGains > 0) return "bg-green-500/10 border-green-500/20";
+    if (listingGains < 0) return "bg-red-500/10 border-red-500/20";
     return "bg-gray-500/10 border-gray-500/20";
   };
 
   // Format gain value with +/- sign and percentage
   const formatGain = () => {
-    if (!ipo.listing_gains && ipo.listing_gains !== 0) return "N/A";
+    if (!hasListingGains) return "N/A";
     
     // API returns listing_gains as percentage already (like 3.076923076923077 for 3.08%)
-    return `${ipo.listing_gains > 0 ? '+' : ''}${ipo.listing_gains.toFixed(2)}%`;
+    return `${listingGains > 0 ? '+' : ''}${listingGains.toFixed(2)}%`;
   };
   
-  const formatPrice = (price: any) => {
+  const formatPrice = (price: string | number | null | undefined) => {
     if (!price) return "N/A";
     return price.toString().startsWith('₹') ? price : `₹${price}`;
   };
 
-  const formatDate = (dateString: any) => {
+  const formatDate = (dateString: string | undefined) => {
     if (!dateString) return "N/A";
     try {
       const date = new Date(dateString);
@@ -621,20 +410,20 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
         });
       }
       return dateString;
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };
 
   // Calculate listing performance category
   const getPerformanceCategory = () => {
-    if (!ipo.listing_gains && ipo.listing_gains !== 0) return 'Unknown';
+    if (!hasListingGains) return 'Unknown';
     
-    if (ipo.listing_gains >= 50) return 'Stellar';
-    if (ipo.listing_gains >= 20) return 'Strong';
-    if (ipo.listing_gains >= 5) return 'Good';
-    if (ipo.listing_gains >= 0) return 'Positive';
-    if (ipo.listing_gains >= -10) return 'Weak';
+    if (listingGains >= 50) return 'Stellar';
+    if (listingGains >= 20) return 'Strong';
+    if (listingGains >= 5) return 'Good';
+    if (listingGains >= 0) return 'Positive';
+    if (listingGains >= -10) return 'Weak';
     return 'Poor';
   };
 
@@ -681,7 +470,7 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
                 </div>
                 {/* Stock trend indicator */}
                 <div className="ml-2">
-                  {ipo.listing_gains > 0 ? (
+                  {hasListingGains && listingGains > 0 ? (
                     // Green upward trend graph
                     <svg width="24" height="16" viewBox="0 0 24 16" className="text-green-400">
                       <path
@@ -702,7 +491,7 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
                         strokeLinejoin="round"
                       />
                     </svg>
-                  ) : ipo.listing_gains < 0 ? (
+                  ) : hasListingGains && listingGains < 0 ? (
                     // Red downward trend graph
                     <svg width="24" height="16" viewBox="0 0 24 16" className="text-red-400">
                       <path
@@ -805,7 +594,7 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-gray-400">Performance Trend</span>
             <div className="flex items-center gap-1">
-              {ipo.listing_gains > 0 ? (
+              {hasListingGains && listingGains > 0 ? (
                 <>
                   <svg width="12" height="8" viewBox="0 0 12 8" className="text-green-400">
                     <path d="M1 7 L6 2 L11 1" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
@@ -813,7 +602,7 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
                   </svg>
                   <span className="text-xs text-green-400 font-medium">Bullish</span>
                 </>
-              ) : ipo.listing_gains < 0 ? (
+              ) : hasListingGains && listingGains < 0 ? (
                 <>
                   <svg width="12" height="8" viewBox="0 0 12 8" className="text-red-400">
                     <path d="M1 1 L6 6 L11 7" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round"/>
@@ -834,12 +623,12 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
           <div className="bg-gray-800/50 rounded-full h-2 overflow-hidden">
             <div 
               className={`h-full transition-all duration-500 ${
-                ipo.listing_gains >= 0 
+                (listingGains ?? 0) >= 0 
                   ? 'bg-gradient-to-r from-green-500 to-emerald-500' 
                   : 'bg-gradient-to-r from-red-500 to-red-600'
               }`}
               style={{
-                width: `${Math.min(100, Math.max(5, Math.abs(ipo.listing_gains || 0) * 2))}%`
+                width: `${Math.min(100, Math.max(5, Math.abs(listingGains ?? 0) * 2))}%`
               }}
             ></div>
           </div>
@@ -850,7 +639,7 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
 };
 
   // Convert API response data to IpoItem format
-  const mapToIpoItem = (ipo: any): IpoItem => {
+  const mapToIpoItem = (ipo: unknown): IpoItem => {
     // Process and validate the IPO data to ensure it has all required fields
     // Make sure we're working with a copy to avoid modifying the original
     
@@ -886,48 +675,11 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
         lot_size: undefined
       };
     }
-    
-    // Helper function to format listing gain as percentage
-    const formatListingGain = (gain: any): string => {
-      if (gain === null || gain === undefined) return 'N/A';
-      
-      // If it's already a formatted string with % sign
-      if (typeof gain === 'string' && gain.includes('%')) {
-      // Extract the numeric value and format it to 3 decimal places
-      const match = gain.match(/([-+]?)(\d+\.?\d*)/);
-      if (match) {
-        const sign = match[1];
-        const value = parseFloat(match[2]);
-        return `${sign}${value.toFixed(3)}%`;
-      }
-        return gain;
-      }
-      
-      // If it's a decimal value (API usually returns like -0.09 for -9%)
-      if (typeof gain === 'number') {
-      return `${(gain * 100).toFixed(3)}%`;
-      }
-      
-      // If it's a string number without % sign
-      if (typeof gain === 'string') {
-        const parsedValue = parseFloat(gain);
-        if (!isNaN(parsedValue)) {
-          // Check if it's already percentage or decimal
-          if (parsedValue > -1 && parsedValue < 1) {
-            // Decimal value (convert to percentage)
-          return `${(parsedValue * 100).toFixed(3)}%`;
-          } else {
-            // Already percentage value
-          return `${parsedValue.toFixed(3)}%`;
-          }
-        }
-      }
-      
-      return String(gain);
-    };
-    
+
+    const source = ipo as IpoCardData;
+
   // Update the processNumber function to return undefined instead of null
-  const processNumber = (value: any): number | undefined => {
+  const processNumber = (value: unknown): number | undefined => {
     if (value === null || value === undefined) return undefined;
       
       if (typeof value === 'number') return value;
@@ -943,7 +695,11 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
     };
     
     // Format price range to ensure it's not just zeros
-    const formatPriceRange = (min: any, max: any, existing: any): string => {
+    const formatPriceRange = (
+      min: string | number | undefined,
+      max: string | number | undefined,
+      existing: string | undefined
+    ): string => {
       if (existing) return existing;
       
       const minPrice = processNumber(min);
@@ -959,59 +715,59 @@ const SimpleIpoCard = ({ ipo }: { ipo: any }) => {
     
     const processedIpo: IpoItem = {
       // Basic fields - API response uses 'name' for company name
-      company_name: ipo.name || ipo.company_name || 'Unknown Company',
-      name: ipo.name || ipo.company_name, // Keep original name field
+      company_name: source.name || source.company_name || 'Unknown Company',
+      name: source.name || source.company_name, // Keep original name field
       
       // Symbol is required
-      symbol: ipo.symbol || 'N/A',
+      symbol: source.symbol || 'N/A',
       
       // Logo is optional
-      logo: ipo.logo || undefined,
+      logo: source.logo || undefined,
       
       // Status fields - critical for UI display
-      subscription_status: ipo.status || 'upcoming', // API uses 'status' field
-      status: ipo.status || 'upcoming',
+      subscription_status: source.status || 'upcoming', // API uses 'status' field
+      status: source.status || 'upcoming',
       
       // Price fields - ensure we have valid numbers or clear indicators
-      price_range: formatPriceRange(ipo.min_price, ipo.max_price, ipo.price_range),
-      ipo_price: ipo.issue_price ? `₹${ipo.issue_price}` : undefined,
-      issue_price: processNumber(ipo.issue_price), // Keep as number for calculations
+      price_range: formatPriceRange(source.min_price, source.max_price, source.price_range),
+      ipo_price: source.issue_price ? `₹${source.issue_price}` : undefined,
+      issue_price: processNumber(source.issue_price), // Keep as number for calculations
       
       // Listing data - API uses 'listing_gains' as percentage (like 3.076923076923077 for 3.08%)
-      listing_price: processNumber(ipo.listing_price),
-      listing_gain: ipo.listing_gains ? `${ipo.listing_gains > 0 ? '+' : ''}${ipo.listing_gains.toFixed(2)}%` : 'N/A',
-      listing_gains: ipo.listing_gains, // Keep original percentage value
+      listing_price: processNumber(source.listing_price),
+      listing_gain: source.listing_gains ? `${source.listing_gains > 0 ? '+' : ''}${source.listing_gains.toFixed(2)}%` : 'N/A',
+      listing_gains: source.listing_gains, // Keep original percentage value
       
       // Date fields - API provides bidding_start_date, bidding_end_date, listing_date
-      listing_date: ipo.listing_date || undefined,
-      open: ipo.bidding_start_date || undefined,
-      close: ipo.bidding_end_date || undefined,
-      bidding_start_date: ipo.bidding_start_date || undefined,
-      bidding_end_date: ipo.bidding_end_date || undefined,
+      listing_date: source.listing_date || undefined,
+      open: source.bidding_start_date || undefined,
+      close: source.bidding_end_date || undefined,
+      bidding_start_date: source.bidding_start_date || undefined,
+      bidding_end_date: source.bidding_end_date || undefined,
       
       // Size and type - API provides lot_size
-      issue_size: ipo.issue_size && ipo.issue_size !== '0' ? ipo.issue_size : 'Size TBA',
-      issue_type: ipo.is_sme ? 'SME IPO' : 'Book Built',
+      issue_size: source.issue_size && source.issue_size !== '0' ? source.issue_size : 'Size TBA',
+      issue_type: source.is_sme ? 'SME IPO' : 'Book Built',
       
       // Price ranges - validate they're not zeros
-      min_price: processNumber(ipo.min_price),
-      max_price: processNumber(ipo.max_price),
+      min_price: processNumber(source.min_price),
+      max_price: processNumber(source.max_price),
       
       // Document links - API provides document_url
-      document_url: ipo.document_url || undefined,
-      rhpLink: ipo.document_url || undefined, // Use document_url as RHP link
-      drhpLink: ipo.document_url || undefined, // Use document_url as DRHP link
+      document_url: source.document_url || undefined,
+      rhpLink: source.document_url || undefined, // Use document_url as RHP link
+      drhpLink: source.document_url || undefined, // Use document_url as DRHP link
       
       // Additional fields - API provides additional_text, lot_size, is_sme
-      additional_text: ipo.additional_text || undefined,
-      is_sme: ipo.is_sme === true,
-      lot_size: processNumber(ipo.lot_size)
+      additional_text: source.additional_text || undefined,
+      is_sme: source.is_sme === true,
+      lot_size: processNumber(source.lot_size)
     };
     
     // For debugging - log only the first few IPOs to avoid console spam
     if (Math.random() < 0.1) { // Increased probability for debugging
       logger.debug('Sample processed IPO item', processedIpo);
-      logger.debug('Original API data', ipo);
+      logger.debug('Original API data', source);
     }
     
     return processedIpo;
@@ -1103,13 +859,13 @@ export default function IpoPage() {
                 additional_text: "Bid starts on 31 Jul at 10 AM",
                 min_price: 123,
                 max_price: 130,
-                issue_price: null,
-                listing_gains: null,
-                listing_price: null,
+                issue_price: undefined,
+                listing_gains: undefined,
+                listing_price: undefined,
                 bidding_start_date: "2025-07-31",
-                bidding_end_date: null,
+                bidding_end_date: undefined,
                 listing_date: "2025-08-07",
-                lot_size: null,
+                lot_size: undefined,
                 document_url: "https://firebasestorage.googleapis.com/test.pdf"
               },
               {
@@ -1120,13 +876,13 @@ export default function IpoPage() {
                 additional_text: "Bid starts on 31 Jul at 10 AM",
                 min_price: 100,
                 max_price: 105,
-                issue_price: null,
-                listing_gains: null,
-                listing_price: null,
+                issue_price: undefined,
+                listing_gains: undefined,
+                listing_price: undefined,
                 bidding_start_date: "2025-07-31",
-                bidding_end_date: null,
+                bidding_end_date: undefined,
                 listing_date: "2025-08-07",
-                lot_size: null,
+                lot_size: undefined,
                 document_url: "https://www.renolpolychem.com/pdf/rhp.pdf"
               }
             ],
@@ -1139,14 +895,14 @@ export default function IpoPage() {
                 additional_text: "IPO closes today at 4:50 PM",
                 min_price: 82,
                 max_price: 84,
-                issue_price: null,
-                listing_gains: null,
-                listing_price: null,
+                issue_price: undefined,
+                listing_gains: undefined,
+                listing_price: undefined,
                 bidding_start_date: "2025-07-25",
                 bidding_end_date: "2025-07-29",
-                listing_date: null,
+                listing_date: undefined,
                 lot_size: 1600,
-                document_url: null
+                document_url: undefined
               },
               {
                 symbol: "SHANTIGOLD",
@@ -1156,14 +912,14 @@ export default function IpoPage() {
                 additional_text: "IPO closes today at 4:50 PM",
                 min_price: 189,
                 max_price: 199,
-                issue_price: null,
-                listing_gains: null,
-                listing_price: null,
+                issue_price: undefined,
+                listing_gains: undefined,
+                listing_price: undefined,
                 bidding_start_date: "2025-07-25",
                 bidding_end_date: "2025-07-29",
-                listing_date: null,
+                listing_date: undefined,
                 lot_size: 75,
-                document_url: null
+                document_url: undefined
               }
             ],
             listed: [
@@ -1179,9 +935,9 @@ export default function IpoPage() {
                 listing_gains: 3.076923076923077,
                 listing_price: 67,
                 bidding_start_date: "2025-07-21",
-                bidding_end_date: null,
+                bidding_end_date: undefined,
                 listing_date: "2025-07-28",
-                lot_size: null,
+                lot_size: undefined,
                 document_url: "https://www.bseindia.com/test.pdf"
               },
               {
@@ -1196,9 +952,9 @@ export default function IpoPage() {
                 listing_gains: 13.750000000000002,
                 listing_price: 136.5,
                 bidding_start_date: "2025-07-21",
-                bidding_end_date: null,
+                bidding_end_date: undefined,
                 listing_date: "2025-07-28",
-                lot_size: null,
+                lot_size: undefined,
                 document_url: "https://unistonecapital.com/test.pdf"
               }
             ],
@@ -1288,7 +1044,7 @@ export default function IpoPage() {
         // Log data load success
         logger.debug('IPO data loaded successfully');
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         logger.error('Error in IPO data processing:', err);
         
         // Don't show error to user, use fallback data instead (like stocks/market pages)
@@ -1305,14 +1061,14 @@ export default function IpoPage() {
               additional_text: "Coming Soon",
               min_price: 100,
               max_price: 110,
-              issue_price: null,
-              listing_gains: null,
-              listing_price: null,
+              issue_price: undefined,
+              listing_gains: undefined,
+              listing_price: undefined,
               bidding_start_date: "2025-08-01",
-              bidding_end_date: null,
+              bidding_end_date: undefined,
               listing_date: "2025-08-08",
-              lot_size: null,
-              document_url: null
+              lot_size: undefined,
+              document_url: undefined
             }
           ],
           active: [
@@ -1324,14 +1080,14 @@ export default function IpoPage() {
               additional_text: "IPO Open Now",
               min_price: 80,
               max_price: 90,
-              issue_price: null,
-              listing_gains: null,
-              listing_price: null,
+              issue_price: undefined,
+              listing_gains: undefined,
+              listing_price: undefined,
               bidding_start_date: "2025-07-25",
               bidding_end_date: "2025-07-30",
-              listing_date: null,
+              listing_date: undefined,
               lot_size: 1000,
-              document_url: null
+              document_url: undefined
             }
           ],
           listed: [
@@ -1347,10 +1103,10 @@ export default function IpoPage() {
               listing_gains: 10.0,
               listing_price: 82.5,
               bidding_start_date: "2025-07-15",
-              bidding_end_date: null,
+              bidding_end_date: undefined,
               listing_date: "2025-07-22",
-              lot_size: null,
-              document_url: null
+              lot_size: undefined,
+              document_url: undefined
             }
           ]
         };

@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { logger } from '@/lib/logger';
 import { 
   Building2, 
   TrendingUp, 
@@ -10,7 +11,6 @@ import {
   Target,
   Users,
   BarChart3,
-  PieChart,
   ArrowUp,
   ArrowDown,
   Activity,

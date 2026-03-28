@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { Table, TableRow, TableBody, TableCell } from '@/components/ui/table';
 import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import * as stockApi from '@/api/api';
+import { logger } from '@/lib/logger';
 
 interface Stock {
   symbol: string;

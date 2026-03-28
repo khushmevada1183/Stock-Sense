@@ -345,21 +345,29 @@ const PriceChange = ({ change, percentChange }: PriceChangeProps) => {
 };
 
 interface ChartProps {
-  data: any; // Using any for now, ideally should be more specific
+  data: unknown;
 }
 
 const StockPriceChart = ({ data }: ChartProps) => {
+  const hasData = data !== null && data !== undefined;
+
   return (
     <div className="h-full flex items-center justify-center">
-      <div className="text-gray-400">Chart visualization would appear here</div>
+      <div className="text-gray-400">
+        {hasData ? 'Chart visualization would appear here' : 'No chart data available'}
+      </div>
     </div>
   );
 };
 
 const MarketBreadthChart = ({ data }: ChartProps) => {
+  const hasData = data !== null && data !== undefined;
+
   return (
     <div className="h-full flex items-center justify-center">
-      <div className="text-gray-400">Market breadth chart would appear here</div>
+      <div className="text-gray-400">
+        {hasData ? 'Market breadth chart would appear here' : 'No market breadth data available'}
+      </div>
     </div>
   );
 };
@@ -369,9 +377,15 @@ interface SectorChartProps {
 }
 
 const SectorPerformanceChart = ({ sectors }: SectorChartProps) => {
+  const sectorCount = sectors.length;
+
   return (
     <div className="h-full flex items-center justify-center">
-      <div className="text-gray-400">Sector performance chart would appear here</div>
+      <div className="text-gray-400">
+        {sectorCount > 0
+          ? `Sector performance chart would appear here (${sectorCount} sectors)`
+          : 'No sector performance data available'}
+      </div>
     </div>
   );
 };

@@ -30,6 +30,8 @@ const NewsCard: React.FC<NewsItemProps> = ({
   premiumStory,
   imagecaption
 }) => {
+  const displayImage = bigimage || thumbnailimage;
+
   // Format date for display
   const formatDate = (dateString: string) => {
     try {
@@ -39,18 +41,19 @@ const NewsCard: React.FC<NewsItemProps> = ({
         return parts.slice(1).join(',').trim();
       }
       return dateString;
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300 h-full flex flex-col bg-gray-900/90 backdrop-blur-lg border border-gray-800/30">
-      {bigimage && (
+      {displayImage && (
         <div className="relative w-full h-40 overflow-hidden">
           <img 
-            src={bigimage} 
+            src={displayImage} 
             alt={headline} 
+            title={imagecaption || headline}
             className="w-full h-full object-cover"
           />
           {premiumStory === "true" && (

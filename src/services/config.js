@@ -18,7 +18,9 @@ export const API_CONFIG = {
   API_KEYS: process.env.NEXT_PUBLIC_INDIAN_API_KEYS?.split(',') || []
 };
 
-export default {
+const appConfig = {
   FEATURES,
   API_CONFIG
 };
+
+export default appConfig;

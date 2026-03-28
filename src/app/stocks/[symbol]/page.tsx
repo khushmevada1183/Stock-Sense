@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import React, { useEffect, useRef, useState } from 'react';
 import { logger } from '@/lib/logger';
 import { useParams } from 'next/navigation';
@@ -9,8 +7,6 @@ import { gsap } from 'gsap';
 import { Chart, registerables } from 'chart.js';
 import { 
   TrendingUp, 
-  ArrowUp, 
-  ArrowDown, 
   DollarSign, 
   LineChart, 
   BarChart4, 
@@ -25,14 +21,9 @@ import {
   Rocket
 } from 'lucide-react';
 import { apiHelpers } from '@/api/api';
-import { normalizeStockData, formatPrice, formatPct, type NormalizedStock } from '@/lib/normalizeStock';
+import { normalizeStockData, type NormalizedStock } from '@/lib/normalizeStock';
 // Removed separate financial API imports - now using single /stock endpoint
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
-import FinancialStatements from '@/components/stocks/FinancialStatements';
-import StockNewsSection from '@/components/stocks/StockNewsSection';
-import FinancialHighlights from '@/components/stocks/FinancialHighlights';
-import ManagementInfo from '@/components/stocks/ManagementInfo';
 import TechnicalAnalysis from '@/components/stocks/TechnicalAnalysis';
 import MacroeconomicIndicators from '@/components/stocks/MacroeconomicIndicators';
 import SentimentAnalysis from '@/components/stocks/SentimentAnalysis';
@@ -47,13 +38,22 @@ import FundamentalAnalysis from '@/components/stocks/FundamentalAnalysis';
 import MetricCard from '@/components/stocks/MetricCard';
 // Define types needed for financial data
 interface FinancialRatiosData {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface FetchedFinancialStatementsData {
-  [key: string]: any;
+  statements?: Array<{
+    incomeStatement?: FinancialItem[];
+    balanceSheet?: FinancialItem[];
+    cashFlow?: FinancialItem[];
+    year?: string;
+    endDate?: string;
+    type?: string;
+    statementDate?: string;
+    period?: number;
+  }>;
 }
-import { FinancialPeriod } from '@/components/stocks/FinancialStatements'; // Import for transformFinancialData
+import { FinancialItem, FinancialPeriod } from '@/components/stocks/FinancialStatements'; // Import for transformFinancialData
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -62,26 +62,25 @@ Chart.register(...registerables);
 export default function Page() {
   const params = useParams();
   const symbol = params?.symbol as string || '';
-  const [stockData, setStockData] = useState<any>(null);           // raw API response
+  const [stockData, setStockData] = useState<unknown | null>(null);           // raw API response
   const [stock, setStock] = useState<NormalizedStock | null>(null); // normalized data
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
 
   // State for Fundamental Analysis Data
-  const [financialRatios, setFinancialRatios] = useState<FinancialRatiosData | null>(null);
-  const [financialStatements, setFinancialStatements] = useState<FetchedFinancialStatementsData | null>(null);
-  const [loadingRatios, setLoadingRatios] = useState(false);
-  const [errorRatios, setErrorRatios] = useState<string | null>(null);
-  const [loadingStatements, setLoadingStatements] = useState(false);
-  const [errorStatements, setErrorStatements] = useState<string | null>(null);
+  const financialRatios: FinancialRatiosData | null = null;
+  const financialStatements: FetchedFinancialStatementsData | null = null;
+  const loadingRatios = false;
+  const errorRatios: string | null = null;
+  const loadingStatements = false;
+  const errorStatements: string | null = null;
   
   // Refs for animations and charts
   const headerRef = useRef<HTMLDivElement>(null);
   const priceRef = useRef<HTMLDivElement>(null);
   const rangeRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
-  const detailsRef = useRef<HTMLDivElement>(null);
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const tabContentRef = useRef<HTMLDivElement>(null);
   const sectorDistributionChartRef = useRef<HTMLCanvasElement>(null);
@@ -146,12 +145,13 @@ export default function Page() {
         } else {
           setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         logger.error('Error fetching stock data:', err);
+        const errorObj = err as { response?: { status?: number }; message?: string };
         setError(
-          err.response?.status === 404
+          errorObj.response?.status === 404
             ? `Stock "${symbol}" not found. Please check the name or symbol and try again.`
-            : `Failed to fetch stock data: ${err.message || 'Unknown error'}. Please try again.`
+            : `Failed to fetch stock data: ${errorObj.message || 'Unknown error'}. Please try again.`
         );
       } finally {
         setLoading(false);
@@ -164,7 +164,7 @@ export default function Page() {
   
   // Initialize animations after data is loaded — use fromTo so elements always end visible
   useEffect(() => {
-    if (loading || !stockData || error) return;
+    if (loading || !stock || error) return;
 
     const animatedRefs = [
       headerRef.current,
@@ -223,7 +223,7 @@ export default function Page() {
         gsap.set(animatedRefs, { clearProps: 'opacity,transform,filter' });
       }
     };
-  }, [loading, stockData, error]);
+  }, [loading, stock, error]);
 
   // Prevent stale GSAP inline styles from previous tab content from leaving cards dimmed
   useEffect(() => {
@@ -239,7 +239,7 @@ export default function Page() {
   // Initialize the charts
   const initializeCharts = () => {
     // Only proceed if we have data and chart refs
-    if (!stockData) return;
+    if (!stock) return;
     
     // Clean up any existing charts first
     cleanupCharts();
@@ -255,7 +255,7 @@ export default function Page() {
     const sectorCtx = sectorDistributionChartRef.current.getContext('2d');
     if (sectorCtx) {
         try {
-      const industry = stockData.industry || stockData.sector || '';
+      const industry = stock.industry || stock.sector || '';
       
       // Sector distribution (dummy data - replace with real data)
       const sectorData = {
@@ -325,7 +325,7 @@ export default function Page() {
       const priceFloat = parseFloat(price.toString().replace(/[₹,]/g, '')) || 100;
       
       // Generate sample data points around the current price
-      const lastMonthData = Array.from({ length: 30 }, (_, i) => {
+      const lastMonthData = Array.from({ length: 30 }, () => {
         const variation = (Math.random() - 0.5) * 20;  // Random variation ±10%
         return priceFloat * (1 + variation / 100); // Current price with variation
       });
@@ -411,10 +411,7 @@ export default function Page() {
   // ── Data extraction (all reads from normalized `stock` object) ──────────
   const extractPrice = () => {
     if (stock) return stock.lastPrice || 'N/A';
-    if (!stockData) return 'N/A';
-    // Legacy fallbacks for any cached old-format data
-    const raw = stockData?.data || stockData;
-    return raw?.priceInfo?.lastPrice || raw?.price || raw?.lastPrice || 'N/A';
+    return 'N/A';
   };
 
   const formatMarketCap = (marketCap: string | number): string => {
@@ -439,67 +436,24 @@ export default function Page() {
   // Helper: PE ratio from normalized data (metadata.pdSymbolPe in NSE India)
   const extractPE = () => {
     if (stock?.symbolPE && stock.symbolPE !== 'N/A') return String(stock.symbolPE);
-    // fallback: try raw nested
-    const raw = stockData?.data || stockData;
-    const pe = raw?.metadata?.pdSymbolPe || raw?.pe || raw?.pe_ratio;
-    if (pe !== undefined && pe !== null && pe !== '') return String(pe);
     return 'N/A';
   };
   
   // Helper: EPS — not directly in NSE India equityDetails; show N/A
-  const extractEPS = () => {
-    const raw = stockData?.data || stockData;
-    const eps = raw?.eps || raw?.EPS;
-    if (eps !== undefined && eps !== null && eps !== '') {
-      return typeof eps === 'number' ? `₹${eps.toFixed(2)}` : `₹${eps}`;
-    }
-    return 'N/A';
-  };
-  // Helper function to transform financial data from API response
-  const transformFinancialData = (): FinancialPeriod[] => { // Added return type
-    // If stockData has statements directly, process them
-    if (stockData.stockFinancialMap) {
-      return [{
-        stockFinancialMap: stockData.stockFinancialMap,
-        FiscalYear: stockData.FiscalYear || new Date().getFullYear().toString(),
-        EndDate: stockData.StatementDate || stockData.EndDate || new Date().toISOString().split('T')[0],
-        Type: stockData.Type || 'Interim',
-        StatementDate: stockData.StatementDate || new Date().toISOString().split('T')[0],
-        fiscalPeriodNumber: stockData.fiscalPeriodNumber || 0
-      }];
-    }
-
-    // Look for financial statements in fiscal periods array
-    if (Array.isArray(stockData.fiscalPeriods)) {
-      return stockData.fiscalPeriods;
-    }
-
-    // Check if financial statements are in a nested field
-    if (stockData.financials?.statements) {
-      return stockData.financials.statements.map((statement: any) => ({
-        stockFinancialMap: {
-          INC: statement.income || [],
-          BAL: statement.balance || [],
-          CAS: statement.cashflow || []
-        },
-        FiscalYear: statement.year || new Date().getFullYear().toString(),
-        EndDate: statement.date || new Date().toISOString().split('T')[0],
-        Type: statement.type || 'Interim',
-        StatementDate: statement.date || new Date().toISOString().split('T')[0],
-        fiscalPeriodNumber: statement.period || 0
-      }));
-    }
-
-    return [];
-  };
-
+  const extractEPS = () => 'N/A';
   // Helper function to transform fetched financial statements to FinancialPeriod format
-  const transformFetchedFinancialStatements = (data: FetchedFinancialStatementsData): FinancialPeriod[] => {
-    if (!data || !data.statements || !Array.isArray(data.statements)) {
+  const transformFetchedFinancialStatements = (data: unknown): FinancialPeriod[] => {
+    if (!data || typeof data !== 'object') {
       return [];
     }
 
-    return data.statements.map((statement: any) => ({
+    const fetchedData = data as FetchedFinancialStatementsData;
+
+    if (!fetchedData.statements || !Array.isArray(fetchedData.statements)) {
+      return [];
+    }
+
+    return fetchedData.statements.map((statement) => ({
       stockFinancialMap: {
         INC: statement.incomeStatement || [],
         BAL: statement.balanceSheet || [],
@@ -535,10 +489,10 @@ export default function Page() {
   }
   
   // ── Extract key info — prefer normalized stock, fall back to raw ─────────────
-  const companyName = stock?.companyName || stockData?.data?.info?.companyName || stockData?.info?.companyName || symbol;
-  const displaySymbol = stock?.symbol || stockData?.data?.info?.symbol || symbol;
-  const industry = stock?.industry || stockData?.data?.industryInfo?.industry || 'N/A';
-  const sector = stock?.sector || stockData?.data?.industryInfo?.sector || 'N/A';
+  const companyName = stock?.companyName || symbol;
+  const displaySymbol = stock?.symbol || symbol;
+  const industry = stock?.industry || 'N/A';
+  const sector = stock?.sector || 'N/A';
   const price = extractPrice();
   
   // Percent change
@@ -560,14 +514,12 @@ export default function Page() {
   // Circuit limits
   const upperCircuit = stock?.upperCircuit || 'N/A';
   const lowerCircuit = stock?.lowerCircuit || 'N/A';
-  const priceBand = stock?.priceBand || 'N/A';
   
   // Metrics (PE, EPS, Market Cap)
   const pe = extractPE();
   const eps = extractEPS();
   const marketCap = stock?.marketCap ? formatMarketCap(stock.marketCap) : 'N/A';
-  const volume = stock?.volume ? stock.volume : (stockData?.data?.preOpenMarket?.totalTradedVolume || 'N/A');
-  const avgVolume = 'N/A';
+  const volume = stock?.volume || 'N/A';
   const debtToEquity = 'N/A';
   const dividendYield = 'N/A';
   
@@ -578,21 +530,18 @@ export default function Page() {
   
   // Market status
   const marketCapValue = stock?.marketCap || undefined;
-  const percentChange = pChange;
-  
+
   // Management team
-  const officers: any[] = [];
+  const officers: React.ComponentProps<typeof Overview>['officers'] = [];
 
   // Financial data (NSE India doesn't return detailed financials in equityDetails)
-  const financialData: any[] = [];
+  const financialData: React.ComponentProps<typeof Overview>['financialData'] = [];
   
   // Company description from securityInfo or industryInfo
-  const description = stockData?.data?.securityInfo?.companyDescription 
-    || stockData?.data?.metadata?.pdSectorInd 
-    || `${companyName} is listed on the NSE under the ${industry} sector.`;
+  const description = `${companyName} is listed on the NSE under the ${industry} sector.`;
 
   // Recent news
-  const recentNews: any[] = [];  // Tab configuration
+  const recentNews: React.ComponentProps<typeof Overview>['recentNews'] = [];  // Tab configuration
   const tabs = [
     {
       id: 'overview',
@@ -902,7 +851,7 @@ export default function Page() {
           <div ref={tabContentRef} className="p-6">
             {activeTab === 'overview' && (
               <Overview 
-                stockData={stock?._raw || stockData?.data || stockData}
+                stockData={stock?._raw || stockData || {}}
                 symbol={symbol}
                 companyName={companyName}
                 industry={industry}
@@ -934,7 +883,7 @@ export default function Page() {
                 eps={eps}
                 dividendYield={dividendYield}
                 debtToEquity={debtToEquity}
-                currencySymbol={stockData?.currencySymbol || '₹'}
+                currencySymbol={'₹'}
                 loadingRatios={loadingRatios}
                 errorRatios={errorRatios}
                 loadingStatements={loadingStatements}
@@ -984,16 +933,15 @@ export default function Page() {
             {activeTab === 'risk' && (
               <RiskAssessment 
                 stock={{
-                  symbol,
-                  companyName,
-                  current_price: stock?.lastPrice ?? 0,
-                  marketCap: marketCapValue || 0,
-                  industry,
-                  sector,
-                  pe,
-                  pChange,
-                  yearHigh,
-                  yearLow,
+                  price: stock?.lastPrice ?? 0,
+                  high: dayHigh ?? 0,
+                  low: dayLow ?? 0,
+                  lowCircuitLimit: lowerCircuit,
+                  upCircuitLimit: upperCircuit,
+                  year_high: yearHigh ?? 0,
+                  year_low: yearLow ?? 0,
+                  volume: volume,
+                  averageVolume: 0,
                 }}
               />
             )}

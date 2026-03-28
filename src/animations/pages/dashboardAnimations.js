@@ -261,7 +261,7 @@ export const initDashboardPageAnimations = (refs) => {
   return masterTimeline;
 };
 
-export default {
+const dashboardAnimations = {
   animateDashboardHeader,
   animateStockList,
   animateCommoditiesTable,
@@ -270,3 +270,5 @@ export default {
   animateHighLowTable,
   initDashboardPageAnimations
 }; 
+
+export default dashboardAnimations;

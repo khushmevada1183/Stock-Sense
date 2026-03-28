@@ -83,13 +83,40 @@ export interface NormalizedStock {
   volume: number;
   
   // Raw data preserved for advanced components
-  _raw: any;
+  _raw: unknown;
 }
+
+type UnknownRecord = Record<string, unknown>;
+
+const asRecord = (value: unknown): UnknownRecord => {
+  if (value && typeof value === 'object') {
+    return value as UnknownRecord;
+  }
+  return {};
+};
+
+const safeStr = (val: unknown, fallback = 'N/A'): string => {
+  if (val === null || val === undefined || val === '') return fallback;
+  return String(val);
+};
+
+const toNumberOrString = (value: unknown, fallback = 'N/A'): number | string => {
+  const numeric = safeNum(value, Number.NaN);
+  if (!Number.isNaN(numeric)) {
+    return numeric;
+  }
+
+  if (typeof value === 'string' || typeof value === 'number') {
+    return value;
+  }
+
+  return fallback;
+};
 
 /**
  * Safely parse a number from any value
  */
-function safeNum(val: any, fallback: number = 0): number {
+function safeNum(val: unknown, fallback: number = 0): number {
   if (val === null || val === undefined || val === '' || val === '-') return fallback;
   const n = parseFloat(String(val).replace(/,/g, ''));
   return isNaN(n) ? fallback : n;
@@ -99,19 +126,22 @@ function safeNum(val: any, fallback: number = 0): number {
  * Normalize the raw API response into a consistent NormalizedStock object.
  * Handles both the wrapped { success, data } format and the raw data object.
  */
-export function normalizeStockData(raw: any): NormalizedStock | null {
+export function normalizeStockData(raw: unknown): NormalizedStock | null {
   if (!raw) return null;
   
   // Unwrap { success, data } envelope if present
-  const data = raw?.success !== undefined ? raw.data : raw;
-  if (!data) return null;
+  const rawRecord = asRecord(raw);
+  const data = rawRecord.success !== undefined ? rawRecord.data : raw;
+  const dataRecord = asRecord(data);
+  if (!Object.keys(dataRecord).length) return null;
   
   // Extract sub-objects
-  const info = data.info || {};
-  const priceInfo = data.priceInfo || {};
-  const industryInfo = data.industryInfo || {};
-  const metadata = data.metadata || {};
-  const securityInfo = data.securityInfo || {};
+  const info = asRecord(dataRecord.info);
+  const priceInfo = asRecord(dataRecord.priceInfo);
+  const industryInfo = asRecord(dataRecord.industryInfo);
+  const metadata = asRecord(dataRecord.metadata);
+  const securityInfo = asRecord(dataRecord.securityInfo);
+  const preOpenMarket = asRecord(dataRecord.preOpenMarket);
   
   // Price fields
   const lastPrice = safeNum(priceInfo.lastPrice);
@@ -123,35 +153,35 @@ export function normalizeStockData(raw: any): NormalizedStock | null {
   const vwap = safeNum(priceInfo.vwap);
   
   // Intraday range
-  const intraDayHL = priceInfo.intraDayHighLow || {};
+  const intraDayHL = asRecord(priceInfo.intraDayHighLow);
   const dayHigh = safeNum(intraDayHL.max);
   const dayLow = safeNum(intraDayHL.min);
   
   // 52-week range
-  const weekHL = priceInfo.weekHighLow || {};
+  const weekHL = asRecord(priceInfo.weekHighLow);
   const yearHigh = safeNum(weekHL.max);
   const yearLow = safeNum(weekHL.min);
   
   // Industry
-  const industry = industryInfo.industry || info.industry || metadata.pdSectorInd || 'N/A';
-  const sector = industryInfo.sector || 'N/A';
-  const macro = industryInfo.macro || 'N/A';
-  const basicIndustry = industryInfo.basicIndustry || 'N/A';
+  const industry = safeStr(industryInfo.industry ?? info.industry ?? metadata.pdSectorInd, 'N/A');
+  const sector = safeStr(industryInfo.sector, 'N/A');
+  const macro = safeStr(industryInfo.macro, 'N/A');
+  const basicIndustry = safeStr(industryInfo.basicIndustry, 'N/A');
   
   // Symbol/company
-  const symbol = info.symbol || metadata.symbol || '';
-  const companyName = info.companyName || metadata.companyName || symbol;
-  const isin = info.isin || securityInfo.isin || '';
+  const symbol = safeStr(info.symbol ?? metadata.symbol, '');
+  const companyName = safeStr(info.companyName ?? metadata.companyName ?? symbol, 'N/A');
+  const isin = safeStr(info.isin ?? securityInfo.isin, '');
   // PE data from metadata
-  const symbolPE = safeNum(metadata.pdSymbolPe) || metadata.pdSymbolPe || 'N/A';
-  const sectorPE = safeNum(metadata.pdSectorPe) || metadata.pdSectorPe || 'N/A';
+  const symbolPE = toNumberOrString(metadata.pdSymbolPe, 'N/A');
+  const sectorPE = toNumberOrString(metadata.pdSectorPe, 'N/A');
   
   // Calculate Market Cap & Volume
   const issuedSize = safeNum(securityInfo.issuedSize);
   const marketCap = lastPrice && issuedSize ? lastPrice * issuedSize : 0;
   
   // NSE volume can be scattered depending on time of day
-  const preOpenVolume = safeNum(data.preOpenMarket?.totalTradedVolume);
+  const preOpenVolume = safeNum(preOpenMarket.totalTradedVolume);
   const priceInfoVolume = safeNum(priceInfo.totalTradedVolume) || safeNum(priceInfo.volume) || safeNum(priceInfo.quantityTraded);
   const volume = priceInfoVolume || preOpenVolume || 0;
   
@@ -159,7 +189,7 @@ export function normalizeStockData(raw: any): NormalizedStock | null {
     symbol,
     companyName,
     isin,
-    series: metadata.series || info.series || 'EQ',
+    series: safeStr(metadata.series ?? info.series, 'EQ'),
     
     price: lastPrice,
     lastPrice,
@@ -175,30 +205,30 @@ export function normalizeStockData(raw: any): NormalizedStock | null {
     
     yearHigh,
     yearLow,
-    yearHighDate: weekHL.maxDate || '',
-    yearLowDate: weekHL.minDate || '',
+    yearHighDate: safeStr(weekHL.maxDate, ''),
+    yearLowDate: safeStr(weekHL.minDate, ''),
     
-    upperCircuit: priceInfo.upperCP || 'N/A',
-    lowerCircuit: priceInfo.lowerCP || 'N/A',
-    priceBand: priceInfo.pPriceBand || 'N/A',
+    upperCircuit: safeStr(priceInfo.upperCP, 'N/A'),
+    lowerCircuit: safeStr(priceInfo.lowerCP, 'N/A'),
+    priceBand: safeStr(priceInfo.pPriceBand, 'N/A'),
     
     industry,
     sector,
     macro,
     basicIndustry,
     
-    listingDate: metadata.listingDate || info.listingDate || 'N/A',
-    tradingStatus: metadata.tradingStatus || securityInfo.tradingStatus || 'Active',
-    lastUpdateTime: metadata.lastUpdateTime || 'N/A',
+    listingDate: safeStr(metadata.listingDate ?? info.listingDate, 'N/A'),
+    tradingStatus: safeStr(metadata.tradingStatus ?? securityInfo.tradingStatus, 'Active'),
+    lastUpdateTime: safeStr(metadata.lastUpdateTime, 'N/A'),
     
     symbolPE,
     sectorPE,
     isPositive: pChange >= 0,
-    marketStatus: data.currentMarketType || 'N/A',
+    marketStatus: safeStr(dataRecord.currentMarketType, 'N/A'),
     marketCap,
     volume,
     
-    _raw: data,
+    _raw: dataRecord,
   };
 }
 

@@ -16,7 +16,7 @@ export interface Toast {
 export interface Modal {
   id: string;
   component: React.ReactNode;
-  props?: Record<string, any>;
+  props?: Record<string, unknown>;
 }
 
 // UI Context state
@@ -28,7 +28,7 @@ interface UIContextState {
   
   // Modals
   modals: Modal[];
-  openModal: (component: React.ReactNode, props?: Record<string, any>) => string;
+  openModal: (component: React.ReactNode, props?: Record<string, unknown>) => string;
   closeModal: (id: string) => void;
   
   // Loading states
@@ -74,6 +74,11 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   
   // Mobile menu state
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Remove a toast notification
+  const removeToast = useCallback((id: string) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  }, []);
   
   // Add a toast notification
   const addToast = useCallback((message: string, type: ToastType, duration: number = 5000) => {
@@ -90,15 +95,10 @@ export const UIProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
     
     return id;
-  }, []);
-  
-  // Remove a toast notification
-  const removeToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  }, []);
+  }, [removeToast]);
   
   // Open a modal
-  const openModal = useCallback((component: React.ReactNode, props?: Record<string, any>) => {
+  const openModal = useCallback((component: React.ReactNode, props?: Record<string, unknown>) => {
     const id = `modal-${Date.now()}`;
     const newModal = { id, component, props };
     

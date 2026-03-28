@@ -4,11 +4,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
-  SearchIcon, ChevronDown, ChevronUp, ThumbsUp, ThumbsDown, 
+  SearchIcon, ChevronDown, ChevronUp,
   HelpCircle, BarChart2, LineChart, Tag, AlertTriangle, Settings, Shield
 } from 'lucide-react';
 import { 
-  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip
 } from 'recharts';
 import PageBackground from '@/components/layout/PageBackground';
 

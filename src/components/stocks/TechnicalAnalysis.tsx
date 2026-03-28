@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
@@ -35,58 +35,11 @@ interface TechnicalAnalysisProps {
 }
 
 const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({ 
-  symbol, 
   currentPrice, 
   priceData = [], 
   volume = [] 
 }) => {
-  const [indicators, setIndicators] = useState<TechnicalIndicator[]>([]);
-  const [supportResistance, setSupportResistance] = useState<SupportResistanceLevel[]>([]);
-  const [overallSignal, setOverallSignal] = useState<'BUY' | 'SELL' | 'HOLD'>('HOLD');
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Calculate technical indicators
-  useEffect(() => {
-    if (priceData.length > 0) {
-      const calculatedIndicators = calculateTechnicalIndicators(priceData, volume);
-      setIndicators(calculatedIndicators);
-      
-      const levels = calculateSupportResistance(priceData);
-      setSupportResistance(levels);
-      
-      const signal = calculateOverallSignal(calculatedIndicators);
-      setOverallSignal(signal);
-    }
-  }, [priceData, volume]);
-
-  // Animation
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const elements = Array.from(containerRef.current.children);
-    if (!elements.length) return;
-
-    gsap.killTweensOf(elements);
-    gsap.set(elements, { clearProps: 'opacity,transform,filter' });
-
-    const tween = gsap.fromTo(
-      elements,
-      { y: 20, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power3.out",
-        overwrite: "auto"
-      }
-    );
-
-    return () => {
-      tween.kill();
-      gsap.set(elements, { clearProps: 'opacity,transform,filter' });
-    };
-  }, [indicators]);
 
   const calculateTechnicalIndicators = (prices: number[], volumes: number[]): TechnicalIndicator[] => {
     const indicators: TechnicalIndicator[] = [];
@@ -258,6 +211,50 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
     if (sellSignals > buySignals * 1.5) return 'SELL';
     return 'HOLD';
   };
+
+  const indicators = useMemo(
+    () => (priceData.length > 0 ? calculateTechnicalIndicators(priceData, volume) : []),
+    [priceData, volume]
+  );
+
+  const supportResistance = useMemo(
+    () => (priceData.length > 0 ? calculateSupportResistance(priceData) : []),
+    [priceData]
+  );
+
+  const overallSignal = useMemo(
+    () => calculateOverallSignal(indicators),
+    [indicators]
+  );
+
+  // Animation
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const elements = Array.from(containerRef.current.children);
+    if (!elements.length) return;
+
+    gsap.killTweensOf(elements);
+    gsap.set(elements, { clearProps: 'opacity,transform,filter' });
+
+    const tween = gsap.fromTo(
+      elements,
+      { y: 20, opacity: 0 },
+      {
+        y: 0,
+        opacity: 1,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power3.out",
+        overwrite: "auto"
+      }
+    );
+
+    return () => {
+      tween.kill();
+      gsap.set(elements, { clearProps: 'opacity,transform,filter' });
+    };
+  }, [indicators]);
 
   const getSignalColor = (signal: 'BUY' | 'SELL' | 'HOLD') => {
     switch (signal) {

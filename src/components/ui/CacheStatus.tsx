@@ -56,6 +56,8 @@ export default function CacheStatus({
     return 'text-red-400';
   };
 
+  const memoryUtilization = Math.round((stats.memory?.items || 0) / 10);
+
   if (compact) {
     return (
       <div className={`flex items-center space-x-4 text-sm ${className}`}>
@@ -67,8 +69,8 @@ export default function CacheStatus({
         </div>
         <div className="flex items-center space-x-1">
           <FiActivity className="w-4 h-4 text-gray-400" />
-          <span className="text-green-400">
-            {Math.round((stats.memory?.items || 0) / 10)}%
+          <span className={getUtilizationColor(memoryUtilization)}>
+            {memoryUtilization}%
           </span>
         </div>
         {showControls && (
@@ -135,8 +137,8 @@ export default function CacheStatus({
             </div>
             <div className="flex justify-between">
               <span className="text-xs text-gray-400">Utilization:</span>
-              <span className="text-green-400">
-                {Math.round((stats.memory?.items || 0) / 10)}%
+              <span className={getUtilizationColor(memoryUtilization)}>
+                {memoryUtilization}%
               </span>
             </div>
           </div>

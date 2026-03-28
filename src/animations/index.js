@@ -47,8 +47,10 @@ export const layout = {
 };
 
 // Default export of all animations
-export default {
+const animations = {
   pages,
   components,
   layout
 }; 
+
+export default animations;

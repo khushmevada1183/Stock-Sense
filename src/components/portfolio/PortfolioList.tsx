@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import * as stockApi from '@/api/api';
 import { Trash2, Edit, ChevronRight, PlusCircle } from 'lucide-react';
-import { logger } from '@/lib/logger';
 
 interface Stock {
   symbol: string;
@@ -46,11 +45,11 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
     fetchPortfolios();
   }, [userId]);
 
-  const handleDelete = async (portfolioId: number) => {
+  const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this portfolio?')) {
       try {
         // Updated to work with the modified API function that takes no parameters
-        const response = await stockApi.deletePortfolio();
+        await stockApi.deletePortfolio();
         // Always show an error message since the API is not available
         setError('Portfolio deletion is not supported by the current API.');
       } catch (err) {
@@ -127,7 +126,7 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
                 </Link>
                 <button 
                   className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-                  onClick={() => handleDelete(portfolio.id)}
+                  onClick={() => handleDelete()}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

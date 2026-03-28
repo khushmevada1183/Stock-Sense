@@ -322,7 +322,7 @@ export const initMarketPageAnimations = (refs) => {
   return masterTimeline;
 };
 
-export default {
+const marketAnimations = {
   animateMarketHeader,
   animateMarketIndices,
   animateSectorPerformance,
@@ -333,3 +333,5 @@ export default {
   animateAnalysisSection,
   initMarketPageAnimations
 }; 
+
+export default marketAnimations;

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { FiBarChart2, FiUsers, FiTrendingUp, FiActivity, FiDollarSign, FiFile, FiPieChart, FiTarget, FiGrid, FiBriefcase } from 'react-icons/fi';
 
@@ -11,12 +11,6 @@ interface FeatureItem {
 }
 
 export default function AnalysisFeatures() {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
   return (
     <section className="py-16 section-glow">
       <div className="container mx-auto px-4">
@@ -40,11 +34,7 @@ export default function AnalysisFeatures() {
               className="glass-card card-shine p-5 rounded-xl group"
             >
               <div className="text-neon-400 text-2xl mb-4 icon-glow w-fit">
-                {mounted ? (
-                  React.cloneElement(feature.icon as React.ReactElement, { suppressHydrationWarning: true })
-                ) : (
-                  <div className="h-8 w-8"></div>
-                )}
+                {feature.icon}
               </div>
               <h3 className="text-base font-semibold mb-2 text-gray-200 group-hover:text-white transition-colors duration-300">
                 {feature.title}

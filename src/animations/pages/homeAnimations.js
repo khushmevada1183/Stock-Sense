@@ -323,7 +323,7 @@ export const initHomePageAnimations = (refs) => {
 // Import sector performance animations
 import { animateSectorPerformance } from '../components/SectorPerformanceAnimations';
 
-export default {
+const homeAnimations = {
   animateHeroSection,
   animateMarketOverview,
   animateSectorPerformance,
@@ -334,3 +334,5 @@ export default {
   animateCtaSection,
   initHomePageAnimations
 }; 
+
+export default homeAnimations;

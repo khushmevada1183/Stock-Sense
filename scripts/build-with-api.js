@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 const { spawn } = require('child_process');
 const http = require('http');
@@ -144,7 +145,7 @@ async function waitForBackendAndBuild() {
 }
 
 // Handle API process errors
-apiProcess.on('error', (error) => {
+apiProcess.on('error', () => {
   console.log('API server failed to start, continuing with build anyway...');
   // Don't exit, continue with build
 });

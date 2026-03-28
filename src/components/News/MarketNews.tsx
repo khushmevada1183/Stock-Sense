@@ -1,19 +1,19 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
 
 // Define the NewsItem interface locally to avoid import issues
 interface NewsItem {
-  id?: string;
+  id?: string | number;
   title: string;
   source: string;
   date?: string;
   pub_date?: string;
   url: string;
-  imageUrl?: string;
-  image_url?: string;
+  imageUrl?: string | null;
+  image_url?: string | null;
   description?: string;
   summary?: string;
   publishedAt?: string;
@@ -35,12 +35,9 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
     [newsData]
   );
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [normalizedNews.length]);
-
   const totalPages = Math.max(1, Math.ceil(normalizedNews.length / NEWS_PER_PAGE));
-  const startIndex = (currentPage - 1) * NEWS_PER_PAGE;
+  const effectivePage = Math.min(currentPage, totalPages);
+  const startIndex = (effectivePage - 1) * NEWS_PER_PAGE;
   const endIndex = startIndex + NEWS_PER_PAGE;
   const visibleNews = normalizedNews.slice(startIndex, endIndex);
   const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
@@ -55,7 +52,7 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
         month: 'short',
         year: 'numeric'
       });
-    } catch (error) {
+    } catch {
       return 'Invalid date';
     }
   };
@@ -105,7 +102,7 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
                   {(item.image_url || item.imageUrl) && (
                     <div className="mt-2 mb-3">
                       <img 
-                        src={item.image_url || item.imageUrl} 
+                        src={item.image_url || item.imageUrl || undefined} 
                         alt={item.title}
                         className="w-full h-32 object-cover rounded-md"
                         loading="lazy"
@@ -130,7 +127,7 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
                   <button
                     type="button"
                     onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                    disabled={currentPage === 1}
+                    disabled={effectivePage === 1}
                     className="px-3 py-1.5 rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:text-white hover:border-neon-400/40 transition-colors"
                   >
                     Prev
@@ -142,7 +139,7 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
                       type="button"
                       onClick={() => setCurrentPage(pageNum)}
                       className={`px-3 py-1.5 rounded-lg border transition-colors ${
-                        pageNum === currentPage
+                        pageNum === effectivePage
                           ? 'bg-neon-400 text-black border-neon-400'
                           : 'bg-gray-900/90 backdrop-blur-lg border-gray-700/50 text-gray-200 hover:text-white hover:border-neon-400/40'
                       }`}
@@ -154,14 +151,14 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
                   <button
                     type="button"
                     onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
-                    disabled={currentPage === totalPages}
+                    disabled={effectivePage === totalPages}
                     className="px-3 py-1.5 rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:text-white hover:border-neon-400/40 transition-colors"
                   >
                     Next
                   </button>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, normalizedNews.length)} of {normalizedNews.length}
+                  Page {effectivePage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, normalizedNews.length)} of {normalizedNews.length}
                 </p>
               </div>
             )}

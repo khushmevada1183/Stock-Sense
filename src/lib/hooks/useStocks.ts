@@ -34,6 +34,24 @@ export interface HistoricalDataPoint {
   volume?: number;
 }
 
+interface PriceShockerData {
+  symbol?: string;
+  tickerId?: string;
+  company_name?: string;
+  companyName?: string;
+  displayName?: string;
+  current_price?: number;
+  price?: number;
+  change_percent?: string | number;
+  sector?: string;
+}
+
+interface MarketDataState {
+  topGainers: StockData[];
+  topLosers: StockData[];
+  indices: StockData[];
+}
+
 // Type for the caching logic
 interface CacheItem<T> {
   data: T;
@@ -194,18 +212,28 @@ export function useHistoricalData(symbol: string, period: string = '1yr') {
 
 // Hook to fetch market data (top gainers, losers, etc.)
 export function useMarketData() {
-  const [marketData, setMarketData] = useState<{
-    topGainers: StockData[];
-    topLosers: StockData[];
-    indices: any[];
-  }>({
+  const [marketData, setMarketData] = useState<MarketDataState>({
     topGainers: [],
     topLosers: [],
     indices: []
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const cache = useRef<Record<string, CacheItem<any>>>({});
+  const cache = useRef<Record<string, CacheItem<MarketDataState>>>({});
+
+  const toStockData = useCallback((stock: PriceShockerData): StockData => {
+    const changePercent = stock.change_percent !== undefined
+      ? parseFloat(stock.change_percent.toString())
+      : undefined;
+
+    return {
+      symbol: stock.symbol || stock.tickerId || 'N/A',
+      companyName: stock.company_name || stock.companyName || stock.displayName || stock.symbol || 'Unknown Company',
+      latestPrice: stock.current_price ?? stock.price,
+      changePercent,
+      sector: stock.sector
+    };
+  }, []);
   
   const fetchMarketData = useCallback(async () => {
     // Check cache first (with 1 minute expiry for market data)
@@ -225,23 +253,32 @@ export function useMarketData() {
     try {
       // Fetch market data using documented endpoints
       // Price shockers can be used for both gainers and losers
-      const priceShockers = await apiHelpers.getPriceShockers();
-      const topGainers = priceShockers.filter((stock: any) => 
-        stock.change_percent && parseFloat(stock.change_percent) > 0
-      );
-      const topLosers = priceShockers.filter((stock: any) => 
-        stock.change_percent && parseFloat(stock.change_percent) < 0
-      );
-      
+      const rawPriceShockers = await apiHelpers.getPriceShockers();
+      const priceShockers: PriceShockerData[] = Array.isArray(rawPriceShockers) ? rawPriceShockers : [];
+      const topGainers = priceShockers.filter((stock) => {
+        if (stock.change_percent === undefined) return false;
+        return parseFloat(stock.change_percent.toString()) > 0;
+      });
+      const topLosers = priceShockers.filter((stock) => {
+        if (stock.change_percent === undefined) return false;
+        return parseFloat(stock.change_percent.toString()) < 0;
+      });
+
+      const topGainersData = topGainers.map(toStockData);
+      const topLosersData = topLosers.map(toStockData);
+
       // Use trending data instead of indices since getMarketIndices is not available
-      const marketOverview = await apiHelpers.getMarketOverview();
-      
-      const data = {
-        topGainers: topGainers as StockData[],
-        topLosers: topLosers as StockData[],
-        indices: marketOverview.trending || []
+      const rawMarketOverview = await apiHelpers.getMarketOverview() as { trending?: PriceShockerData[] };
+      const indexData = Array.isArray(rawMarketOverview.trending)
+        ? rawMarketOverview.trending.map(toStockData)
+        : [];
+
+      const data: MarketDataState = {
+        topGainers: topGainersData,
+        topLosers: topLosersData,
+        indices: indexData
       };
-      
+
       // Update state and cache
       setMarketData(data);
       cache.current[cacheKey] = {
@@ -253,7 +290,7 @@ export function useMarketData() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [toStockData]);
   
   // Fetch data on initial render
   useEffect(() => {

@@ -16,10 +16,7 @@ import {
   MessageCircle,
   Newspaper,
   Star,
-  BarChart3,
   Zap,
-  Globe,
-  Building
 } from 'lucide-react';
 
 interface SentimentData {
@@ -53,7 +50,7 @@ interface SentimentAnalysisProps {
   companyName: string;
 }
 
-const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol, companyName }) => {
+const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
   const [sentimentData, setSentimentData] = useState<SentimentData | null>(null);
   const [sources, setSources] = useState<SentimentSource[]>([]);
   const [marketMood, setMarketMood] = useState<MarketMoodIndicator[]>([]);

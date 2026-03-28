@@ -5,8 +5,9 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import LoadingSkeleton from '../../components/ui/LoadingSkeleton';
+import { logger } from '@/lib/logger';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5002/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
 
 interface Stock {
   id: number;

@@ -261,7 +261,9 @@ export async function getHealthStatus() {
 // API helpers object for backward compatibility  
 export const apiHelpers = {
   getStockDetails,
+  searchStocks,
   getHistoricalData,
+  getHistoricalPrices,
   getFinancialStatements,
   getCompanyProfile,
   getStockTargetPrice,

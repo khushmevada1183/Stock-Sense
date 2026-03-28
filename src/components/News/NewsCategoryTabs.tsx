@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Newspaper, TrendingUp, Briefcase, BarChart3, Globe, AlertCircle } from 'lucide-react';
 import { gsap } from 'gsap';
@@ -48,9 +48,9 @@ const NEWS_CATEGORIES = [
 export default function NewsCategoryTabs() {
   const router = useRouter();
   const pathname = usePathname();
-  const [activeCategory, setActiveCategory] = useState('all');
   const tabsRef = useRef<HTMLDivElement>(null);
   const indicatorRef = useRef<HTMLDivElement>(null);
+  const activeCategory = NEWS_CATEGORIES.find((cat) => (pathname || '') === cat.path)?.id || 'all';
 
   // Initialize animations
   useEffect(() => {
@@ -70,41 +70,36 @@ export default function NewsCategoryTabs() {
     }
   }, []);
 
-  // Determine active category based on path
-  useEffect(() => {
-    const path = pathname || '';
-    const category = NEWS_CATEGORIES.find(cat => path === cat.path)?.id || 'all';
-    setActiveCategory(category);
-    
-    // Animate the indicator when category changes
-    animateIndicator(category);
-  }, [pathname]);
-
   // Function to animate the indicator
-  const animateIndicator = (categoryId: string) => {
+  function animateIndicator(categoryId: string) {
     if (!indicatorRef.current || !tabsRef.current) return;
-    
+
     const activeTab = tabsRef.current.querySelector(`[data-category="${categoryId}"]`);
     if (!activeTab) return;
-    
+
     const tabRect = activeTab.getBoundingClientRect();
     const containerRect = tabsRef.current.getBoundingClientRect();
-    
+
     // Calculate position relative to container
     const left = tabRect.left - containerRect.left;
     const width = tabRect.width;
-    
+
     gsap.to(indicatorRef.current, {
       left,
       width,
       duration: 0.3,
       ease: "power2.inOut"
     });
-  };
+  }
+
+  // Determine active category based on path
+  useEffect(() => {
+    // Animate the indicator when category changes
+    animateIndicator(activeCategory);
+  }, [activeCategory]);
 
   // Handle category change
-  const handleCategoryChange = (path: string, categoryId: string) => {
-    setActiveCategory(categoryId);
+  const handleCategoryChange = (path: string) => {
     router.push(path);
   };
 
@@ -122,7 +117,7 @@ export default function NewsCategoryTabs() {
             <button
               key={category.id}
               data-category={category.id}
-              onClick={() => handleCategoryChange(category.path, category.id)}
+              onClick={() => handleCategoryChange(category.path)}
               className={`category-tab flex items-center px-3 py-2 md:px-4 md:py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive 
                   ? 'text-white bg-blue-600 shadow-sm shadow-blue-900/30' 

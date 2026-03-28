@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '../../components/ui/button';
-import { Moon, Sun, Menu, X, Bug, Search } from 'lucide-react';
+import { Moon, Sun, Menu, X, Bug } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import SearchBar from './SearchBar';
 
@@ -32,29 +32,14 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, className = '' }) => 
   );
 };
 
-// Custom icon component to fix hydration issues
-const HydrationSafeIcon = ({ icon: IconComponent, className }: { icon: React.ElementType, className?: string }) => {
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  return (
-    <span suppressHydrationWarning>
-      {mounted ? <IconComponent className={className} /> : null}
-    </span>
-  );
-};
+const subscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 const Navigation: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -81,7 +66,7 @@ const Navigation: React.FC = () => {
             {/* Search Bar - Desktop */}
             <div className="hidden md:flex flex-1 mx-6">
               <div className="w-full max-w-xl relative">
-                <SearchBar compact={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
+                <SearchBar compact={true} showDetailsInline={false} onSearchComplete={() => {}} />
               </div>
             </div>
 
@@ -145,7 +130,7 @@ const Navigation: React.FC = () => {
           <div className="md:hidden bg-gray-900/90 backdrop-blur-lg dark:bg-gray-950 border-b border border-gray-800/30 shadow-lg">
             {/* Mobile Search Bar */}
             <div className="px-2 pt-3 pb-2">
-              <SearchBar compact={true} showDetailsInline={false} onSearchComplete={(symbol) => {}} />
+              <SearchBar compact={true} showDetailsInline={false} onSearchComplete={() => {}} />
             </div>
             
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">

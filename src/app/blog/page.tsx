@@ -6,7 +6,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, AreaChart, Area, LineChart, Line
+  PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { BookOpen, Bookmark, TrendingUp, Clock, ChevronRight, Search, Filter, Calendar, Tag, User } from 'lucide-react';
 import PageBackground from '@/components/layout/PageBackground';

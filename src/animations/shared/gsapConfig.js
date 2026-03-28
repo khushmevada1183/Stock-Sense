@@ -182,7 +182,7 @@ export const createMagneticEffect = (element, options = {}) => {
   };
 };
 
-export default {
+const gsapConfig = {
   gsap,
   ScrollTrigger,
   TextPlugin,
@@ -195,3 +195,5 @@ export default {
   initGSAP,
   createMagneticEffect
 };
+
+export default gsapConfig;

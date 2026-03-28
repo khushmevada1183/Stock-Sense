@@ -218,7 +218,7 @@ export default function PortfolioPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700/50">
-                {holdings.map((stock, index) => (
+                {holdings.map((stock) => (
                   <tr key={stock.symbol} className="hover:bg-gray-800/30 transition-colors duration-200">
                     <td className="px-6 py-4">
                       <div className="space-y-1">

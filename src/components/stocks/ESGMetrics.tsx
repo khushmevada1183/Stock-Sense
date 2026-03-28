@@ -5,7 +5,6 @@ import { gsap } from 'gsap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Leaf, 
-  Users, 
   Shield, 
   TrendingUp, 
   TrendingDown, 
@@ -397,7 +396,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Globe className="h-5 w-5 text-cyan-400" />
-            Industry ESG Comparison
+            {industry} ESG Comparison
           </CardTitle>
         </CardHeader>
         <CardContent>

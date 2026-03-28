@@ -9,6 +9,14 @@ const FeaturedNews = dynamic(() => import('@/components/News/FeaturedNews'), { s
 const NewsCategoryTabs = dynamic(() => import('@/components/News/NewsCategoryTabs'), { ssr: false });
 const TrendingTopics = dynamic(() => import('@/components/News/TrendingTopics'), { ssr: false });
 
+const topCompaniesData = [
+  { company: 'Reliance Industries', change: '+2.34%', positive: true },
+  { company: 'HDFC Bank', change: '+1.28%', positive: true },
+  { company: 'TCS', change: '-0.92%', positive: false },
+  { company: 'Infosys', change: '-1.14%', positive: false },
+  { company: 'HUL', change: '+0.67%', positive: true }
+];
+
 export default function CompaniesNewsPageClient() {
   return (
     <div className="container mx-auto px-4 py-6">
@@ -157,11 +165,11 @@ export default function CompaniesNewsPageClient() {
           <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
             <h3 className="text-lg font-bold mb-4">Top Companies</h3>
             <div className="space-y-3">
-              {['Reliance Industries', 'HDFC Bank', 'TCS', 'Infosys', 'HUL'].map((company) => (
-                <div key={company} className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">{company}</span>
-                  <span className={`text-xs ${Math.random() > 0.5 ? 'text-green-400' : 'text-red-400'}`}>
-                    {Math.random() > 0.5 ? '+' : '-'}{(Math.random() * 5 + 1).toFixed(2)}%
+              {topCompaniesData.map((item) => (
+                <div key={item.company} className="flex justify-between items-center">
+                  <span className="text-sm text-gray-300">{item.company}</span>
+                  <span className={`text-xs ${item.positive ? 'text-green-400' : 'text-red-400'}`}>
+                    {item.change}
                   </span>
                 </div>
               ))}

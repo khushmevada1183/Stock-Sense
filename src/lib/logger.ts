@@ -9,12 +9,24 @@ interface LogEntry {
   timestamp: string;
   level: LogLevel;
   message: string;
-  data?: any;
+  data?: unknown;
 }
 
 class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development';
   private logs: LogEntry[] = [];
+
+  private toLogRecord(value: unknown): Record<string, unknown> {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return value as Record<string, unknown>;
+    }
+
+    if (value === undefined) {
+      return {};
+    }
+
+    return { data: value };
+  }
 
   private formatTimestamp(): string {
     return new Date().toISOString();
@@ -24,32 +36,36 @@ class Logger {
     return `[${this.formatTimestamp()}] [${level.toUpperCase()}] ${message}`;
   }
 
-  debug(message: string, data?: any): void {
+  debug(message: string, data?: unknown): void {
     if (this.isDevelopment) {
       console.debug(this.formatMessage('debug', message), data);
     }
     this.store('debug', message, data);
   }
 
-  info(message: string, data?: any): void {
+  info(message: string, data?: unknown): void {
     console.info(this.formatMessage('info', message), data);
     this.store('info', message, data);
   }
 
-  warn(message: string, data?: any): void {
+  warn(message: string, data?: unknown): void {
     if (this.isDevelopment) {
       console.warn(this.formatMessage('warn', message), data);
     }
     this.store('warn', message, data);
   }
 
-  error(message: string, error?: any, data?: any): void {
+  error(message: string, error?: unknown, data?: unknown): void {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    console.error(this.formatMessage('error', message), { error: errorMessage, ...data });
-    this.store('error', message, { error: errorMessage, ...data });
+    const payload = {
+      error: errorMessage,
+      ...this.toLogRecord(data)
+    };
+    console.error(this.formatMessage('error', message), payload);
+    this.store('error', message, payload);
   }
 
-  private store(level: LogLevel, message: string, data?: any): void {
+  private store(level: LogLevel, message: string, data?: unknown): void {
     const entry: LogEntry = {
       timestamp: this.formatTimestamp(),
       level,

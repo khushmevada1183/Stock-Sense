@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NewsItem } from '@/types/news';
 import { Calendar, ExternalLink, Tag, ChevronRight, ChevronLeft } from 'lucide-react';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { gsap } from 'gsap';
 
 interface FeaturedNewsItem extends NewsItem {
@@ -12,8 +11,8 @@ interface FeaturedNewsItem extends NewsItem {
   author?: string;
   summary?: string;
   description?: string;
-  imageUrl?: string;
-  image_url?: string;
+  imageUrl?: string | null;
+  image_url?: string | null;
   pub_date?: string;
 }
 
@@ -71,7 +70,7 @@ export default function FeaturedNews({ newsData, loading, error }: FeaturedNewsP
     try {
       const date = new Date(dateString);
       return format(date, 'MMM dd, yyyy');
-    } catch (error) {
+    } catch {
       return 'Unknown date';
     }
   };

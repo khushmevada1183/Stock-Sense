@@ -32,7 +32,7 @@ const AnimationContext = createContext({
 
 export const AnimationProvider = ({ children }) => {
   const [isAnimationEnabled, setAnimationEnabled] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const isInitializedRef = React.useRef(false);
   const pathname = usePathname();
 
   // Clears stale inline animation styles that can leave elements dim/invisible
@@ -63,33 +63,31 @@ export const AnimationProvider = ({ children }) => {
 
   // Initialize GSAP once on client
   useEffect(() => {
-    if (typeof window !== 'undefined' && !isInitialized) {
-      // Register necessary plugins
-      gsap.registerPlugin(ScrollTrigger);
-      
-      // Initialize GSAP with default settings
-      initGSAP();
-      
-      // Set initialized state
-      setIsInitialized(true);
-      
-      // Listen for resize events to refresh ScrollTrigger
-      const handleResize = () => {
-        ScrollTrigger.refresh();
-      };
-      
-      window.addEventListener('resize', handleResize);
-      
-      // Cleanup on unmount
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
-    }
-  }, [isInitialized]);
+    if (typeof window === 'undefined' || isInitializedRef.current) return;
+
+    // Register necessary plugins
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Initialize GSAP with default settings
+    initGSAP();
+    isInitializedRef.current = true;
+
+    // Listen for resize events to refresh ScrollTrigger
+    const handleResize = () => {
+      ScrollTrigger.refresh();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   // Route-level animation hard reset to prevent stale/partial render states.
   useEffect(() => {
-    if (typeof window === 'undefined' || !isInitialized) return;
+    if (typeof window === 'undefined' || !isInitializedRef.current) return;
 
     const rafId = window.requestAnimationFrame(() => {
       ScrollTrigger.getAll().forEach((trigger) => trigger.kill(true));
@@ -101,7 +99,7 @@ export const AnimationProvider = ({ children }) => {
     return () => {
       window.cancelAnimationFrame(rafId);
     };
-  }, [pathname, isInitialized]);
+  }, [pathname]);
 
   // Function to manually refresh ScrollTrigger
   const refreshScrollTrigger = () => {

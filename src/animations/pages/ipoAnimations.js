@@ -1,7 +1,6 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
-import { createIPOItemHoverEffect, createCardHoverEffect, createButtonHoverEffect } from '../shared/AnimationUtils';
 
 // Ensure plugins are registered
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
@@ -329,7 +328,6 @@ export const animateIpoStats = (statsContainerRef) => {
   // Count up animation for the numbers
   if (statNumbers.length) {
     statNumbers.forEach(number => {
-      const targetValue = parseInt(number.textContent) || 0;
       gsap.from(number, {
         textContent: 0,
         duration: 1.5,
@@ -529,7 +527,7 @@ export const initIpoPageAnimations = (refs) => {
   return masterTimeline;
 };
 
-export default {
+const ipoAnimations = {
   animateIpoHeader,
   animatePromoBox,
   createMagneticButton,
@@ -539,3 +537,5 @@ export default {
   animateNewsSection,
   initIpoPageAnimations
 }; 
+
+export default ipoAnimations;

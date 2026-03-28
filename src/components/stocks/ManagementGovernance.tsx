@@ -332,6 +332,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
             <Users className="w-5 h-5 text-neon-400" />
             Executive Leadership Team
           </CardTitle>
+          <div className="text-sm text-gray-400">{companyName}</div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

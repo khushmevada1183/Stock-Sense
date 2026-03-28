@@ -22,6 +22,7 @@ export default function MarketOverview() {
     const fetchMarketData = async () => {
       try {
         const response = await stockApi.getBSEMostActive();
+        setError(null);
 
         // Try to extract real index data if the API provides it
         // Shape attempt: { success, data: { indices: { nifty, sensex, bank_nifty, it_nifty } } }
@@ -60,7 +61,8 @@ export default function MarketOverview() {
           setIndices(fallbackIndices);
         }
       } catch (error) {
-        console.error('Failed to fetch market indices:', error);
+        logger.error('Failed to fetch market indices:', error);
+        setError('Unable to load live market data. Showing fallback values.');
         setIndices(fallbackIndices);
       } finally {
         setLoading(false);

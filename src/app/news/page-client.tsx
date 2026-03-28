@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -12,6 +11,21 @@ const FeaturedNews = dynamic(() => import('@/components/News/FeaturedNews'), { s
 const SectorNews = dynamic(() => import('@/components/News/SectorNews'), { ssr: false });
 const TrendingTopics = dynamic(() => import('@/components/News/TrendingTopics'), { ssr: false });
 const NewsCategoryTabs = dynamic(() => import('@/components/News/NewsCategoryTabs'), { ssr: false });
+
+interface NewsArticle {
+  id: string | number;
+  title: string;
+  summary: string;
+  category: string;
+  date: string;
+  source: string;
+  url: string;
+  imageUrl: string | null;
+}
+
+const asNewsArray = (value: unknown): NewsArticle[] => {
+  return Array.isArray(value) ? (value as NewsArticle[]) : [];
+};
 
 const FALLBACK_NEWS = [
   { id: 1, title: "Sensex surges 600 pts on strong global cues; Nifty above 22,600", summary: "Indian markets opened on a strong note tracking positive global sentiment after US Fed signals.", category: "markets", date: new Date().toISOString(), source: "Economic Times", url: "#", imageUrl: null },
@@ -27,7 +41,7 @@ const FALLBACK_NEWS = [
 ];
 
 export default function NewsPageClient() {
-  const [newsData, setNewsData] = useState<any[]>([]);
+  const [newsData, setNewsData] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -37,13 +51,14 @@ export default function NewsPageClient() {
         setLoading(true);
         const response = await stockApi.getLatestNews();
         // API shape: { success, data: [...] } or { success, data: { news: [...] } }
-        let articles: any[] = [];
+        let articles: NewsArticle[] = [];
         if (response?.success) {
-          articles = Array.isArray(response.data)
-            ? response.data
-            : Array.isArray(response.data?.news)
-              ? response.data.news
-              : [];
+          const responseData = response.data as unknown;
+          articles = asNewsArray(responseData);
+
+          if (!articles.length && responseData && typeof responseData === 'object') {
+            articles = asNewsArray((responseData as { news?: unknown }).news);
+          }
         }
         setNewsData(articles.length > 0 ? articles : FALLBACK_NEWS);
         setError('');

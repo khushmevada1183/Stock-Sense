@@ -2,9 +2,8 @@
 import { logger } from '@/lib/logger';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Calendar, TrendingUp, DollarSign, Percent } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, TrendingUp, DollarSign } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { IpoItem } from '@/types/ipo';
 import { gsap } from 'gsap';
@@ -73,12 +72,12 @@ export default function IpoSection() {
           let upcomingIpos: ExtendedIpoItem[] = [];
 
           if (Array.isArray(response.data)) {
-            upcomingIpos = response.data.slice(0, 5).map((ipo: any) => ({
+            upcomingIpos = response.data.slice(0, 5).map((ipo: ExtendedIpoItem) => ({
               ...ipo,
               hasMinimalData: !ipo.price_range || !ipo.issue_size
             }));
           } else if (response.data.upcoming && Array.isArray(response.data.upcoming)) {
-            upcomingIpos = response.data.upcoming.slice(0, 5).map((ipo: any) => ({
+            upcomingIpos = response.data.upcoming.slice(0, 5).map((ipo: ExtendedIpoItem) => ({
               ...ipo,
               hasMinimalData: !ipo.price_range || !ipo.issue_size
             }));

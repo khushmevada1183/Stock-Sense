@@ -11,13 +11,8 @@ import {
   ArrowUp,
   ArrowDown,
   Activity,
-  PieChart,
   BarChart3,
-  Globe,
-  Calendar,
   Target,
-  Percent,
-  DollarSign
 } from 'lucide-react';
 
 interface InstitutionalHolding {

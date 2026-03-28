@@ -40,7 +40,7 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
       const parts = dateString.split(',');
       if (parts.length > 1) return parts.slice(1).join(',').trim();
       return dateString;
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };

@@ -5,6 +5,7 @@ import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import StockLogo from './StockLogo';
 import { useDebounce } from '../../lib/hooks/useDebounce';
+import { logger } from '@/lib/logger';
 
 // Unified search result type
 interface UnifiedSearchResult {
@@ -16,16 +17,26 @@ interface UnifiedSearchResult {
   sector?: string;
 }
 
+interface SearchApiResult {
+  symbol?: string;
+  ticker_id?: string;
+  name?: string;
+  company_name?: string;
+  current_price?: number;
+  price?: number;
+  percent_change?: number;
+  sector?: string;
+}
+
 interface SearchBarProps {
   compact?: boolean;
   showDetailsInline?: boolean;
-  onSearchComplete?: (symbol: string, results?: any[]) => void;
+  onSearchComplete?: (symbol: string, results?: UnifiedSearchResult[]) => void;
   isMobile?: boolean;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ 
   compact = false,
-  showDetailsInline = false, // Default to false as we only need navigation behavior
   onSearchComplete,
   isMobile = false
 }) => {
@@ -72,13 +83,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
         // Search using API endpoints
         const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
         const data = await response.json();
-        const stockResults = data.results || data || [];
+        const rawResults = data.results || data || [];
+        const stockResults: SearchApiResult[] = Array.isArray(rawResults) ? rawResults : [];
         
         if (stockResults && stockResults.length > 0) {
           // Map results to our unified format
-          const mappedResults = stockResults.map((stock: any) => ({
-            symbol: stock.symbol,
-            companyName: stock.name || stock.company_name || stock.symbol,
+          const mappedResults = stockResults.map((stock) => ({
+            symbol: stock.symbol || stock.ticker_id || '',
+            companyName: stock.name || stock.company_name || stock.symbol || stock.ticker_id || 'Unknown Company',
             latestPrice: stock.current_price || stock.price || 0,
             changePercent: stock.percent_change,
             sector: stock.sector
@@ -86,20 +98,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
           
           setResults(mappedResults);
           setSearchMode('indian');
-          
-          // Pass results to parent component if callback is provided
-          if (onSearchComplete && mappedResults.length > 0) {
-            onSearchComplete(debouncedQuery, stockResults);
-          }
         } else {
           // If no results, try with trending data as fallback
           try {
             const trendingResponse = await fetch('/api/trending');
             const trendingData = await trendingResponse.json();
+            const topGainers: SearchApiResult[] = trendingData.data?.trending_stocks?.top_gainers || [];
+            const topLosers: SearchApiResult[] = trendingData.data?.trending_stocks?.top_losers || [];
             const trendingStocks = [
-              ...(trendingData.data?.trending_stocks?.top_gainers || []),
-              ...(trendingData.data?.trending_stocks?.top_losers || [])
-            ].filter((stock: any) => {
+              ...topGainers,
+              ...topLosers
+            ].filter((stock) => {
               const searchLower = debouncedQuery.toLowerCase();
               const nameLower = (stock.company_name || stock.name || '').toLowerCase();
               const symbolLower = (stock.ticker_id || stock.symbol || '').toLowerCase();
@@ -107,9 +116,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
             });
             
             if (trendingStocks.length > 0) {
-              const mappedTrending = trendingStocks.map((stock: any) => ({
-                symbol: stock.symbol || stock.ticker_id,
-                companyName: stock.name || stock.company_name || stock.symbol,
+              const mappedTrending = trendingStocks.map((stock) => ({
+                symbol: stock.symbol || stock.ticker_id || '',
+                companyName: stock.name || stock.company_name || stock.symbol || stock.ticker_id || 'Unknown Company',
                 latestPrice: stock.current_price || stock.price || 0,
                 changePercent: stock.percent_change,
                 sector: stock.sector
@@ -117,16 +126,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
               
               setResults(mappedTrending);
               setSearchMode('global');
-              
-              // Pass results to parent component if callback is provided
-              if (onSearchComplete && trendingStocks.length > 0) {
-                onSearchComplete(debouncedQuery, trendingStocks);
-              }
             } else {
               setResults([]);
               setError('No results found');
             }
-          } catch (err) {
+          } catch {
             setResults([]);
             setError('No results found');
           }

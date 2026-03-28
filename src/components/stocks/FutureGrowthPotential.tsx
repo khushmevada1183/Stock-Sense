@@ -10,10 +10,7 @@ import {
   Globe,
   Lightbulb,
   BarChart3,
-  PieChart,
   Activity,
-  ArrowUp,
-  ArrowDown,
   Star,
   Rocket,
   Brain
@@ -77,9 +74,7 @@ interface FutureGrowthPotentialProps {
 
 const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({ 
   symbol, 
-  companyName, 
-  industry, 
-  currentRevenue = 0 
+  companyName
 }) => {
   const [growthDrivers, setGrowthDrivers] = useState<GrowthDriver[]>([]);
   const [marketOpportunities, setMarketOpportunities] = useState<MarketOpportunity[]>([]);

@@ -7,7 +7,12 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+type StatementTab = 'cashFlow' | 'balanceSheet' | 'incomeStatement';
+
+const isStatementTab = (value: string): value is StatementTab =>
+  value === 'cashFlow' || value === 'balanceSheet' || value === 'incomeStatement';
 
 interface FinancialItem {
   displayName: string;
@@ -40,7 +45,7 @@ interface FinancialStatementsSectionProps {
 }
 
 const FinancialStatementsSection = ({ financials }: FinancialStatementsSectionProps) => {
-  const [activeTab, setActiveTab] = useState<'cashFlow' | 'balanceSheet' | 'incomeStatement'>('incomeStatement');
+  const [activeTab, setActiveTab] = useState<StatementTab>('incomeStatement');
   const [selectedYear, setSelectedYear] = useState<string>(financials[0]?.fiscalYear || '');
   const [searchTerm, setSearchTerm] = useState<string>('');
   
@@ -140,7 +145,14 @@ const FinancialStatementsSection = ({ financials }: FinancialStatementsSectionPr
             </div>
             
             {/* Statement Type Tabs */}
-            <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)}>
+            <Tabs
+              value={activeTab}
+              onValueChange={(value) => {
+                if (isStatementTab(value)) {
+                  setActiveTab(value);
+                }
+              }}
+            >
               <TabsList className="mb-4">
                 <TabsTrigger value="incomeStatement">Income Statement</TabsTrigger>
                 <TabsTrigger value="balanceSheet">Balance Sheet</TabsTrigger>

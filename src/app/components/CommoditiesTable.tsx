@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import * as stockApi from '@/api/api';
+import { logger } from '@/lib/logger';
 import LoadingSpinner from './LoadingSpinner';
 
 interface Commodity {

@@ -3,11 +3,20 @@
 import { useState, useEffect, useRef } from 'react';
 import * as stockApi from '@/api/api';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { logger } from '@/lib/logger';
 
 interface SectorData {
   name: string;
   changePercent: number;
   marketCap?: string;
+}
+
+interface SectorPerformanceApiItem {
+  sector_name?: string;
+  name?: string;
+  change_percent?: string | number;
+  percent_change?: string | number;
+  market_cap?: string;
 }
 
 export default function SectorPerformance() {
@@ -22,11 +31,11 @@ export default function SectorPerformance() {
         const response = await stockApi.getNSEMostActive();
         
         if (response && response.success && response.data && response.data.sector_performance) {
-          const sectorData: SectorData[] = response.data.sector_performance
+          const sectorData: SectorData[] = (response.data.sector_performance as SectorPerformanceApiItem[])
             .slice(0, 8)
-            .map((sector: any) => ({
-              name: sector.sector_name || sector.name,
-              changePercent: parseFloat(sector.change_percent || sector.percent_change || '0'),
+            .map((sector) => ({
+              name: sector.sector_name || sector.name || 'Unknown Sector',
+              changePercent: parseFloat(String(sector.change_percent ?? sector.percent_change ?? '0')),
               marketCap: sector.market_cap || undefined
             }));
           

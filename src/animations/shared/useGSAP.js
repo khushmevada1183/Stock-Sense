@@ -278,7 +278,7 @@ export const useTextSplit = (options = {}, dependencies = []) => {
   return elementRef;
 };
 
-export default {
+const useGSAP = {
   useGSAPEffect,
   useScrollAnimation,
   useStaggerAnimation,
@@ -286,3 +286,5 @@ export default {
   useParallax,
   useTextSplit
 }; 
+
+export default useGSAP;

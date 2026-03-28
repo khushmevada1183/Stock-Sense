@@ -6,14 +6,14 @@ import { ExternalLink } from 'lucide-react';
 
 // Define the NewsItem interface locally to avoid import issues
 interface NewsItem {
-  id?: string;
+  id?: string | number;
   title: string;
   source: string;
   date?: string;
   pub_date?: string;
   url: string;
-  imageUrl?: string;
-  image_url?: string;
+  imageUrl?: string | null;
+  image_url?: string | null;
   description?: string;
   summary?: string;
   publishedAt?: string;
@@ -36,7 +36,7 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
         month: 'short',
         year: 'numeric'
       });
-    } catch (error) {
+    } catch {
       return 'Invalid date';
     }
   };
@@ -86,7 +86,7 @@ const MarketNews = ({ newsData, loading, error }: MarketNewsProps) => {
                   {(item.image_url || item.imageUrl) && (
                     <div className="mt-2 mb-3">
                       <img 
-                        src={item.image_url || item.imageUrl} 
+                        src={item.image_url || item.imageUrl || undefined} 
                         alt={item.title}
                         className="w-full h-32 object-cover rounded-md"
                       />

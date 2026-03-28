@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { TrendingUp, ChevronRight, Hash } from 'lucide-react';
+import { ChevronRight, Hash } from 'lucide-react';
 import { gsap } from 'gsap';
+import { logger } from '@/lib/logger';
 
 // Mock trending topics data
 const MOCK_TRENDING_TOPICS = [
