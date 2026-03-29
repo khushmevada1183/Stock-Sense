@@ -204,7 +204,7 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
 
       <CardContent className="space-y-4">
         {/* Overall Risk Score */}
-        <div className="p-4 glass-card rounded-xl">
+        <div className="p-4 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950">
           <div className="flex items-center justify-between mb-2">
             <span className="text-gray-300 font-medium">Overall Risk</span>
             <span className={`px-3 py-1 rounded-full text-sm font-medium ${overallRiskInfo.color}`}>

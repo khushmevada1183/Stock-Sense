@@ -5,26 +5,22 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98]",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-neon-sm",
-        destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline:
-          "border border-gray-700/50 bg-gray-900/50 backdrop-blur-lg hover:border-neon-400/30 hover:bg-gray-800/60 hover:shadow-neon-sm text-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent/10 hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        glow: "bg-neon-400 text-black font-semibold hover:shadow-neon-lg hover:scale-[1.03]",
-        gradient: "bg-gradient-to-r from-neon-400 to-cyan-400 text-black font-semibold hover:shadow-neon-lg hover:scale-[1.03]",
+        default: "bg-slate-900 text-white hover:bg-slate-800",
+        destructive: "bg-red-600 text-white hover:bg-red-700",
+        outline: "border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-white dark:hover:bg-slate-900",
+        secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700",
+        ghost: "text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-800",
+        link: "text-slate-900 underline-offset-4 hover:underline dark:text-white",
+        success: "bg-green-600 text-white hover:bg-green-700",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-lg px-3",
-        lg: "h-12 rounded-xl px-8 text-base",
+        sm: "h-9 rounded px-3 text-xs",
+        lg: "h-12 rounded-lg px-8 text-base",
         icon: "h-10 w-10",
       },
     },

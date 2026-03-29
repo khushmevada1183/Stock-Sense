@@ -332,43 +332,43 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
             <Users className="w-5 h-5 text-neon-400" />
             Executive Leadership Team
           </CardTitle>
-          <div className="text-sm text-gray-400">{companyName}</div>
+          <div className="text-sm text-slate-600 dark:text-slate-400">{companyName}</div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {executives.map((executive, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-950">
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <h4 className="text-white font-medium">{executive.name}</h4>
-                    <p className="text-neon-400 text-sm">{executive.position}</p>
+                    <h4 className="text-slate-900 dark:text-white font-medium">{executive.name}</h4>
+                    <p className="text-blue-600 dark:text-blue-400 text-sm">{executive.position}</p>
                   </div>
                   <div className="text-right">
-                    <div className="text-white text-sm">{executive.tenure}y</div>
-                    <div className="text-gray-400 text-xs">Tenure</div>
+                    <div className="text-slate-900 dark:text-white text-sm">{executive.tenure}y</div>
+                    <div className="text-slate-600 dark:text-slate-400 text-xs">Tenure</div>
                   </div>
                 </div>
                 
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     <Award className="w-4 h-4 text-yellow-400" />
-                    <span className="text-gray-300">{executive.education}</span>
+                    <span className="text-slate-700 dark:text-slate-300">{executive.education}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Building className="w-4 h-4 text-cyan-400" />
-                    <span className="text-gray-300">{executive.experience} years experience</span>
+                    <span className="text-slate-700 dark:text-slate-300">{executive.experience} years experience</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <DollarSign className="w-4 h-4 text-green-400" />
-                    <span className="text-gray-300">{executive.shareholding}% shareholding</span>
+                    <span className="text-slate-700 dark:text-slate-300">{executive.shareholding}% shareholding</span>
                   </div>
                 </div>
                 
                 <div className="mt-3">
-                  <div className="text-gray-400 text-xs mb-1">Previous Roles:</div>
+                  <div className="text-slate-600 dark:text-slate-400 text-xs mb-1">Previous Roles:</div>
                   <div className="space-y-1">
                     {executive.previousRoles.slice(0, 2).map((role, roleIndex) => (
-                      <div key={roleIndex} className="text-xs text-gray-500">• {role}</div>
+                      <div key={roleIndex} className="text-xs text-slate-600 dark:text-slate-400">• {role}</div>
                     ))}
                   </div>
                 </div>

@@ -58,9 +58,9 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
       return null; 
     }
     return (
-      <div className="flex justify-between py-3 border-b border-gray-800/30 last:border-b-0">
-        <span className="text-gray-500 text-sm">{label}</span>
-        <span className="text-gray-200 font-medium text-sm">{typeof value === 'number' ? value.toFixed(2) : value}{unit}</span>
+      <div className="flex justify-between py-3 border-b border-slate-200 dark:border-slate-700 last:border-b-0">
+        <span className="text-slate-600 dark:text-slate-400 text-sm">{label}</span>
+        <span className="text-slate-900 dark:text-slate-100 font-medium text-sm">{typeof value === 'number' ? value.toFixed(2) : value}{unit}</span>
       </div>
     );
   };
@@ -69,13 +69,13 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
     <div className="space-y-8">
       {/* Financial Ratios Section */}
       {!loadingRatios && financialRatios && Object.keys(financialRatios).length > 0 && (
-        <Card glass className="text-white">
+        <Card>
           <CardHeader>
             <CardTitle className="text-xl font-semibold flex items-center">
-              <BarChart4 className="w-5 h-5 mr-2.5 text-neon-400" />
+              <BarChart4 className="w-5 h-5 mr-2.5 text-blue-600 dark:text-blue-400" />
               Key Financial Ratios
             </CardTitle>
-            <CardDescription className="text-gray-500">
+            <CardDescription>
               Important financial metrics for {companyName}.
             </CardDescription>
           </CardHeader>

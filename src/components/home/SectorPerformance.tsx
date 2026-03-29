@@ -72,9 +72,9 @@ export default function SectorPerformance() {
       <div ref={sectionRef}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="glass-card rounded-xl p-4">
-              <div className="h-4 bg-gray-800/60 rounded-lg w-3/4 mb-3 shimmer" />
-              <div className="h-6 bg-gray-800/60 rounded-lg w-1/2 shimmer" />
+            <div key={i} className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-4 animate-pulse">
+              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4 mb-3" />
+              <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/2" />
             </div>
           ))}
         </div>
@@ -84,7 +84,7 @@ export default function SectorPerformance() {
 
   if (error) {
     return (
-      <div className="glass-card rounded-xl p-4 border-red-500/20 text-red-400">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400">
         {error}
       </div>
     );
@@ -102,30 +102,34 @@ export default function SectorPerformance() {
         return (
           <div 
             key={sector.name || index}
-            className="glass-card card-shine rounded-xl p-4 group relative overflow-hidden"
+            className="relative overflow-hidden"
           >
-            {/* Performance bar (background accent) */}
-            <div 
-              className={`absolute bottom-0 left-0 h-[3px] rounded-full transition-all duration-700 ${
+            <div className="w-full min-h-[122px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-4 hover:shadow-md transition-shadow">
+              <h3 className="font-medium text-slate-700 dark:text-slate-300 mb-2 text-sm leading-tight">
+                {sector.name}
+              </h3>
+              <div className={`flex items-center font-bold text-lg ${
                 positive 
-                  ? 'bg-gradient-to-r from-green-500/60 to-green-400/30' 
-                  : 'bg-gradient-to-r from-red-500/60 to-red-400/30'
-              }`}
-              style={{ width: `${barWidth}%` }}
-            />
-            
-            <h3 className="font-medium text-gray-400 mb-2 text-sm leading-tight group-hover:text-gray-300 transition-colors duration-300">
-              {sector.name}
-            </h3>
-            <div className={`flex items-center font-bold text-lg ${
-              positive ? 'text-green-400' : 'text-red-400'
-            }`}>
-              {positive ? (
-                <ArrowUp className="w-4 h-4 mr-1 animate-subtle-bounce" />
-              ) : (
-                <ArrowDown className="w-4 h-4 mr-1" />
-              )}
-              {Math.abs(sector.changePercent).toFixed(2)}%
+                  ? 'text-green-600 dark:text-green-400' 
+                  : 'text-red-600 dark:text-red-400'
+              }`}>
+                {positive ? (
+                  <ArrowUp className="w-4 h-4 mr-1" />
+                ) : (
+                  <ArrowDown className="w-4 h-4 mr-1" />
+                )}
+                {Math.abs(sector.changePercent).toFixed(2)}%
+              </div>
+
+              {/* Performance bar */}
+              <div
+                className={`mt-3 h-1 rounded-full transition-all duration-700 ${
+                  positive 
+                    ? 'bg-green-200 dark:bg-green-900/30' 
+                    : 'bg-red-200 dark:bg-red-900/30'
+                }`}
+                style={{ width: `${barWidth}%` }}
+              />
             </div>
           </div>
         );

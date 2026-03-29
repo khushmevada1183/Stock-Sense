@@ -1,5 +1,5 @@
 import './globals.css';
-import { Inter, Roboto_Mono } from 'next/font/google';
+import { Inter, Roboto_Mono, Geist } from 'next/font/google';
 import { ThemeProvider } from '../components/ui/ThemeProvider';
 import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
@@ -11,6 +11,9 @@ import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
 import ClientScrollProgressIndicator from '../components/layout/ClientScrollProgressIndicator';
 import KeepAlive from '../components/KeepAlive';
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({ subsets: ['latin'], display: 'swap' });
 const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono', display: 'swap' });
@@ -26,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
       <body className={`${inter.className} ${robotoMono.variable} min-h-screen flex flex-col antialiased relative`} suppressHydrationWarning>
 
         

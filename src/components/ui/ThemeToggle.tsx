@@ -24,8 +24,8 @@ const ThemeToggle = () => {
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
       className={`p-2 rounded-full transition-all duration-300 ${
         isDark
-          ? 'bg-gray-900/90 backdrop-blur-lg text-neon-400 hover:text-neon-300 hover:bg-gray-700/90 hover:shadow-neon-sm'
-          : 'bg-gray-200 text-gray-600 hover:text-blue-600 hover:bg-gray-300'
+          ? 'bg-gray-900/90 backdrop-blur-lg text-gray-300 hover:text-white hover:bg-gray-700/90'
+          : 'bg-gray-200 text-gray-600 hover:text-gray-800 hover:bg-gray-300'
       }`}
     >
       {isDark ? (

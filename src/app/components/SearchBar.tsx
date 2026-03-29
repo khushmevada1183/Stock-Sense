@@ -272,7 +272,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               bg-gray-900/90 backdrop-blur-lg border 
               ${compact && !isMobile ? 'border-gray-700/30 rounded-full' : isMobile ? 'border-gray-700/30 rounded-lg' : 'border-gray-800/30 rounded-lg'} 
               focus:outline-none 
-              ${compact ? 'focus:ring-1 focus:ring-neon-400' : 'focus:ring-2 focus:ring-blue-500'} 
+              ${compact ? 'focus:ring-1 focus:ring-gray-500' : 'focus:ring-2 focus:ring-blue-500'} 
               focus:border-transparent 
               ${compact ? 'text-gray-200 placeholder-gray-400' : 'text-white'}`}
             onFocus={() => query.length >= 2 && setIsResultsVisible(true)}
@@ -289,11 +289,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
           <button 
             type="submit" 
             className={`absolute inset-y-0 right-0 flex items-center pr-3 
-              ${compact ? 'text-neon-400 hover:text-neon-300 font-mono' : 'text-cyan-400 hover:text-blue-300'}`}
+              ${compact ? 'text-gray-300 hover:text-white font-mono' : 'text-cyan-400 hover:text-blue-300'}`}
             data-testid="search-button"
           >
             {isLoading ? (
-              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
+              <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" aria-hidden="true"></div>
             ) : (
               <span>Go</span>
             )}

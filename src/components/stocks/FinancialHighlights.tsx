@@ -40,12 +40,12 @@ interface HighlightMetric {
 const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData }) => {
   if (!financialData || financialData.length === 0) {
     return (
-      <Card glass>
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">Financial Highlights</CardTitle>
+          <CardTitle>Financial Highlights</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500">No financial data available.</p>
+          <p className="text-slate-600 dark:text-slate-400">No financial data available.</p>
         </CardContent>
       </Card>
     );
@@ -127,35 +127,35 @@ const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData
   const periodType = latestFinancialPeriod.Type === 'Annual' ? 'Annual' : 'Quarterly';
   
   return (
-    <Card glass>
+    <Card>
       <CardHeader>
-        <CardTitle className="text-white">
+        <CardTitle>
           Financial Highlights ({periodType})
         </CardTitle>
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-slate-600 dark:text-slate-400">
           Period: {latestFinancialPeriod.EndDate.split('-')[0]} - FY{latestFinancialPeriod.FiscalYear}
         </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {highlightMetrics.map((metric, index) => (
-            <div key={index} className="glass-card rounded-xl p-4 group transition-all duration-300">
+            <div key={index} className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-950 hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-3">
-                <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wider">{metric.title}</h3>
+                <h3 className="text-slate-700 dark:text-slate-300 font-medium text-sm uppercase tracking-wider">{metric.title}</h3>
                 <div className={`p-2 rounded-lg transition-colors duration-300 ${
                   typeof metric.isPositive === 'boolean' 
                     ? metric.isPositive 
-                      ? 'bg-green-500/10 text-green-400 group-hover:bg-green-500/15'
-                      : 'bg-red-500/10 text-red-400 group-hover:bg-red-500/15'
-                    : 'bg-neon-400/10 text-neon-400 group-hover:bg-neon-400/15'
+                      ? 'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-400'
+                      : 'bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400'
+                    : 'bg-blue-100 text-blue-600 dark:bg-blue-950 dark:text-blue-400'
                 }`}>
                   {metric.icon}
                 </div>
               </div>
-              <p className="text-xl font-bold text-white">{metric.value}</p>
+              <p className="text-xl font-bold text-slate-900 dark:text-white">{metric.value}</p>
               {metric.change && (
                 <div className={`flex items-center mt-1 text-sm ${
-                  metric.isPositive ? 'text-green-400' : 'text-red-400'
+                  metric.isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                 }`}>
                   {metric.isPositive ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                   <span>{metric.change}</span>

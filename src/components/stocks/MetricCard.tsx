@@ -39,34 +39,25 @@ const MetricCard: React.FC<MetricCardProps> = ({
   }, [isAnimated, delay]);
 
   return (
-    <div ref={cardRef} className="glass-card card-shine rounded-xl overflow-hidden group">
-      {/* Top accent */}
-      <div className={`h-[2px] ${
-        typeof isPositive === 'boolean'
-          ? isPositive 
-            ? 'bg-gradient-to-r from-transparent via-green-400/50 to-transparent'
-            : 'bg-gradient-to-r from-transparent via-red-400/50 to-transparent'
-          : 'bg-gradient-to-r from-transparent via-neon-400/30 to-transparent'
-      }`} />
-      
+    <div ref={cardRef} className="rounded-lg border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow dark:border-slate-700 dark:bg-slate-950 overflow-hidden">
       <div className="p-5">
         <div className="flex justify-between items-start mb-4">
-          <h3 className="text-gray-500 font-medium text-sm uppercase tracking-wider">{title}</h3>
+          <h3 className="text-slate-600 dark:text-slate-400 font-medium text-sm uppercase tracking-wider">{title}</h3>
           <div className={`p-2 rounded-lg transition-colors duration-300 ${
             typeof isPositive === 'boolean' 
               ? isPositive 
-                ? 'bg-green-500/10 text-green-400 group-hover:bg-green-500/15'
-                : 'bg-red-500/10 text-red-400 group-hover:bg-red-500/15'
-              : 'bg-neon-400/10 text-neon-400 group-hover:bg-neon-400/15'
+                ? 'bg-green-100 text-green-600 dark:bg-green-950 dark:text-green-400'
+                : 'bg-red-100 text-red-600 dark:bg-red-950 dark:text-red-400'
+              : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-400'
           }`}>
             {icon}
           </div>
         </div>
         <div className="flex flex-col">
-          <p className="text-2xl font-bold text-white">{value}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
           {change && (
             <div className={`flex items-center mt-1.5 text-sm font-medium ${
-              isPositive ? 'text-green-400' : 'text-red-400'
+              isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
             }`}>
               {isPositive ? <ArrowUp className="w-3.5 h-3.5 mr-1" /> : <ArrowDown className="w-3.5 h-3.5 mr-1" />}
               <span>{change}</span>

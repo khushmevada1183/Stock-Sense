@@ -2,11 +2,13 @@
 import { logger } from '@/lib/logger';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import * as stockApi from '@/api/api';
 import { StockData as Stock } from '@/types/stocks';
 import { gsap } from 'gsap';
 import { TrendingUp, TrendingDown, BarChart2, ArrowRight } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface StockLike {
   id?: string;
@@ -80,6 +82,7 @@ const normalizeStock = (value: unknown): Stock => {
 };
 
 export default function FeaturedStocks() {
+  const router = useRouter();
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -207,7 +210,7 @@ export default function FeaturedStocks() {
 
   if (error) {
     return (
-      <div className="glass-card rounded-xl p-4 border-red-500/20 text-red-400">
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400">
         {error}
       </div>
     );
@@ -215,7 +218,7 @@ export default function FeaturedStocks() {
 
   if (stocks.length === 0) {
     return (
-      <div className="glass-card rounded-xl p-4 border-yellow-500/20 text-yellow-400 text-center">
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-700 text-center dark:border-amber-900/30 dark:bg-amber-900/10 dark:text-amber-400">
         No featured stocks available at this time.
       </div>
     );
@@ -256,74 +259,71 @@ export default function FeaturedStocks() {
           return (
             <div 
               key={stock.id || stock.symbol || index} 
-              className="stock-card glass-card card-shine rounded-xl overflow-hidden group"
+              className="stock-card"
             >
-              {/* Top accent line */}
-              <div className={`h-[2px] ${
-                positive 
-                  ? 'bg-gradient-to-r from-transparent via-green-400/50 to-transparent' 
-                  : 'bg-gradient-to-r from-transparent via-red-400/50 to-transparent'
-              }`} />
-              
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-100 mb-1">
-                      <Link href={`/stocks/${stock.symbol}`} className="hover:text-neon-400 transition-colors duration-300">
-                        {stock.symbol}
-                      </Link>
-                    </h3>
-                    <p className="text-gray-500 text-sm">
-                      {stock.company_name || 'N/A'}
-                    </p>
+              <div className="w-full rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-5 hover:shadow-md transition-shadow">
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
+                        <Link href={`/stocks/${stock.symbol}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                          {stock.symbol}
+                        </Link>
+                      </h3>
+                      <p className="text-slate-500 dark:text-slate-400 text-sm">
+                        {stock.company_name || 'N/A'}
+                      </p>
+                    </div>
+                    <span className={`price-element text-sm font-semibold rounded-full px-3 py-1 flex items-center ${
+                      positive
+                        ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                        : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+                    }`}>
+                      {positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
+                      {positive ? '+' : ''}
+                      {formatNumber(stock.price_change_percentage)}%
+                    </span>
                   </div>
-                  <span className={`price-element text-sm font-semibold rounded-full px-3 py-1 flex items-center ${
-                    positive
-                      ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                      : 'bg-red-500/10 text-red-400 border border-red-500/20'
-                  }`}>
-                    {positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                    {positive ? '+' : ''}
-                    {formatNumber(stock.price_change_percentage)}%
-                  </span>
-                </div>
-                
-                <div className="price-element text-2xl font-bold mb-4 text-white">
-                  ₹{currentPrice.toLocaleString(undefined, {maximumFractionDigits: 2})}
-                </div>
-                
-                {/* Price progress bar */}
-                <div className="mb-5">
-                  <div className="flex justify-between text-xs mb-1.5">
-                    <span className="text-gray-600">Price vs. Category</span>
-                    <span className="text-gray-500">{Math.round(percentOfMax)}%</span>
+
+                  <div className="price-element text-2xl font-bold mb-4 text-slate-900 dark:text-white">
+                    ₹{currentPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                   </div>
-                  <div className="h-1.5 bg-gray-800/60 rounded-full overflow-hidden">
-                    <div 
-                      className={`price-bar-fill h-full ${
-                        positive 
-                          ? 'bg-gradient-to-r from-green-500/80 to-neon-400/60' 
-                          : 'bg-gradient-to-r from-red-500/80 to-red-400/60'
-                      } rounded-full`}
-                      style={{ width: `${percentOfMax}%`, transformOrigin: 'left' }}
-                    />
+
+                  {/* Price progress bar */}
+                  <div className="mb-5">
+                    <div className="flex justify-between text-xs mb-1.5">
+                      <span className="text-slate-600 dark:text-slate-400">Price vs. Category</span>
+                      <span className="text-slate-500 dark:text-slate-400">{Math.round(percentOfMax)}%</span>
+                    </div>
+                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                      <div
+                        className={`price-bar-fill h-full ${
+                          positive
+                            ? 'bg-green-500'
+                            : 'bg-red-500'
+                        } rounded-full`}
+                        style={{ width: `${percentOfMax}%`, transformOrigin: 'left' }}
+                      />
+                    </div>
                   </div>
+
+                  {/* Sector info */}
+                  <div className="flex items-center text-sm mb-5 text-slate-500 dark:text-slate-400">
+                    <BarChart2 size={14} className="mr-1.5" />
+                    <span>{stock.sector_name || 'Various Sectors'}</span>
+                  </div>
+
+                  {/* CTA */}
+                  <Button
+                    variant="outline"
+                    size="default"
+                    className="w-full flex items-center justify-center"
+                    onClick={() => router.push(`/stocks/${stock.symbol}`)}
+                  >
+                    View Analysis
+                    <ArrowRight className="ml-2 h-3.5 w-3.5" />
+                  </Button>
                 </div>
-                
-                {/* Sector info */}
-                <div className="flex items-center text-sm mb-5 text-gray-500">
-                  <BarChart2 size={14} className="mr-1.5" />
-                  <span>{stock.sector_name || 'Various Sectors'}</span>
-                </div>
-                
-                {/* CTA */}
-                <Link 
-                  href={`/stocks/${stock.symbol}`}
-                  className="group/btn flex items-center justify-center w-full py-2.5 rounded-lg border border-neon-400/20 bg-neon-400/[0.04] text-neon-400 text-sm font-medium hover:bg-neon-400/10 hover:border-neon-400/30 transition-all duration-300"
-                >
-                  View Analysis
-                  <ArrowRight className="ml-2 h-3.5 w-3.5 transition-transform duration-300 group-hover/btn:translate-x-1" />
-                </Link>
               </div>
             </div>
           );

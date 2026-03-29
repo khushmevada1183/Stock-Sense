@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Chart, registerables } from 'chart.js';
 import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, DollarSign, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 import { logger } from '@/lib/logger';
 import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
+import { GlowCard } from '@/components/spotlight-card';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -130,6 +131,17 @@ const STOCKS_TABLE_PAGE_SIZE = 10;
 const SECTOR_CARD_PAGE_SIZE = 6;
 const PERFORMANCE_CARD_PAGE_SIZE = 8;
 const HIGH_LOW_CARD_PAGE_SIZE = 4;
+
+interface StocksSurfaceCardProps {
+  children: ReactNode;
+  className?: string;
+}
+
+const StocksSurfaceCard = ({ children, className = '' }: StocksSurfaceCardProps) => (
+  <GlowCard customSize className={`rounded-2xl border border-gray-700/50 bg-gray-900/90 !p-0 shadow-lg ${className}`}>
+    {children}
+  </GlowCard>
+);
 
 export default function StocksIndexPage() {
   // API Data States
@@ -1118,7 +1130,7 @@ export default function StocksIndexPage() {
       
       {/* Market Metrics Cards */}
       <div ref={metricsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-        <Card className="metric-card bg-gray-900/90 backdrop-blur-lg border-gray-700/50 text-white hover:bg-gray-700/50 transition-colors shadow-lg">
+        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium text-gray-300">Total Volume</CardTitle>
           </CardHeader>
@@ -1136,9 +1148,9 @@ export default function StocksIndexPage() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
         
-        <Card className="metric-card bg-gray-900/90 backdrop-blur-lg border-gray-700/50 text-white hover:bg-gray-700/50 transition-colors shadow-lg">
+        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium text-gray-300">Avg Price</CardTitle>
           </CardHeader>
@@ -1156,9 +1168,9 @@ export default function StocksIndexPage() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
         
-        <Card className="metric-card bg-gray-900/90 backdrop-blur-lg border-gray-700/50 text-white hover:bg-gray-700/50 transition-colors shadow-lg">
+        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium text-gray-300">Gainers</CardTitle>
           </CardHeader>
@@ -1176,9 +1188,9 @@ export default function StocksIndexPage() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
         
-        <Card className="metric-card bg-gray-900/90 backdrop-blur-lg border-gray-700/50 text-white hover:bg-gray-700/50 transition-colors shadow-lg">
+        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-medium text-gray-300">Losers</CardTitle>
           </CardHeader>
@@ -1196,59 +1208,59 @@ export default function StocksIndexPage() {
               </div>
             </div>
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
       </div>
       
       {/* Data Sources Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-        <Card className="metric-card bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 hover:bg-gray-700/50 transition-all duration-300 shadow-xl hover:shadow-2xl">
+        <StocksSurfaceCard className="metric-card hover:bg-gray-700/50 transition-all duration-300">
           <CardContent className="pt-8 pb-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-gray-200 font-semibold text-lg">Trending Stocks</h3>
                 <p className="text-3xl font-bold text-white mt-2">{trendingStocks.length}</p>
               </div>
-              <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-blue-400/20 to-blue-600/20 text-blue-300 border border-blue-400/30">
+              <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gray-700/50 text-gray-200 border border-gray-600/40">
                 Live Data
               </div>
             </div>
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
         
-        <Card className="metric-card bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 hover:bg-gray-700/50 transition-all duration-300 shadow-xl hover:shadow-2xl">
+        <StocksSurfaceCard className="metric-card hover:bg-gray-700/50 transition-all duration-300">
           <CardContent className="pt-8 pb-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-gray-200 font-semibold text-lg">BSE Most Active</h3>
                 <p className="text-3xl font-bold text-white mt-2">{bseActive.length}</p>
               </div>
-              <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-green-400/20 to-green-600/20 text-green-300 border border-green-400/30">
+              <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gray-700/50 text-gray-200 border border-gray-600/40">
                 BSE Live
               </div>
             </div>
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
         
-        <Card className="metric-card bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 hover:bg-gray-700/50 transition-all duration-300 shadow-xl hover:shadow-2xl">
+        <StocksSurfaceCard className="metric-card hover:bg-gray-700/50 transition-all duration-300">
           <CardContent className="pt-8 pb-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-gray-200 font-semibold text-lg">NSE Most Active</h3>
                 <p className="text-3xl font-bold text-white mt-2">{nseActive.length}</p>
               </div>
-              <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-400/20 to-purple-600/20 text-purple-300 border border-purple-400/30">
+              <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gray-700/50 text-gray-200 border border-gray-600/40">
                 NSE Live
               </div>
             </div>
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
       </div>
       
       {/* Main dashboard grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
         {/* Featured Stocks - Left Column (2/3 width) */}
         <div ref={stocksRef} className="xl:col-span-2 space-y-6 lg:space-y-8">
-          <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <StocksSurfaceCard>
             <CardHeader className="border-b border-gray-700 pb-3">
               <CardTitle className="text-white">Trending Stocks</CardTitle>
             </CardHeader>
@@ -1428,7 +1440,7 @@ export default function StocksIndexPage() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </StocksSurfaceCard>
 
           {/* Detailed Stock Information Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

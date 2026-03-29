@@ -44,12 +44,12 @@ const FinancialMetric: React.FC<FinancialMetricProps> = ({
 
   // Set color based on change direction and whether positive is good
   const getChangeColor = () => {
-    if (!hasChange) return 'text-gray-400';
+    if (!hasChange) return 'text-slate-600 dark:text-slate-400';
     
     if (isPositiveGood) {
-      return isPositiveChange ? 'text-green-400' : 'text-red-400';
+      return isPositiveChange ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
     } else {
-      return isPositiveChange ? 'text-red-400' : 'text-green-400';
+      return isPositiveChange ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400';
     }
   };
 
@@ -64,9 +64,9 @@ const FinancialMetric: React.FC<FinancialMetricProps> = ({
   };
 
   return (
-    <div className="p-4 glass-card rounded-xl border border-gray-800/30">
-      <div className="text-sm text-gray-400 mb-1">{label}</div>
-      <div className="text-xl font-semibold text-white">{formatValue(value)}</div>
+    <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-950 hover:shadow-sm transition-shadow">
+      <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">{label}</div>
+      <div className="text-xl font-semibold text-slate-900 dark:text-white">{formatValue(value)}</div>
       
       {hasChange && (
         <div className={`flex items-center mt-2 ${getChangeColor()}`}>
@@ -92,21 +92,21 @@ const FinancialMetricsGrid: React.FC<FinancialMetricsGridProps> = ({
 }) => {
   if (!metrics || metrics.length === 0) {
     return (
-      <Card glass>
+      <Card>
         <CardHeader>
-          <CardTitle className="text-white">{title}</CardTitle>
+          <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-400">No financial metrics available.</p>
+          <p className="text-slate-600 dark:text-slate-400">No financial metrics available.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card glass>
+    <Card>
       <CardHeader>
-        <CardTitle className="text-white">{title}</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

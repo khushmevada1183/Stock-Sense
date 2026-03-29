@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -47,6 +49,8 @@ const nextConfig = {
   transpilePackages: ['@radix-ui/react-accordion'],
   // Configure for dynamic rendering with standalone output
   output: 'standalone',
+  // Pin tracing root to this project to avoid multi-lockfile root inference warnings.
+  outputFileTracingRoot: path.join(__dirname),
   // Configure image handling
   images: {
     remotePatterns: [

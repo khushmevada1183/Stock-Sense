@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowRight, Zap } from 'lucide-react';
+import { Button } from '../ui/button';
 
 // Animated counter component
 function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: string }) {
@@ -57,53 +58,66 @@ function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: str
 }
 
 export default function CtaSection() {
+  const router = useRouter();
+
   return (
-    <section className="py-16 relative">
-      {/* Background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-neon-400/[0.03] blur-[100px] rounded-full" />
+    <section className="relative pt-0 pb-10 md:pt-1 md:pb-12">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 -z-10 flex justify-center">
+        <div className="h-36 w-[min(88vw,860px)] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(15,23,42,0.09),transparent_72%)] blur-xl dark:bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.16),transparent_76%)]" />
       </div>
-      
+
       <div className="container mx-auto px-4 text-center relative z-10">
         <motion.div
+          className="mx-auto max-w-4xl"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-neon-400/20 bg-neon-400/[0.05] text-neon-400 text-sm mb-8">
-            <Zap className="mr-2 h-3.5 w-3.5" />
-            Start your journey
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-slate-300/75 bg-white/75 px-4 py-2 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.65)] ring-1 ring-white/75 backdrop-blur-md dark:border-slate-600/70 dark:bg-slate-900/55 dark:ring-slate-300/10">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-[0.6rem] font-[var(--font-roboto-mono)] font-semibold tracking-[0.16em] text-slate-50 dark:bg-slate-100 dark:text-slate-950">
+              01
+            </span>
+            <span className="inline-flex items-center gap-2 font-[var(--font-roboto-mono)] text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-slate-700 dark:text-slate-200">
+              <Zap className="h-3.5 w-3.5" />
+              Start your journey
+            </span>
           </div>
-          
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">
-            Ready to Make Smarter <span className="gradient-text">Investment Decisions</span>?
-          </h2>
-          <p className="text-lg text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+
+          <div className="mb-6">
+            <h2 className="font-[var(--font-sans)] text-[clamp(2rem,4.6vw,3.8rem)] font-semibold leading-[1.03] tracking-[-0.035em] text-slate-900 dark:text-slate-50">
+              Ready to Make Smarter Investment Decisions?
+            </h2>
+          </div>
+          <p className="mx-auto mb-10 max-w-2xl text-[1.2rem] leading-relaxed text-slate-600 dark:text-slate-300 md:text-[1.34rem]">
             Join thousands of investors using our platform to analyze Indian stocks
             and build profitable portfolios.
           </p>
-          
+
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-14">
-            <Link
-              href="/auth/register"
-              className="group px-8 py-4 bg-neon-400 text-black font-semibold rounded-xl hover:shadow-neon-lg transition-all duration-400 hover:scale-[1.03] active:scale-[0.98] inline-flex items-center justify-center"
+          <div className="mb-12 flex flex-col justify-center gap-3 sm:flex-row md:mb-14">
+            <Button
+              variant="outline"
+              size="lg"
+              className="group inline-flex min-w-[240px] items-center justify-center rounded-2xl border !border-slate-900 !bg-slate-900 px-8 py-4 font-[var(--font-sans)] text-base font-semibold tracking-[-0.015em] !text-slate-50 shadow-[0_16px_34px_-20px_rgba(15,23,42,0.86)] transition-all duration-300 hover:-translate-y-0.5 hover:!bg-slate-800 hover:shadow-[0_18px_42px_-22px_rgba(15,23,42,0.9)] dark:!border-slate-100 dark:!bg-slate-100 dark:!text-slate-950 dark:hover:!bg-slate-200"
+              onClick={() => router.push('/auth/register')}
             >
               Create Free Account
               <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-            <Link
-              href="/about"
-              className="group px-8 py-4 text-white font-medium rounded-xl border border-gray-700/50 bg-gray-900/50 backdrop-blur-lg hover:border-neon-400/30 hover:bg-gray-800/60 transition-all duration-400 hover:shadow-neon-sm inline-flex items-center justify-center"
+            </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="inline-flex min-w-[170px] items-center justify-center rounded-2xl border border-slate-300 bg-white/70 px-8 py-4 font-[var(--font-sans)] text-base font-medium text-slate-700 backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 dark:border-slate-600 dark:bg-slate-900/55 dark:text-slate-200 dark:hover:bg-slate-900"
+              onClick={() => router.push('/about')}
             >
               Learn More
-            </Link>
+            </Button>
           </div>
         </motion.div>
-        
+
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-3xl mx-auto">
+        <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-3 md:gap-5">
           {[
             { value: '100000', suffix: '+', label: 'Stocks Analyzed' },
             { value: '50000', suffix: '+', label: 'Registered Users' },
@@ -115,12 +129,19 @@ export default function CtaSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="glass-card card-shine rounded-xl p-6"
+              className="h-full"
             >
-              <div className="text-3xl font-bold text-neon-400 mb-2">
-                <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+              <div className="relative h-full min-h-[142px] overflow-hidden rounded-2xl border border-slate-200/85 bg-white/78 p-6 shadow-[0_20px_36px_-32px_rgba(15,23,42,0.9)] ring-1 ring-white/70 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_46px_-30px_rgba(15,23,42,0.6)] dark:border-slate-700/75 dark:bg-slate-900/60 dark:ring-slate-200/5">
+                <div className="mx-auto mb-4 h-px w-16 bg-gradient-to-r from-transparent via-slate-400/80 to-transparent dark:via-slate-500/90" />
+                <div className="text-center">
+                  <div className="mb-2 font-[var(--font-sans)] text-[2.25rem] font-semibold leading-none tracking-[-0.03em] text-slate-900 dark:text-slate-50">
+                    <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <p className="font-[var(--font-roboto-mono)] text-[0.68rem] font-semibold uppercase tracking-[0.17em] text-slate-500 dark:text-slate-400">
+                    {stat.label}
+                  </p>
+                </div>
               </div>
-              <p className="text-gray-500 text-sm">{stat.label}</p>
             </motion.div>
           ))}
         </div>

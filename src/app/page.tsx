@@ -6,6 +6,7 @@ import { SectionReveal } from '../components/ui/SectionReveal';
 import HeroSection from '../components/home/HeroSection';
 import AnalysisFeatures from '../components/home/AnalysisFeatures';
 import CtaSection from '../components/home/CtaSection';
+import MarketNetworkSection from '../components/ui/market-network-section';
 
 // Dynamically import heavy UI components to reduce initial bundle size and speed up perceived loading
 const MarketOverview = dynamic(() => import('../components/home/MarketOverview'), { 
@@ -21,28 +22,57 @@ const IpoSection = dynamic(() => import('../components/home/IpoSection'), {
   loading: () => <div className="h-48 rounded-xl mb-3 shimmer w-full" />
 });
 
+type SectionHeaderProps = {
+  badge: string;
+  title: string;
+  accent: string;
+  ctaHref?: string;
+  ctaLabel?: string;
+};
+
+function SectionHeader({ badge, title, accent, ctaHref, ctaLabel }: SectionHeaderProps) {
+  return (
+    <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div>
+        <span className="inline-flex rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+          {badge}
+        </span>
+        <h2 className="mt-4 text-2xl font-bold leading-tight text-white md:text-3xl">
+          {title} <span className="text-neon-300 neon-glow-text">{accent}</span>
+        </h2>
+      </div>
+      {ctaHref && ctaLabel && (
+        <Link
+          href={ctaHref}
+          className="inline-flex w-fit items-center text-sm font-semibold tracking-wide text-gray-300 transition-colors duration-300 hover:text-white"
+        >
+          {ctaLabel}
+        </Link>
+      )}
+    </div>
+  );
+}
+
 
 export default function Home() {
 
   return (
-    <div className="pb-16">
-      {/* Grid overlay is applied globally via html in globals.css — no duplicate here */}
+    <div className="relative overflow-hidden pb-8 md:pb-10">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-20 mx-auto h-72 w-[70%] rounded-full bg-[radial-gradient(circle,_rgba(56,189,248,0.16)_0%,_transparent_65%)] blur-3xl"
+      />
 
-      {/* Hero Section */}
       <div>
         <HeroSection />
       </div>
 
-      {/* Animated section divider */}
       <div className="section-divider mx-auto max-w-5xl" />
 
-      {/* Market Overview */}
       <SectionReveal>
-        <section className="py-14 relative z-10 section-glow">
-          <div className="container mx-auto px-4 max-w-[1440px] overflow-x-visible">
-            <h2 className="text-2xl md:text-3xl font-bold text-center mb-10 text-white">
-              Market <span className="gradient-text">Overview</span>
-            </h2>
+        <section className="relative z-10 py-16">
+          <div className="container mx-auto max-w-[1440px] overflow-x-visible px-4">
+            <SectionHeader badge="Module 01" title="Market" accent="Overview" />
             <div className="overflow-x-auto pb-2">
               <MarketOverview />
             </div>
@@ -52,18 +82,16 @@ export default function Home() {
 
       <div className="section-divider mx-auto max-w-5xl" />
       
-      {/* Sector Performance */}
       <SectionReveal delay={0.05}>
-        <section className="py-14 relative z-10">
+        <section className="relative z-10 py-16">
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-10">
-              <h2 className="text-lg md:text-xl font-bold text-white">
-                Sector Performance
-              </h2>
-              <Link href="/market" className="text-neon-400 hover:text-neon-300 font-medium text-sm transition-colors duration-300 hover-underline">
-                View Details
-              </Link>
-            </div>
+            <SectionHeader
+              badge="Module 01"
+              title="Sector"
+              accent="Performance"
+              ctaHref="/market"
+              ctaLabel="View Details"
+            />
             <SectorPerformance />
           </div>
         </section>
@@ -71,18 +99,16 @@ export default function Home() {
 
       <div className="section-divider mx-auto max-w-5xl" />
 
-      {/* Featured Stocks */}
       <SectionReveal delay={0.05}>
-        <section className="py-14 relative z-10 section-glow">
+        <section className="relative z-10 py-16">
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-10">
-              <h2 className="text-lg md:text-xl font-bold text-white">
-                Featured <span className="gradient-text">Stocks</span>
-              </h2>
-              <Link href="/stocks" className="text-neon-400 hover:text-neon-300 font-medium text-sm transition-colors duration-300 hover-underline">
-                View All Stocks
-              </Link>
-            </div>
+            <SectionHeader
+              badge="Module 01"
+              title="Featured"
+              accent="Stocks"
+              ctaHref="/stocks"
+              ctaLabel="View All Stocks"
+            />
             <FeaturedStocks />
           </div>
         </section>
@@ -90,18 +116,16 @@ export default function Home() {
 
       <div className="section-divider mx-auto max-w-5xl" />
 
-      {/* IPO Section */}
       <SectionReveal delay={0.05}>
-        <section className="py-14 relative z-10">
+        <section className="relative z-10 py-16">
           <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-10">
-              <h2 className="text-lg md:text-xl font-bold text-white">
-                Upcoming IPOs
-              </h2>
-              <Link href="/ipo" className="text-neon-400 hover:text-neon-300 font-medium text-sm transition-colors duration-300 hover-underline">
-                View All IPOs
-              </Link>
-            </div>
+            <SectionHeader
+              badge="Module 01"
+              title="Upcoming"
+              accent="IPOs"
+              ctaHref="/ipo"
+              ctaLabel="View All IPOs"
+            />
             <IpoSection />
           </div>
         </section>
@@ -109,21 +133,27 @@ export default function Home() {
 
       <div className="section-divider mx-auto max-w-5xl" />
 
-      {/* Analysis Features */}
       <SectionReveal delay={0.05}>
-        <section className="py-14 relative z-10 section-glow">
+        <section className="relative z-10 py-16">
           <div className="container mx-auto px-4">
             <AnalysisFeatures />
           </div>
         </section>
       </SectionReveal>
 
-      {/* Call to Action */}
       <SectionReveal delay={0.05}>
-        <section className="py-14 relative z-10">
+        <section className="relative z-10 pt-0 pb-12 md:pt-2 md:pb-14">
           <div className="container mx-auto px-4">
             <CtaSection />
           </div>
+        </section>
+      </SectionReveal>
+
+      <div className="section-divider mx-auto max-w-5xl" />
+
+      <SectionReveal delay={0.05}>
+        <section className="relative z-10 pt-8 pb-4 md:pt-10 md:pb-6">
+          <MarketNetworkSection />
         </section>
       </SectionReveal>
 

@@ -2,11 +2,13 @@
 import { logger } from '@/lib/logger';
 
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, Calendar, TrendingUp, DollarSign } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { IpoItem } from '@/types/ipo';
 import { gsap } from 'gsap';
+import { Button } from '../ui/button';
 
 // Define extended IPO item type with our custom animation properties
 type ExtendedIpoItem = IpoItem & {
@@ -15,6 +17,7 @@ type ExtendedIpoItem = IpoItem & {
 };
 
 export default function IpoSection() {
+  const router = useRouter();
   const [ipoData, setIpoData] = useState<ExtendedIpoItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -112,21 +115,21 @@ export default function IpoSection() {
 
   if (loading) {
     return (
-      <div className="glass-card rounded-xl p-6">
+      <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-6">
         <div className="flex gap-5 overflow-hidden">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="glass-card rounded-xl p-5 min-w-[300px]">
+            <div key={i} className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 p-5 min-w-[300px] animate-pulse">
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-gray-800/60 rounded-xl shimmer" />
+                <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-lg" />
                 <div className="ml-3">
-                  <div className="h-5 bg-gray-800/60 rounded-lg w-32 mb-2 shimmer" />
-                  <div className="h-3 bg-gray-800/60 rounded-lg w-16 shimmer" />
+                  <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded-lg w-32 mb-2" />
+                  <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded-lg w-16" />
                 </div>
               </div>
               <div className="space-y-3">
-                <div className="h-4 bg-gray-800/60 rounded-lg w-full shimmer" />
-                <div className="h-4 bg-gray-800/60 rounded-lg w-3/4 shimmer" />
-                <div className="h-4 bg-gray-800/60 rounded-lg w-2/3 shimmer" />
+                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-full" />
+                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4" />
+                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-2/3" />
               </div>
             </div>
           ))}
@@ -137,7 +140,7 @@ export default function IpoSection() {
 
   if (error) {
     return (
-      <div className="glass-card rounded-xl p-4 border-red-500/20 text-red-400">
+      <div className="rounded-lg border border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-900/10 p-4 text-red-700 dark:text-red-400">
         {error}
       </div>
     );
@@ -145,8 +148,8 @@ export default function IpoSection() {
 
   if (ipoData.length === 0) {
     return (
-      <div className="glass-card rounded-xl p-6">
-        <p className="text-gray-500 text-center py-8">
+      <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-6">
+        <p className="text-slate-600 dark:text-slate-400 text-center py-8">
           No upcoming IPO data available at this time.
         </p>
       </div>
@@ -156,9 +159,9 @@ export default function IpoSection() {
   const displayedIpos = ipoData.slice(0, 5);
 
   return (
-    <div ref={sectionRef} className="glass-card rounded-xl overflow-hidden">
+    <div ref={sectionRef} className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 overflow-hidden">
       <div className="p-6">
-        <div className="text-gray-500 text-sm mb-6">
+        <div className="text-slate-600 dark:text-slate-400 text-sm mb-6">
           Companies that have filed for an IPO with SEBI. Details might be disclosed later.
         </div>
 
@@ -172,108 +175,122 @@ export default function IpoSection() {
               {displayedIpos.map((ipo, index) => (
                 <div
                   key={index}
-                  className="ipo-card glass-card card-shine rounded-xl p-5 min-w-[300px] flex flex-col relative overflow-hidden"
+                  className="ipo-card min-w-[300px]"
                   data-minimal={ipo.hasMinimalData ? 'true' : 'false'}
                 >
-                  {/* Status accent on top */}
-                  <div className={`absolute top-0 left-0 right-0 h-[2px] ${getStatusGradient(ipo.subscription_status || '')}`} />
+                  {(() => {
+                    const statusText = (ipo.subscription_status || 'Upcoming').toLowerCase();
+                    const isPositiveStatus = /(oversubscribed|subscribed|open|strong|bullish)/.test(statusText);
 
-                  <div className="flex items-center mb-4">
-                    {ipo.logo ? (
-                      <div className="w-12 h-12 rounded-xl bg-gray-800/60 flex items-center justify-center overflow-hidden mr-3 border border-gray-700/30">
-                        <Image
-                          src={ipo.logo}
-                          alt={`${ipo.company_name} logo`}
-                          width={48}
-                          height={48}
-                          className="object-contain"
-                        />
-                      </div>
-                    ) : (
-                      <div className="w-12 h-12 flex items-center justify-center bg-gray-800/60 rounded-xl mr-3 text-gray-300 font-bold text-lg border border-gray-700/30">
-                        {ipo.symbol?.substring(0, 2) || ipo.company_name?.substring(0, 2) || 'IP'}
-                      </div>
-                    )}
-                    <div>
-                      <div className="font-bold text-gray-100 mb-0.5">{ipo.company_name}</div>
-                      <div className="text-gray-500 text-sm">{ipo.symbol}</div>
-                    </div>
-                  </div>
+                    return (
+                      <div className="relative w-full min-h-[330px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-5 hover:shadow-md transition-shadow flex flex-col">
+                        <div className="flex items-center mb-4">
+                          {ipo.logo ? (
+                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden mr-3">
+                              <Image
+                                src={ipo.logo}
+                                alt={`${ipo.company_name} logo`}
+                                width={48}
+                                height={48}
+                                className="object-contain"
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg mr-3 text-slate-900 dark:text-white font-bold text-lg">
+                              {ipo.symbol?.substring(0, 2) || ipo.company_name?.substring(0, 2) || 'IP'}
+                            </div>
+                          )}
+                          <div>
+                            <div className="font-bold text-slate-900 dark:text-white mb-0.5">{ipo.company_name}</div>
+                            <div className="text-slate-500 dark:text-slate-400 text-sm">{ipo.symbol}</div>
+                          </div>
+                        </div>
 
-                  <div className="space-y-3 mb-4">
-                    <div className="metric-item flex items-center text-gray-300">
-                      <div className="w-7 h-7 rounded-lg bg-yellow-500/10 flex items-center justify-center mr-2.5">
-                        <DollarSign size={14} className="text-yellow-400" />
-                      </div>
-                      <div className="text-sm">
-                        <span className="text-gray-500">Issue Size:</span>{' '}
-                        <span className="text-gray-200 font-medium">{ipo.issue_size}</span>
-                      </div>
-                    </div>
+                        <div className="space-y-3 mb-4">
+                          <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-2.5">
+                              <DollarSign size={14} className="text-slate-600 dark:text-slate-400" />
+                            </div>
+                            <div className="text-sm">
+                              <span className="text-slate-500 dark:text-slate-400">Issue Size:</span>{' '}
+                              <span className="text-slate-900 dark:text-white font-medium">{ipo.issue_size}</span>
+                            </div>
+                          </div>
 
-                    <div className="metric-item flex items-center text-gray-300">
-                      <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center mr-2.5">
-                        <TrendingUp size={14} className="text-blue-400" />
-                      </div>
-                      <div className="text-sm">
-                        <span className="text-gray-500">Price Range:</span>{' '}
-                        <span className="text-gray-200 font-medium">{ipo.price_range}</span>
-                      </div>
-                    </div>
+                          <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-2.5">
+                              <TrendingUp size={14} className="text-slate-600 dark:text-slate-400" />
+                            </div>
+                            <div className="text-sm">
+                              <span className="text-slate-500 dark:text-slate-400">Price Range:</span>{' '}
+                              <span className="text-slate-900 dark:text-white font-medium">{ipo.price_range}</span>
+                            </div>
+                          </div>
 
-                    <div className="metric-item flex items-center text-gray-300">
-                      <div className="w-7 h-7 rounded-lg bg-green-500/10 flex items-center justify-center mr-2.5">
-                        <Calendar size={14} className="text-green-400" />
+                          <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-2.5">
+                              <Calendar size={14} className="text-slate-600 dark:text-slate-400" />
+                            </div>
+                            <div className="text-sm">
+                              <span className="text-slate-500 dark:text-slate-400">Open Date:</span>{' '}
+                              <span className="text-slate-900 dark:text-white font-medium">{ipo.open || 'TBA'}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Subscription bar */}
+                        <div className="mb-4">
+                          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1.5">Expected Interest</div>
+                          <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                isPositiveStatus
+                                  ? 'bg-green-500'
+                                  : 'bg-orange-500'
+                              }`}
+                              style={{ width: `${Math.random() * 50 + 50}%` }}
+                            />
+                          </div>
+                        </div>
+
+                        <div className="mt-auto">
+                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            isPositiveStatus
+                              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                              : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                          }`}>
+                            {ipo.subscription_status || 'Upcoming'}
+                          </span>
+                        </div>
+
+                        {/* Document links if available */}
+                        {(ipo.rhpLink || ipo.drhpLink) && (
+                          <div className="flex gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                            {ipo.rhpLink && (
+                              <a
+                                href={ipo.rhpLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-medium transition-colors"
+                              >
+                                RHP Document
+                              </a>
+                            )}
+                            {ipo.drhpLink && (
+                              <a
+                                href={ipo.drhpLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs font-medium transition-colors"
+                              >
+                                DRHP Document
+                              </a>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <div className="text-sm">
-                        <span className="text-gray-500">Open Date:</span>{' '}
-                        <span className="text-gray-200 font-medium">{ipo.open || 'TBA'}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Subscription bar */}
-                  <div className="mb-4">
-                    <div className="text-xs text-gray-600 mb-1.5">Expected Interest</div>
-                    <div className="h-1.5 bg-gray-800/60 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-neon-400/60 to-cyan-400/40 rounded-full"
-                        style={{ width: `${Math.random() * 50 + 50}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-auto">
-                    <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(ipo.subscription_status || '')}`}>
-                      {ipo.subscription_status || 'Upcoming'}
-                    </span>
-                  </div>
-
-                  {/* Document links if available */}
-                  {(ipo.rhpLink || ipo.drhpLink) && (
-                    <div className="flex gap-4 mt-3 pt-3 border-t border-gray-800/30">
-                      {ipo.rhpLink && (
-                        <a
-                          href={ipo.rhpLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-yellow-400 hover:text-yellow-300 text-xs font-medium transition-colors hover-underline"
-                        >
-                          RHP Document
-                        </a>
-                      )}
-                      {ipo.drhpLink && (
-                        <a
-                          href={ipo.drhpLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-green-400 hover:text-green-300 text-xs font-medium transition-colors hover-underline"
-                        >
-                          DRHP Document
-                        </a>
-                      )}
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
               ))}
             </div>
@@ -284,14 +301,14 @@ export default function IpoSection() {
             <div className="flex justify-end mt-2 gap-2">
               <button
                 onClick={() => scrollCarousel('left')}
-                className="p-2 rounded-full glass-card text-gray-400 hover:text-neon-400 hover:border-neon-400/20 transition-all duration-300"
+                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 aria-label="Scroll left"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={() => scrollCarousel('right')}
-                className="p-2 rounded-full glass-card text-gray-400 hover:text-neon-400 hover:border-neon-400/20 transition-all duration-300"
+                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 aria-label="Scroll right"
               >
                 <ChevronRight size={16} />
@@ -301,48 +318,32 @@ export default function IpoSection() {
         </div>
 
         {/* Demat Account CTA */}
-        <div className="mt-6 glass-card rounded-xl p-5 text-center border-neon-400/10">
-          <div className="font-semibold text-gray-200 mb-2">Applying for IPOs?</div>
-          <p className="text-gray-500 text-sm mb-4">
+        <div className="mt-6 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-5 text-center">
+          <div className="font-semibold text-slate-900 dark:text-white mb-2">Applying for IPOs?</div>
+          <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
             To apply for IPOs, you need a Demat account. Open your account now to start investing.
           </p>
-          <a
-            href="#"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 py-2 bg-neon-400 hover:shadow-neon text-black rounded-lg text-sm font-semibold inline-block transition-all duration-300 hover:scale-[1.03]"
+          <Button
+            size="sm"
+            className="mx-auto"
+            onClick={() => router.push('/auth/register')}
           >
             Open a Demat Account
-          </a>
+          </Button>
         </div>
       </div>
     </div>
   );
 }
 
-// Helper function to determine status badge color
+// Helper function to determine status badge color (kept for potential future use)
 function getStatusColor(status: string): string {
-  status = status.toLowerCase();
-  if (status.includes('open') || status.includes('active')) {
-    return 'bg-green-500/10 text-green-400 border border-green-500/20';
-  } else if (status.includes('upcoming') || status.includes('announced')) {
-    return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
-  } else if (status.includes('closed') || status.includes('completed')) {
-    return 'bg-gray-800/40 text-gray-400 border border-gray-700/30';
-  } else if (status.includes('oversubscribed')) {
-    return 'bg-purple-500/10 text-purple-400 border border-purple-500/20';
-  } else {
-    return 'bg-blue-500/10 text-blue-400 border border-blue-500/20';
+  const value = status.toLowerCase();
+  if (/oversubscribed|subscribed|open|strong|bullish/.test(value)) {
+    return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
   }
-}
-
-// Helper function for gradient accent line color
-function getStatusGradient(status: string): string {
-  status = status.toLowerCase();
-  if (status.includes('open') || status.includes('active')) {
-    return 'bg-gradient-to-r from-transparent via-green-400/50 to-transparent';
-  } else if (status.includes('oversubscribed')) {
-    return 'bg-gradient-to-r from-transparent via-purple-400/50 to-transparent';
+  if (/undersubscribed|closed|withdrawn|failed|weak|bearish/.test(value)) {
+    return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
   }
-  return 'bg-gradient-to-r from-transparent via-blue-400/50 to-transparent';
+  return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
 }

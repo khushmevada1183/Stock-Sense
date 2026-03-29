@@ -289,7 +289,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {industryMetrics.map((metric, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-950">
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium text-sm">{metric.name}</h4>
                   <div className={`px-2 py-1 rounded text-xs ${getRankBadge(metric.rank)}`}>
