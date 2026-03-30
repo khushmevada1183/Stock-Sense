@@ -27,6 +27,23 @@ interface GraphSize {
   height: number;
 }
 
+interface EdgeGeometry {
+  id: string;
+  start: NodePosition;
+  end: NodePosition;
+  baseOpacity: number;
+  strokeWidth: number;
+  dashed?: boolean;
+}
+
+interface SignalTrack {
+  id: string;
+  start: NodePosition;
+  end: NodePosition;
+  duration: number;
+  delay: number;
+}
+
 const CORE_NODE_RADII: EllipseRadii = {
   x: 8.2,
   y: 13.4,
@@ -36,6 +53,9 @@ const FACTOR_NODE_RADII: EllipseRadii = {
   x: 2.35,
   y: 3.75,
 };
+
+const SIGNAL_TRAIL_LENGTH_CM = 1;
+const PX_PER_CM = 37.7952755906;
 
 export default function AnalysisFeatures() {
   const graphRef = React.useRef<HTMLDivElement | null>(null);
@@ -112,6 +132,111 @@ export default function AnalysisFeatures() {
     };
   }, [coreSize, graphSize]);
 
+  const ringEdges = React.useMemo<EdgeGeometry[]>(
+    () =>
+      ringConnections.map(([from, to], index) => {
+        const start = nodePositions[from];
+        const end = nodePositions[to];
+        const startEdge = getPointOnEllipse(start, end, factorNodeRadii);
+        const endEdge = getPointOnEllipse(end, start, factorNodeRadii);
+
+        return {
+          id: `ring-${from}-${to}`,
+          start: startEdge,
+          end: endEdge,
+          baseOpacity: 0.16 + (index % 3) * 0.05,
+          strokeWidth: 1,
+          dashed: true,
+        };
+      }),
+    [ringConnections, nodePositions, factorNodeRadii]
+  );
+
+  const meshEdges = React.useMemo<EdgeGeometry[]>(
+    () =>
+      meshConnections.map(([from, to], index) => {
+        const start = nodePositions[from];
+        const end = nodePositions[to];
+        const startEdge = getPointOnEllipse(start, end, factorNodeRadii);
+        const endEdge = getPointOnEllipse(end, start, factorNodeRadii);
+
+        return {
+          id: `mesh-${from}-${to}`,
+          start: startEdge,
+          end: endEdge,
+          baseOpacity: 0.1 + (index % 4) * 0.04,
+          strokeWidth: 1,
+        };
+      }),
+    [meshConnections, nodePositions, factorNodeRadii]
+  );
+
+  const coreEdges = React.useMemo<EdgeGeometry[]>(
+    () =>
+      nodePositions.map((position, index) => {
+        const coreEdgePoint = getPointOnEllipse(
+          { x: 50, y: 50 },
+          position,
+          coreNodeRadii
+        );
+        const factorEdgePoint = getPointOnEllipse(
+          position,
+          { x: 50, y: 50 },
+          factorNodeRadii
+        );
+
+        return {
+          id: `core-${features[index].title}`,
+          start: coreEdgePoint,
+          end: factorEdgePoint,
+          baseOpacity: 0.26,
+          strokeWidth: 1.25,
+        };
+      }),
+    [nodePositions, coreNodeRadii, factorNodeRadii]
+  );
+
+  const signalTracks = React.useMemo<SignalTrack[]>(() => {
+    const tracks: SignalTrack[] = [];
+
+    coreEdges.forEach((edge, index) => {
+      const reverse = index % 2 === 1;
+      tracks.push({
+        id: `signal-core-${index}`,
+        start: reverse ? edge.end : edge.start,
+        end: reverse ? edge.start : edge.end,
+        duration: 2.2 + (index % 4) * 0.32,
+        delay: index * 0.14,
+      });
+    });
+
+    meshEdges.forEach((edge, index) => {
+      if (index % 4 === 0) {
+        tracks.push({
+          id: `signal-mesh-${index}`,
+          start: edge.start,
+          end: edge.end,
+          duration: 2.8 + (index % 3) * 0.35,
+          delay: 0.6 + index * 0.08,
+        });
+      }
+    });
+
+    ringEdges.forEach((edge, index) => {
+      if (index % 2 === 0) {
+        tracks.push({
+          id: `signal-ring-${index}`,
+          start: edge.start,
+          end: edge.end,
+          duration: 3.1 + (index % 4) * 0.22,
+          delay: 0.4 + index * 0.07,
+        });
+      }
+    });
+
+    return tracks;
+  }, [coreEdges, meshEdges, ringEdges]);
+
   return (
     <div className="relative px-2 py-10 text-slate-900 sm:px-4 md:px-6 md:py-14 dark:text-slate-100">
 
@@ -136,74 +261,170 @@ export default function AnalysisFeatures() {
 
       <div ref={graphRef} className="relative mx-auto mt-12 h-[min(92vw,31rem)] w-full max-w-5xl sm:h-[min(78vw,36rem)] lg:h-[36rem]">
         <svg aria-hidden className="absolute inset-0 h-full w-full text-slate-600 dark:text-slate-200">
-          {ringConnections.map(([from, to], index) => {
-            const start = nodePositions[from];
-            const end = nodePositions[to];
-            const startEdge = getPointOnEllipse(start, end, factorNodeRadii);
-            const endEdge = getPointOnEllipse(end, start, factorNodeRadii);
-
-            return (
-              <line
-                key={`ring-${from}-${to}`}
-                x1={`${startEdge.x}%`}
-                y1={`${startEdge.y}%`}
-                x2={`${endEdge.x}%`}
-                y2={`${endEdge.y}%`}
-                stroke="currentColor"
-                strokeWidth="1"
-                strokeDasharray="4 8"
-                style={{ opacity: 0.16 + (index % 3) * 0.05 }}
-              />
-            );
-          })}
-
-          {meshConnections.map(([from, to], index) => {
-            const start = nodePositions[from];
-            const end = nodePositions[to];
-            const startEdge = getPointOnEllipse(start, end, factorNodeRadii);
-            const endEdge = getPointOnEllipse(end, start, factorNodeRadii);
-
-            return (
-              <line
-                key={`mesh-${from}-${to}`}
-                x1={`${startEdge.x}%`}
-                y1={`${startEdge.y}%`}
-                x2={`${endEdge.x}%`}
-                y2={`${endEdge.y}%`}
-                stroke="currentColor"
-                strokeWidth="1"
-                style={{ opacity: 0.1 + (index % 4) * 0.04 }}
-              />
-            );
-          })}
-
-          {nodePositions.map((position, index) => (
-            (() => {
-              const coreEdgePoint = getPointOnEllipse(
-                { x: 50, y: 50 },
-                position,
-                coreNodeRadii
-              );
-              const factorEdgePoint = getPointOnEllipse(
-                position,
-                { x: 50, y: 50 },
-                factorNodeRadii
-              );
-
-              return (
-                <line
-                  key={`core-${features[index].title}`}
-                  x1={`${coreEdgePoint.x}%`}
-                  y1={`${coreEdgePoint.y}%`}
-                  x2={`${factorEdgePoint.x}%`}
-                  y2={`${factorEdgePoint.y}%`}
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  style={{ opacity: 0.26 }}
-                />
-              );
-            })()
+          {ringEdges.map((edge, index) => (
+            <motion.line
+              key={edge.id}
+              x1={`${edge.start.x}%`}
+              y1={`${edge.start.y}%`}
+              x2={`${edge.end.x}%`}
+              y2={`${edge.end.y}%`}
+              stroke="currentColor"
+              strokeWidth={`${edge.strokeWidth}`}
+              strokeDasharray={edge.dashed ? '4 8' : undefined}
+              initial={{ opacity: edge.baseOpacity }}
+              animate={{
+                opacity: [edge.baseOpacity * 0.75, Math.min(edge.baseOpacity + 0.1, 0.4), edge.baseOpacity * 0.75],
+              }}
+              transition={{
+                duration: 4.3 + (index % 3) * 0.7,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: index * 0.12,
+                ease: 'easeInOut',
+              }}
+            />
           ))}
+
+          {meshEdges.map((edge, index) => (
+            <motion.line
+              key={edge.id}
+              x1={`${edge.start.x}%`}
+              y1={`${edge.start.y}%`}
+              x2={`${edge.end.x}%`}
+              y2={`${edge.end.y}%`}
+              stroke="currentColor"
+              strokeWidth={`${edge.strokeWidth}`}
+              initial={{ opacity: edge.baseOpacity }}
+              animate={{
+                opacity: [edge.baseOpacity * 0.7, Math.min(edge.baseOpacity + 0.08, 0.32), edge.baseOpacity * 0.7],
+              }}
+              transition={{
+                duration: 5 + (index % 4) * 0.65,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: 0.25 + index * 0.08,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
+
+          {coreEdges.map((edge, index) => (
+            <motion.line
+              key={edge.id}
+              x1={`${edge.start.x}%`}
+              y1={`${edge.start.y}%`}
+              x2={`${edge.end.x}%`}
+              y2={`${edge.end.y}%`}
+              stroke="currentColor"
+              strokeWidth={`${edge.strokeWidth}`}
+              initial={{ opacity: edge.baseOpacity }}
+              animate={{
+                opacity: [edge.baseOpacity * 0.75, Math.min(edge.baseOpacity + 0.14, 0.44), edge.baseOpacity * 0.75],
+              }}
+              transition={{
+                duration: 3.1 + (index % 5) * 0.32,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: 0.12 + index * 0.09,
+                ease: 'easeInOut',
+              }}
+            />
+          ))}
+        </svg>
+
+        <svg
+          aria-hidden
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
+          {signalTracks.map((track, index) => {
+            const signalColor = '#facc15';
+            const repeatDelay = 0.35 + (index % 3) * 0.25;
+            const trailOffset = getTrailOffsetInPercent(
+              track.start,
+              track.end,
+              graphSize,
+              SIGNAL_TRAIL_LENGTH_CM
+            );
+            const glowOffset = getTrailOffsetInPercent(
+              track.start,
+              track.end,
+              graphSize,
+              SIGNAL_TRAIL_LENGTH_CM * 1.7
+            );
+
+            const startTail = {
+              x: track.start.x - trailOffset.x,
+              y: track.start.y - trailOffset.y,
+            };
+
+            const endTail = {
+              x: track.end.x - trailOffset.x,
+              y: track.end.y - trailOffset.y,
+            };
+
+            const startGlow = {
+              x: track.start.x - glowOffset.x,
+              y: track.start.y - glowOffset.y,
+            };
+
+            const endGlow = {
+              x: track.end.x - glowOffset.x,
+              y: track.end.y - glowOffset.y,
+            };
+
+            return (
+              <g key={track.id}>
+                <motion.line
+                  x1={startGlow.x}
+                  y1={startGlow.y}
+                  x2={track.start.x}
+                  y2={track.start.y}
+                  stroke={signalColor}
+                  strokeWidth="0.000003"
+                  strokeLinecap="square"
+                  animate={{
+                    x1: [startGlow.x, endGlow.x],
+                    y1: [startGlow.y, endGlow.y],
+                    x2: [track.start.x, track.end.x],
+                    y2: [track.start.y, track.end.y],
+                    opacity: [0, 0.48, 0],
+                  }}
+                  transition={{
+                    duration: track.duration,
+                    delay: track.delay,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatDelay,
+                    ease: 'linear',
+                  }}
+                  style={{ filter: `blur(0.25px) drop-shadow(0 0 4px ${signalColor})` }}
+                />
+
+                <motion.line
+                  x1={startTail.x}
+                  y1={startTail.y}
+                  x2={track.start.x}
+                  y2={track.start.y}
+                  stroke={signalColor}
+                  strokeWidth="0.2"
+                  strokeLinecap="square"
+                  animate={{
+                    x1: [startTail.x, endTail.x],
+                    y1: [startTail.y, endTail.y],
+                    x2: [track.start.x, track.end.x],
+                    y2: [track.start.y, track.end.y],
+                    opacity: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: track.duration,
+                    delay: track.delay,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatDelay,
+                    ease: 'linear',
+                  }}
+                  style={{ filter: `drop-shadow(0 0 2px ${signalColor}) drop-shadow(0 0 4px ${signalColor})` }}
+                />
+              </g>
+            );
+          })}
         </svg>
 
         <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
@@ -242,7 +463,7 @@ export default function AnalysisFeatures() {
               className="feature-card group absolute"
             >
               <div className="relative h-0 w-0">
-                <span className="absolute left-3.5 top-[-1.02rem] font-[var(--font-roboto-mono)] text-[0.5rem] font-semibold tracking-[0.12em] text-slate-500 dark:text-zinc-300 sm:text-[0.52rem]">
+                <span className="absolute left-[0.86rem] top-[-1.08rem] z-30 inline-flex min-w-[1.45rem] items-center justify-center rounded-full border border-slate-500/85 bg-white px-1.5 py-[0.04rem] font-[var(--font-roboto-mono)] text-[0.55rem] font-semibold tracking-[0.12em] text-slate-900 shadow-[0_2px_8px_rgba(15,23,42,0.18)] dark:border-white/70 dark:bg-black dark:text-white dark:shadow-[0_2px_8px_rgba(0,0,0,0.45)] sm:text-[0.56rem]">
                   {String(index + 1).padStart(2, '0')}
                 </span>
 
@@ -348,6 +569,32 @@ function getPixelRadiusInPercent(radiusPx: number, graphSize: GraphSize, fallbac
   return {
     x: (radiusPx / graphSize.width) * 100,
     y: (radiusPx / graphSize.height) * 100,
+  };
+}
+
+function getTrailOffsetInPercent(
+  start: NodePosition,
+  end: NodePosition,
+  graphSize: GraphSize,
+  trailLengthCm: number
+): NodePosition {
+  const trailPx = trailLengthCm * PX_PER_CM;
+
+  if (!graphSize.width || !graphSize.height) {
+    return { x: 0.08, y: 0.08 };
+  }
+
+  const dxPx = ((end.x - start.x) / 100) * graphSize.width;
+  const dyPx = ((end.y - start.y) / 100) * graphSize.height;
+  const lengthPx = Math.hypot(dxPx, dyPx);
+
+  if (lengthPx === 0) {
+    return { x: 0, y: 0 };
+  }
+
+  return {
+    x: (((dxPx / lengthPx) * trailPx) / graphSize.width) * 100,
+    y: (((dyPx / lengthPx) * trailPx) / graphSize.height) * 100,
   };
 }
 
