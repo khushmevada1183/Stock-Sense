@@ -63,7 +63,7 @@ export default function HeroSection() {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-3 text-slate-900 dark:text-white">
                   Gain the Edge with AI-Powered
                 </h1>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neon-500 dark:text-neon-300">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neon-500 dark:text-neon-300 neon-glow-text">
                   Stock Insights
                 </h2>
               </div>

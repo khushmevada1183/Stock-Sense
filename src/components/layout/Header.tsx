@@ -61,7 +61,7 @@ const Header = () => {
                       href={item.href}
                       className={`relative flex items-center px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
                         active
-                          ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm'
+                          ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm neon-glow-text'
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/40'
                       }`}
                     >
@@ -116,7 +116,7 @@ const Header = () => {
                       href={item.href}
                       className={`flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
                         active
-                          ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm'
+                          ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm neon-glow-text'
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/40'
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
