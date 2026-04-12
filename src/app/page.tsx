@@ -23,21 +23,17 @@ const IpoSection = dynamic(() => import('../components/home/IpoSection'), {
 });
 
 type SectionHeaderProps = {
-  badge: string;
   title: string;
   accent: string;
   ctaHref?: string;
   ctaLabel?: string;
 };
 
-function SectionHeader({ badge, title, accent, ctaHref, ctaLabel }: SectionHeaderProps) {
+function SectionHeader({ title, accent, ctaHref, ctaLabel }: SectionHeaderProps) {
   return (
     <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
       <div>
-        <span className="inline-flex rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
-          {badge}
-        </span>
-        <h2 className="mt-4 text-2xl font-bold leading-tight text-white md:text-3xl">
+        <h2 className="text-2xl font-bold leading-tight text-white md:text-3xl">
           {title} <span className="text-neon-300 neon-glow-text">{accent}</span>
         </h2>
       </div>
@@ -60,7 +56,7 @@ export default function Home() {
     <div className="relative overflow-hidden pb-8 md:pb-10">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-20 mx-auto h-72 w-[70%] rounded-full bg-[radial-gradient(circle,_rgba(56,189,248,0.16)_0%,_transparent_65%)] blur-3xl"
+        className="pointer-events-none absolute inset-x-0 top-20 mx-auto h-72 w-[70%] rounded-full bg-[radial-gradient(circle,_rgba(57,255,20,0.16)_0%,_transparent_65%)] blur-3xl"
       />
 
       <div>
@@ -72,7 +68,7 @@ export default function Home() {
       <SectionReveal>
         <section className="relative z-10 py-16">
           <div className="container mx-auto max-w-[1440px] overflow-x-visible px-4">
-            <SectionHeader badge="Module 01" title="Market" accent="Overview" />
+            <SectionHeader title="Market" accent="Overview" />
             <div className="overflow-x-auto pb-2">
               <MarketOverview />
             </div>
@@ -86,7 +82,6 @@ export default function Home() {
         <section className="relative z-10 py-16">
           <div className="container mx-auto px-4">
             <SectionHeader
-              badge="Module 01"
               title="Sector"
               accent="Performance"
               ctaHref="/market"
@@ -103,7 +98,6 @@ export default function Home() {
         <section className="relative z-10 py-16">
           <div className="container mx-auto px-4">
             <SectionHeader
-              badge="Module 01"
               title="Featured"
               accent="Stocks"
               ctaHref="/stocks"
@@ -120,7 +114,6 @@ export default function Home() {
         <section className="relative z-10 py-16">
           <div className="container mx-auto px-4">
             <SectionHeader
-              badge="Module 01"
               title="Upcoming"
               accent="IPOs"
               ctaHref="/ipo"

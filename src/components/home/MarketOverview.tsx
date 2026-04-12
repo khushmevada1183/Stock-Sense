@@ -78,7 +78,7 @@ export default function MarketOverview() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-6 animate-pulse">
+          <div key={i} className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-6 animate-pulse">
             <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4 mb-3" />
             <div className="h-7 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/2 mb-3" />
             <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/3" />
@@ -136,7 +136,7 @@ export default function MarketOverview() {
             key={i} 
             className="h-full"
           >
-            <div className="w-full min-h-[170px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-6 hover:shadow-md transition-shadow">
+            <div className="w-full min-h-[170px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-6 hover:shadow-md transition-shadow">
               {/* Header row */}
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-slate-600 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">{index.name}</h3>

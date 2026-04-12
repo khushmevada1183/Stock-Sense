@@ -72,7 +72,7 @@ export default function SectorPerformance() {
       <div ref={sectionRef}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-4 animate-pulse">
+            <div key={i} className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-4 animate-pulse">
               <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4 mb-3" />
               <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/2" />
             </div>
@@ -104,7 +104,7 @@ export default function SectorPerformance() {
             key={sector.name || index}
             className="relative overflow-hidden"
           >
-            <div className="w-full min-h-[122px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-4 hover:shadow-md transition-shadow">
+            <div className="w-full min-h-[122px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-4 hover:shadow-md transition-shadow">
               <h3 className="font-medium text-slate-700 dark:text-slate-300 mb-2 text-sm leading-tight">
                 {sector.name}
               </h3>

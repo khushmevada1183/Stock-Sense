@@ -53,7 +53,7 @@ export default function HeroSection() {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               {/* Badge */}
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-slate-300 bg-slate-50 text-slate-700 text-sm mb-8 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-300">
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-slate-300 bg-slate-50 text-slate-700 text-sm mb-8 dark:border-gray-700/70 dark:bg-gray-900/80 dark:text-slate-300">
                 <Sparkles className="mr-2 h-3.5 w-3.5" />
                 Real-time market intelligence
               </div>
@@ -63,7 +63,7 @@ export default function HeroSection() {
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1] mb-3 text-slate-900 dark:text-white">
                   Gain the Edge with AI-Powered
                 </h1>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-blue-600 dark:text-blue-400">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neon-500 dark:text-neon-300">
                   Stock Insights
                 </h2>
               </div>
@@ -130,19 +130,19 @@ export default function HeroSection() {
               className="relative"
             >
               {/* Chart Card */}
-              <div className="relative h-[400px] w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-6">
+              <div className="relative h-[400px] w-full overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-6">
                 {/* Chart SVG */}
                 <svg className="w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="none">
                   <defs>
                     <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                      <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
-                      <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.08" />
-                      <stop offset="100%" stopColor="#3b82f6" stopOpacity="0" />
+                      <stop offset="0%" stopColor="#39ff14" stopOpacity="0.18" />
+                      <stop offset="50%" stopColor="#39ff14" stopOpacity="0.1" />
+                      <stop offset="100%" stopColor="#39ff14" stopOpacity="0" />
                     </linearGradient>
                     <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#3b82f6" />
-                      <stop offset="50%" stopColor="#2563eb" />
-                      <stop offset="100%" stopColor="#3b82f6" />
+                      <stop offset="0%" stopColor="#39ff14" />
+                      <stop offset="50%" stopColor="#22c55e" />
+                      <stop offset="100%" stopColor="#39ff14" />
                     </linearGradient>
                   </defs>
                   
@@ -168,19 +168,19 @@ export default function HeroSection() {
                     { cx: 350, cy: 120 }
                   ].map((point, i) => (
                     <g key={i}>
-                      <circle cx={point.cx} cy={point.cy} r="6" fill="#e0e7ff" />
-                      <circle cx={point.cx} cy={point.cy} r="3" fill="#3b82f6" />
+                      <circle cx={point.cx} cy={point.cy} r="6" fill="#dcfce7" />
+                      <circle cx={point.cx} cy={point.cy} r="3" fill="#39ff14" />
                     </g>
                   ))}
                 </svg>
                 
                 {/* Live data indicators */}
                 <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
-                  <div className="text-xs font-mono bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-full text-slate-700 dark:text-slate-300 flex items-center border border-slate-200 dark:border-slate-700">
+                  <div className="text-xs font-mono bg-slate-50 dark:bg-gray-900 px-3 py-1.5 rounded-full text-slate-700 dark:text-slate-300 flex items-center border border-slate-200 dark:border-gray-700/50">
                     <span className="mr-2 h-1.5 w-1.5 rounded-full bg-green-500" />
                     LIVE DATA
                   </div>
-                  <div className="text-xs font-mono bg-slate-50 dark:bg-slate-900 px-3 py-1.5 rounded-full text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                  <div className="text-xs font-mono bg-slate-50 dark:bg-gray-900 px-3 py-1.5 rounded-full text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-gray-700/50">
                     NIFTY 50: 19,200 <span className="text-green-600 dark:text-green-400 ml-1">+1.20%</span>
                   </div>
                 </div>
@@ -192,7 +192,7 @@ export default function HeroSection() {
                     { label: 'BANK NIFTY', value: '44,120', change: '-0.45%', positive: false },
                     { label: 'IT INDEX', value: '32,150', change: '+1.20%', positive: true }
                   ].map((metric, i) => (
-                    <div key={i} className="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <div key={i} className="bg-slate-50 dark:bg-gray-900 p-2.5 rounded-lg border border-slate-200 dark:border-gray-700/50">
                       <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">{metric.label}</div>
                       <div className="text-sm font-semibold flex items-center justify-between mt-0.5">
                         <span className="text-slate-900 dark:text-white">{metric.value}</span>
@@ -213,10 +213,10 @@ export default function HeroSection() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.35, ease: 'easeOut' }}
-                  className="absolute -bottom-12 -right-8 w-64 rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-4"
+                  className="absolute -bottom-12 -right-8 w-64 rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-4"
                 >
                   <div className="flex items-start mb-3">
-                    <div className="h-8 w-8 rounded-full bg-slate-300 dark:bg-slate-700 flex items-center justify-center text-slate-900 dark:text-white font-semibold text-sm">
+                    <div className="h-8 w-8 rounded-full bg-slate-300 dark:bg-gray-700/80 flex items-center justify-center text-slate-900 dark:text-white font-semibold text-sm">
                       {testimonials[currentTestimonial].name.charAt(0)}
                     </div>
                     <div className="ml-3">

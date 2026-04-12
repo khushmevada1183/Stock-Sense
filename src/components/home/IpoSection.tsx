@@ -115,21 +115,21 @@ export default function IpoSection() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-6">
+      <div className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-6">
         <div className="flex gap-5 overflow-hidden">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-950 p-5 min-w-[300px] animate-pulse">
+            <div key={i} className="rounded-lg border border-slate-200 dark:border-gray-700/50 bg-white dark:bg-gray-900/90 p-5 min-w-[300px] animate-pulse">
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-lg" />
+                <div className="w-12 h-12 bg-slate-200 dark:bg-gray-700/70 rounded-lg" />
                 <div className="ml-3">
-                  <div className="h-5 bg-slate-200 dark:bg-slate-700 rounded-lg w-32 mb-2" />
-                  <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded-lg w-16" />
+                  <div className="h-5 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-32 mb-2" />
+                  <div className="h-3 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-16" />
                 </div>
               </div>
               <div className="space-y-3">
-                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-full" />
-                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4" />
-                <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-2/3" />
+                <div className="h-4 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-full" />
+                <div className="h-4 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-3/4" />
+                <div className="h-4 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-2/3" />
               </div>
             </div>
           ))}
@@ -148,7 +148,7 @@ export default function IpoSection() {
 
   if (ipoData.length === 0) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-6">
+      <div className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-6">
         <p className="text-slate-600 dark:text-slate-400 text-center py-8">
           No upcoming IPO data available at this time.
         </p>
@@ -159,7 +159,7 @@ export default function IpoSection() {
   const displayedIpos = ipoData.slice(0, 5);
 
   return (
-    <div ref={sectionRef} className="rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 overflow-hidden">
+    <div ref={sectionRef} className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 overflow-hidden">
       <div className="p-6">
         <div className="text-slate-600 dark:text-slate-400 text-sm mb-6">
           Companies that have filed for an IPO with SEBI. Details might be disclosed later.
@@ -183,10 +183,10 @@ export default function IpoSection() {
                     const isPositiveStatus = /(oversubscribed|subscribed|open|strong|bullish)/.test(statusText);
 
                     return (
-                      <div className="relative w-full min-h-[330px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-5 hover:shadow-md transition-shadow flex flex-col">
+                      <div className="relative w-full min-h-[330px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-5 hover:shadow-md transition-shadow flex flex-col">
                         <div className="flex items-center mb-4">
                           {ipo.logo ? (
-                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden mr-3">
+                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center overflow-hidden mr-3">
                               <Image
                                 src={ipo.logo}
                                 alt={`${ipo.company_name} logo`}
@@ -196,7 +196,7 @@ export default function IpoSection() {
                               />
                             </div>
                           ) : (
-                            <div className="w-12 h-12 flex items-center justify-center bg-slate-100 dark:bg-slate-800 rounded-lg mr-3 text-slate-900 dark:text-white font-bold text-lg">
+                            <div className="w-12 h-12 flex items-center justify-center bg-slate-100 dark:bg-gray-800/80 rounded-lg mr-3 text-slate-900 dark:text-white font-bold text-lg">
                               {ipo.symbol?.substring(0, 2) || ipo.company_name?.substring(0, 2) || 'IP'}
                             </div>
                           )}
@@ -208,7 +208,7 @@ export default function IpoSection() {
 
                         <div className="space-y-3 mb-4">
                           <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
-                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mr-2.5">
                               <DollarSign size={14} className="text-slate-600 dark:text-slate-400" />
                             </div>
                             <div className="text-sm">
@@ -218,7 +218,7 @@ export default function IpoSection() {
                           </div>
 
                           <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
-                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mr-2.5">
                               <TrendingUp size={14} className="text-slate-600 dark:text-slate-400" />
                             </div>
                             <div className="text-sm">
@@ -228,7 +228,7 @@ export default function IpoSection() {
                           </div>
 
                           <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
-                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center mr-2.5">
+                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mr-2.5">
                               <Calendar size={14} className="text-slate-600 dark:text-slate-400" />
                             </div>
                             <div className="text-sm">
@@ -241,7 +241,7 @@ export default function IpoSection() {
                         {/* Subscription bar */}
                         <div className="mb-4">
                           <div className="text-xs text-slate-600 dark:text-slate-400 mb-1.5">Expected Interest</div>
-                          <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-2 bg-slate-200 dark:bg-gray-700/70 rounded-full overflow-hidden">
                             <div
                               className={`h-full rounded-full ${
                                 isPositiveStatus
@@ -265,7 +265,7 @@ export default function IpoSection() {
 
                         {/* Document links if available */}
                         {(ipo.rhpLink || ipo.drhpLink) && (
-                          <div className="flex gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                          <div className="flex gap-4 mt-3 pt-3 border-t border-slate-200 dark:border-gray-700/60">
                             {ipo.rhpLink && (
                               <a
                                 href={ipo.rhpLink}
@@ -301,14 +301,14 @@ export default function IpoSection() {
             <div className="flex justify-end mt-2 gap-2">
               <button
                 onClick={() => scrollCarousel('left')}
-                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 aria-label="Scroll left"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={() => scrollCarousel('right')}
-                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 aria-label="Scroll right"
               >
                 <ChevronRight size={16} />
@@ -318,7 +318,7 @@ export default function IpoSection() {
         </div>
 
         {/* Demat Account CTA */}
-        <div className="mt-6 rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-950 p-5 text-center">
+        <div className="mt-6 rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-5 text-center">
           <div className="font-semibold text-slate-900 dark:text-white mb-2">Applying for IPOs?</div>
           <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
             To apply for IPOs, you need a Demat account. Open your account now to start investing.

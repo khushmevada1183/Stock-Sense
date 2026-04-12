@@ -186,9 +186,18 @@ html.dark {
 html.dark .bg-gray-950 {
   background-color: #0D1117 !important;
 }
+html.dark .dark\:bg-gray-950 {
+  background-color: #0D1117 !important;
+}
 html.dark .bg-gray-900\/60,
 html.dark .bg-gray-900\/90,
 html.dark .bg-gray-900 {
+  background-color: #161B22 !important;
+  border-color: rgba(48,54,61,0.8) !important;
+}
+html.dark .dark\:bg-gray-900\/60,
+html.dark .dark\:bg-gray-900\/90,
+html.dark .dark\:bg-gray-900 {
   background-color: #161B22 !important;
   border-color: rgba(48,54,61,0.8) !important;
 }
@@ -198,10 +207,22 @@ html.dark .bg-gray-800 {
   background-color: #1C2128 !important;
   border-color: rgba(48,54,61,0.6) !important;
 }
+html.dark .dark\:bg-gray-800\/50,
+html.dark .dark\:bg-gray-800\/30,
+html.dark .dark\:bg-gray-800 {
+  background-color: #1C2128 !important;
+  border-color: rgba(48,54,61,0.6) !important;
+}
 html.dark .border-gray-700\/50,
 html.dark .border-gray-800\/30,
 html.dark .border-gray-800\/20,
 html.dark .border-gray-700 {
+  border-color: rgba(48,54,61,0.9) !important;
+}
+html.dark .dark\:border-gray-700\/50,
+html.dark .dark\:border-gray-800\/30,
+html.dark .dark\:border-gray-800\/20,
+html.dark .dark\:border-gray-700 {
   border-color: rgba(48,54,61,0.9) !important;
 }
 html.dark .divide-gray-700\/50 > * {

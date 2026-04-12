@@ -14,7 +14,7 @@ interface Stock {
 }
 
 interface Portfolio {
-  id: number;
+  id: string;
   userId: string;
   portfolioName: string;
   stocks: Stock[];
@@ -29,7 +29,7 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
   const fetchPortfolios = async () => {
     try {
       setIsLoading(true);
-      const data = await getUserPortfolios();
+      const data = await getUserPortfolios(userId);
       setPortfolios(data.portfolios || []);
       setError('');
     } catch (err) {
@@ -42,52 +42,16 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
 
   useEffect(() => {
     fetchPortfolios();
-    
-    // Since the portfolio API is not available, we can use mock data for demonstration
-    // This will only run if the API returns an empty array
-    const addMockData = async () => {
-      const data = await getUserPortfolios();
-      if (data.portfolios.length === 0) {
-        setPortfolios([
-          {
-            id: 1,
-            userId: userId,
-            portfolioName: "Demo Growth Portfolio",
-            stocks: [
-              { symbol: "RELIANCE", quantity: 10, buyPrice: 2500, buyDate: "2025-01-15" },
-              { symbol: "TCS", quantity: 5, buyPrice: 3800, buyDate: "2025-02-20" },
-              { symbol: "INFY", quantity: 15, buyPrice: 1600, buyDate: "2025-03-10" }
-            ],
-            createdAt: "2025-01-01"
-          },
-          {
-            id: 2,
-            userId: userId,
-            portfolioName: "Demo Dividend Portfolio",
-            stocks: [
-              { symbol: "HDFCBANK", quantity: 8, buyPrice: 1800, buyDate: "2025-03-05" },
-              { symbol: "ITC", quantity: 20, buyPrice: 400, buyDate: "2025-04-12" }
-            ],
-            createdAt: "2025-03-01"
-          }
-        ]);
-      }
-    };
-    
-    addMockData();
   }, [userId]);
 
-  const handleDelete = async (portfolioId: number) => {
+  const handleDelete = async (portfolioId: string) => {
     if (window.confirm('Are you sure you want to delete this portfolio?')) {
       try {
-        // Since the API is not available, we'll use a mock implementation
-        const response = await deletePortfolio();
-        // Mock the success by removing the portfolio from the local state
-        // In a real implementation, we'd check response.success
-        setPortfolios(portfolios.filter(p => p.id !== portfolioId));
-        
-        if (!response.success) {
-          logger.warn('Mock API: Portfolio deletion simulated locally');
+        const response = await deletePortfolio(portfolioId, userId);
+        if (response.success) {
+          setPortfolios((prev) => prev.filter((portfolio) => portfolio.id !== portfolioId));
+        } else {
+          setError(response.message || 'Failed to delete the portfolio.');
         }
       } catch (err) {
         setError('An error occurred while deleting the portfolio.');

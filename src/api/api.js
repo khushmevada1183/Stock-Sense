@@ -7,7 +7,14 @@ import { logger } from '@/lib/logger';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
 
 // Generic function for API calls
-async function fetchApi(endpoint, params = {}) {
+async function requestApi(endpoint, options = {}) {
+  const {
+    method = 'GET',
+    params = {},
+    body,
+    revalidate = 60,
+  } = options;
+
   const url = new URL(`${BASE_URL}${endpoint}`);
   
   // Add query parameters if any
@@ -21,12 +28,27 @@ async function fetchApi(endpoint, params = {}) {
   
   try {
     const response = await fetch(url.toString(), {
-      // Add Incremental Static Regeneration caching (60 seconds)
-      next: { revalidate: 60 }
+      method,
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+      next: method === 'GET' ? { revalidate } : undefined,
+      cache: method === 'GET' ? undefined : 'no-store',
     });
     
     if (!response.ok) {
-      throw new Error(`API error ${response.status}: ${response.statusText}`);
+      let errorPayload = null;
+      try {
+        errorPayload = await response.json();
+      } catch {
+        errorPayload = null;
+      }
+
+      const serverMessage =
+        errorPayload?.error?.message ||
+        errorPayload?.message ||
+        response.statusText;
+
+      throw new Error(`API error ${response.status}: ${serverMessage}`);
     }
     
     const data = await response.json();
@@ -35,6 +57,10 @@ async function fetchApi(endpoint, params = {}) {
     logger.error(`Error fetching from ${endpoint}`, error);
     throw error;
   }
+}
+
+async function fetchApi(endpoint, params = {}) {
+  return requestApi(endpoint, { method: 'GET', params });
 }
 
 // ===== STOCK DATA ENDPOINTS =====
@@ -207,43 +233,86 @@ export async function getMarketMovers() {
   return { bse, nse };
 }
 
-// ===== PORTFOLIO FUNCTIONS (NOT AVAILABLE) =====
+// ===== PORTFOLIO FUNCTIONS =====
 
-export async function getUserPortfolios() {
-  logger.warn("Portfolio API not available in the current API version");
-  return { portfolios: [] };
+const DEFAULT_USER_ID = '1';
+
+export async function getUserPortfolios(userId = DEFAULT_USER_ID) {
+  const response = await fetchApi('/portfolio', { userId });
+  return { portfolios: response?.data?.portfolios || [] };
 }
 
-export async function getPortfolioDetails() {
-  logger.warn("Portfolio API not available in the current API version");
-  return { details: {} };
+export async function getPortfolioDetails(portfolioId, userId = DEFAULT_USER_ID) {
+  if (!portfolioId) {
+    return { details: {} };
+  }
+
+  const response = await fetchApi(`/portfolio/${portfolioId}`, { userId });
+  return { details: response?.data?.details || {} };
 }
 
 export async function createPortfolio(portfolioData) {
-  logger.warn("Portfolio API not available in the current API version");
-  logger.info("Would create portfolio with data:", portfolioData);
-  return { success: true, portfolioId: Math.random().toString(36).substr(2, 9) };
+  const payload = {
+    ...portfolioData,
+    userId: portfolioData?.userId || DEFAULT_USER_ID,
+  };
+
+  const response = await requestApi('/portfolio', {
+    method: 'POST',
+    body: payload,
+  });
+
+  return {
+    success: response?.data?.success ?? false,
+    portfolioId: response?.data?.portfolioId,
+    portfolio: response?.data?.portfolio,
+  };
 }
 
 export async function updatePortfolio(portfolioId, portfolioData) {
-  logger.warn("Portfolio API not available in the current API version");
-  logger.info("Would update portfolio", portfolioId, "with data:", portfolioData);
-  return { success: true };
+  if (!portfolioId) {
+    throw new Error('portfolioId is required to update portfolio');
+  }
+
+  const payload = {
+    ...portfolioData,
+    userId: portfolioData?.userId || DEFAULT_USER_ID,
+  };
+
+  const response = await requestApi(`/portfolio/${portfolioId}`, {
+    method: 'PUT',
+    body: payload,
+  });
+
+  return {
+    success: response?.data?.success ?? false,
+    portfolio: response?.data?.portfolio,
+  };
 }
 
-export async function deletePortfolio() {
-  logger.warn("Portfolio API not available in the current API version");
-  return { success: false, message: "API not available" };
+export async function deletePortfolio(portfolioId, userId = DEFAULT_USER_ID) {
+  if (!portfolioId) {
+    return { success: false, message: 'portfolioId is required' };
+  }
+
+  const response = await requestApi(`/portfolio/${portfolioId}`, {
+    method: 'DELETE',
+    params: { userId },
+  });
+
+  return response?.data || { success: false };
 }
 
-export async function getPortfolioHoldings() {
-  logger.warn("Portfolio API not available in the current API version");
-  return { holdings: [] };
+export async function getPortfolioHoldings(userId = DEFAULT_USER_ID, portfolioId = null) {
+  const params = portfolioId ? { userId, portfolioId } : { userId };
+  const response = await fetchApi('/portfolio/holdings', params);
+  return { holdings: response?.data?.holdings || [] };
 }
 
-export async function getPortfolioSummary() {
-  logger.warn("Portfolio API not available in the current API version");
-  return { summary: {} };
+export async function getPortfolioSummary(userId = DEFAULT_USER_ID, portfolioId = null) {
+  const params = portfolioId ? { userId, portfolioId } : { userId };
+  const response = await fetchApi('/portfolio/summary', params);
+  return { summary: response?.data?.summary || {} };
 }
 
 // ===== HEALTH CHECK =====

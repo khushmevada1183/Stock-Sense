@@ -261,12 +261,12 @@ export default function FeaturedStocks() {
               key={stock.id || stock.symbol || index} 
               className="stock-card"
             >
-              <div className="w-full rounded-lg border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 p-5 hover:shadow-md transition-shadow">
+              <div className="w-full rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-5 hover:shadow-md transition-shadow">
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-                        <Link href={`/stocks/${stock.symbol}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300">
+                        <Link href={`/stocks/${stock.symbol}`} className="hover:text-neon-500 dark:hover:text-neon-300 transition-colors duration-300">
                           {stock.symbol}
                         </Link>
                       </h3>
@@ -295,7 +295,7 @@ export default function FeaturedStocks() {
                       <span className="text-slate-600 dark:text-slate-400">Price vs. Category</span>
                       <span className="text-slate-500 dark:text-slate-400">{Math.round(percentOfMax)}%</span>
                     </div>
-                    <div className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-slate-200 dark:bg-gray-700/70 rounded-full overflow-hidden">
                       <div
                         className={`price-bar-fill h-full ${
                           positive

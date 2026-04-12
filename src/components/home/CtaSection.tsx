@@ -63,7 +63,7 @@ export default function CtaSection() {
   return (
     <section className="relative pt-0 pb-10 md:pt-1 md:pb-12">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 -z-10 flex justify-center">
-        <div className="h-36 w-[min(88vw,860px)] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(15,23,42,0.09),transparent_72%)] blur-xl dark:bg-[radial-gradient(ellipse_at_center,rgba(14,165,233,0.16),transparent_76%)]" />
+        <div className="h-36 w-[min(88vw,860px)] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(15,23,42,0.09),transparent_72%)] blur-xl dark:bg-[radial-gradient(ellipse_at_center,rgba(57,255,20,0.18),transparent_76%)]" />
       </div>
 
       <div className="container mx-auto px-4 text-center relative z-10">
@@ -74,7 +74,7 @@ export default function CtaSection() {
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-slate-300/75 bg-white/75 px-4 py-2 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.65)] ring-1 ring-white/75 backdrop-blur-md dark:border-slate-600/70 dark:bg-slate-900/55 dark:ring-slate-300/10">
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-slate-300/75 bg-white/75 px-4 py-2 shadow-[0_10px_30px_-22px_rgba(15,23,42,0.65)] ring-1 ring-white/75 backdrop-blur-md dark:border-gray-700/70 dark:bg-gray-900/70 dark:ring-gray-300/10">
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-900 text-[0.6rem] font-[var(--font-roboto-mono)] font-semibold tracking-[0.16em] text-slate-50 dark:bg-slate-100 dark:text-slate-950">
               01
             </span>
@@ -108,7 +108,7 @@ export default function CtaSection() {
             <Button
               variant="outline"
               size="lg"
-              className="inline-flex min-w-[170px] items-center justify-center rounded-2xl border border-slate-300 bg-white/70 px-8 py-4 font-[var(--font-sans)] text-base font-medium text-slate-700 backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 dark:border-slate-600 dark:bg-slate-900/55 dark:text-slate-200 dark:hover:bg-slate-900"
+              className="inline-flex min-w-[170px] items-center justify-center rounded-2xl border border-slate-300 bg-white/70 px-8 py-4 font-[var(--font-sans)] text-base font-medium text-slate-700 backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 dark:border-gray-700/70 dark:bg-gray-900/70 dark:text-slate-200 dark:hover:bg-gray-900/90"
               onClick={() => router.push('/about')}
             >
               Learn More
@@ -131,7 +131,7 @@ export default function CtaSection() {
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="h-full"
             >
-              <div className="relative h-full min-h-[142px] overflow-hidden rounded-2xl border border-slate-200/85 bg-white/78 p-6 shadow-[0_20px_36px_-32px_rgba(15,23,42,0.9)] ring-1 ring-white/70 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_46px_-30px_rgba(15,23,42,0.6)] dark:border-slate-700/75 dark:bg-slate-900/60 dark:ring-slate-200/5">
+              <div className="relative h-full min-h-[142px] overflow-hidden rounded-2xl border border-slate-200/85 bg-white/78 p-6 shadow-[0_20px_36px_-32px_rgba(15,23,42,0.9)] ring-1 ring-white/70 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_46px_-30px_rgba(15,23,42,0.6)] dark:border-gray-700/70 dark:bg-gray-900/80 dark:ring-gray-200/5">
                 <div className="mx-auto mb-4 h-px w-16 bg-gradient-to-r from-transparent via-slate-400/80 to-transparent dark:via-slate-500/90" />
                 <div className="text-center">
                   <div className="mb-2 font-[var(--font-sans)] text-[2.25rem] font-semibold leading-none tracking-[-0.03em] text-slate-900 dark:text-slate-50">

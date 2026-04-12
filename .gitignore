@@ -58,3 +58,4 @@ next-env.d.ts
 dist/
 nul
 .env*.local
+.kiro/specs/scalable-stock-prediction-backend/.config.kiro

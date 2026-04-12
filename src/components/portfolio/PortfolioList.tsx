@@ -13,7 +13,7 @@ interface Stock {
 }
 
 interface Portfolio {
-  id: number;
+  id: string;
   userId: string;
   portfolioName: string;
   stocks: Stock[];
@@ -28,13 +28,11 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
   const fetchPortfolios = async () => {
     try {
       setIsLoading(true);
-      // Updated to work with the modified API function that takes no parameters
-      const data = await stockApi.getUserPortfolios();
+      const data = await stockApi.getUserPortfolios(userId);
       setPortfolios(data.portfolios || []);
-      // Add a warning since this API is not available
-      setError('Portfolio feature is currently unavailable as it is not supported by the API.');
+      setError('');
     } catch (err) {
-      setError('Failed to load portfolios. Portfolio API is not supported.');
+      setError('Failed to load portfolios. Please try again.');
       console.error('Error fetching portfolios:', err);
     } finally {
       setIsLoading(false);
@@ -45,15 +43,18 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
     fetchPortfolios();
   }, [userId]);
 
-  const handleDelete = async () => {
+  const handleDelete = async (portfolioId: string) => {
     if (window.confirm('Are you sure you want to delete this portfolio?')) {
       try {
-        // Updated to work with the modified API function that takes no parameters
-        await stockApi.deletePortfolio();
-        // Always show an error message since the API is not available
-        setError('Portfolio deletion is not supported by the current API.');
+        const response = await stockApi.deletePortfolio(portfolioId, userId);
+        if (response.success) {
+          setPortfolios((prev) => prev.filter((portfolio) => portfolio.id !== portfolioId));
+          setError('');
+        } else {
+          setError(response.message || 'Failed to delete portfolio.');
+        }
       } catch (err) {
-        setError('Portfolio API is not available.');
+        setError('Failed to delete portfolio.');
         console.error('Error deleting portfolio:', err);
       }
     }
@@ -126,7 +127,7 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
                 </Link>
                 <button 
                   className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-                  onClick={() => handleDelete()}
+                  onClick={() => handleDelete(portfolio.id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
