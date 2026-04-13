@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { getCompanyProfile } from '@/api/api';
 import { logger } from '@/lib/logger';
 
 interface StockLogoProps {
@@ -14,54 +13,19 @@ interface StockLogoProps {
 
 const StockLogo: React.FC<StockLogoProps> = ({ symbol, size = 40, className = '', imageUrl }) => {
   const [logoUrl, setLogoUrl] = useState<string | null>(imageUrl || null);
-  const [fallbackUrl, setFallbackUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(imageUrl ? false : true);
   const [error, setError] = useState<boolean>(false);
 
   useEffect(() => {
-    // If imageUrl is provided directly, use it instead of fetching
-    if (imageUrl) {
-      setLogoUrl(imageUrl);
-      setIsLoading(false);
-      return;
-    }
-    
-    const fetchLogo = async () => {
-      if (!symbol) return;
-
-      setIsLoading(true);
-      setError(false);
-
-      // Always set a fallback URL based on the symbol
-      const defaultFallback = `https://ui-avatars.com/api/?name=${symbol}&background=random&size=128`;
-      setFallbackUrl(defaultFallback);
-
-      try {
-        // Use company profile instead since getCompanyLogo is not available
-        const companyData = await getCompanyProfile(symbol);
-        
-        if (companyData && companyData.logo) {
-          setLogoUrl(companyData.logo);
-        } else {
-          // Use the fallback directly if no logo in company profile
-          setLogoUrl(defaultFallback);
-        }
-      } catch (err) {
-        logger.error('Error fetching logo:', err);
-        setError(true);
-        setLogoUrl(defaultFallback);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchLogo();
+    setIsLoading(false);
+    setError(!imageUrl);
+    setLogoUrl(imageUrl || null);
   }, [symbol, imageUrl]);
 
   const handleImageError = () => {
-    logger.debug(`Image error for ${symbol}, using fallback`);
+    logger.debug(`Image error for ${symbol}, using text fallback`);
     setError(true);
-    setLogoUrl(fallbackUrl || `https://ui-avatars.com/api/?name=${symbol}&background=random&size=128`);
+    setLogoUrl(null);
   };
 
   if (isLoading) {

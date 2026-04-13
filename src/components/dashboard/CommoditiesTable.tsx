@@ -1,14 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ArrowUp, ArrowDown } from 'lucide-react';
-import { logger } from '@/lib/logger';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
 
 interface Commodity {
   id: string;
@@ -21,27 +17,17 @@ interface Commodity {
   category: string;
 }
 
+const LOCAL_COMMODITIES: Commodity[] = [];
+
 const CommoditiesTable = () => {
   const [commodities, setCommodities] = useState<Commodity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchCommodities = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`${API_URL}/commodities`);
-        setCommodities(response.data);
-        setError('');
-      } catch (err) {
-        logger.error('Error fetching commodities:', err);
-        setError('Failed to load commodities data. Please try again later.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchCommodities();
+    setCommodities(LOCAL_COMMODITIES);
+    setError('');
+    setIsLoading(false);
   }, []);
 
   // Format date to readable format

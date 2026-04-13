@@ -17,16 +17,7 @@ interface UnifiedSearchResult {
   sector?: string;
 }
 
-interface SearchApiResult {
-  symbol?: string;
-  ticker_id?: string;
-  name?: string;
-  company_name?: string;
-  current_price?: number;
-  price?: number;
-  percent_change?: number;
-  sector?: string;
-}
+const LOCAL_SEARCH_INDEX: UnifiedSearchResult[] = [];
 
 interface SearchBarProps {
   compact?: boolean;
@@ -45,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isResultsVisible, setIsResultsVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchMode, setSearchMode] = useState<'global' | 'indian'>('global');
+  const [searchMode, setSearchMode] = useState<'local' | 'indian'>('local');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -67,7 +58,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   // Fetch search results when debounced query changes
   useEffect(() => {
-    const fetchResults = async () => {
+    const fetchResults = () => {
       if (debouncedQuery.length < 2) {
         setResults([]);
         setIsResultsVisible(false);
@@ -79,74 +70,27 @@ const SearchBar: React.FC<SearchBarProps> = ({
       setError(null);
       setIsResultsVisible(true);
 
-      try {
-        // Search using API endpoints
-        const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}`);
-        const data = await response.json();
-        const rawResults = data.results || data || [];
-        const stockResults: SearchApiResult[] = Array.isArray(rawResults) ? rawResults : [];
-        
-        if (stockResults && stockResults.length > 0) {
-          // Map results to our unified format
-          const mappedResults = stockResults.map((stock) => ({
-            symbol: stock.symbol || stock.ticker_id || '',
-            companyName: stock.name || stock.company_name || stock.symbol || stock.ticker_id || 'Unknown Company',
-            latestPrice: stock.current_price || stock.price || 0,
-            changePercent: stock.percent_change,
-            sector: stock.sector
-          })).slice(0, 10);
-          
-          setResults(mappedResults);
-          setSearchMode('indian');
-        } else {
-          // If no results, try with trending data as fallback
-          try {
-            const trendingResponse = await fetch('/api/trending');
-            const trendingData = await trendingResponse.json();
-            const topGainers: SearchApiResult[] = trendingData.data?.trending_stocks?.top_gainers || [];
-            const topLosers: SearchApiResult[] = trendingData.data?.trending_stocks?.top_losers || [];
-            const trendingStocks = [
-              ...topGainers,
-              ...topLosers
-            ].filter((stock) => {
-              const searchLower = debouncedQuery.toLowerCase();
-              const nameLower = (stock.company_name || stock.name || '').toLowerCase();
-              const symbolLower = (stock.ticker_id || stock.symbol || '').toLowerCase();
-              return nameLower.includes(searchLower) || symbolLower.includes(searchLower);
-            });
-            
-            if (trendingStocks.length > 0) {
-              const mappedTrending = trendingStocks.map((stock) => ({
-                symbol: stock.symbol || stock.ticker_id || '',
-                companyName: stock.name || stock.company_name || stock.symbol || stock.ticker_id || 'Unknown Company',
-                latestPrice: stock.current_price || stock.price || 0,
-                changePercent: stock.percent_change,
-                sector: stock.sector
-              })).slice(0, 10);
-              
-              setResults(mappedTrending);
-              setSearchMode('global');
-            } else {
-              setResults([]);
-              setError('No results found');
-            }
-          } catch {
-            setResults([]);
-            setError('No results found');
-          }
-        }
-      } catch (err) {
-        logger.error('Search error:', err);
+      const normalizedQuery = debouncedQuery.trim().toLowerCase();
+      const localResults = LOCAL_SEARCH_INDEX.filter((stock) => {
+        return (
+          stock.symbol.toLowerCase().includes(normalizedQuery) ||
+          stock.companyName.toLowerCase().includes(normalizedQuery)
+        );
+      }).slice(0, 10);
+
+      if (localResults.length > 0) {
+        setResults(localResults);
+        setSearchMode('local');
+      } else {
         setResults([]);
-        setError('Error searching stocks. Please try again.');
-        
-        // Inform parent component about the error if callback is provided
-        if (onSearchComplete) {
-          onSearchComplete('', []);
-        }
-      } finally {
-        setIsLoading(false);
+        setError('No results found');
       }
+
+      if (onSearchComplete && localResults.length === 0) {
+        onSearchComplete('', []);
+      }
+
+      setIsLoading(false);
     };
 
     fetchResults();

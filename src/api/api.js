@@ -1,271 +1,314 @@
-// Single API file for Stock Sense - Calls deployed backend on Render
-// This file imports the backend URL from .env and handles all API calls
+// Frontend-local data layer.
+// All external API/network integration is intentionally removed.
 
 import { logger } from '@/lib/logger';
 
-// Import the deployed backend URL from environment variables
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
+const LOCAL_TRENDING_STOCKS = [];
 
-// Generic function for API calls
-async function requestApi(endpoint, options = {}) {
-  const {
-    method = 'GET',
-    params = {},
-    body,
-    revalidate = 60,
-  } = options;
+const LOCAL_PRICE_SHOCKERS = [];
 
-  const url = new URL(`${BASE_URL}${endpoint}`);
-  
-  // Add query parameters if any
-  if (params && Object.keys(params).length > 0) {
-    Object.keys(params).forEach(key => {
-      if (params[key] !== undefined && params[key] !== null) {
-        url.searchParams.append(key, params[key]);
-      }
-    });
-  }
-  
-  try {
-    const response = await fetch(url.toString(), {
-      method,
-      headers: body ? { 'Content-Type': 'application/json' } : undefined,
-      body: body ? JSON.stringify(body) : undefined,
-      next: method === 'GET' ? { revalidate } : undefined,
-      cache: method === 'GET' ? undefined : 'no-store',
-    });
-    
-    if (!response.ok) {
-      let errorPayload = null;
-      try {
-        errorPayload = await response.json();
-      } catch {
-        errorPayload = null;
-      }
+const LOCAL_BSE_ACTIVE = [];
 
-      const serverMessage =
-        errorPayload?.error?.message ||
-        errorPayload?.message ||
-        response.statusText;
+const LOCAL_NSE_ACTIVE = [];
 
-      throw new Error(`API error ${response.status}: ${serverMessage}`);
-    }
-    
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    logger.error(`Error fetching from ${endpoint}`, error);
-    throw error;
-  }
-}
+const LOCAL_NEWS = [];
 
-async function fetchApi(endpoint, params = {}) {
-  return requestApi(endpoint, { method: 'GET', params });
-}
+const LOCAL_IPO_DATA = {
+  upcoming: [],
+  active: [],
+  listed: [],
+  closed: [],
+};
 
-// ===== STOCK DATA ENDPOINTS =====
+const LOCAL_COMMODITIES = [];
+
+const DEFAULT_USER_ID = '1';
+
+const toTopMover = (item) => {
+  const pct = Number(item.change_percent || 0);
+  return {
+    symbol: item.symbol,
+    companyName: item.company_name,
+    price: Number(item.current_price || 0),
+    change: Number(item.net_change || 0),
+    changePercent: pct,
+    volume: Number(item.volume || 0),
+  };
+};
+
+const findStockBySymbol = (symbolOrName = '') => {
+  const query = String(symbolOrName).trim().toLowerCase();
+  return LOCAL_TRENDING_STOCKS.find((stock) => {
+    const symbol = String(stock.symbol || '').toLowerCase();
+    const name = String(stock.company_name || '').toLowerCase();
+    return symbol === query || symbol.includes(query) || name.includes(query);
+  });
+};
+
+// ===== STOCK DATA =====
 
 export async function getStockDetails(stockName) {
-  logger.debug(`API Call: /stock?name=${stockName}`);
-  return fetchApi('/stock', { name: stockName });
-}
-
-export async function getTrendingStocks() {
-  return fetchApi('/trending');
-}
-
-export async function getHistoricalData(stockName, period = '6m', filter = 'price') {
-  return fetchApi('/historical_data', { 
-    stock_name: stockName, 
-    period: period, 
-    filter: filter 
-  });
-}
-
-export async function getFinancialStatement(stockName, stats) {
-  logger.warn('DEPRECATED: getFinancialStatement called - should use /stock endpoint instead');
-  return fetchApi('/statement', { 
-    stock_name: stockName, 
-    stats: stats 
-  });
-}
-
-export async function getStockTargetPrice(stockId) {
-  return fetchApi('/stock_target_price', { stock_id: stockId });
-}
-
-export async function getCorporateActions(stockName) {
-  return fetchApi('/corporate_actions', { stock_name: stockName });
-}
-
-export async function getRecentAnnouncements(stockName) {
-  return fetchApi('/recent_announcements', { stock_name: stockName });
-}
-
-export async function getStockForecasts(stockId, measureCode = 'EPS', periodType = 'Annual', dataType = 'Actuals', age = 'Current') {
-  return fetchApi('/stock_forecasts', {
-    stock_id: stockId,
-    measure_code: measureCode,
-    period_type: periodType,
-    data_type: dataType,
-    age: age
-  });
-}
-
-export async function getHistoricalStats(stockName, stats) {
-  return fetchApi('/historical_stats', { 
-    stock_name: stockName, 
-    stats: stats 
-  });
-}
-
-// ===== MARKET DATA ENDPOINTS =====
-
-export async function getBSEMostActive() {
-  return fetchApi('/BSE_most_active');
-}
-
-export async function getNSEMostActive() {
-  return fetchApi('/NSE_most_active');
-}
-
-export async function get52WeekHighLow() {
-  return fetchApi('/fetch_52_week_high_low_data');
-}
-
-export async function getPriceShockers() {
-  return fetchApi('/price_shockers');
-}
-
-export async function getCommodities() {
-  return fetchApi('/commodities');
-}
-
-// ===== IPO DATA ENDPOINTS =====
-
-export async function getIPOData() {
-  const response = await fetchApi('/ipo');
-  
-  if (response && response.success) {
-    return response;
-  } else if (response && typeof response === 'object' && response.data) {
+  const found = findStockBySymbol(stockName);
+  if (!found) {
     return {
-      success: true,
-      data: response.data
-    };
-  } else if (response && response.upcoming) {
-    return {
-      success: true,
-      data: response
+      symbol: String(stockName || '').toUpperCase(),
+      company_name: String(stockName || 'Unknown Company'),
+      current_price: 0,
+      percent_change: 0,
+      sector: 'N/A',
+      industry: 'N/A',
+      market_cap: 0,
+      year_high: 0,
+      year_low: 0,
+      volume: 0,
+      average_volume: 0,
     };
   }
-  
+
   return {
-    success: false,
-    data: {
-      upcoming: [],
-      active: [],
-      listed: [],
-      closed: []
-    }
+    symbol: found.symbol,
+    company_name: found.company_name,
+    current_price: Number(found.current_price || 0),
+    percent_change: Number(found.price_change_percentage || 0),
+    sector: found.sector_name || 'N/A',
+    industry: found.sector_name || 'N/A',
+    market_cap: 0,
+    year_high: Number(found.current_price || 0),
+    year_low: Number(found.current_price || 0),
+    volume: 0,
+    average_volume: 0,
   };
 }
 
-// ===== NEWS & MUTUAL FUNDS =====
+export async function getTrendingStocks() {
+  return {
+    success: true,
+    data: {
+      stocks: LOCAL_TRENDING_STOCKS,
+      trending_stocks: {
+        top_gainers: LOCAL_TRENDING_STOCKS.filter((stock) => Number(stock.price_change_percentage || 0) >= 0),
+        top_losers: LOCAL_TRENDING_STOCKS.filter((stock) => Number(stock.price_change_percentage || 0) < 0),
+      },
+    },
+  };
+}
+
+export async function getHistoricalData() {
+  return [];
+}
+
+export async function getFinancialStatement() {
+  return { statements: [] };
+}
+
+export async function getStockTargetPrice() {
+  return {
+    priceTarget: {
+      CurrencyCode: 'INR',
+      Mean: 0,
+      High: 0,
+      Low: 0,
+      NumberOfAnalysts: 0,
+    },
+    recommendation: {
+      Mean: 3,
+      Statistics: {
+        Statistic: [
+          { Recommendation: 1, NumberOfAnalysts: 0 },
+          { Recommendation: 2, NumberOfAnalysts: 0 },
+          { Recommendation: 3, NumberOfAnalysts: 0 },
+          { Recommendation: 4, NumberOfAnalysts: 0 },
+          { Recommendation: 5, NumberOfAnalysts: 0 },
+        ],
+      },
+    },
+  };
+}
+
+export async function getCorporateActions() {
+  return [];
+}
+
+export async function getRecentAnnouncements() {
+  return [];
+}
+
+export async function getStockForecasts() {
+  return [];
+}
+
+export async function getHistoricalStats() {
+  return [];
+}
+
+// ===== MARKET DATA =====
+
+export async function getBSEMostActive() {
+  return {
+    success: true,
+    data: {
+      data: LOCAL_BSE_ACTIVE,
+      indices: {
+        nifty: { value: 0, change: 0, percent_change: 0 },
+        sensex: { value: 0, change: 0, percent_change: 0 },
+        bank_nifty: { value: 0, change: 0, percent_change: 0 },
+        it_nifty: { value: 0, change: 0, percent_change: 0 },
+      },
+    },
+  };
+}
+
+export async function getNSEMostActive() {
+  return {
+    success: true,
+    data: {
+      data: LOCAL_NSE_ACTIVE,
+      sector_performance: [],
+    },
+  };
+}
+
+export async function get52WeekHighLow() {
+  return {
+    BSE_52WeekHighLow: {
+      high52Week: [],
+      low52Week: [],
+    },
+    NSE_52WeekHighLow: {
+      high52Week: [],
+      low52Week: [],
+    },
+  };
+}
+
+export async function getPriceShockers() {
+  return {
+    success: true,
+    data: {
+      gainers: LOCAL_PRICE_SHOCKERS.filter((stock) => Number(stock.change_percent || 0) > 0),
+      losers: LOCAL_PRICE_SHOCKERS.filter((stock) => Number(stock.change_percent || 0) < 0),
+      BSE_PriceShocker: [],
+      NSE_PriceShocker: [],
+    },
+  };
+}
+
+export async function getCommodities() {
+  return LOCAL_COMMODITIES;
+}
+
+// ===== IPO / NEWS / FUNDS =====
+
+export async function getIPOData() {
+  return {
+    success: true,
+    data: LOCAL_IPO_DATA,
+  };
+}
 
 export async function getLatestNews() {
-  return fetchApi('/news');
+  return {
+    success: true,
+    data: LOCAL_NEWS,
+  };
 }
 
 export async function getMutualFunds() {
-  return fetchApi('/mutual_funds');
+  return [];
 }
 
-export async function searchMutualFunds(query) {
-  return fetchApi('/mutual_fund_search', { query: query });
+export async function searchMutualFunds() {
+  return [];
 }
 
-export async function getMutualFundDetails(stockName) {
-  return fetchApi('/mutual_funds_details', { stock_name: stockName });
+export async function getMutualFundDetails() {
+  return {};
 }
 
-export async function searchIndustry(query) {
-  return fetchApi('/industry_search', { query: query });
+export async function searchIndustry() {
+  return [];
 }
 
 // ===== COMPATIBILITY ALIASES =====
 
-// Legacy function names for backward compatibility
-export const getUpcomingIPOs = () => {
-  logger.warn('getUpcomingIPOs is deprecated. Use getIPOData() instead.');
-  return getIPOData();
+export const getUpcomingIPOs = () => getIPOData();
+export const getIPOCalendar = () => getIPOData();
+export const getFeaturedStocks = () => Promise.resolve(LOCAL_TRENDING_STOCKS);
+
+export const searchStocks = async (query) => {
+  const normalized = String(query || '').trim().toLowerCase();
+  if (!normalized) {
+    return [];
+  }
+
+  return LOCAL_TRENDING_STOCKS.filter((stock) => {
+    const symbol = String(stock.symbol || '').toLowerCase();
+    const name = String(stock.company_name || '').toLowerCase();
+    return symbol.includes(normalized) || name.includes(normalized);
+  }).map((stock) => ({
+    symbol: stock.symbol,
+    ticker_id: stock.ticker_id,
+    company_name: stock.company_name,
+    current_price: stock.current_price,
+    percent_change: stock.price_change_percentage,
+    sector: stock.sector_name,
+  }));
 };
 
-export const getIPOCalendar = () => {
-  logger.warn('getIPOCalendar is deprecated. Use getIPOData() instead.');
-  return getIPOData();
+export const getTopGainers = async () => {
+  const gainers = LOCAL_PRICE_SHOCKERS.filter((stock) => Number(stock.change_percent || 0) > 0);
+  return gainers.map(toTopMover);
 };
 
-export const getFeaturedStocks = () => getTrendingStocks();
-export const searchStocks = (query) => getStockDetails(query);
-export const getTopGainers = () => getTrendingStocks();
-export const getTopLosers = () => getPriceShockers();
-export const getFinancialStatements = (stockName) => getFinancialStatement(stockName, 'basic');
-export const getCompanyProfile = (stockName) => getStockDetails(stockName);
+export const getTopLosers = async () => {
+  const losers = LOCAL_PRICE_SHOCKERS.filter((stock) => Number(stock.change_percent || 0) < 0);
+  return losers.map(toTopMover);
+};
+
+export const getFinancialStatements = () => getFinancialStatement();
+export const getCompanyProfile = async (stockName) => {
+  const details = await getStockDetails(stockName);
+  return { ...details, logo: null };
+};
 export const getHistoricalPrices = (stockName, period = '6m') => getHistoricalData(stockName, period, 'price');
 export const fetchStockDetails = getStockDetails;
 export const fetchHistoricalData = getHistoricalData;
 
-// Market news function for context compatibility
 export const fetchMarketNews = async () => {
   const response = await getLatestNews();
-  return response.data || response || [];
+  return response.data || [];
 };
 
 export async function getMarketOverview() {
-  const trending = await getTrendingStocks();
-  return { trending };
+  return { trending: LOCAL_TRENDING_STOCKS };
 }
 
 export async function getMarketMovers() {
-  const bse = await getBSEMostActive();
-  const nse = await getNSEMostActive();
-  return { bse, nse };
+  return {
+    bse: LOCAL_BSE_ACTIVE,
+    nse: LOCAL_NSE_ACTIVE,
+  };
 }
 
-// ===== PORTFOLIO FUNCTIONS =====
-
-const DEFAULT_USER_ID = '1';
+// ===== PORTFOLIO =====
 
 export async function getUserPortfolios(userId = DEFAULT_USER_ID) {
-  const response = await fetchApi('/portfolio', { userId });
-  return { portfolios: response?.data?.portfolios || [] };
+  return { portfolios: [] };
 }
 
-export async function getPortfolioDetails(portfolioId, userId = DEFAULT_USER_ID) {
-  if (!portfolioId) {
-    return { details: {} };
-  }
-
-  const response = await fetchApi(`/portfolio/${portfolioId}`, { userId });
-  return { details: response?.data?.details || {} };
+export async function getPortfolioDetails() {
+  return { details: {} };
 }
 
 export async function createPortfolio(portfolioData) {
-  const payload = {
-    ...portfolioData,
-    userId: portfolioData?.userId || DEFAULT_USER_ID,
-  };
-
-  const response = await requestApi('/portfolio', {
-    method: 'POST',
-    body: payload,
-  });
-
   return {
-    success: response?.data?.success ?? false,
-    portfolioId: response?.data?.portfolioId,
-    portfolio: response?.data?.portfolio,
+    success: true,
+    portfolioId: 'local-portfolio',
+    portfolio: {
+      userId: portfolioData?.userId || DEFAULT_USER_ID,
+      portfolioName: portfolioData?.portfolioName || 'Untitled Portfolio',
+      stocks: Array.isArray(portfolioData?.stocks) ? portfolioData.stocks : [],
+    },
   };
 }
 
@@ -274,60 +317,49 @@ export async function updatePortfolio(portfolioId, portfolioData) {
     throw new Error('portfolioId is required to update portfolio');
   }
 
-  const payload = {
-    ...portfolioData,
-    userId: portfolioData?.userId || DEFAULT_USER_ID,
-  };
-
-  const response = await requestApi(`/portfolio/${portfolioId}`, {
-    method: 'PUT',
-    body: payload,
-  });
-
   return {
-    success: response?.data?.success ?? false,
-    portfolio: response?.data?.portfolio,
+    success: true,
+    portfolio: {
+      id: portfolioId,
+      userId: portfolioData?.userId || DEFAULT_USER_ID,
+      portfolioName: portfolioData?.portfolioName || 'Untitled Portfolio',
+      stocks: Array.isArray(portfolioData?.stocks) ? portfolioData.stocks : [],
+    },
   };
 }
 
-export async function deletePortfolio(portfolioId, userId = DEFAULT_USER_ID) {
-  if (!portfolioId) {
-    return { success: false, message: 'portfolioId is required' };
-  }
-
-  const response = await requestApi(`/portfolio/${portfolioId}`, {
-    method: 'DELETE',
-    params: { userId },
-  });
-
-  return response?.data || { success: false };
+export async function deletePortfolio() {
+  return { success: true };
 }
 
-export async function getPortfolioHoldings(userId = DEFAULT_USER_ID, portfolioId = null) {
-  const params = portfolioId ? { userId, portfolioId } : { userId };
-  const response = await fetchApi('/portfolio/holdings', params);
-  return { holdings: response?.data?.holdings || [] };
+export async function getPortfolioHoldings() {
+  return { holdings: [] };
 }
 
-export async function getPortfolioSummary(userId = DEFAULT_USER_ID, portfolioId = null) {
-  const params = portfolioId ? { userId, portfolioId } : { userId };
-  const response = await fetchApi('/portfolio/summary', params);
-  return { summary: response?.data?.summary || {} };
+export async function getPortfolioSummary() {
+  return {
+    summary: {
+      totalValue: 0,
+      totalProfitLoss: 0,
+      totalProfitLossPercent: 0,
+      dayGain: 0,
+      dayGainPercent: 0,
+      riskProfile: 'Moderate',
+      valuationScore: 0,
+      sectorAllocation: [],
+    },
+  };
 }
 
-// ===== HEALTH CHECK =====
+// ===== HEALTH =====
 
 export async function getHealthStatus() {
-  try {
-    const response = await fetch(BASE_URL.replace('/api', '/health'));
-    return await response.json();
-  } catch (error) {
-    logger.error('Health check failed:', error);
-    return { status: 'error', message: 'Backend unavailable' };
-  }
+  return {
+    status: 'disabled',
+    message: 'Frontend API integration has been removed for backend migration.',
+  };
 }
 
-// API helpers object for backward compatibility  
 export const apiHelpers = {
   getStockDetails,
   searchStocks,
@@ -347,5 +379,7 @@ export const apiHelpers = {
   getCommodities,
   getNSEMostActive,
   getBSEMostActive,
-  getPriceShockers
+  getPriceShockers,
 };
+
+logger.info('External API integration is disabled. Frontend is using local data only.');

@@ -252,7 +252,7 @@ export default function StocksIndexPage() {
           stockApi.getTrendingStocks(),
           stockApi.getBSEMostActive(), 
           stockApi.getNSEMostActive(),
-          fetch('/api/price_shockers').then(r => r.json()).catch(() => ({ success: false, data: {} }))
+          stockApi.getPriceShockers()
         ]);
 
         logger.debug('API Responses fetched', { 

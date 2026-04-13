@@ -2,12 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
 import LoadingSkeleton from '../../components/ui/LoadingSkeleton';
-import { logger } from '@/lib/logger';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
 
 interface Stock {
   id: number;
@@ -25,29 +20,16 @@ interface WatchlistSectionProps {
 }
 
 const WatchlistSection = ({ watchlist, loading }: WatchlistSectionProps) => {
-  const { token } = useAuth();
   const [removing, setRemoving] = useState<number | null>(null);
-  
-  const handleRemoveFromWatchlist = async (stockId: number) => {
-    if (!token) return;
-    
-    try {
-      setRemoving(stockId);
-      
-      // Setup axios with auth header
-      const headers = { Authorization: `Bearer ${token}` };
-      
-      // Remove from watchlist
-      await axios.delete(`${API_URL}/watchlists/stocks/${stockId}`, { headers });
-      
-      // Refresh the page to update the watchlist - better to use state management or context
-      window.location.reload();
-    } catch (error) {
-      logger.error('Error removing stock from watchlist:', error);
-    } finally {
-      setRemoving(null);
-    }
+  const [removedStockIds, setRemovedStockIds] = useState<number[]>([]);
+
+  const handleRemoveFromWatchlist = (stockId: number) => {
+    setRemoving(stockId);
+    setRemovedStockIds((prev) => [...prev, stockId]);
+    setRemoving(null);
   };
+
+  const visibleWatchlist = watchlist.filter((stock) => !removedStockIds.includes(stock.id));
   
   if (loading) {
     return (
@@ -72,7 +54,7 @@ const WatchlistSection = ({ watchlist, loading }: WatchlistSectionProps) => {
         </Link>
       </div>
       
-      {watchlist.length === 0 ? (
+      {visibleWatchlist.length === 0 ? (
         <div className="py-8 text-center">
           <p className="text-gray-500 dark:text-gray-400 mb-4">You haven&apos;t added any stocks to your watchlist yet.</p>
           <Link
@@ -96,7 +78,7 @@ const WatchlistSection = ({ watchlist, loading }: WatchlistSectionProps) => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-              {watchlist.map((stock) => (
+              {visibleWatchlist.map((stock) => (
                 <tr key={stock.id} className="hover:bg-gray-50 dark:hover:bg-gray-750">
                   <td className="px-4 py-3">
                     <Link 

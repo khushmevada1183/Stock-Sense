@@ -1,21 +1,21 @@
 // Configuration constants for the application
 export const FEATURES = {
-  ENABLE_REAL_TIME_UPDATES: true,
+  ENABLE_REAL_TIME_UPDATES: false,
   ENABLE_CACHING: true,
   ENABLE_DEBUG_MODE: false
 };
 
 export const API_CONFIG = {
-  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000',
-  TIMEOUT: 10000,
-  RETRY_ATTEMPTS: 3,
-  CACHE_DURATION: 300000, // 5 minutes in milliseconds
+  BASE_URL: 'INTEGRATION_DISABLED',
+  TIMEOUT: 0,
+  RETRY_ATTEMPTS: 0,
+  CACHE_DURATION: 0,
   KEY_ROTATION: {
-    ENABLED: true,
-    AUTO_ROTATE_ON_429: true,
-    MAX_CONSECUTIVE_FAILURES: 2
+    ENABLED: false,
+    AUTO_ROTATE_ON_429: false,
+    MAX_CONSECUTIVE_FAILURES: 0
   },
-  API_KEYS: process.env.NEXT_PUBLIC_INDIAN_API_KEYS?.split(',') || []
+  API_KEYS: []
 };
 
 const appConfig = {

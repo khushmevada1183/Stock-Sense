@@ -1,11 +1,9 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import { logger } from '@/lib/logger';
 
-// API URL from environment variables
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
+const AUTH_STORAGE_KEY = 'stock-sense-auth';
 
 // User type definition
 export interface User {
@@ -50,28 +48,31 @@ interface RegisterData {
   last_name?: string;
 }
 
-const getErrorMessage = (error: unknown, fallback: string): string => {
-  if (axios.isAxiosError(error)) {
-    const responseData = error.response?.data;
-    if (
-      responseData &&
-      typeof responseData === 'object' &&
-      'message' in responseData &&
-      typeof (responseData as { message?: unknown }).message === 'string'
-    ) {
-      return (responseData as { message: string }).message;
-    }
+const makeUserFromEmail = (email: string, firstName?: string, lastName?: string): User => ({
+  id: `local-${email.toLowerCase()}`,
+  email,
+  first_name: firstName || null,
+  last_name: lastName || null,
+  role: 'user',
+});
 
-    if (error.message) {
-      return error.message;
-    }
+const persistAuthState = (token: string, user: User) => {
+  if (typeof window === 'undefined') {
+    return;
   }
 
-  if (error instanceof Error && error.message) {
-    return error.message;
+  localStorage.setItem(
+    AUTH_STORAGE_KEY,
+    JSON.stringify({ token, user })
+  );
+};
+
+const clearAuthState = () => {
+  if (typeof window === 'undefined') {
+    return;
   }
 
-  return fallback;
+  localStorage.removeItem(AUTH_STORAGE_KEY);
 };
 
 // Create auth context
@@ -89,30 +90,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const loadUser = async () => {
       try {
-        // Check for token in localStorage
-        const storedToken = localStorage.getItem('token');
-        
-        if (!storedToken) {
+        const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+        if (!raw) {
           setLoading(false);
           return;
         }
-        
-        // Set token in state and axios header
-        setToken(storedToken);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-        
-        // Fetch current user
-        const response = await axios.get(`${API_URL}/auth/me`);
-        
-        setUser(response.data.user);
+
+        const parsed = JSON.parse(raw) as { token?: string; user?: User };
+        if (!parsed.token || !parsed.user) {
+          clearAuthState();
+          setLoading(false);
+          return;
+        }
+
+        setToken(parsed.token);
+        setUser(parsed.user);
         setIsAuthenticated(true);
       } catch (err: unknown) {
-        // Clear invalid token
-        localStorage.removeItem('token');
+        clearAuthState();
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
-        logger.error('Auth initialization error:', getErrorMessage(err, 'Failed to initialize authentication.'));
+        logger.error('Auth initialization error:', err instanceof Error ? err.message : 'Failed to initialize authentication.');
       } finally {
         setLoading(false);
       }
@@ -126,25 +125,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-      
-      const { token, user } = response.data;
-      
-      // Save token to localStorage
-      localStorage.setItem('token', token);
-      
-      // Set auth state
-      setToken(token);
-      setUser(user);
+
+      if (!email || !password) {
+        throw new Error('Email and password are required.');
+      }
+
+      const localToken = `local-token-${Date.now()}`;
+      const localUser = makeUserFromEmail(email);
+
+      persistAuthState(localToken, localUser);
+
+      setToken(localToken);
+      setUser(localUser);
       setIsAuthenticated(true);
-      
-      // Set token in axios headers
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
-      return user;
+
+      return;
     } catch (err: unknown) {
-      const errorMessage = getErrorMessage(err, 'Login failed. Please check your credentials and try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Login failed. Please check your credentials and try again.';
       setError(errorMessage);
       setToken(null);
       setUser(null);
@@ -160,25 +157,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
-      
-      const response = await axios.post(`${API_URL}/auth/register`, userData);
-      
-      const { token, user } = response.data;
-      
-      // Save token to localStorage
-      localStorage.setItem('token', token);
-      
-      // Set auth state
-      setToken(token);
-      setUser(user);
+
+      if (!userData.email || !userData.password) {
+        throw new Error('Email and password are required.');
+      }
+
+      const localToken = `local-token-${Date.now()}`;
+      const localUser = makeUserFromEmail(
+        userData.email,
+        userData.first_name,
+        userData.last_name
+      );
+
+      persistAuthState(localToken, localUser);
+
+      setToken(localToken);
+      setUser(localUser);
       setIsAuthenticated(true);
-      
-      // Set token in axios headers
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
-      return user;
+
+      return;
     } catch (err: unknown) {
-      const errorMessage = getErrorMessage(err, 'Registration failed. Please try again with a different email.');
+      const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again with a different email.';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
@@ -188,16 +187,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Logout function
   const logout = () => {
-    // Remove token from localStorage
-    localStorage.removeItem('token');
-    
-    // Reset auth state
+    clearAuthState();
+
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
-    
-    // Remove token from axios headers
-    delete axios.defaults.headers.common['Authorization'];
   };
 
   // Clear error function
