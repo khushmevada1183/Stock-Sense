@@ -96,6 +96,7 @@ interface LooseStock {
   open?: number;
   close?: number;
   volume?: number;
+  traded_volume?: number;
   totalTurnover?: number;
   finalQuantity?: number;
   bid_size?: number;

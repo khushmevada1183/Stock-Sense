@@ -856,6 +856,10 @@ export async function deletePortfolio(portfolioId, userId = DEFAULT_USER_ID) {
   };
 }
 
+/**
+ * @param {string} [userId]
+ * @param {string|null|undefined} [portfolioId]
+ */
 export async function getPortfolioHoldings(userId = DEFAULT_USER_ID, portfolioId = null) {
   const path = portfolioId
     ? `/portfolios/${encodeURIComponent(String(portfolioId).trim())}/holdings`
@@ -870,6 +874,10 @@ export async function getPortfolioHoldings(userId = DEFAULT_USER_ID, portfolioId
   };
 }
 
+/**
+ * @param {string} [userId]
+ * @param {string|null|undefined} [portfolioId]
+ */
 export async function getPortfolioSummary(userId = DEFAULT_USER_ID, portfolioId = null) {
   const path = portfolioId
     ? `/portfolios/${encodeURIComponent(String(portfolioId).trim())}/summary`
@@ -884,6 +892,11 @@ export async function getPortfolioSummary(userId = DEFAULT_USER_ID, portfolioId 
   };
 }
 
+/**
+ * @param {string} [userId]
+ * @param {string|null|undefined} [portfolioId]
+ * @param {Record<string, unknown>} [params]
+ */
 export async function getPortfolioPerformance(userId = DEFAULT_USER_ID, portfolioId = null, params = {}) {
   const path = portfolioId
     ? `/portfolios/${encodeURIComponent(String(portfolioId).trim())}/performance`
@@ -898,6 +911,11 @@ export async function getPortfolioPerformance(userId = DEFAULT_USER_ID, portfoli
   };
 }
 
+/**
+ * @param {string} [userId]
+ * @param {string|null|undefined} [portfolioId]
+ * @param {Record<string, unknown>} [params]
+ */
 export async function getPortfolioXirr(userId = DEFAULT_USER_ID, portfolioId = null, params = {}) {
   const path = portfolioId
     ? `/portfolios/${encodeURIComponent(String(portfolioId).trim())}/xirr`
