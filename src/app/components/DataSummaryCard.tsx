@@ -11,7 +11,7 @@ import {
   BarChart4, 
   Scale, 
   Percent, 
-  DollarSign 
+  IndianRupee 
 } from 'lucide-react';
 
 interface DataSummaryCardProps {
@@ -33,7 +33,7 @@ interface DataSummaryCardProps {
 const defaultIcons = {
   marketCap: <BarChart4 className="h-5 w-5" />,
   pe: <Scale className="h-5 w-5" />,
-  eps: <DollarSign className="h-5 w-5" />,
+  eps: <IndianRupee className="h-5 w-5" />,
   dividendYield: <Percent className="h-5 w-5" />,
   volume: <ArrowUp className="h-5 w-5" />
 };

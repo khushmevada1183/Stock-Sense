@@ -4,7 +4,7 @@ import { logger } from '@/lib/logger';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Calendar, TrendingUp, DollarSign } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, TrendingUp, IndianRupee } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { IpoItem } from '@/types/ipo';
 import { gsap } from 'gsap';
@@ -209,7 +209,7 @@ export default function IpoSection() {
                         <div className="space-y-3 mb-4">
                           <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
                             <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mr-2.5">
-                              <DollarSign size={14} className="text-slate-600 dark:text-slate-400" />
+                              <IndianRupee size={14} className="text-slate-600 dark:text-slate-400" />
                             </div>
                             <div className="text-sm">
                               <span className="text-slate-500 dark:text-slate-400">Issue Size:</span>{' '}

@@ -24,8 +24,10 @@ interface PortfolioFormProps {
 interface SearchStockApiResult {
   symbol?: string;
   tickerId?: string;
+  ticker_id?: string;
   company_name?: string;
   companyName?: string;
+  name?: string;
 }
 
 const PortfolioForm = ({ 
@@ -75,19 +77,19 @@ const PortfolioForm = ({
     setIsSearching(true);
     
     try {
-      // Call the real API endpoint to search for stocks
       const response = await stockApi.searchStocks(query);
-      
-      if (response.data && response.data.data) {
-        const results = response.data.data.map((stock: SearchStockApiResult) => ({
-          symbol: stock.symbol || stock.tickerId || '',
-          name: stock.company_name || stock.companyName || 'Unknown Company'
-        })).slice(0, 5);
-        
-        setSymbolSearchResults(results);
-      } else {
-        setSymbolSearchResults([]);
-      }
+
+      const results = Array.isArray(response)
+        ? response
+            .map((stock: SearchStockApiResult) => ({
+              symbol: stock.symbol || stock.tickerId || stock.ticker_id || '',
+              name: stock.company_name || stock.companyName || stock.name || 'Unknown Company',
+            }))
+            .filter((item) => item.symbol)
+            .slice(0, 5)
+        : [];
+
+      setSymbolSearchResults(results);
     } catch (err) {
       console.error('Error searching for symbols:', err);
       setSymbolSearchResults([]);
@@ -161,7 +163,6 @@ const PortfolioForm = ({
     
     try {
       const portfolioData = {
-        userId,
         portfolioName,
         stocks
       };

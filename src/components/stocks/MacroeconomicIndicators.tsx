@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Globe, 
   TrendingUp, 
-  DollarSign, 
+  IndianRupee, 
   Building,
   BarChart3,
   PieChart,
@@ -113,7 +113,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
         {
           name: 'Foreign Exchange Reserves',
           value: 645.2,
-          unit: 'Billion USD',
+          unit: 'Billion INR',
           change: 12.5,
           impact: 'positive',
           description: 'India\'s forex reserves',
@@ -234,7 +234,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'monetary': return <DollarSign className="w-4 h-4" />;
+      case 'monetary': return <IndianRupee className="w-4 h-4" />;
       case 'fiscal': return <Building className="w-4 h-4" />;
       case 'inflation': return <TrendingUp className="w-4 h-4" />;
       case 'growth': return <BarChart3 className="w-4 h-4" />;

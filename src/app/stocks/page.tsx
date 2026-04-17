@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Chart, registerables } from 'chart.js';
-import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, DollarSign, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, IndianRupee, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,6 +11,7 @@ import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 import { logger } from '@/lib/logger';
 import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
 import { GlowCard } from '@/components/spotlight-card';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -72,6 +73,7 @@ interface LooseStock {
   industry?: string;
   current_price?: number;
   last_price?: number;
+  lastPrice?: number;
   ltp?: number;
   price?: number;
   market_cap?: number | string;
@@ -79,10 +81,12 @@ interface LooseStock {
   averagePrice?: number;
   price_change_percentage?: number;
   percent_change?: number;
+  pChange?: number;
   percentChange?: number;
   change?: number;
   net_change?: number;
   netChange?: number;
+  previousClose?: number;
   bid?: number;
   bidSize?: number;
   ask?: number;
@@ -92,6 +96,8 @@ interface LooseStock {
   open?: number;
   close?: number;
   volume?: number;
+  totalTurnover?: number;
+  finalQuantity?: number;
   bid_size?: number;
   ask_size?: number;
   low_circuit_limit?: number;
@@ -167,6 +173,45 @@ export default function StocksIndexPage() {
   });
   
   const [sectorDistribution, setSectorDistribution] = useState<{[key: string]: number}>({});
+
+  const { subscribeMarketOverview, unsubscribeMarketOverview } = useWebSocket({
+    onLiveTick: (payload) => {
+      const tick = payload as {
+        symbol?: string;
+        close?: number;
+        change?: number;
+        pChange?: number;
+      };
+
+      const liveSymbol = String(tick?.symbol || '').trim().toUpperCase();
+      if (!liveSymbol) {
+        return;
+      }
+
+      setStocks((prev) =>
+        prev.map((stock) => {
+          if (String(stock.symbol || '').trim().toUpperCase() !== liveSymbol) {
+            return stock;
+          }
+
+          const nextPrice = Number.isFinite(Number(tick.close)) ? Number(tick.close) : stock.current_price;
+          const nextChange = Number.isFinite(Number(tick.change)) ? Number(tick.change) : stock.net_change;
+          const nextPercent = Number.isFinite(Number(tick.pChange)) ? Number(tick.pChange) : stock.percent_change;
+
+          return {
+            ...stock,
+            current_price: nextPrice,
+            net_change: nextChange,
+            percent_change: nextPercent,
+            price_change_percentage: nextPercent,
+          };
+        })
+      );
+    },
+    onMarketSnapshot: () => {
+      // Snapshot events are handled by the existing polling refresh cycle.
+    },
+  });
   
   // Refs for animating elements
   const dashboardRef = useRef<HTMLDivElement>(null);
@@ -243,6 +288,13 @@ export default function StocksIndexPage() {
   }, [highLowData.length]);
 
   useEffect(() => {
+    subscribeMarketOverview();
+    return () => {
+      unsubscribeMarketOverview();
+    };
+  }, [subscribeMarketOverview, unsubscribeMarketOverview]);
+
+  useEffect(() => {
     const fetchStockData = async () => {
       try {
         setLoading(true);
@@ -288,25 +340,40 @@ export default function StocksIndexPage() {
         );
 
         // ---- BSE / NSE most active -----------------------------------------
-        // Actual shape when data exists: { success, data: { success, data: [...] } }  (double-wrapped)
-        // Current mock returns: { success, data: { success, message, data: {} } }
         const unwrap = (res: unknown): LooseStock[] => {
-          const response = res as {
-            data?: {
-              data?: unknown[] | Record<string, unknown>;
-            } | unknown[];
-          } | unknown[];
-
-          if (!res) return [];
-          // Try double-unwrap first (real data format)
-          const inner = (response as { data?: { data?: unknown[] | Record<string, unknown> } })?.data?.data;
-          if (Array.isArray(inner)) return inner as LooseStock[];
-          if (inner && typeof inner === 'object' && Object.keys(inner).length > 0) {
-            return Object.values(inner) as LooseStock[];
+          if (!res) {
+            return [];
           }
-          // Single-unwrap
-          if (Array.isArray((response as { data?: unknown[] })?.data)) return (response as { data: LooseStock[] }).data;
-          if (Array.isArray(response)) return response as LooseStock[];
+
+          if (Array.isArray(res)) {
+            return res as LooseStock[];
+          }
+
+          const response = res as Record<string, unknown>;
+          const candidates: unknown[] = [response.data, response];
+
+          for (const candidate of candidates) {
+            if (Array.isArray(candidate)) {
+              return candidate as LooseStock[];
+            }
+
+            if (candidate && typeof candidate === 'object') {
+              const record = candidate as Record<string, unknown>;
+
+              if (Array.isArray(record.stocks)) return record.stocks as LooseStock[];
+              if (Array.isArray(record.rows)) return record.rows as LooseStock[];
+              if (Array.isArray(record.results)) return record.results as LooseStock[];
+              if (Array.isArray(record.data)) return record.data as LooseStock[];
+
+              if (record.data && typeof record.data === 'object') {
+                const nested = record.data as Record<string, unknown>;
+                if (Array.isArray(nested.stocks)) return nested.stocks as LooseStock[];
+                if (Array.isArray(nested.rows)) return nested.rows as LooseStock[];
+                if (Array.isArray(nested.results)) return nested.results as LooseStock[];
+              }
+            }
+          }
+
           return [];
         };
 
@@ -317,6 +384,8 @@ export default function StocksIndexPage() {
         let priceShockers: LooseStock[] = [];
         if (priceShockersRes?.success && priceShockersRes?.data) {
           priceShockers = [
+            ...(priceShockersRes.data.gainers || []),
+            ...(priceShockersRes.data.losers || []),
             ...(priceShockersRes.data.BSE_PriceShocker || []),
             ...(priceShockersRes.data.NSE_PriceShocker || [])
           ];
@@ -360,17 +429,17 @@ export default function StocksIndexPage() {
           return {
             id: index + 1,
             // Handle different API response formats for ticker/symbol
-            ticker_id: stock.ticker_id || stock.tickerId || stock.ticker?.split('.')?.[0] || '',
-            symbol: stock.ric?.split('.')[0] || stock.nseCode || stock.symbol || stock.ticker?.split('.')[0] || `STOCK${index + 1}`,
+            ticker_id: stock.ticker_id || stock.tickerId || stock.symbol || stock.ticker?.split('.')?.[0] || '',
+            symbol: stock.symbol || stock.ric?.split('.')[0] || stock.nseCode || stock.ticker?.split('.')[0] || `STOCK${index + 1}`,
             
             // Company name with fallbacks
             company_name: stock.company_name || stock.displayName || stock.company || stock.name || `Company ${index + 1}`,
             sector_name: stock.sector_name || stock.sector || stock.industry || 'General',
             
             // Price data with comprehensive mapping
-            current_price: toNumber(stock.price || stock.current_price || stock.ltp || stock.last_price),
-            price_change_percentage: toNumber(stock.percent_change || stock.percentChange || stock.price_change_percentage),
-            percent_change: toNumber(stock.percent_change || stock.percentChange || stock.price_change_percentage),
+            current_price: toNumber(stock.price || stock.current_price || stock.lastPrice || stock.ltp || stock.last_price),
+            price_change_percentage: toNumber(stock.percent_change || stock.pChange || stock.percentChange || stock.price_change_percentage),
+            percent_change: toNumber(stock.percent_change || stock.pChange || stock.percentChange || stock.price_change_percentage),
             net_change: toNumber(stock.net_change || stock.netChange || stock.change),
             
             // Trading data
@@ -379,8 +448,8 @@ export default function StocksIndexPage() {
             high: toNumber(stock.high),
             low: toNumber(stock.low),
             open: toNumber(stock.open),
-            close: toNumber(stock.close),
-            volume: toInteger(stock.volume),
+            close: toNumber(stock.close || stock.previousClose),
+            volume: toInteger(stock.volume || stock.totalTurnover || stock.finalQuantity || stock.traded_volume),
             
             // Size and limit data
             bid_size: toInteger(stock.bid_size || stock.bidSize),
@@ -1144,7 +1213,7 @@ export default function StocksIndexPage() {
                 </p>
               </div>
               <div className="p-4 bg-indigo-500/20 rounded-lg">
-                <DollarSign className="w-6 h-6 text-indigo-400" />
+                <IndianRupee className="w-6 h-6 text-indigo-400" />
               </div>
             </div>
           </CardContent>

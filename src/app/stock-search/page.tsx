@@ -6,6 +6,7 @@ import { TrendingUp, Clock } from 'lucide-react';
 import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 import SearchBar from '@/app/components/SearchBar';
 import { useRouter } from 'next/navigation';
+import { getTrendingStocks } from '@/api/api';
 
 interface PopularStock {
   ticker_id?: string;
@@ -23,8 +24,6 @@ interface TrendingResponse {
     };
   };
 }
-
-const LOCAL_POPULAR_STOCKS: PopularStock[] = [];
 
 const StockSearchPage: React.FC = () => {
   const [popularStocks, setPopularStocks] = useState<PopularStock[]>([]);
@@ -59,7 +58,18 @@ const StockSearchPage: React.FC = () => {
   };
 
   useEffect(() => {
-    setPopularStocks(LOCAL_POPULAR_STOCKS);
+    const loadPopular = async () => {
+      try {
+        const response = await getTrendingStocks() as TrendingResponse;
+        const topGainers = response?.data?.trending_stocks?.top_gainers || [];
+        const topLosers = response?.data?.trending_stocks?.top_losers || [];
+        setPopularStocks([...topGainers.slice(0, 6), ...topLosers.slice(0, 6)]);
+      } catch {
+        setPopularStocks([]);
+      }
+    };
+
+    void loadPopular();
   }, []);
 
   // This function will be passed to the SearchBar component

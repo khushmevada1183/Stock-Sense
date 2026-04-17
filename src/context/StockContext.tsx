@@ -35,6 +35,14 @@ interface PriceShocker {
   sector?: string;
 }
 
+interface NewsResponseItem {
+  title?: string;
+  url?: string;
+  source?: string;
+  summary?: string;
+  publishedAt?: string;
+}
+
 interface StockContextValue {
   searchQuery: string;
   searchResults: SearchResult[];
@@ -151,9 +159,10 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsLoadingMarketData(true);
     setMarketDataError(null);
     try {
-      // Use the price shockers API instead since the gainers/losers APIs are not available
       const priceShockersResponse = await api.getPriceShockers();
-      const priceShockers: PriceShocker[] = Array.isArray(priceShockersResponse) ? priceShockersResponse : [];
+      const priceShockersPayload = (priceShockersResponse as { data?: { gainers?: PriceShocker[]; losers?: PriceShocker[] } })?.data;
+      const gainersRaw: PriceShocker[] = Array.isArray(priceShockersPayload?.gainers) ? priceShockersPayload.gainers : [];
+      const losersRaw: PriceShocker[] = Array.isArray(priceShockersPayload?.losers) ? priceShockersPayload.losers : [];
       const toStockDetails = (stock: PriceShocker): StockDetails => ({
         symbol: stock.symbol || stock.tickerId || 'N/A',
         companyName: stock.company_name || stock.companyName || stock.symbol || stock.tickerId || 'Unknown Company',
@@ -162,13 +171,8 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         sector: stock.sector
       });
       
-      // Split the price shockers into gainers and losers based on their change
-      const gainers = priceShockers
-        .filter((stock) => stock.change_percent !== undefined && parseFloat(stock.change_percent.toString()) > 0)
-        .map(toStockDetails);
-      const losers = priceShockers
-        .filter((stock) => stock.change_percent !== undefined && parseFloat(stock.change_percent.toString()) < 0)
-        .map(toStockDetails);
+      const gainers = gainersRaw.map(toStockDetails);
+      const losers = losersRaw.map(toStockDetails);
       
       setTopGainers(gainers);
       setTopLosers(losers);
@@ -183,9 +187,25 @@ export const StockProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setIsLoadingNews(true);
     setNewsError(null);
     try {
-      // Use the getLatestNews function since it matches the documented API
       const response = await api.getLatestNews();
-      setMarketNews(response.news || []);
+      const payload = (response as { data?: { news?: NewsResponseItem[]; articles?: NewsResponseItem[] } | NewsResponseItem[] })?.data;
+      const articles = Array.isArray(payload)
+        ? payload
+        : Array.isArray(payload?.articles)
+          ? payload.articles
+          : Array.isArray(payload?.news)
+            ? payload.news
+            : [];
+
+      setMarketNews(
+        articles.map((item) => ({
+          title: item.title || 'Untitled',
+          url: item.url || '#',
+          source: item.source || 'Stock Sense',
+          summary: item.summary || '',
+          publishedAt: item.publishedAt || new Date().toISOString(),
+        }))
+      );
     } catch (error) {
       setNewsError(error instanceof Error ? error.message : 'Failed to fetch news.');
     } finally {

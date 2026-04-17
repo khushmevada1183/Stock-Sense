@@ -41,17 +41,38 @@ const FAQS = [
 
 type IpoCardData = IpoItem & {
   subscription_percentage?: number;
+  externalKey?: string;
+  companyName?: string;
+  priceMin?: number | string;
+  priceMax?: number | string;
+  issuePrice?: number | string;
+  listingPrice?: number | string;
+  listingGainsPercent?: number;
+  biddingStartDate?: string;
+  biddingEndDate?: string;
+  listingDate?: string;
+  lotSize?: number | string;
+  issueSizeText?: string;
+  isSme?: boolean;
 };
 
 interface APIResponse {
   success: boolean;
   data: {
-    upcoming: IpoCardData[];
-    active: IpoCardData[];
-    listed: IpoCardData[];
+    grouped?: boolean;
+    total?: number;
+    upcoming?: IpoCardData[];
+    active?: IpoCardData[];
+    listed?: IpoCardData[];
     closed?: IpoCardData[];
+    entries?: IpoCardData[];
   };
 }
+
+const toIpoDetailsHref = (ipo: IpoCardData) => {
+  const identifier = String(ipo.id || ipo.symbol || '').trim();
+  return `/ipo/${encodeURIComponent(identifier)}`;
+};
 
 // Enhanced Upcoming IPO card component with consistent layout
 const UpcomingIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
@@ -172,7 +193,7 @@ const UpcomingIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
           {/* Action buttons - Fixed at bottom */}
           <div className="flex gap-2 mt-auto">
             <Link 
-              href={`/ipo/${ipo.symbol}`}
+              href={toIpoDetailsHref(ipo)}
               className="flex-1 text-center py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               View Details
@@ -340,7 +361,7 @@ const ActiveIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
           {/* Action buttons - Fixed at bottom */}
           <div className="flex gap-2 mt-auto">
             <Link 
-              href={`/ipo/${ipo.symbol}`}
+              href={toIpoDetailsHref(ipo)}
               className="flex-1 text-center py-2.5 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               Apply Now
@@ -570,7 +591,7 @@ const SimpleIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
           {/* Action buttons - Fixed at bottom */}
           <div className="flex gap-2 mt-auto">
             <Link 
-              href={`/ipo/${ipo.symbol}`}
+              href={toIpoDetailsHref(ipo)}
               className="flex-1 text-center py-2.5 bg-gradient-to-r from-purple-600 to-pink-700 hover:from-purple-700 hover:to-pink-800 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl"
             >
               View Analysis
@@ -712,11 +733,47 @@ const SimpleIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
       
       return 'Price TBA';
     };
+
+    const pickText = (...values: unknown[]): string | undefined => {
+      for (const value of values) {
+        if (typeof value === 'string') {
+          const trimmed = value.trim();
+          if (trimmed) {
+            return trimmed;
+          }
+        }
+      }
+
+      return undefined;
+    };
+
+    const pickNumber = (...values: unknown[]): number | undefined => {
+      for (const value of values) {
+        const parsed = processNumber(value);
+        if (parsed !== undefined) {
+          return parsed;
+        }
+      }
+
+      return undefined;
+    };
+
+    const derivedMinPrice = pickNumber(source.min_price, source.priceMin);
+    const derivedMaxPrice = pickNumber(source.max_price, source.priceMax);
+    const derivedIssuePrice = pickNumber(source.issue_price, source.issuePrice);
+    const derivedListingPrice = pickNumber(source.listing_price, source.listingPrice);
+    const derivedListingGains = pickNumber(source.listing_gains, source.listingGainsPercent);
+    const derivedBiddingStart = pickText(source.bidding_start_date, source.biddingStartDate);
+    const derivedBiddingEnd = pickText(source.bidding_end_date, source.biddingEndDate);
+    const derivedListingDate = pickText(source.listing_date, source.listingDate);
+    const derivedIssueSize = pickText(source.issue_size, source.issueSizeText);
+    const derivedCompanyName = pickText(source.name, source.company_name, source.companyName) || 'Unknown Company';
     
     const processedIpo: IpoItem = {
+      id: pickText(source.id, source.externalKey),
       // Basic fields - API response uses 'name' for company name
-      company_name: source.name || source.company_name || 'Unknown Company',
-      name: source.name || source.company_name, // Keep original name field
+      company_name: derivedCompanyName,
+      name: derivedCompanyName,
       
       // Symbol is required
       symbol: source.symbol || 'N/A',
@@ -729,29 +786,32 @@ const SimpleIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
       status: source.status || 'upcoming',
       
       // Price fields - ensure we have valid numbers or clear indicators
-      price_range: formatPriceRange(source.min_price, source.max_price, source.price_range),
-      ipo_price: source.issue_price ? `₹${source.issue_price}` : undefined,
-      issue_price: processNumber(source.issue_price), // Keep as number for calculations
+      price_range: formatPriceRange(derivedMinPrice, derivedMaxPrice, source.price_range),
+      ipo_price: derivedIssuePrice !== undefined ? `₹${derivedIssuePrice}` : undefined,
+      issue_price: derivedIssuePrice, // Keep as number for calculations
       
       // Listing data - API uses 'listing_gains' as percentage (like 3.076923076923077 for 3.08%)
-      listing_price: processNumber(source.listing_price),
-      listing_gain: source.listing_gains ? `${source.listing_gains > 0 ? '+' : ''}${source.listing_gains.toFixed(2)}%` : 'N/A',
-      listing_gains: source.listing_gains, // Keep original percentage value
+      listing_price: derivedListingPrice,
+      listing_gain:
+        derivedListingGains !== undefined
+          ? `${derivedListingGains > 0 ? '+' : ''}${derivedListingGains.toFixed(2)}%`
+          : 'N/A',
+      listing_gains: derivedListingGains, // Keep original percentage value
       
       // Date fields - API provides bidding_start_date, bidding_end_date, listing_date
-      listing_date: source.listing_date || undefined,
-      open: source.bidding_start_date || undefined,
-      close: source.bidding_end_date || undefined,
-      bidding_start_date: source.bidding_start_date || undefined,
-      bidding_end_date: source.bidding_end_date || undefined,
+      listing_date: derivedListingDate,
+      open: derivedBiddingStart,
+      close: derivedBiddingEnd,
+      bidding_start_date: derivedBiddingStart,
+      bidding_end_date: derivedBiddingEnd,
       
       // Size and type - API provides lot_size
-      issue_size: source.issue_size && source.issue_size !== '0' ? source.issue_size : 'Size TBA',
-      issue_type: source.is_sme ? 'SME IPO' : 'Book Built',
+      issue_size: derivedIssueSize && derivedIssueSize !== '0' ? derivedIssueSize : 'Size TBA',
+      issue_type: source.is_sme || source.isSme ? 'SME IPO' : 'Book Built',
       
       // Price ranges - validate they're not zeros
-      min_price: processNumber(source.min_price),
-      max_price: processNumber(source.max_price),
+      min_price: derivedMinPrice,
+      max_price: derivedMaxPrice,
       
       // Document links - API provides document_url
       document_url: source.document_url || undefined,
@@ -760,8 +820,8 @@ const SimpleIpoCard = ({ ipo }: { ipo: IpoCardData }) => {
       
       // Additional fields - API provides additional_text, lot_size, is_sme
       additional_text: source.additional_text || undefined,
-      is_sme: source.is_sme === true,
-      lot_size: processNumber(source.lot_size)
+      is_sme: source.is_sme === true || source.isSme === true,
+      lot_size: pickNumber(source.lot_size, source.lotSize)
     };
     
     // For debugging - log only the first few IPOs to avoid console spam
@@ -977,9 +1037,10 @@ export default function IpoPage() {
         
         logger.debug('Calculated statistics', statistics);
         logger.debug('Found listed IPOs', { count: data.listed?.length });
-        
-        if (data.listed?.length > 0) {
-          logger.debug('First listed IPO', data.listed[0]);
+
+        const firstListed = data.listed?.[0];
+        if (firstListed) {
+          logger.debug('First listed IPO', firstListed);
         }
         
         setStatistics(statistics);

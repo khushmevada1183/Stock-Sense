@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   PieChart, Pie, Cell, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, Tooltip
 } from 'recharts';
 import * as stockApi from '@/api/api';
 import { logger } from '@/lib/logger';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import marketAnimations from '@/animations/pages/marketAnimations';
 
@@ -30,14 +31,19 @@ interface Stock {
   ticker?: string;
   displayName?: string;
   company_name?: string;
+  companyName?: string;
   company?: string;
   current_price?: number;
+  lastPrice?: number;
   price_change?: number;
   percent_change?: number;
   price_change_percentage?: number;
   net_change?: number;
+  pChange?: number;
   change_percent?: number;
   last_price?: number;
+  totalTurnover?: number;
+  finalQuantity?: number;
   sector_name?: string;
   sector?: string;
   netChange?: number;
@@ -75,6 +81,16 @@ interface MarketData {
   breadth: MarketBreadth;
   sectors: SectorData[];
   heatMapData: HeatMapSector[];
+}
+
+interface MarketEndpointStats {
+  sectorHeatmapCount: number;
+  high52Count: number;
+  low52Count: number;
+  indexHistoryPoints: number;
+  snapshotHistoryCount: number;
+  snapshotStatus: string;
+  snapshotCapturedAt: string;
 }
 
 // Market Indices Component
@@ -574,6 +590,7 @@ const HeatMap = ({ data }: HeatMapProps) => {
 
 // Main Market Page Component
 export default function MarketPage() {
+  const SOCKET_REFRESH_COOLDOWN_MS = 5000;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [marketData, setMarketData] = useState<MarketData>({
@@ -585,8 +602,18 @@ export default function MarketPage() {
     sectors: [],
     heatMapData: []
   });
+  const [endpointStats, setEndpointStats] = useState<MarketEndpointStats>({
+    sectorHeatmapCount: 0,
+    high52Count: 0,
+    low52Count: 0,
+    indexHistoryPoints: 0,
+    snapshotHistoryCount: 0,
+    snapshotStatus: 'unknown',
+    snapshotCapturedAt: '',
+  });
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const lastSocketRefreshRef = useRef(0);
   const { isAnimationEnabled } = useAnimation();
 
   // Animation effects
@@ -607,23 +634,105 @@ export default function MarketPage() {
     year: 'numeric' 
   });
 
-  const fetchMarketData = async () => {
+  const fetchMarketData = useCallback(async (showLoader = false) => {
+    const extractRows = (value: unknown): unknown[] => {
+      if (Array.isArray(value)) {
+        return value;
+      }
+
+      if (value && typeof value === 'object') {
+        const data = value as Record<string, unknown>;
+        for (const key of ['items', 'rows', 'results', 'data', 'records', 'history', 'series', 'snapshots', 'highs', 'lows']) {
+          if (Array.isArray(data[key])) {
+            return data[key] as unknown[];
+          }
+        }
+      }
+
+      return [];
+    };
+
+    const toNumeric = (value: unknown, fallback = 0): number => {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : fallback;
+    };
+
+    const toSymbol = (value: unknown): string => {
+      const text = String(value || '').trim();
+      return text ? text.split('.')[0].toUpperCase() : 'N/A';
+    };
+
+    const normalizeMostActivePayload = (value: unknown): Stock[] => {
+      if (Array.isArray(value)) {
+        return value as Stock[];
+      }
+
+      if (value && typeof value === 'object') {
+        const record = value as Record<string, unknown>;
+
+        if (Array.isArray(record.stocks)) {
+          return record.stocks as Stock[];
+        }
+
+        if (record.data && typeof record.data === 'object') {
+          const nested = record.data as Record<string, unknown>;
+          if (Array.isArray(nested.stocks)) {
+            return nested.stocks as Stock[];
+          }
+          if (Array.isArray(record.data)) {
+            return record.data as Stock[];
+          }
+        }
+      }
+
+      return [];
+    };
+
     try {
-      setLoading(true);
+      if (showLoader) {
+        setLoading(true);
+      }
       setError(null);
       
       // Fetch data from multiple Indian Stock API endpoints according to the mapping
       const [
+        marketOverviewData,
         trendingData,           // For Market Heat Map (trending stocks)
         bseMostActiveData,     // For Most Active & Heat Map
         nseMostActiveData,     // For Most Active & Heat Map
-        priceShockersData      // For Top Gainers/Losers & Market Breadth
+        priceShockersData,     // For Top Gainers/Losers & Market Breadth
+        sectorHeatmapApiData,
+        week52HighApiData,
+        week52LowApiData,
+        snapshotLatestApiData,
+        snapshotHistoryApiData,
+        snapshotStatusApiData,
       ] = await Promise.allSettled([
+        stockApi.getMarketOverview(),
         stockApi.getTrendingStocks(),
         stockApi.getBSEMostActive(),
         stockApi.getNSEMostActive(),
-        stockApi.getPriceShockers()
+        stockApi.getPriceShockers(),
+        stockApi.getMarketSectorHeatmap(),
+        stockApi.get52WeekHigh(),
+        stockApi.get52WeekLow(),
+        stockApi.getMarketSnapshotLatest(),
+        stockApi.getMarketSnapshotHistory({ limit: 30 }),
+        stockApi.getMarketSnapshotStatus(),
       ]);
+
+      const overviewPayload = marketOverviewData.status === 'fulfilled'
+        ? ((marketOverviewData.value?.data ?? marketOverviewData.value) as Record<string, unknown> | null)
+        : null;
+      const overviewIndices = Array.isArray(overviewPayload?.indices)
+        ? (overviewPayload.indices as Array<Record<string, unknown>>)
+        : [];
+      const overviewBreadth = overviewPayload?.breadth && typeof overviewPayload.breadth === 'object'
+        ? (overviewPayload.breadth as Record<string, unknown>)
+        : null;
+      const overviewGainersLosers = overviewPayload?.gainersLosers && typeof overviewPayload.gainersLosers === 'object'
+        ? (overviewPayload.gainersLosers as Record<string, unknown>)
+        : null;
 
       // ---- Price Shockers ------------------------------------------------
       // Actual shape: { success, data: { gainers: [...], losers: [...] } }
@@ -633,8 +742,32 @@ export default function MarketPage() {
       if (priceShockersData.status === 'fulfilled' && priceShockersData.value?.success && priceShockersData.value?.data) {
         const d = priceShockersData.value.data;
         // Try new format first: { gainers, losers }
-        priceGainers = d.gainers || d.BSE_PriceShocker || [];
-        priceLosers  = d.losers  || d.NSE_PriceShocker || [];
+        priceGainers = Array.isArray(d.gainers)
+          ? d.gainers
+          : Array.isArray(d.BSE_PriceShocker)
+            ? d.BSE_PriceShocker
+            : [];
+        priceLosers = Array.isArray(d.losers)
+          ? d.losers
+          : Array.isArray(d.NSE_PriceShocker)
+            ? d.NSE_PriceShocker
+            : [];
+      }
+
+      if (!priceGainers.length) {
+        priceGainers = Array.isArray(overviewGainersLosers?.gainers)
+          ? (overviewGainersLosers.gainers as Stock[])
+          : Array.isArray(overviewGainersLosers?.topGainers)
+            ? (overviewGainersLosers.topGainers as Stock[])
+            : [];
+      }
+
+      if (!priceLosers.length) {
+        priceLosers = Array.isArray(overviewGainersLosers?.losers)
+          ? (overviewGainersLosers.losers as Stock[])
+          : Array.isArray(overviewGainersLosers?.topLosers)
+            ? (overviewGainersLosers.topLosers as Stock[])
+            : [];
       }
       const priceShockers = [...priceGainers, ...priceLosers];
 
@@ -642,7 +775,9 @@ export default function MarketPage() {
       // Field name: change_percent (not percentChange)
       const breadthCalculation = priceShockers.reduce(
         (acc: { advances: number; declines: number; unchanged: number }, stock: Stock) => {
-          const pct = parseFloat((stock.change_percent ?? stock.percentChange ?? stock.percent_change ?? 0).toString());
+          const pct = toNumeric(
+            stock.change_percent ?? stock.pChange ?? stock.percentChange ?? stock.percent_change ?? stock.price_change_percentage
+          );
           if (pct > 0) acc.advances++;
           else if (pct < 0) acc.declines++;
           else acc.unchanged++;
@@ -675,7 +810,7 @@ export default function MarketPage() {
       // Build sector performance from trending stock sectors
       trendingStocks.forEach((s: Stock) => {
         const sec = s.sector_name || s.sector || 'Other';
-        const pct = parseFloat((s.price_change_percentage ?? s.percent_change ?? 0).toString());
+        const pct = toNumeric(s.price_change_percentage ?? s.percent_change ?? s.pChange ?? s.percentChange);
         if (!sectorMap[sec]) sectorMap[sec] = [];
         sectorMap[sec].push(pct);
       });
@@ -683,23 +818,17 @@ export default function MarketPage() {
         const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
         sectorPerformance.push({ name, change: parseFloat(avg.toFixed(2)) });
       });
-      // Ensure we always have some sector data
-      if (sectorPerformance.length === 0) {
-        ['Banking', 'IT', 'Pharma', 'Auto', 'FMCG'].forEach(name => {
-          sectorPerformance.push({ name, change: parseFloat((Math.random() * 4 - 2).toFixed(2)) });
-        });
-      }
 
       // Extract BSE most active data
       let bseStocks: Stock[] = [];
-      if (bseMostActiveData.status === 'fulfilled' && bseMostActiveData.value?.success && bseMostActiveData.value?.data) {
-        bseStocks = Array.isArray(bseMostActiveData.value.data) ? bseMostActiveData.value.data : bseMostActiveData.value.data.stocks || [];
+      if (bseMostActiveData.status === 'fulfilled') {
+        bseStocks = normalizeMostActivePayload(bseMostActiveData.value?.data ?? bseMostActiveData.value);
       }
 
       // Extract NSE most active data
       let nseStocks: Stock[] = [];
-      if (nseMostActiveData.status === 'fulfilled' && nseMostActiveData.value?.success && nseMostActiveData.value?.data) {
-        nseStocks = Array.isArray(nseMostActiveData.value.data) ? nseMostActiveData.value.data : nseMostActiveData.value.data.stocks || [];
+      if (nseMostActiveData.status === 'fulfilled') {
+        nseStocks = normalizeMostActivePayload(nseMostActiveData.value?.data ?? nseMostActiveData.value);
       }
 
       // Create Heat Map data from trending + most active stocks
@@ -710,10 +839,10 @@ export default function MarketPage() {
         heatMapData.push({
           sector: "Most Active BSE",
           stocks: bseStocks.slice(0, 6).map(stock => ({
-            name: stock.company || stock.company_name || 'Unknown Company',
-            symbol: stock.ticker?.split('.')[0] || stock.ric?.split('.')[0] || stock.company?.substring(0, 4).toUpperCase() || 'N/A',
-            change: parseFloat((stock.percent_change ?? 0).toString()),
-            marketCap: parseInt((stock.volume ?? 1000000).toString(), 10) // Using volume as proxy for market cap
+            name: stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company',
+            symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
+            change: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
+            marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity, 1000000)),
           }))
         });
       }
@@ -723,10 +852,10 @@ export default function MarketPage() {
         heatMapData.push({
           sector: "Most Active NSE", 
           stocks: nseStocks.slice(0, 6).map(stock => ({
-            name: stock.company || stock.company_name || 'Unknown Company',
-            symbol: stock.ticker?.split('.')[0] || stock.ric?.split('.')[0] || stock.company?.substring(0, 4).toUpperCase() || 'N/A',
-            change: parseFloat((stock.percent_change ?? 0).toString()),
-            marketCap: parseInt((stock.volume ?? 1000000).toString(), 10) // Using volume as proxy for market cap
+            name: stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company',
+            symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
+            change: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
+            marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity, 1000000)),
           }))
         });
       }
@@ -736,10 +865,10 @@ export default function MarketPage() {
         heatMapData.push({
           sector: "Price Shockers",
           stocks: priceShockers.slice(0, 8).map(stock => ({
-            name: stock.displayName || 'Unknown Company',
-            symbol: stock.ric?.split('.')[0] || stock.displayName?.substring(0, 4).toUpperCase() || 'N/A',
-            change: parseFloat((stock.percentChange ?? 0).toString()),
-            marketCap: parseInt((stock.volume ?? 2000000).toString(), 10) // Using volume as proxy for market cap
+            name: stock.company_name || stock.companyName || stock.name || stock.symbol || 'Unknown Company',
+            symbol: toSymbol(stock.symbol || stock.ric),
+            change: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange),
+            marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume, 2000000)),
           }))
         });
       }
@@ -750,60 +879,78 @@ export default function MarketPage() {
         heatMapData.push({
           sector: "Trending Stocks",
           stocks: trendingStocks.slice(0, 8).map(stock => ({
-            name: stock.company_name || stock.displayName || 'Unknown',
-            symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
-            change: parseFloat((stock.price_change_percentage ?? stock.percent_change ?? 0).toString()),
-            marketCap: parseInt((stock.current_price ?? 2000000).toString(), 10)
+            name: stock.company_name || stock.companyName || stock.displayName || stock.name || 'Unknown',
+            symbol: toSymbol(stock.symbol || stock.ric),
+            change: toNumeric(stock.price_change_percentage ?? stock.percent_change ?? stock.pChange),
+            marketCap: Math.trunc(toNumeric(stock.current_price ?? stock.lastPrice ?? stock.price ?? 2000000)),
           }))
         });
       }
 
+      const breadthFromOverview = overviewBreadth
+        ? {
+            advances: Math.trunc(toNumeric(overviewBreadth.gainers)),
+            declines: Math.trunc(toNumeric(overviewBreadth.losers)),
+            unchanged: Math.max(
+              0,
+              Math.trunc(toNumeric(overviewBreadth.total)) -
+                Math.trunc(toNumeric(overviewBreadth.gainers)) -
+                Math.trunc(toNumeric(overviewBreadth.losers))
+            ),
+          }
+        : null;
+
       // Structure the data for the UI components
       const structuredData = {
-        indices: [], // API doesn't provide direct index data - keeping empty
-        breadth: breadthCalculation, // Calculated from price shockers
-        sectors: sectorPerformance, // Mock data since industry search not available
+        indices: overviewIndices.slice(0, 6).map((index) => ({
+          name: String(index.index || index.name || index.indexSymbol || 'Index'),
+          current: toNumeric(index.last ?? index.current ?? index.close),
+          change: toNumeric(index.variation ?? index.change),
+          percentage: toNumeric(index.percentChange ?? index.percentage ?? index.pChange),
+        })),
+        breadth: breadthFromOverview || breadthCalculation,
+        sectors: sectorPerformance,
         
         // Top Gainers — from price shockers gainers array
         // Fields: symbol, change_percent, last_price
         topGainers: priceGainers
           .slice(0, 5)
           .map(stock => ({
-            symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
-            name: stock.company_name || stock.displayName || stock.symbol || 'Unknown',
-            price: parseFloat((stock.last_price ?? stock.current_price ?? stock.price ?? 0).toString()),
-            change: parseFloat((stock.change_percent ?? stock.netChange ?? 0).toString()),
-            percentChange: parseFloat((stock.change_percent ?? stock.percentChange ?? 0).toString())
+            symbol: toSymbol(stock.symbol || stock.ric),
+            name: stock.company_name || stock.companyName || stock.displayName || stock.name || stock.symbol || 'Unknown',
+            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.current_price ?? stock.price),
+            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change),
+            percentChange: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange)
           })),
 
         // Top Losers — from price shockers losers array
         topLosers: priceLosers
           .slice(0, 5)
           .map(stock => ({
-            symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
-            name: stock.company_name || stock.displayName || stock.symbol || 'Unknown',
-            price: parseFloat((stock.last_price ?? stock.current_price ?? stock.price ?? 0).toString()),
-            change: parseFloat((stock.change_percent ?? stock.netChange ?? 0).toString()),
-            percentChange: parseFloat((stock.change_percent ?? stock.percentChange ?? 0).toString())
+            symbol: toSymbol(stock.symbol || stock.ric),
+            name: stock.company_name || stock.companyName || stock.displayName || stock.name || stock.symbol || 'Unknown',
+            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.current_price ?? stock.price),
+            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change),
+            percentChange: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange)
           })),
         
         // Most Active: Combine BSE and NSE most active stocks
         mostActive: [
           ...(bseStocks.slice(0, 3).map(stock => ({
-            symbol: stock.ticker?.split('.')[0] || stock.ric?.split('.')[0] || stock.company?.toUpperCase() || 'N/A',
-            name: (stock.company || stock.company_name || 'Unknown Company') + ' (BSE)',
-            price: parseFloat((stock.price ?? stock.current_price ?? 0).toString()),
-            change: parseFloat((stock.net_change ?? stock.price_change ?? 0).toString()),
-            percentChange: parseFloat((stock.percent_change ?? stock.price_change_percentage ?? 0).toString()),
-            volume: parseInt((stock.volume ?? stock.traded_volume ?? 0).toString(), 10)
+            symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
+            name: `${stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company'} (BSE)`,
+            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.price ?? stock.current_price),
+            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change),
+            percentChange: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
+            volume: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity))
           }))),
           ...(nseStocks.slice(0, 2).map(stock => ({
-            symbol: stock.ticker?.split('.')[0] || stock.ric?.split('.')[0] || stock.company?.toUpperCase() || 'N/A',
-            name: (stock.company || stock.company_name || 'Unknown Company') + ' (NSE)',
-            price: parseFloat((stock.price ?? stock.current_price ?? 0).toString()),
-            change: parseFloat((stock.net_change ?? stock.price_change ?? 0).toString()),
-            percentChange: parseFloat((stock.percent_change ?? stock.price_change_percentage ?? 0).toString()),
-            volume: parseInt((stock.volume ?? stock.traded_volume ?? 0).toString(), 10)
+            symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
+            name: `${stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company'} (NSE)`,
+            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.price ?? stock.current_price),
+            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change),
+            percentChange: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
+            volume: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity))
           })))
         ].slice(0, 5),
         
@@ -812,22 +959,88 @@ export default function MarketPage() {
 
       setMarketData(structuredData);
 
+      const sectorHeatmapRows = sectorHeatmapApiData.status === 'fulfilled'
+        ? extractRows(sectorHeatmapApiData.value?.data ?? sectorHeatmapApiData.value)
+        : [];
+      const high52Rows = week52HighApiData.status === 'fulfilled'
+        ? extractRows(week52HighApiData.value?.data ?? week52HighApiData.value)
+        : [];
+      const low52Rows = week52LowApiData.status === 'fulfilled'
+        ? extractRows(week52LowApiData.value?.data ?? week52LowApiData.value)
+        : [];
+      const indexHistoryRows: unknown[] = [];
+      const snapshotHistoryRows = snapshotHistoryApiData.status === 'fulfilled'
+        ? extractRows(snapshotHistoryApiData.value?.data ?? snapshotHistoryApiData.value)
+        : [];
+
+      const snapshotStatusPayload = snapshotStatusApiData.status === 'fulfilled'
+        ? (snapshotStatusApiData.value?.data ?? snapshotStatusApiData.value)
+        : null;
+      const snapshotLatestPayload = snapshotLatestApiData.status === 'fulfilled'
+        ? (snapshotLatestApiData.value?.data ?? snapshotLatestApiData.value)
+        : null;
+
+      setEndpointStats({
+        sectorHeatmapCount: sectorHeatmapRows.length,
+        high52Count: high52Rows.length,
+        low52Count: low52Rows.length,
+        indexHistoryPoints: indexHistoryRows.length,
+        snapshotHistoryCount: snapshotHistoryRows.length,
+        snapshotStatus: String(
+          (snapshotStatusPayload as Record<string, unknown> | null)?.status ||
+          (snapshotStatusPayload as Record<string, unknown> | null)?.state ||
+          'unknown'
+        ),
+        snapshotCapturedAt: String(
+          (snapshotLatestPayload as Record<string, unknown> | null)?.capturedAt ||
+          (snapshotLatestPayload as Record<string, unknown> | null)?.updatedAt ||
+          ''
+        ),
+      });
+
     } catch (error) {
       logger.error('Error fetching market data', error);
       setError('Failed to load market data from API.');
     } finally {
-      setLoading(false);
+      if (showLoader) {
+        setLoading(false);
+      }
     }
-  };
+  }, []);
+
+  const triggerSocketRefresh = useCallback(() => {
+    const now = Date.now();
+    if (now - lastSocketRefreshRef.current < SOCKET_REFRESH_COOLDOWN_MS) {
+      return;
+    }
+
+    lastSocketRefreshRef.current = now;
+    void fetchMarketData();
+  }, [fetchMarketData]);
+
+  const { subscribeMarketOverview, unsubscribeMarketOverview } = useWebSocket({
+    onMarketSnapshot: () => {
+      triggerSocketRefresh();
+    },
+  });
 
   useEffect(() => {
-    fetchMarketData();
-    
+    subscribeMarketOverview();
+    return () => {
+      unsubscribeMarketOverview();
+    };
+  }, [subscribeMarketOverview, unsubscribeMarketOverview]);
+
+  useEffect(() => {
+    void fetchMarketData(true);
+
     // Set up interval to refresh data every 30 seconds
-    const interval = setInterval(fetchMarketData, 30000);
-    
+    const interval = setInterval(() => {
+      void fetchMarketData();
+    }, 30000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchMarketData]);
 
   if (loading) {
     return (
@@ -972,6 +1185,40 @@ export default function MarketPage() {
             {/* Heat Map */}
             <div className="mb-8">
               <HeatMap data={marketData.heatMapData} />
+            </div>
+
+            <div className="mb-8 bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg border border-gray-700/50 p-5">
+              <h3 className="text-lg font-semibold text-white mb-3">Market Endpoint Coverage</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
+                  <p className="text-gray-400">Sector Heatmap Rows</p>
+                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.sectorHeatmapCount}</p>
+                </div>
+                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
+                  <p className="text-gray-400">52W High Rows</p>
+                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.high52Count}</p>
+                </div>
+                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
+                  <p className="text-gray-400">52W Low Rows</p>
+                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.low52Count}</p>
+                </div>
+                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
+                  <p className="text-gray-400">Index History Points</p>
+                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.indexHistoryPoints}</p>
+                </div>
+                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
+                  <p className="text-gray-400">Snapshot History Rows</p>
+                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.snapshotHistoryCount}</p>
+                </div>
+                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700 md:col-span-2">
+                  <p className="text-gray-400">Snapshot Status</p>
+                  <p className="text-neon-400 font-semibold text-xl capitalize">{endpointStats.snapshotStatus}</p>
+                </div>
+                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700 md:col-span-2">
+                  <p className="text-gray-400">Snapshot Captured At</p>
+                  <p className="text-neon-400 font-semibold text-sm break-all">{endpointStats.snapshotCapturedAt || 'n/a'}</p>
+                </div>
+              </div>
             </div>
           </>
         )}

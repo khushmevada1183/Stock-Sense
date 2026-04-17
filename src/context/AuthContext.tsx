@@ -1,24 +1,43 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import {
+  getProfile,
+  login as loginRequest,
+  logout as logoutRequest,
+  signup,
+} from '@/api/api';
+import {
+  clearAuthTokens,
+  getAccessToken,
+  getRefreshToken,
+  loadAuthTokens,
+  saveAuthTokens,
+} from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
-const AUTH_STORAGE_KEY = 'stock-sense-auth';
-
-// User type definition
 export interface User {
   id: string;
   email: string;
-  first_name: string | null;
-  last_name: string | null;
-  role: string;
+  first_name?: string | null;
+  last_name?: string | null;
+  fullName?: string | null;
+  role?: string;
+  emailVerified?: boolean;
 }
 
-// Auth context state interface
+interface RegisterData {
+  email: string;
+  password: string;
+  first_name?: string;
+  last_name?: string;
+  fullName?: string;
+}
+
 interface AuthState {
-  isAuthenticated: boolean;
   user: User | null;
   token: string | null;
+  isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<void>;
@@ -27,11 +46,10 @@ interface AuthState {
   clearError: () => void;
 }
 
-// Default auth context
 const defaultAuthContext: AuthState = {
-  isAuthenticated: false,
   user: null,
   token: null,
+  isAuthenticated: false,
   loading: true,
   error: null,
   login: async () => {},
@@ -40,177 +58,214 @@ const defaultAuthContext: AuthState = {
   clearError: () => {},
 };
 
-// Register data interface
-interface RegisterData {
-  email: string;
-  password: string;
-  first_name?: string;
-  last_name?: string;
-}
-
-const makeUserFromEmail = (email: string, firstName?: string, lastName?: string): User => ({
-  id: `local-${email.toLowerCase()}`,
-  email,
-  first_name: firstName || null,
-  last_name: lastName || null,
-  role: 'user',
-});
-
-const persistAuthState = (token: string, user: User) => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  localStorage.setItem(
-    AUTH_STORAGE_KEY,
-    JSON.stringify({ token, user })
-  );
-};
-
-const clearAuthState = () => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  localStorage.removeItem(AUTH_STORAGE_KEY);
-};
-
-// Create auth context
 const AuthContext = createContext<AuthState>(defaultAuthContext);
 
-// Auth provider component
+const normalizeUser = (raw: unknown): User | null => {
+  if (!raw || typeof raw !== 'object') {
+    return null;
+  }
+
+  const payload = raw as Record<string, unknown>;
+
+  if (!payload.id || !payload.email) {
+    return null;
+  }
+
+  return {
+    id: String(payload.id),
+    email: String(payload.email),
+    first_name: payload.first_name ? String(payload.first_name) : null,
+    last_name: payload.last_name ? String(payload.last_name) : null,
+    fullName: payload.fullName ? String(payload.fullName) : null,
+    role: payload.role ? String(payload.role) : 'user',
+    emailVerified: Boolean(payload.emailVerified),
+  };
+};
+
+const extractAuthData = (response: unknown) => {
+  if (!response || typeof response !== 'object') {
+    return {
+      user: null,
+      accessToken: null,
+      refreshToken: null,
+    };
+  }
+
+  const payload = response as { data?: Record<string, unknown> };
+  const data = payload.data || {};
+
+  return {
+    user: normalizeUser(data.user),
+    accessToken: typeof data.accessToken === 'string' ? data.accessToken : null,
+    refreshToken: typeof data.refreshToken === 'string' ? data.refreshToken : null,
+  };
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize auth state on page load
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const raw = localStorage.getItem(AUTH_STORAGE_KEY);
-        if (!raw) {
-          setLoading(false);
-          return;
-        }
+  const clearError = () => setError(null);
 
-        const parsed = JSON.parse(raw) as { token?: string; user?: User };
-        if (!parsed.token || !parsed.user) {
-          clearAuthState();
-          setLoading(false);
-          return;
-        }
+  const hydrateProfile = async () => {
+    try {
+      const profileResponse = await getProfile();
+      const profileData = profileResponse?.data || profileResponse;
+      const profileUser = normalizeUser(profileData?.user || profileData);
 
-        setToken(parsed.token);
-        setUser(parsed.user);
-        setIsAuthenticated(true);
-      } catch (err: unknown) {
-        clearAuthState();
+      if (!profileUser) {
+        throw new Error('Failed to load user profile.');
+      }
+
+      setUser(profileUser);
+      setIsAuthenticated(true);
+      return profileUser;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load profile';
+      logger.error('hydrateProfile failed', message);
+
+      const statusCode =
+        typeof err === 'object' && err !== null && 'status' in err
+          ? Number((err as { status?: unknown }).status)
+          : NaN;
+      const shouldClearAuth = statusCode === 401 || statusCode === 403;
+
+      if (shouldClearAuth) {
+        clearAuthTokens();
         setToken(null);
         setUser(null);
         setIsAuthenticated(false);
-        logger.error('Auth initialization error:', err instanceof Error ? err.message : 'Failed to initialize authentication.');
+      } else if (getAccessToken()) {
+        // Keep the existing auth session on transient backend/network failures.
+        setIsAuthenticated(true);
+      }
+
+      throw err;
+    }
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        loadAuthTokens();
+        const storedAccessToken = getAccessToken();
+
+        if (!storedAccessToken) {
+          setLoading(false);
+          return;
+        }
+
+        setToken(storedAccessToken);
+        await hydrateProfile();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Authentication initialization failed';
+        setError(message);
       } finally {
         setLoading(false);
       }
     };
-    
-    loadUser();
+
+    initialize();
   }, []);
 
-  // Login function
   const login = async (email: string, password: string) => {
     try {
       setLoading(true);
       setError(null);
 
-      if (!email || !password) {
-        throw new Error('Email and password are required.');
+      const response = await loginRequest({ email, password });
+      const { user: authUser, accessToken, refreshToken } = extractAuthData(response);
+
+      if (accessToken) {
+        saveAuthTokens({ accessToken, refreshToken });
+        setToken(accessToken);
       }
 
-      const localToken = `local-token-${Date.now()}`;
-      const localUser = makeUserFromEmail(email);
-
-      persistAuthState(localToken, localUser);
-
-      setToken(localToken);
-      setUser(localUser);
-      setIsAuthenticated(true);
-
-      return;
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Login failed. Please check your credentials and try again.';
-      setError(errorMessage);
+      if (authUser) {
+        setUser(authUser);
+        setIsAuthenticated(true);
+      } else {
+        await hydrateProfile();
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Login failed';
+      setError(message);
       setToken(null);
       setUser(null);
       setIsAuthenticated(false);
-      throw new Error(errorMessage);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  // Register function
   const register = async (userData: RegisterData) => {
     try {
       setLoading(true);
       setError(null);
 
-      if (!userData.email || !userData.password) {
-        throw new Error('Email and password are required.');
+      const payload = {
+        email: userData.email,
+        password: userData.password,
+        fullName:
+          userData.fullName ||
+          [userData.first_name, userData.last_name].filter(Boolean).join(' ').trim(),
+      };
+
+      const response = await signup(payload);
+      const { user: authUser, accessToken, refreshToken } = extractAuthData(response);
+
+      if (accessToken) {
+        saveAuthTokens({ accessToken, refreshToken });
+        setToken(accessToken);
       }
 
-      const localToken = `local-token-${Date.now()}`;
-      const localUser = makeUserFromEmail(
-        userData.email,
-        userData.first_name,
-        userData.last_name
-      );
-
-      persistAuthState(localToken, localUser);
-
-      setToken(localToken);
-      setUser(localUser);
-      setIsAuthenticated(true);
-
-      return;
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Registration failed. Please try again with a different email.';
-      setError(errorMessage);
-      throw new Error(errorMessage);
+      if (authUser) {
+        setUser(authUser);
+        setIsAuthenticated(true);
+      } else {
+        await hydrateProfile();
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Registration failed';
+      setError(message);
+      throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  // Logout function
   const logout = () => {
-    clearAuthState();
+    const refreshToken = getRefreshToken();
 
+    if (refreshToken) {
+      logoutRequest(refreshToken).catch((err) => {
+        logger.warn('logout request failed', err instanceof Error ? err.message : err);
+      });
+    }
+
+    clearAuthTokens();
     setToken(null);
     setUser(null);
     setIsAuthenticated(false);
-  };
-
-  // Clear error function
-  const clearError = () => {
     setError(null);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
         user,
         token,
+        isAuthenticated,
         loading,
         error,
         login,
         register,
         logout,
-        clearError
+        clearError,
       }}
     >
       {children}
@@ -218,5 +273,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-// Hook to use auth context
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);
+
+export default AuthContext;

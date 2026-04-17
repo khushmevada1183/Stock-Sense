@@ -1,7 +1,26 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { getHealthStatus } from '@/api/api';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const [healthStatus, setHealthStatus] = useState<'loading' | 'up' | 'down'>('loading');
+
+  useEffect(() => {
+    const loadHealth = async () => {
+      try {
+        const payload = await getHealthStatus();
+        const status = String(payload?.status || '').toUpperCase();
+        setHealthStatus(status === 'UP' ? 'up' : 'down');
+      } catch {
+        setHealthStatus('down');
+      }
+    };
+
+    void loadHealth();
+  }, []);
   
   const footerLinks = [
     {
@@ -100,6 +119,21 @@ const Footer = () => {
         
         {/* Copyright */}
         <div className="border-t border-gray-800/30 mt-8 pt-6 text-center">
+          <div className="mb-3 flex items-center justify-center gap-2 text-xs">
+            <span
+              className={`inline-block w-2 h-2 rounded-full ${
+                healthStatus === 'up'
+                  ? 'bg-green-400'
+                  : healthStatus === 'down'
+                    ? 'bg-red-400'
+                    : 'bg-yellow-400'
+              }`}
+            ></span>
+            <span className="text-gray-500">
+              Backend status: {healthStatus === 'up' ? 'UP' : healthStatus === 'down' ? 'DOWN' : 'CHECKING'}
+            </span>
+          </div>
+
           <p className="text-sm text-gray-600">
             &copy; {currentYear} Indian Stock Analyzer. All rights reserved.
           </p>

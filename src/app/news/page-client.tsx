@@ -23,49 +23,145 @@ interface NewsArticle {
   imageUrl: string | null;
 }
 
-const asNewsArray = (value: unknown): NewsArticle[] => {
-  return Array.isArray(value) ? (value as NewsArticle[]) : [];
+type NewsPayload = Record<string, unknown>;
+
+type FearGreedSnapshot = {
+  value: number | null;
+  label: string;
+  updatedAt: string;
 };
 
-const FALLBACK_NEWS = [
-  { id: 1, title: "Sensex surges 600 pts on strong global cues; Nifty above 22,600", summary: "Indian markets opened on a strong note tracking positive global sentiment after US Fed signals.", category: "markets", date: new Date().toISOString(), source: "Economic Times", url: "#", imageUrl: null },
-  { id: 2, title: "Reliance Industries Q4 profit rises 7% YoY to ₹21,243 crore", summary: "RIL reported robust quarterly numbers driven by strong performance in retail and digital segments.", category: "markets", date: new Date().toISOString(), source: "Business Standard", url: "#", imageUrl: null },
-  { id: 3, title: "RBI holds repo rate at 6.5% for sixth consecutive meeting", summary: "The Monetary Policy Committee unanimously voted to keep interest rates unchanged amid inflation concerns.", category: "economy", date: new Date().toISOString(), source: "Mint", url: "#", imageUrl: null },
-  { id: 4, title: "IT sector sees revival as TCS, Infosys post strong deal wins", summary: "Major IT firms report record deal pipeline for FY26 amid recovering global tech spending.", category: "IT", date: new Date().toISOString(), source: "NDTV Profit", url: "#", imageUrl: null },
-  { id: 5, title: "HDFC Bank NIM stable at 3.5%; asset quality improvement continues", summary: "HDFC Bank's merger integration on track with improving return ratios and loan growth.", category: "banking", date: new Date().toISOString(), source: "Financial Express", url: "#", imageUrl: null },
-  { id: 6, title: "Sun Pharma bags $200M US FDA approval for specialty drug", summary: "Sun Pharmaceutical receives clearance for a key dermatology product in the high-margin US market.", category: "pharma", date: new Date().toISOString(), source: "Moneycontrol", url: "#", imageUrl: null },
-  { id: 7, title: "Maruti Suzuki February sales up 12% YoY; SUVs lead growth", summary: "Auto sector continues its strong momentum with Maruti's domestic passenger vehicle sales hitting a record.", category: "auto", date: new Date().toISOString(), source: "Reuters", url: "#", imageUrl: null },
-  { id: 8, title: "FII inflows return to Indian equities; ₹8,000 crore bought in March", summary: "Foreign institutional investors turn net buyers after three months of selling pressure.", category: "markets", date: new Date().toISOString(), source: "Bloomberg Quint", url: "#", imageUrl: null },
-  { id: 9, title: "Nifty Midcap 100 outperforms benchmark; up 3% this week", summary: "Mid-cap stocks continue to attract interest as earnings growth outlook remains strong.", category: "markets", date: new Date().toISOString(), source: "Economic Times", url: "#", imageUrl: null },
-  { id: 10, title: "Wipro, HCL Tech announce large AI transformation deals", summary: "Indian IT majors are winning significant AI-led transformation mandates from global enterprises.", category: "IT", date: new Date().toISOString(), source: "Business Standard", url: "#", imageUrl: null },
-];
+const asNewsArray = (value: unknown): NewsPayload[] => {
+  return Array.isArray(value) ? (value as NewsPayload[]) : [];
+};
+
+const toText = (...values: unknown[]): string => {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) {
+      return value.trim();
+    }
+  }
+
+  return '';
+};
+
+const normalizeNewsItem = (value: unknown, index: number): NewsArticle | null => {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+
+  const row = value as NewsPayload;
+  const id = row.id ?? `news-${index}`;
+  const title = toText(row.title, row.headline);
+  const url = toText(row.url, row.link) || '#';
+
+  if (!title) {
+    return null;
+  }
+
+  const date =
+    toText(row.publishedAt, row.pub_date, row.date, row.createdAt) ||
+    new Date().toISOString();
+
+  return {
+    id: typeof id === 'string' || typeof id === 'number' ? id : `news-${index}`,
+    title,
+    summary: toText(row.summary, row.description, row.content),
+    category: toText(row.category) || 'markets',
+    date,
+    source: toText(row.source, row.sourceName) || 'Unknown source',
+    url,
+    imageUrl: toText(row.imageUrl, row.image_url) || null,
+  };
+};
+
+const extractNewsArticles = (payload: unknown): NewsArticle[] => {
+  const data = payload && typeof payload === 'object' ? (payload as NewsPayload) : null;
+  const candidates = [
+    payload,
+    data?.articles,
+    data?.news,
+    data?.rows,
+    data?.results,
+    data?.items,
+  ];
+
+  for (const candidate of candidates) {
+    const rows = asNewsArray(candidate)
+      .map((item, index) => normalizeNewsItem(item, index))
+      .filter((item): item is NewsArticle => Boolean(item));
+
+    if (rows.length > 0) {
+      return rows;
+    }
+  }
+
+  return [];
+};
+
+const parseFearGreed = (payload: unknown): FearGreedSnapshot => {
+  if (!payload || typeof payload !== 'object') {
+    return { value: null, label: 'Unavailable', updatedAt: '' };
+  }
+
+  const data = payload as Record<string, unknown>;
+  const latest = data.latest && typeof data.latest === 'object'
+    ? (data.latest as Record<string, unknown>)
+    : Array.isArray(data.rows) && data.rows[0] && typeof data.rows[0] === 'object'
+      ? (data.rows[0] as Record<string, unknown>)
+      : data;
+
+  const rawValue = latest.value ?? latest.index ?? latest.score ?? latest.fearGreedIndex;
+  const numericValue = Number(rawValue);
+  const label = String(latest.label || latest.sentiment || latest.classification || 'Unavailable');
+  const updatedAt = String(
+    latest.updatedAt || latest.lastUpdated || latest.capturedAt || latest.snapshotDate || latest.createdAt || ''
+  );
+
+  return {
+    value: Number.isFinite(numericValue) ? numericValue : null,
+    label,
+    updatedAt,
+  };
+};
 
 export default function NewsPageClient() {
   const [newsData, setNewsData] = useState<NewsArticle[]>([]);
+  const [fearGreed, setFearGreed] = useState<FearGreedSnapshot>({ value: null, label: 'Loading', updatedAt: '' });
   const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchNewsData = async () => {
       try {
         setLoading(true);
-        const response = await stockApi.getLatestNews();
+        const [newsResponse, fearGreedResponse] = await Promise.allSettled([
+          stockApi.getLatestNews(),
+          stockApi.getFearGreedIndex(),
+        ]);
+
         // API shape: { success, data: [...] } or { success, data: { news: [...] } }
         let articles: NewsArticle[] = [];
-        if (response?.success) {
-          const responseData = response.data as unknown;
-          articles = asNewsArray(responseData);
-
-          if (!articles.length && responseData && typeof responseData === 'object') {
-            articles = asNewsArray((responseData as { news?: unknown }).news);
-          }
+        if (newsResponse.status === 'fulfilled' && newsResponse.value?.success) {
+          const responseData = newsResponse.value.data as unknown;
+          articles = extractNewsArticles(responseData);
         }
-        setNewsData(articles.length > 0 ? articles : FALLBACK_NEWS);
-        setError('');
+
+        if (fearGreedResponse.status === 'fulfilled') {
+          const fearGreedPayload = (fearGreedResponse.value?.data ?? fearGreedResponse.value) as unknown;
+          setFearGreed(parseFearGreed(fearGreedPayload));
+        } else {
+          setFearGreed({ value: null, label: 'Unavailable', updatedAt: '' });
+        }
+
+        setNewsData(articles);
+        setError(articles.length > 0 ? '' : 'No news articles are currently available.');
       } catch (err) {
-        logger.error('Error fetching news (using fallback)', err);
-        setNewsData(FALLBACK_NEWS);
-        setError('');
+        logger.error('Error fetching news', err);
+        setNewsData([]);
+        setFearGreed({ value: null, label: 'Unavailable', updatedAt: '' });
+        setError('Failed to load news data. Please retry shortly.');
       } finally {
         setLoading(false);
       }
@@ -73,6 +169,18 @@ export default function NewsPageClient() {
 
     fetchNewsData();
   }, []);
+
+  const handleSyncNews = async () => {
+    try {
+      setSyncing(true);
+      await stockApi.syncNews();
+      setError('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to trigger news sync');
+    } finally {
+      setSyncing(false);
+    }
+  };
 
 
   return (
@@ -86,6 +194,16 @@ export default function NewsPageClient() {
           <p className="text-gray-300">
           Stay updated with the latest market news, sector updates, and financial insights.
         </p>
+        <div>
+          <button
+            type="button"
+            onClick={() => void handleSyncNews()}
+            disabled={syncing}
+            className="mt-2 px-3 py-1.5 rounded-md text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white"
+          >
+            {syncing ? 'Syncing News...' : 'Trigger News Sync'}
+          </button>
+        </div>
       </div>
       
       {/* News Category Tabs */}
@@ -127,6 +245,15 @@ export default function NewsPageClient() {
         
         {/* Sidebar - 1/4 width on large screens */}
         <div className="lg:col-span-1 space-y-6">
+          <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-4 glass">
+            <h3 className="text-lg font-bold mb-3 text-white">Fear & Greed Index</h3>
+            <div className="text-3xl font-bold text-neon-400">
+              {fearGreed.value === null ? '--' : fearGreed.value}
+            </div>
+            <p className="text-sm text-gray-300 mt-1">{fearGreed.label}</p>
+            {fearGreed.updatedAt ? <p className="text-xs text-gray-500 mt-1">Updated: {fearGreed.updatedAt}</p> : null}
+          </div>
+
           {/* Trending Topics */}
             <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-4 glass">
               <h3 className="text-lg font-bold mb-4 text-white">Trending Topics</h3>

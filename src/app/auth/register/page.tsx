@@ -4,9 +4,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { UserPlus, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { logger } from '@/lib/logger';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const RegisterPage: React.FC = () => {
+  const { register } = useAuth();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,22 +40,22 @@ const RegisterPage: React.FC = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long');
       setLoading(false);
       return;
     }
 
     try {
-      // Add your registration logic here
-      logger.debug('Registration attempt:', formData);
-      // For now, just simulate a registration
-      setTimeout(() => {
-        setLoading(false);
-        // Redirect or handle success
-      }, 1000);
-    } catch {
-      setError('Registration failed. Please try again.');
+      await register({
+        email: formData.email,
+        password: formData.password,
+        fullName: formData.name,
+      });
+      router.push(`/auth/verify-email?email=${encodeURIComponent(formData.email)}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
+    } finally {
       setLoading(false);
     }
   };

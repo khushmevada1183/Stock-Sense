@@ -5,6 +5,7 @@ import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import StockLogo from './StockLogo';
 import { useDebounce } from '../../lib/hooks/useDebounce';
+import { searchStocks as searchStocksApi } from '@/api/api';
 import { logger } from '@/lib/logger';
 
 // Unified search result type
@@ -16,8 +17,6 @@ interface UnifiedSearchResult {
   changePercent?: number;
   sector?: string;
 }
-
-const LOCAL_SEARCH_INDEX: UnifiedSearchResult[] = [];
 
 interface SearchBarProps {
   compact?: boolean;
@@ -36,7 +35,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isResultsVisible, setIsResultsVisible] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchMode, setSearchMode] = useState<'local' | 'indian'>('local');
+  const [searchMode, setSearchMode] = useState<'indian'>('indian');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const searchRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -58,11 +57,14 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   // Fetch search results when debounced query changes
   useEffect(() => {
-    const fetchResults = () => {
+    let cancelled = false;
+
+    const fetchResults = async () => {
       if (debouncedQuery.length < 2) {
         setResults([]);
         setIsResultsVisible(false);
         setError(null);
+        setIsLoading(false);
         return;
       }
 
@@ -70,30 +72,41 @@ const SearchBar: React.FC<SearchBarProps> = ({
       setError(null);
       setIsResultsVisible(true);
 
-      const normalizedQuery = debouncedQuery.trim().toLowerCase();
-      const localResults = LOCAL_SEARCH_INDEX.filter((stock) => {
-        return (
-          stock.symbol.toLowerCase().includes(normalizedQuery) ||
-          stock.companyName.toLowerCase().includes(normalizedQuery)
-        );
-      }).slice(0, 10);
+      try {
+        const response = await searchStocksApi(debouncedQuery, { limit: 10 });
 
-      if (localResults.length > 0) {
-        setResults(localResults);
-        setSearchMode('local');
-      } else {
+        if (cancelled) {
+          return;
+        }
+
+        const mappedResults: UnifiedSearchResult[] = response.map((stock) => ({
+          symbol: stock.symbol,
+          companyName: stock.company_name || stock.name || stock.symbol,
+          latestPrice: stock.current_price,
+          changePercent: stock.percent_change,
+          sector: stock.sector || stock.sector_name,
+        }));
+
+        if (mappedResults.length > 0) {
+          setResults(mappedResults);
+        } else {
+          setResults([]);
+          setError('No results found');
+        }
+      } catch (err) {
+        logger.error('Search API failed:', err);
         setResults([]);
-        setError('No results found');
-      }
-
-      if (onSearchComplete && localResults.length === 0) {
-        onSearchComplete('', []);
+        setError('Unable to search right now. Please try again.');
       }
 
       setIsLoading(false);
     };
 
-    fetchResults();
+    void fetchResults();
+
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedQuery, onSearchComplete]);
 
   // Function to handle keyboard navigation

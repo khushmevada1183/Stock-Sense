@@ -4,9 +4,12 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LogIn, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
-import { logger } from '@/lib/logger';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const LoginPage: React.FC = () => {
+  const { login } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -19,15 +22,11 @@ const LoginPage: React.FC = () => {
     setError('');
 
     try {
-      // Add your authentication logic here
-      logger.debug('Login attempt:', { email, password });
-      // For now, just simulate a login
-      setTimeout(() => {
-        setLoading(false);
-        // Redirect or handle success
-      }, 1000);
-    } catch {
-      setError('Login failed. Please check your credentials.');
+      await login(email, password);
+      router.push('/portfolio');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed. Please check your credentials.');
+    } finally {
       setLoading(false);
     }
   };
@@ -107,6 +106,15 @@ const LoginPage: React.FC = () => {
                 </label>
                 <Link href="/auth/forgot-password" className="text-sm text-blue-400 hover:text-blue-300">
                   Forgot password?
+                </Link>
+              </div>
+
+              <div className="flex items-center justify-between text-xs">
+                <Link href="/auth/verify-email" className="text-gray-400 hover:text-gray-300">
+                  Verify email
+                </Link>
+                <Link href="/auth/sessions" className="text-gray-400 hover:text-gray-300">
+                  Security sessions
                 </Link>
               </div>
 

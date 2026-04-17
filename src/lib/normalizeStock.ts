@@ -134,33 +134,39 @@ export function normalizeStockData(raw: unknown): NormalizedStock | null {
   const data = rawRecord.success !== undefined ? rawRecord.data : raw;
   const dataRecord = asRecord(data);
   if (!Object.keys(dataRecord).length) return null;
+
+  // New v1 backend shape nests market profile inside `profile` and metrics inside `metrics`.
+  const profileRoot = asRecord(dataRecord.profile);
+  const profileData = Object.keys(profileRoot).length ? profileRoot : dataRecord;
   
   // Extract sub-objects
-  const info = asRecord(dataRecord.info);
-  const priceInfo = asRecord(dataRecord.priceInfo);
-  const industryInfo = asRecord(dataRecord.industryInfo);
-  const metadata = asRecord(dataRecord.metadata);
-  const securityInfo = asRecord(dataRecord.securityInfo);
-  const preOpenMarket = asRecord(dataRecord.preOpenMarket);
+  const info = asRecord(profileData.info);
+  const priceInfo = asRecord(profileData.priceInfo);
+  const industryInfo = asRecord(profileData.industryInfo);
+  const metadata = asRecord(profileData.metadata);
+  const securityInfo = asRecord(profileData.securityInfo);
+  const preOpenMarket = asRecord(profileData.preOpenMarket);
+  const metrics = asRecord(dataRecord.metrics);
+  const quote = asRecord(dataRecord.quote);
   
   // Price fields
-  const lastPrice = safeNum(priceInfo.lastPrice);
-  const change = safeNum(priceInfo.change);
-  const pChange = safeNum(priceInfo.pChange);
+  const lastPrice = safeNum(priceInfo.lastPrice ?? quote.lastPrice ?? dataRecord.lastPrice);
+  const change = safeNum(priceInfo.change ?? quote.change ?? dataRecord.change);
+  const pChange = safeNum(priceInfo.pChange ?? quote.changePercent ?? quote.pChange ?? dataRecord.pChange);
   const previousClose = safeNum(priceInfo.previousClose);
-  const open = safeNum(priceInfo.open);
+  const open = safeNum(priceInfo.open ?? quote.open);
   const close = safeNum(priceInfo.close);
   const vwap = safeNum(priceInfo.vwap);
   
   // Intraday range
   const intraDayHL = asRecord(priceInfo.intraDayHighLow);
-  const dayHigh = safeNum(intraDayHL.max);
-  const dayLow = safeNum(intraDayHL.min);
+  const dayHigh = safeNum(intraDayHL.max ?? priceInfo.high ?? quote.high);
+  const dayLow = safeNum(intraDayHL.min ?? priceInfo.low ?? quote.low);
   
   // 52-week range
   const weekHL = asRecord(priceInfo.weekHighLow);
-  const yearHigh = safeNum(weekHL.max);
-  const yearLow = safeNum(weekHL.min);
+  const yearHigh = safeNum(weekHL.max ?? metrics.week52High ?? metrics.high12m);
+  const yearLow = safeNum(weekHL.min ?? metrics.week52Low ?? metrics.low12m);
   
   // Industry
   const industry = safeStr(industryInfo.industry ?? info.industry ?? metadata.pdSectorInd, 'N/A');
@@ -169,27 +175,31 @@ export function normalizeStockData(raw: unknown): NormalizedStock | null {
   const basicIndustry = safeStr(industryInfo.basicIndustry, 'N/A');
   
   // Symbol/company
-  const symbol = safeStr(info.symbol ?? metadata.symbol, '');
+  const symbol = safeStr(info.symbol ?? metadata.symbol ?? dataRecord.symbol ?? quote.symbol, '');
   const companyName = safeStr(info.companyName ?? metadata.companyName ?? symbol, 'N/A');
-  const isin = safeStr(info.isin ?? securityInfo.isin, '');
+  const isin = safeStr(info.isin ?? securityInfo.isin ?? dataRecord.isin, '');
   // PE data from metadata
   const symbolPE = toNumberOrString(metadata.pdSymbolPe, 'N/A');
   const sectorPE = toNumberOrString(metadata.pdSectorPe, 'N/A');
   
   // Calculate Market Cap & Volume
   const issuedSize = safeNum(securityInfo.issuedSize);
-  const marketCap = lastPrice && issuedSize ? lastPrice * issuedSize : 0;
+  const marketCap = lastPrice && issuedSize ? lastPrice * issuedSize : safeNum(dataRecord.marketCap);
   
   // NSE volume can be scattered depending on time of day
   const preOpenVolume = safeNum(preOpenMarket.totalTradedVolume);
-  const priceInfoVolume = safeNum(priceInfo.totalTradedVolume) || safeNum(priceInfo.volume) || safeNum(priceInfo.quantityTraded);
+  const priceInfoVolume =
+    safeNum(priceInfo.totalTradedVolume) ||
+    safeNum(priceInfo.volume) ||
+    safeNum(priceInfo.quantityTraded) ||
+    safeNum(quote.volume);
   const volume = priceInfoVolume || preOpenVolume || 0;
   
   return {
     symbol,
     companyName,
     isin,
-    series: safeStr(metadata.series ?? info.series, 'EQ'),
+    series: safeStr(metadata.series ?? info.series ?? dataRecord.series, 'EQ'),
     
     price: lastPrice,
     lastPrice,
@@ -205,8 +215,8 @@ export function normalizeStockData(raw: unknown): NormalizedStock | null {
     
     yearHigh,
     yearLow,
-    yearHighDate: safeStr(weekHL.maxDate, ''),
-    yearLowDate: safeStr(weekHL.minDate, ''),
+    yearHighDate: safeStr(weekHL.maxDate ?? metrics.week52HighDate, ''),
+    yearLowDate: safeStr(weekHL.minDate ?? metrics.week52LowDate, ''),
     
     upperCircuit: safeStr(priceInfo.upperCP, 'N/A'),
     lowerCircuit: safeStr(priceInfo.lowerCP, 'N/A'),
@@ -217,14 +227,14 @@ export function normalizeStockData(raw: unknown): NormalizedStock | null {
     macro,
     basicIndustry,
     
-    listingDate: safeStr(metadata.listingDate ?? info.listingDate, 'N/A'),
+    listingDate: safeStr(metadata.listingDate ?? info.listingDate ?? dataRecord.listingDate, 'N/A'),
     tradingStatus: safeStr(metadata.tradingStatus ?? securityInfo.tradingStatus, 'Active'),
-    lastUpdateTime: safeStr(metadata.lastUpdateTime, 'N/A'),
+    lastUpdateTime: safeStr(metadata.lastUpdateTime ?? quote.asOf, 'N/A'),
     
     symbolPE,
     sectorPE,
     isPositive: pChange >= 0,
-    marketStatus: safeStr(dataRecord.currentMarketType, 'N/A'),
+    marketStatus: safeStr(dataRecord.currentMarketType ?? dataRecord.source, 'N/A'),
     marketCap,
     volume,
     

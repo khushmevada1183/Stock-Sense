@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingUp, TrendingDown, Scale, DollarSign, BarChart4 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Scale, IndianRupee, BarChart4 } from 'lucide-react';
 
 interface FinancialItem {
   displayName: string;
@@ -103,7 +103,7 @@ const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData
     {
       title: 'EPS',
       value: `₹${formatValue(epsItem?.value)}`,
-      icon: <DollarSign className="h-5 w-5" />,
+      icon: <IndianRupee className="h-5 w-5" />,
       isPositive: epsItem ? parseFloat(epsItem.value) > 0 : undefined,
     },
     {
@@ -119,7 +119,7 @@ const FinancialHighlights: React.FC<FinancialHighlightsProps> = ({ financialData
     {
       title: 'Cash',
       value: `₹${formatValue(cashItem?.value)} Cr`,
-      icon: <DollarSign className="h-5 w-5" />,
+      icon: <IndianRupee className="h-5 w-5" />,
     }
   ];
 

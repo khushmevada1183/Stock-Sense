@@ -16,7 +16,7 @@ import {
   Building,
   UserCheck,
   FileText,
-  DollarSign,
+  IndianRupee,
   BarChart3,
   Eye
 } from 'lucide-react';
@@ -359,7 +359,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
                     <span className="text-slate-700 dark:text-slate-300">{executive.experience} years experience</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-green-400" />
+                    <IndianRupee className="w-4 h-4 text-green-400" />
                     <span className="text-slate-700 dark:text-slate-300">{executive.shareholding}% shareholding</span>
                   </div>
                 </div>

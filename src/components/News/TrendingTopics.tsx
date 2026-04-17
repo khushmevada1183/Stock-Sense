@@ -3,53 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronRight, Hash } from 'lucide-react';
 import { gsap } from 'gsap';
+import { getTrendingNews } from '@/api/api';
 import { logger } from '@/lib/logger';
-
-// Mock trending topics data
-const MOCK_TRENDING_TOPICS = [
-  {
-    id: 1,
-    topic: 'Budget 2023',
-    count: 2453,
-    change: 12,
-    category: 'economy'
-  },
-  {
-    id: 2,
-    topic: 'Inflation Data',
-    count: 1876,
-    change: 5,
-    category: 'economy'
-  },
-  {
-    id: 3,
-    topic: 'HDFC Bank',
-    count: 1654,
-    change: -3,
-    category: 'stocks'
-  },
-  {
-    id: 4,
-    topic: 'Crypto Regulation',
-    count: 1432,
-    change: 20,
-    category: 'crypto'
-  },
-  {
-    id: 5,
-    topic: 'RBI Policy',
-    count: 1298,
-    change: 8,
-    category: 'economy'
-  },
-  {
-    id: 6,
-    topic: 'Reliance Industries',
-    count: 1187,
-    change: 2,
-    category: 'stocks'
-  }
-];
 
 interface TrendingTopic {
   id: number;
@@ -86,22 +41,42 @@ export default function TrendingTopics() {
     const fetchTrendingTopics = async () => {
       try {
         setLoading(true);
-        
-        // In a real implementation, we would fetch trending topics from an API
-        // For now, we'll use mock data with a slight delay to simulate network request
-        setTimeout(() => {
-          setTrendingTopics(MOCK_TRENDING_TOPICS);
-          setLoading(false);
-        }, 800);
+
+        const response = await getTrendingNews({ limit: 20 });
+        const payload = response?.data || response;
+
+        const articles = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.articles)
+            ? payload.articles
+            : Array.isArray(payload?.news)
+              ? payload.news
+              : [];
+
+        const topics: TrendingTopic[] = articles.slice(0, 8).map((article: Record<string, unknown>, index: number) => {
+          const title = String(article.title || 'Market Update').trim();
+          const normalizedTopic = title.split(' ').slice(0, 3).join(' ');
+          const sentiment = Number(article.sentiment || 0);
+
+          return {
+            id: Number(article.id || index + 1),
+            topic: normalizedTopic,
+            count: Number(article.rank || articles.length - index) * 100,
+            change: Number.isFinite(sentiment) ? Math.round(sentiment * 100) : 0,
+            category: String(article.category || 'markets'),
+          };
+        });
+
+        setTrendingTopics(topics);
       } catch (error) {
         logger.error('Error fetching trending topics:', error);
-        // Use mock data on error
-        setTrendingTopics(MOCK_TRENDING_TOPICS);
+        setTrendingTopics([]);
+      } finally {
         setLoading(false);
       }
     };
 
-    fetchTrendingTopics();
+    void fetchTrendingTopics();
   }, []);
 
   // Function to get category badge color

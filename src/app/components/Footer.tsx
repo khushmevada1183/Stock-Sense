@@ -28,8 +28,8 @@ const Footer: React.FC = () => {
             <div className="flex items-center mr-4">
               <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">Integration:</span>
               <div className="flex items-center">
-                <AlertCircle className="h-4 w-4 text-amber-400 mr-1" />
-                <span className="text-sm text-amber-400">API disabled for migration</span>
+                <AlertCircle className="h-4 w-4 text-green-400 mr-1" />
+                <span className="text-sm text-green-400">API v1 connected</span>
               </div>
             </div>
           </div>
@@ -37,7 +37,7 @@ const Footer: React.FC = () => {
 
         <div className="mt-4 text-center text-xs text-gray-500 dark:text-gray-500">
           <p>
-            Backend migration in progress <span className="inline-block mx-1">•</span> API integration will be reintroduced after the new backend rollout
+            Data sourced from Stock Sense Backend v1 <span className="inline-block mx-1">•</span> For informational use only
           </p>
           <p className="mt-1">
             Made with <Heart className="h-3 w-3 inline text-red-500" fill="currentColor" /> in India

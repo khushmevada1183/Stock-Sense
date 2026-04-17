@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TextPlugin } from 'gsap/TextPlugin';
+import { createIPOItemHoverEffect } from '@/animations/shared/AnimationUtils';
 
 // Ensure plugins are registered
 gsap.registerPlugin(ScrollTrigger, TextPlugin);

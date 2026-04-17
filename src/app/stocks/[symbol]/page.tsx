@@ -7,7 +7,7 @@ import { gsap } from 'gsap';
 import { Chart, registerables } from 'chart.js';
 import { 
   TrendingUp, 
-  DollarSign, 
+  IndianRupee, 
   LineChart, 
   BarChart4, 
   Scale,
@@ -20,7 +20,16 @@ import {
   Shield,
   Rocket
 } from 'lucide-react';
-import { apiHelpers } from '@/api/api';
+import {
+  apiHelpers,
+  getStockFinancials,
+  getStockHistory,
+  getStockPeers,
+  getStockQuote,
+  getStockTechnical,
+  getStockTicks,
+} from '@/api/api';
+import { useWebSocket } from '@/hooks/useWebSocket';
 import { normalizeStockData, type NormalizedStock } from '@/lib/normalizeStock';
 // Removed separate financial API imports - now using single /stock endpoint
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
@@ -53,6 +62,15 @@ interface FetchedFinancialStatementsData {
     period?: number;
   }>;
 }
+
+interface StockEndpointStats {
+  quoteLoaded: boolean;
+  technicalLoaded: boolean;
+  financialRows: number;
+  peersRows: number;
+  historyRows: number;
+  ticksRows: number;
+}
 import { FinancialItem, FinancialPeriod } from '@/components/stocks/FinancialStatements'; // Import for transformFinancialData
 
 // Register Chart.js components
@@ -64,6 +82,14 @@ export default function Page() {
   const symbol = params?.symbol as string || '';
   const [stockData, setStockData] = useState<unknown | null>(null);           // raw API response
   const [stock, setStock] = useState<NormalizedStock | null>(null); // normalized data
+  const [endpointStats, setEndpointStats] = useState<StockEndpointStats>({
+    quoteLoaded: false,
+    technicalLoaded: false,
+    financialRows: 0,
+    peersRows: 0,
+    historyRows: 0,
+    ticksRows: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -88,10 +114,49 @@ export default function Page() {
   const financialRatiosRef = useRef<HTMLDivElement>(null); 
   const financialStatementsRef = useRef<HTMLDivElement>(null);
   const animationTimerRef = useRef<number | null>(null);
+
+  const { subscribeStock, unsubscribeStock } = useWebSocket({
+    onLiveTick: (payload) => {
+      const tick = payload as {
+        symbol?: string;
+        close?: number;
+        change?: number;
+        pChange?: number;
+      };
+
+      if (!tick?.symbol || normalizeSymbolForRealtime(tick.symbol) !== normalizeSymbolForRealtime(symbol)) {
+        return;
+      }
+
+      setStock((prev) => {
+        if (!prev) {
+          return prev;
+        }
+
+        const nextPrice = Number.isFinite(Number(tick.close)) ? Number(tick.close) : prev.lastPrice;
+        const nextChange = Number.isFinite(Number(tick.change)) ? Number(tick.change) : prev.change;
+        const nextPChange = Number.isFinite(Number(tick.pChange)) ? Number(tick.pChange) : prev.pChange;
+
+        return {
+          ...prev,
+          price: nextPrice,
+          lastPrice: nextPrice,
+          change: nextChange,
+          pChange: nextPChange,
+          isPositive: nextPChange >= 0,
+          lastUpdateTime: new Date().toISOString(),
+        };
+      });
+    },
+  });
   
   // Refs to store chart instances
   const sectorChartInstanceRef = useRef<Chart | null>(null);
   const performanceChartInstanceRef = useRef<Chart | null>(null);
+
+  function normalizeSymbolForRealtime(value: string) {
+    return String(value || '').trim().toUpperCase();
+  }
   
   // Cleanup function for charts
   const cleanupCharts = () => {
@@ -126,6 +191,23 @@ export default function Page() {
 
     // Fetch stock data and normalize NSE India response structure
     const fetchStockData = async () => {
+      const extractRows = (value: unknown): unknown[] => {
+        if (Array.isArray(value)) {
+          return value;
+        }
+
+        if (value && typeof value === 'object') {
+          const data = value as Record<string, unknown>;
+          for (const key of ['items', 'rows', 'results', 'data', 'records', 'history', 'ticks', 'peers', 'financials']) {
+            if (Array.isArray(data[key])) {
+              return data[key] as unknown[];
+            }
+          }
+        }
+
+        return [];
+      };
+
       try {
         setLoading(true);
         logger.debug(`Fetching stock data for symbol: ${symbol}`);
@@ -142,6 +224,37 @@ export default function Page() {
           if (!normalized) {
             setError(`Could not parse data for "${symbol}". Unexpected data format.`);
           }
+
+          const [quoteRes, technicalRes, financialsRes, peersRes, historyRes, ticksRes] = await Promise.allSettled([
+            getStockQuote(symbol),
+            getStockTechnical(symbol),
+            getStockFinancials(symbol),
+            getStockPeers(symbol),
+            getStockHistory(symbol, { limit: 30 }),
+            getStockTicks(symbol, { limit: 30 }),
+          ]);
+
+          const financialRows = financialsRes.status === 'fulfilled'
+            ? extractRows((financialsRes.value as { data?: unknown })?.data ?? financialsRes.value).length
+            : 0;
+          const peersRows = peersRes.status === 'fulfilled'
+            ? extractRows((peersRes.value as { data?: unknown })?.data ?? peersRes.value).length
+            : 0;
+          const historyRows = historyRes.status === 'fulfilled'
+            ? extractRows((historyRes.value as { data?: unknown })?.data ?? historyRes.value).length
+            : 0;
+          const ticksRows = ticksRes.status === 'fulfilled'
+            ? extractRows((ticksRes.value as { data?: unknown })?.data ?? ticksRes.value).length
+            : 0;
+
+          setEndpointStats({
+            quoteLoaded: quoteRes.status === 'fulfilled',
+            technicalLoaded: technicalRes.status === 'fulfilled',
+            financialRows,
+            peersRows,
+            historyRows,
+            ticksRows,
+          });
         } else {
           setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
         }
@@ -161,6 +274,18 @@ export default function Page() {
     fetchStockData();
     // fetchFinancialData(); // Removed - NSE India equityDetails is all-in-one
   }, [symbol]);
+
+  useEffect(() => {
+    if (!symbol) {
+      return;
+    }
+
+    subscribeStock(symbol);
+
+    return () => {
+      unsubscribeStock(symbol);
+    };
+  }, [symbol, subscribeStock, unsubscribeStock]);
   
   // Initialize animations after data is loaded — use fromTo so elements always end visible
   useEffect(() => {
@@ -492,7 +617,6 @@ export default function Page() {
   const companyName = stock?.companyName || symbol;
   const displaySymbol = stock?.symbol || symbol;
   const industry = stock?.industry || 'N/A';
-  const sector = stock?.sector || 'N/A';
   const price = extractPrice();
   
   // Percent change
@@ -582,7 +706,7 @@ export default function Page() {
     {
       id: 'institutional',
       label: 'Institutional Investment',
-      icon: <DollarSign className="h-4 w-4" />,
+      icon: <IndianRupee className="h-4 w-4" />,
       description: 'FII/DII holdings and flows'
     },
     {
@@ -953,6 +1077,38 @@ export default function Page() {
                 industry={industry}
               />
             )}
+          </div>
+
+          <div className="px-6 pb-6">
+            <div className="bg-gray-900/90 border border-gray-700/60 rounded-lg p-4">
+              <h3 className="text-white font-semibold mb-3">Stock Endpoint Coverage</h3>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
+                  <p className="text-gray-400">Quote Endpoint</p>
+                  <p className="text-neon-400 font-semibold">{endpointStats.quoteLoaded ? 'Loaded' : 'Not loaded'}</p>
+                </div>
+                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
+                  <p className="text-gray-400">Technical Endpoint</p>
+                  <p className="text-neon-400 font-semibold">{endpointStats.technicalLoaded ? 'Loaded' : 'Not loaded'}</p>
+                </div>
+                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
+                  <p className="text-gray-400">Financial Rows</p>
+                  <p className="text-neon-400 font-semibold">{endpointStats.financialRows}</p>
+                </div>
+                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
+                  <p className="text-gray-400">Peers Rows</p>
+                  <p className="text-neon-400 font-semibold">{endpointStats.peersRows}</p>
+                </div>
+                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
+                  <p className="text-gray-400">History Rows</p>
+                  <p className="text-neon-400 font-semibold">{endpointStats.historyRows}</p>
+                </div>
+                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
+                  <p className="text-gray-400">Tick Rows</p>
+                  <p className="text-neon-400 font-semibold">{endpointStats.ticksRows}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

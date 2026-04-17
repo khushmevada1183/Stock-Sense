@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { 
   ArrowUp, 
   ArrowDown, 
   TrendingUp, 
   TrendingDown, 
-  DollarSign, 
+  IndianRupee, 
   BarChart3, 
   PieChart, 
   Target,
@@ -20,6 +20,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import * as stockApi from '@/api/api';
+import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface PortfolioHolding {
   symbol: string;
@@ -47,6 +48,10 @@ interface PortfolioSummary {
   riskProfile?: string;
   valuationScore?: number;
   sectorAllocation?: SectorAllocation[];
+}
+
+interface PortfolioPerformancePoint {
+  [key: string]: unknown;
 }
 
 // Helper function to format currency
@@ -82,31 +87,175 @@ const formatLargeNumber = (value: number): string => {
 const PortfolioDashboard = () => {
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
+  const [authRequired, setAuthRequired] = useState(false);
+  const [selectedPortfolioId, setSelectedPortfolioId] = useState<string>('');
+  const [portfolioDetails, setPortfolioDetails] = useState<Record<string, unknown> | null>(null);
+  const [performancePoints, setPerformancePoints] = useState<PortfolioPerformancePoint[]>([]);
+  const [xirrValue, setXirrValue] = useState<number | null>(null);
+  const [apiMessage, setApiMessage] = useState('');
+  const [showTransactionForm, setShowTransactionForm] = useState(false);
+  const [transactionSymbol, setTransactionSymbol] = useState('');
+  const [transactionType, setTransactionType] = useState<'BUY' | 'SELL'>('BUY');
+  const [transactionQuantity, setTransactionQuantity] = useState('1');
+  const [transactionPrice, setTransactionPrice] = useState('0');
+  const [submittingTransaction, setSubmittingTransaction] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  const fetchPortfolioData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const userPortfoliosResponse = await stockApi.getUserPortfolios();
+      const portfolios = Array.isArray(userPortfoliosResponse?.portfolios)
+        ? userPortfoliosResponse.portfolios as Array<Record<string, unknown>>
+        : [];
+
+      const primaryPortfolioId = String(
+        portfolios[0]?.id || portfolios[0]?.portfolioId || portfolios[0]?.uuid || ''
+      );
+
+      setSelectedPortfolioId(primaryPortfolioId);
+
+      const [holdingsData, summaryData, detailsData, performanceData, xirrData] = await Promise.all([
+        stockApi.getPortfolioHoldings(undefined, primaryPortfolioId || null),
+        stockApi.getPortfolioSummary(undefined, primaryPortfolioId || null),
+        primaryPortfolioId ? stockApi.getPortfolioDetails(primaryPortfolioId) : Promise.resolve(null),
+        stockApi.getPortfolioPerformance(undefined, primaryPortfolioId || null),
+        stockApi.getPortfolioXirr(undefined, primaryPortfolioId || null),
+      ]);
+
+      setHoldings(Array.isArray(holdingsData.holdings) ? holdingsData.holdings as PortfolioHolding[] : []);
+      setSummary(summaryData.summary ? summaryData.summary as PortfolioSummary : null);
+
+      const detailsPayload = detailsData && typeof detailsData === 'object'
+        ? ((detailsData as { details?: Record<string, unknown> }).details || detailsData)
+        : null;
+      setPortfolioDetails(detailsPayload as Record<string, unknown> | null);
+
+      const performancePayload = (performanceData as { performance?: unknown })?.performance;
+      setPerformancePoints(Array.isArray(performancePayload) ? performancePayload as PortfolioPerformancePoint[] : []);
+
+      const rawXirr = (xirrData as { xirr?: unknown })?.xirr;
+      const numericXirr = Number(
+        (rawXirr && typeof rawXirr === 'object'
+          ? (rawXirr as Record<string, unknown>).value || (rawXirr as Record<string, unknown>).xirr
+          : rawXirr) ?? NaN
+      );
+      setXirrValue(Number.isFinite(numericXirr) ? numericXirr : null);
+      setAuthRequired(false);
+      setApiMessage('');
+    } catch (error) {
+      console.error('Error fetching portfolio data:', error);
+
+      const message = error instanceof Error ? error.message : 'Failed to load portfolio analytics endpoints.';
+      const statusCode =
+        typeof error === 'object' && error !== null && 'status' in error
+          ? Number((error as { status?: unknown }).status)
+          : NaN;
+
+      const unauthorized =
+        statusCode === 401 ||
+        /unauthorized|authorization bearer token is required|token/i.test(message);
+
+      setAuthRequired(unauthorized);
+      setApiMessage(message);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const handleExport = async () => {
+    if (!selectedPortfolioId) {
+      setApiMessage('No portfolio selected for export.');
+      return;
+    }
+
+    try {
+      const exportResponse = await stockApi.getPortfolioExport(selectedPortfolioId);
+      const payload = exportResponse?.exportData || exportResponse;
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `portfolio-${selectedPortfolioId}-export.json`;
+      link.click();
+      URL.revokeObjectURL(url);
+      setApiMessage('Portfolio export downloaded successfully.');
+    } catch (error) {
+      setApiMessage(error instanceof Error ? error.message : 'Failed to export portfolio data.');
+    }
+  };
+
+  const handleAddTransaction = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!selectedPortfolioId) {
+      setApiMessage('No portfolio selected for transaction.');
+      return;
+    }
+
+    if (!transactionSymbol.trim() || Number(transactionQuantity) <= 0 || Number(transactionPrice) <= 0) {
+      setApiMessage('Enter symbol, quantity, and price before submitting transaction.');
+      return;
+    }
+
+    try {
+      setSubmittingTransaction(true);
+      await stockApi.addPortfolioTransaction(selectedPortfolioId, {
+        symbol: transactionSymbol.trim().toUpperCase(),
+        transactionType,
+        quantity: Number(transactionQuantity),
+        price: Number(transactionPrice),
+        executedAt: new Date().toISOString(),
+      });
+
+      setTransactionSymbol('');
+      setTransactionQuantity('1');
+      setTransactionPrice('0');
+      setApiMessage('Transaction submitted successfully.');
+      await fetchPortfolioData();
+    } catch (error) {
+      setApiMessage(error instanceof Error ? error.message : 'Failed to add transaction.');
+    } finally {
+      setSubmittingTransaction(false);
+    }
+  };
+
+  const { subscribePortfolio, unsubscribePortfolio } = useWebSocket({
+    onPortfolioUpdate: (payload) => {
+      const eventPortfolioId = String((payload as { portfolioId?: string })?.portfolioId || '').trim();
+      if (eventPortfolioId && selectedPortfolioId && eventPortfolioId !== selectedPortfolioId) {
+        return;
+      }
+
+      void fetchPortfolioData();
+    },
+  });
   
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Get mock data
-        const holdingsData = await stockApi.getPortfolioHoldings();
-        const summaryData = await stockApi.getPortfolioSummary();
-        
-        setHoldings(Array.isArray(holdingsData.holdings) ? holdingsData.holdings as PortfolioHolding[] : []);
-        setSummary(summaryData.summary ? summaryData.summary as PortfolioSummary : null);
-      } catch (error) {
-        console.error('Error fetching portfolio data:', error);
-      } finally {
-        setIsLoading(false);
-      }
+    void fetchPortfolioData();
+  }, [fetchPortfolioData]);
+
+  useEffect(() => {
+    if (!selectedPortfolioId) {
+      return;
+    }
+
+    subscribePortfolio(selectedPortfolioId);
+    return () => {
+      unsubscribePortfolio(selectedPortfolioId);
     };
-    
-    fetchData();
-  }, []);
+  }, [selectedPortfolioId, subscribePortfolio, unsubscribePortfolio]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      void fetchPortfolioData();
+    }, 60000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [fetchPortfolioData]);
   
   // Animation effect for dashboard elements
   useEffect(() => {
@@ -151,13 +300,30 @@ const PortfolioDashboard = () => {
         <div className="container mx-auto px-4 py-6 relative z-10">
           <div className="bg-red-900/20 backdrop-blur-lg border border-red-800/50 rounded-xl p-6 text-center glass">
             <h3 className="text-lg font-medium text-red-400">Portfolio Unavailable</h3>
-            <p className="mt-2 text-red-300/80">Unable to load your portfolio data. Please try again.</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="mt-4 px-6 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/50 rounded-lg text-red-300 transition-all duration-200"
-            >
-              Retry
-            </button>
+            {authRequired ? (
+              <>
+                <p className="mt-2 text-red-300/80">Please log in to access portfolio analytics.</p>
+                <Link
+                  href="/auth/login"
+                  className="mt-4 inline-block px-6 py-2 bg-blue-600/30 hover:bg-blue-600/40 border border-blue-500/50 rounded-lg text-blue-200 transition-all duration-200"
+                >
+                  Go to Login
+                </Link>
+              </>
+            ) : (
+              <>
+                <p className="mt-2 text-red-300/80">Unable to load your portfolio data. Please try again.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    void fetchPortfolioData();
+                  }}
+                  className="mt-4 px-6 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/50 rounded-lg text-red-300 transition-all duration-200"
+                >
+                  Retry
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -180,10 +346,18 @@ const PortfolioDashboard = () => {
               </p>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="p-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white transition-all duration-200">
+              <button
+                type="button"
+                onClick={() => void fetchPortfolioData()}
+                className="p-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white transition-all duration-200"
+              >
                 <RefreshCw size={20} />
               </button>
-              <button className="p-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white transition-all duration-200">
+              <button
+                type="button"
+                onClick={() => void handleExport()}
+                className="p-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white transition-all duration-200"
+              >
                 <Download size={20} />
               </button>
               <button className="p-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white transition-all duration-200">
@@ -202,7 +376,7 @@ const PortfolioDashboard = () => {
                 <p className="text-2xl font-bold text-white mt-1">{formatLargeNumber(summary.totalValue || 0)}</p>
               </div>
               <div className="p-3 bg-neon-400/10 rounded-lg">
-                <DollarSign className="w-6 h-6 text-neon-400" />
+                <IndianRupee className="w-6 h-6 text-neon-400" />
               </div>
             </div>
           </div>
@@ -380,20 +554,99 @@ const PortfolioDashboard = () => {
             </div>
           </div>
         </div>
+
+        <div className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 rounded-xl p-5 glass dashboard-card mb-8">
+          <h3 className="text-lg font-semibold text-white mb-3">Portfolio Endpoint Coverage</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="bg-gray-800/70 border border-gray-700 rounded-md p-3">
+              <p className="text-gray-400">Selected Portfolio</p>
+              <p className="text-neon-400 font-semibold break-all">{selectedPortfolioId || 'n/a'}</p>
+            </div>
+            <div className="bg-gray-800/70 border border-gray-700 rounded-md p-3">
+              <p className="text-gray-400">Performance Points</p>
+              <p className="text-neon-400 font-semibold">{performancePoints.length}</p>
+            </div>
+            <div className="bg-gray-800/70 border border-gray-700 rounded-md p-3">
+              <p className="text-gray-400">XIRR</p>
+              <p className="text-neon-400 font-semibold">{xirrValue === null ? 'n/a' : `${xirrValue}%`}</p>
+            </div>
+          </div>
+          {portfolioDetails ? (
+            <details className="mt-3">
+              <summary className="text-xs text-gray-300 cursor-pointer">View Portfolio Detail Payload</summary>
+              <pre className="text-xs text-gray-300 bg-gray-800 border border-gray-700 rounded-md p-3 overflow-x-auto mt-2 max-h-48">
+                {JSON.stringify(portfolioDetails, null, 2)}
+              </pre>
+            </details>
+          ) : null}
+          {apiMessage ? <p className="text-xs text-amber-300 mt-3">{apiMessage}</p> : null}
+        </div>
         {/* Holdings Table */}
         <div className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 rounded-xl p-6 glass dashboard-card">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-white">Your Holdings</h3>
             <div className="flex items-center space-x-3">
-              <button className="px-4 py-2 bg-neon-400/10 hover:bg-neon-400/20 border border-neon-400/30 rounded-lg text-neon-400 transition-all duration-200 text-sm font-medium">
+              <button
+                type="button"
+                onClick={() => setShowTransactionForm((prev) => !prev)}
+                className="px-4 py-2 bg-neon-400/10 hover:bg-neon-400/20 border border-neon-400/30 rounded-lg text-neon-400 transition-all duration-200 text-sm font-medium"
+              >
                 <Plus className="w-4 h-4 inline mr-2" />
-                Add Stock
+                {showTransactionForm ? 'Hide Transaction Form' : 'Add Transaction'}
               </button>
-              <button className="px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white transition-all duration-200 text-sm">
+              <button
+                type="button"
+                onClick={() => void handleExport()}
+                className="px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 rounded-lg text-gray-300 hover:text-white transition-all duration-200 text-sm"
+              >
                 Export
               </button>
             </div>
           </div>
+
+          {showTransactionForm ? (
+            <form onSubmit={handleAddTransaction} className="grid grid-cols-1 md:grid-cols-5 gap-3 mb-5 border border-gray-700/70 rounded-lg p-4 bg-gray-800/40">
+              <input
+                value={transactionSymbol}
+                onChange={(event) => setTransactionSymbol(event.target.value)}
+                placeholder="Symbol"
+                className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+              />
+              <select
+                value={transactionType}
+                onChange={(event) => setTransactionType(event.target.value as 'BUY' | 'SELL')}
+                className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+              >
+                <option value="BUY">BUY</option>
+                <option value="SELL">SELL</option>
+              </select>
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={transactionQuantity}
+                onChange={(event) => setTransactionQuantity(event.target.value)}
+                placeholder="Quantity"
+                className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+              />
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={transactionPrice}
+                onChange={(event) => setTransactionPrice(event.target.value)}
+                placeholder="Price"
+                className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+              />
+              <button
+                type="submit"
+                disabled={submittingTransaction}
+                className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white text-sm rounded-md px-3 py-2"
+              >
+                {submittingTransaction ? 'Submitting...' : 'Submit'}
+              </button>
+            </form>
+          ) : null}
           
           <div className="overflow-x-auto">
             <table className="min-w-full">

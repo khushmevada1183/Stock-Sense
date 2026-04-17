@@ -14,6 +14,11 @@ import {
   BarChart3,
   Target,
 } from 'lucide-react';
+import {
+  getFiiDiiLatest,
+  getMutualFundsTopHolders,
+  getShareholdingLatest,
+} from '@/api/api';
 
 interface InstitutionalHolding {
   institution: string;
@@ -65,121 +70,99 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
   const fetchInstitutionalData = async () => {
     setLoading(true);
     try {
-      // Simulate API call - replace with actual institutional data APIs
-      const mockHoldings: InstitutionalHolding[] = [
-        {
-          institution: 'Foreign Institutional Investors',
-          type: 'FII',
-          holding: 12580000,
-          percentage: 18.5,
-          change: 2.1,
-          quarter: 'Q3 FY24',
-          value: 15125000000
-        },
-        {
-          institution: 'Domestic Institutional Investors',
-          type: 'DII',
-          holding: 9450000,
-          percentage: 13.9,
-          change: -0.8,
-          quarter: 'Q3 FY24',
-          value: 11362500000
-        },
-        {
-          institution: 'Mutual Funds',
-          type: 'MF',
-          holding: 8200000,
-          percentage: 12.1,
-          change: 1.5,
-          quarter: 'Q3 FY24',
-          value: 9860000000
-        },
-        {
-          institution: 'Insurance Companies',
-          type: 'Insurance',
-          holding: 3800000,
-          percentage: 5.6,
-          change: 0.3,
-          quarter: 'Q3 FY24',
-          value: 4570000000
-        },
-        {
-          institution: 'Banks',
-          type: 'Bank',
-          holding: 2100000,
-          percentage: 3.1,
-          change: -0.2,
-          quarter: 'Q3 FY24',
-          value: 2525000000
-        },
-        {
-          institution: 'Other Institutions',
-          type: 'Other',
-          holding: 1500000,
-          percentage: 2.2,
-          change: 0.1,
-          quarter: 'Q3 FY24',
-          value: 1800000000
+      const [shareholdingResponse, fiiDiiResponse, topHoldersResponse] = await Promise.all([
+        getShareholdingLatest({ symbol }),
+        getFiiDiiLatest({ symbol, limit: 8 }),
+        getMutualFundsTopHolders({ symbol, limit: 8 }),
+      ]);
+
+      const toArray = (value: unknown) => {
+        if (Array.isArray(value)) return value;
+        if (value && typeof value === 'object') {
+          const data = value as Record<string, unknown>;
+          for (const key of ['items', 'rows', 'results', 'data', 'records']) {
+            if (Array.isArray(data[key])) return data[key] as unknown[];
+          }
         }
-      ];
+        return [];
+      };
 
-      const mockFlows: InstitutionalFlow[] = [
-        { date: '2024-02-01', fiiFlow: 125.5, diiFlow: -45.2, netFlow: 80.3, priceImpact: 1.2 },
-        { date: '2024-01-01', fiiFlow: -89.3, diiFlow: 156.7, netFlow: 67.4, priceImpact: 0.8 },
-        { date: '2023-12-01', fiiFlow: 234.1, diiFlow: 78.9, netFlow: 313.0, priceImpact: 2.1 },
-        { date: '2023-11-01', fiiFlow: -156.8, diiFlow: -23.4, netFlow: -180.2, priceImpact: -1.5 },
-        { date: '2023-10-01', fiiFlow: 45.6, diiFlow: 112.3, netFlow: 157.9, priceImpact: 1.0 }
-      ];
+      const shareholdingPayload = (shareholdingResponse as { data?: unknown })?.data ?? shareholdingResponse;
+      const shareholdingRows = toArray(shareholdingPayload);
 
-      const mockTopInstitutions: TopInstitution[] = [
-        {
-          name: 'Vanguard Emerging Markets',
-          type: 'FII',
-          sharesHeld: 2850000,
-          percentage: 4.2,
-          change: 0.5,
-          averageCost: 1150
-        },
-        {
-          name: 'Government of Singapore',
-          type: 'FII',
-          sharesHeld: 2100000,
-          percentage: 3.1,
-          change: 0.2,
-          averageCost: 1080
-        },
-        {
-          name: 'SBI Bluechip Fund',
-          type: 'DII',
-          sharesHeld: 1950000,
-          percentage: 2.9,
-          change: -0.1,
-          averageCost: 980
-        },
-        {
-          name: 'HDFC Top 200 Fund',
-          type: 'DII',
-          sharesHeld: 1720000,
-          percentage: 2.5,
-          change: 0.3,
-          averageCost: 1020
-        },
-        {
-          name: 'LIC of India',
-          type: 'DII',
-          sharesHeld: 1680000,
-          percentage: 2.5,
-          change: 0.0,
-          averageCost: 850
-        }
-      ];
+      const mappedHoldings: InstitutionalHolding[] = shareholdingRows.slice(0, 8).map((row, index) => {
+        const item = row as Record<string, unknown>;
+        const percentage = Number(item.percentage || item.holdingPercent || item.value || 0);
+        const shares = Number(item.shares || item.holding || item.quantity || 0);
+        const typeRaw = String(item.category || item.type || item.investorType || 'Other').toUpperCase();
+        const normalizedType: InstitutionalHolding['type'] =
+          typeRaw.includes('FII') || typeRaw.includes('FOREIGN')
+            ? 'FII'
+            : typeRaw.includes('DII') || typeRaw.includes('DOMESTIC')
+              ? 'DII'
+              : typeRaw.includes('MF') || typeRaw.includes('MUTUAL')
+                ? 'MF'
+                : typeRaw.includes('INSURANCE')
+                  ? 'Insurance'
+                  : typeRaw.includes('BANK')
+                    ? 'Bank'
+                    : 'Other';
 
-      setHoldings(mockHoldings);
-      setFlows(mockFlows);
-      setTopInstitutions(mockTopInstitutions);
-      setTotalInstitutional(mockHoldings.reduce((sum, holding) => sum + holding.percentage, 0));
+        return {
+          institution: String(item.name || item.institution || item.category || `Holder ${index + 1}`),
+          type: normalizedType,
+          holding: shares,
+          percentage,
+          change: Number(item.change || item.delta || 0),
+          quarter: String(item.quarter || item.period || 'Latest'),
+          value: Number(item.valueAmount || item.value || 0),
+        };
+      });
+
+      const fiiDiiPayload = (fiiDiiResponse as { data?: unknown })?.data ?? fiiDiiResponse;
+      const fiiDiiRows = toArray(fiiDiiPayload);
+
+      const mappedFlows: InstitutionalFlow[] = fiiDiiRows.slice(0, 8).map((row, index) => {
+        const item = row as Record<string, unknown>;
+        const fiiFlow = Number(item.fiiNet || item.fiiFlow || item.fii || 0);
+        const diiFlow = Number(item.diiNet || item.diiFlow || item.dii || 0);
+
+        return {
+          date: String(item.date || item.tradeDate || item.snapshotDate || `T-${index + 1}`),
+          fiiFlow,
+          diiFlow,
+          netFlow: Number(item.netFlow || fiiFlow + diiFlow),
+          priceImpact: Number(item.priceImpact || item.impact || 0),
+        };
+      });
+
+      const holdersPayload = (topHoldersResponse as { data?: unknown })?.data ?? topHoldersResponse;
+      const holdersRows = toArray(holdersPayload);
+
+      const mappedTopInstitutions: TopInstitution[] = holdersRows.slice(0, 8).map((row, index) => {
+        const item = row as Record<string, unknown>;
+        const typeRaw = String(item.type || item.holderType || item.category || 'DII').toUpperCase();
+
+        return {
+          name: String(item.name || item.institution || `Institution ${index + 1}`),
+          type: typeRaw.includes('FII') || typeRaw.includes('FOREIGN') ? 'FII' : 'DII',
+          sharesHeld: Number(item.sharesHeld || item.shares || item.quantity || 0),
+          percentage: Number(item.percentage || item.holdingPercent || 0),
+          change: Number(item.change || item.delta || 0),
+          averageCost: Number(item.averageCost || item.avgCost || 0),
+        };
+      });
+
+      setHoldings(mappedHoldings);
+      setFlows(mappedFlows);
+      setTopInstitutions(mappedTopInstitutions);
+      setTotalInstitutional(mappedHoldings.reduce((sum, holding) => sum + holding.percentage, 0));
     } catch (error) {
       console.error('Error fetching institutional data:', error);
+      setHoldings([]);
+      setFlows([]);
+      setTopInstitutions([]);
+      setTotalInstitutional(0);
     } finally {
       setLoading(false);
     }
