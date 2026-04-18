@@ -207,7 +207,7 @@ export default function FAQ() {
           <div className="flex flex-wrap justify-center gap-3 mb-8">
           <button
               onClick={() => setActiveCategory('all')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium transition-colors ${
               activeCategory === 'all' 
                   ? 'bg-neon-400 text-black shadow-neon-sm' 
                   : 'bg-gray-900/90 backdrop-blur-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
@@ -220,7 +220,7 @@ export default function FAQ() {
             <button
               key={category.id}
                 onClick={() => setActiveCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium flex items-center transition-colors ${
+                className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium flex items-center transition-colors ${
                 activeCategory === category.id 
                     ? 'bg-neon-400 text-black shadow-neon-sm' 
                     : 'bg-gray-900/90 backdrop-blur-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
@@ -236,6 +236,7 @@ export default function FAQ() {
       </div>
 
       {/* FAQ List */}
+        <h2 className="sr-only">FAQ Questions</h2>
         <div 
           className="space-y-4 mb-12"
         >
@@ -317,7 +318,7 @@ export default function FAQ() {
                   We couldn&apos;t find any FAQs matching your search criteria.
                 </p>
                 <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 min-h-[44px] bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                   onClick={() => {
                     setSearchQuery('');
                     setActiveCategory('all');
@@ -398,9 +399,9 @@ export default function FAQ() {
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               Can&apos;t find what you&apos;re looking for? Our support team is here to help.
             </p>
-            <a 
-              href="/contact" 
-              className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            <a
+              href="/contact"
+              className="inline-flex min-h-[44px] items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               Contact Support
             </a>

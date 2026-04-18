@@ -268,10 +268,19 @@ export function useMarketData() {
       const topLosersData = topLosers.map(toStockData);
 
       // Use trending data instead of indices since getMarketIndices is not available
-      const rawMarketOverview = await apiHelpers.getMarketOverview() as { trending?: PriceShockerData[] };
-      const indexData = Array.isArray(rawMarketOverview.trending)
-        ? rawMarketOverview.trending.map(toStockData)
-        : [];
+      const rawMarketOverview = await apiHelpers.getMarketOverview();
+      const marketOverviewPayload =
+        rawMarketOverview && typeof rawMarketOverview === 'object' && 'data' in rawMarketOverview
+          ? (rawMarketOverview as { data?: unknown }).data
+          : rawMarketOverview;
+      const trendingRows =
+        marketOverviewPayload &&
+        typeof marketOverviewPayload === 'object' &&
+        'trending' in marketOverviewPayload &&
+        Array.isArray((marketOverviewPayload as { trending?: unknown }).trending)
+          ? ((marketOverviewPayload as { trending: PriceShockerData[] }).trending)
+          : [];
+      const indexData = trendingRows.map(toStockData);
 
       const data: MarketDataState = {
         topGainers: topGainersData,

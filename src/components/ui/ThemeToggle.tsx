@@ -13,7 +13,7 @@ const ThemeToggle = () => {
   const mounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
 
   if (!mounted) {
-    return <div className="w-10 h-10" />;
+    return <div className="w-11 h-11" />;
   }
 
   const isDark = resolvedTheme === 'dark';
@@ -22,7 +22,7 @@ const ThemeToggle = () => {
     <button
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className={`p-2 rounded-full transition-all duration-300 ${
+      className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center p-2 rounded-full transition-all duration-300 ${
         isDark
           ? 'bg-gray-900/90 backdrop-blur-lg text-gray-300 hover:text-white hover:bg-gray-700/90'
           : 'bg-gray-200 text-gray-600 hover:text-gray-800 hover:bg-gray-300'

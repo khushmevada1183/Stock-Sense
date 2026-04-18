@@ -120,18 +120,22 @@ export default function BlogPage() {
       ease: "power3.out"
     });
 
-    // Animate metrics with ScrollTrigger
-    gsap.from('.metric-item', {
-      scrollTrigger: {
-        trigger: '.metrics-section',
-        start: 'top 80%',
-      },
-      y: 30,
-      opacity: 0,
-      stagger: 0.1,
-      duration: 0.8,
-      ease: "power3.out"
-    });
+    // Animate metrics with ScrollTrigger only if metric targets exist on the page
+    const metricItems = gsap.utils.toArray('.metric-item');
+    const metricSection = document.querySelector('.metrics-section');
+    if (metricItems.length > 0 && metricSection) {
+      gsap.from(metricItems, {
+        scrollTrigger: {
+          trigger: metricSection,
+          start: 'top 80%',
+        },
+        y: 30,
+        opacity: 0,
+        stagger: 0.1,
+        duration: 0.8,
+        ease: "power3.out"
+      });
+    }
 
     // Animate charts
     gsap.from('.chart-container', {
@@ -176,21 +180,27 @@ export default function BlogPage() {
         {/* Search and Filter Section */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-grow">
+            <label htmlFor="blog-search" className="sr-only">Search blog articles</label>
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search size={18} className="text-gray-400" />
             </div>
             <input
+              id="blog-search"
               type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-neon-400 focus:border-neon-400"
+                className="block w-full min-h-[44px] pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-neon-400 focus:border-neon-400"
               placeholder="Search articles..."
+              aria-label="Search blog articles"
             />
           </div>
           <div className="flex gap-2">
             <div className="relative">
+              <label htmlFor="blog-category" className="sr-only">Filter blog articles by category</label>
               <select 
-                  className="appearance-none block w-full px-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 pr-8 focus:ring-neon-400 focus:border-neon-400"
+                  id="blog-category"
+                  className="appearance-none block w-full min-h-[44px] px-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 pr-8 focus:ring-neon-400 focus:border-neon-400"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
+                aria-label="Filter blog articles by category"
               >
                 {categoryOptions.map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
@@ -210,7 +220,7 @@ export default function BlogPage() {
                 <BookOpen size={24} className="text-neon-400" />
               Featured Articles
             </h2>
-              <button className="text-neon-400 hover:underline flex items-center">
+              <button type="button" className="text-neon-400 hover:underline inline-flex min-h-[44px] items-center px-2">
               View All <ChevronRight size={18} />
             </button>
           </div>
@@ -407,7 +417,7 @@ export default function BlogPage() {
               <Clock size={24} className="text-blue-600 dark:text-blue-400" />
               Recent Articles
             </h2>
-            <button className="text-blue-600 dark:text-blue-400 hover:underline flex items-center">
+            <button type="button" className="text-blue-600 dark:text-blue-400 hover:underline inline-flex min-h-[44px] items-center px-2">
               View Archive <ChevronRight size={18} />
             </button>
           </div>
@@ -434,7 +444,12 @@ export default function BlogPage() {
                 <div className="flex-shrink-0 ml-4 text-sm text-gray-500 dark:text-gray-400 flex items-center">
                   <Calendar size={14} className="mr-1" /> {post.date}
                 </div>
-                <button className="ml-4 text-blue-600 dark:text-blue-400 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                <button
+                  type="button"
+                  className="ml-4 text-blue-600 dark:text-blue-400 p-2.5 min-h-[44px] min-w-[44px] rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center"
+                  aria-label={`Save article: ${post.title}`}
+                  title={`Save article: ${post.title}`}
+                >
                   <Bookmark size={18} />
                 </button>
               </Card>
@@ -453,12 +468,15 @@ export default function BlogPage() {
             </div>
             <div className="w-full md:w-auto">
               <div className="flex flex-col sm:flex-row gap-3">
+                <label htmlFor="blog-newsletter-email" className="sr-only">Email address</label>
                 <input
+                  id="blog-newsletter-email"
                   type="email"
-                  className="px-4 py-2 rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 min-h-[44px] rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-white"
                   placeholder="Your email address"
+                  aria-label="Email address"
                 />
-                <button className="px-4 py-2 bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors">
+                <button className="px-4 py-2 min-h-[44px] bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors">
                   Subscribe
                 </button>
               </div>

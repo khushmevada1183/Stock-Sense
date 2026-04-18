@@ -146,6 +146,90 @@ const saveTokensFromAuthPayload = (response) => {
   }
 };
 
+const MARKET_OVERVIEW_CACHE_TTL_MS = 15000;
+let marketOverviewCache = {
+  data: null,
+  expiresAt: 0,
+  inFlight: null,
+};
+
+const requestCacheStore = new Map();
+
+const buildCacheKey = (prefix, params = {}) => {
+  const query = Object.entries(params)
+    .filter(([, value]) => value !== undefined && value !== null && value !== '')
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, value]) => `${key}:${String(value)}`)
+    .join('|');
+
+  return query ? `${prefix}?${query}` : prefix;
+};
+
+const withRequestCache = async (key, fetcher, ttlMs = 3500) => {
+  const now = Date.now();
+  const cached = requestCacheStore.get(key);
+
+  if (cached?.inFlight) {
+    return cached.inFlight;
+  }
+
+  if (cached?.data && cached.expiresAt > now) {
+    return cached.data;
+  }
+
+  if (cached?.error && cached.expiresAt > now) {
+    throw cached.error;
+  }
+
+  const inFlight = Promise.resolve()
+    .then(fetcher)
+    .then((data) => {
+      requestCacheStore.set(key, {
+        data,
+        error: null,
+        expiresAt: Date.now() + ttlMs,
+        inFlight: null,
+      });
+      return data;
+    })
+    .catch((error) => {
+      const statusCode = typeof error === 'object' && error !== null && 'status' in error
+        ? Number(error.status)
+        : NaN;
+
+      if (statusCode === 401 || statusCode === 429) {
+        requestCacheStore.set(key, {
+          data: null,
+          error,
+          expiresAt: Date.now() + ttlMs,
+          inFlight: null,
+        });
+      } else {
+        requestCacheStore.delete(key);
+      }
+
+      throw error;
+    })
+    .finally(() => {
+      const current = requestCacheStore.get(key);
+      if (current && current.inFlight) {
+        requestCacheStore.set(key, {
+          ...current,
+          inFlight: null,
+        });
+      }
+    });
+
+  requestCacheStore.set(key, {
+    data: cached?.data || null,
+    error: cached?.error || null,
+    expiresAt: cached?.expiresAt || 0,
+    inFlight,
+  });
+
+  return inFlight;
+};
+
 // ===== AUTH =====
 
 export async function signup(payload) {
@@ -209,7 +293,11 @@ export async function resetPassword(payload) {
 }
 
 export async function getProfile() {
-  return apiGet('/auth/profile', undefined, { requiresAuth: true });
+  return withRequestCache(
+    'auth:profile',
+    () => apiGet('/auth/profile', undefined, { requiresAuth: true }),
+    5000
+  );
 }
 
 export async function updateProfile(payload) {
@@ -374,7 +462,32 @@ export async function getHistoricalStats(stockName, stats = 'price') {
 // ===== MARKET =====
 
 export async function getMarketOverview() {
-  return apiGet('/market/overview');
+  const now = Date.now();
+
+  if (marketOverviewCache.data && marketOverviewCache.expiresAt > now) {
+    return marketOverviewCache.data;
+  }
+
+  if (marketOverviewCache.inFlight) {
+    return marketOverviewCache.inFlight;
+  }
+
+  marketOverviewCache.inFlight = apiGet('/market/overview')
+    .then((response) => {
+      marketOverviewCache.data = response;
+      marketOverviewCache.expiresAt = Date.now() + MARKET_OVERVIEW_CACHE_TTL_MS;
+      return response;
+    })
+    .catch((error) => {
+      marketOverviewCache.data = null;
+      marketOverviewCache.expiresAt = 0;
+      throw error;
+    })
+    .finally(() => {
+      marketOverviewCache.inFlight = null;
+    });
+
+  return marketOverviewCache.inFlight;
 }
 
 export async function getMarketSnapshotLatest() {
@@ -612,15 +725,28 @@ export async function getMarketMovers() {
 // ===== NEWS =====
 
 export async function getLatestNews(params = {}) {
-  return apiGet('/news', params);
+  return withRequestCache(
+    buildCacheKey('news:latest', params),
+    () => apiGet('/news', params),
+    4000
+  );
 }
 
 export async function getNewsByCategory(category, params = {}) {
-  return apiGet(`/news/category/${encodeURIComponent(String(category || '').trim().toLowerCase())}`, params);
+  const normalizedCategory = encodeURIComponent(String(category || '').trim().toLowerCase());
+  return withRequestCache(
+    buildCacheKey(`news:category:${normalizedCategory}`, params),
+    () => apiGet(`/news/category/${normalizedCategory}`, params),
+    4000
+  );
 }
 
 export async function getTrendingNews(params = {}) {
-  return apiGet('/news/trending', params);
+  return withRequestCache(
+    buildCacheKey('news:trending', params),
+    () => apiGet('/news/trending', params),
+    4000
+  );
 }
 
 export async function getNewsAlerts(params = {}) {
@@ -644,7 +770,11 @@ export async function fetchMarketNews() {
 // ===== IPO =====
 
 export async function getIPOCalendar(params = {}) {
-  return apiGet('/ipo/calendar', params);
+  return withRequestCache(
+    buildCacheKey('ipo:calendar', params),
+    () => apiGet('/ipo/calendar', params),
+    5000
+  );
 }
 
 export async function getIpoById(ipoId) {
@@ -799,7 +929,11 @@ export async function getEarningsCalendarSummary(params = {}) {
 // ===== PORTFOLIO =====
 
 export async function getUserPortfolios(userId = DEFAULT_USER_ID) {
-  const response = await apiGet('/portfolios', undefined, { requiresAuth: true });
+  const response = await withRequestCache(
+    'portfolio:list',
+    () => apiGet('/portfolios', undefined, { requiresAuth: true }),
+    5000
+  );
   const data = unwrapData(response);
 
   return {
@@ -1031,7 +1165,11 @@ export async function getAlertEvaluatorStatus() {
 // ===== NOTIFICATIONS =====
 
 export async function getNotifications(params = {}) {
-  return apiGet('/notifications', params, { requiresAuth: true });
+  return withRequestCache(
+    buildCacheKey('notifications:list', params),
+    () => apiGet('/notifications', params, { requiresAuth: true }),
+    5000
+  );
 }
 
 export async function getNotificationDeliveryStatus() {
@@ -1055,13 +1193,25 @@ export async function deletePushDevice(deviceId) {
 // ===== HEALTH =====
 
 export async function getHealthStatus() {
-  const response = await apiGet('/health');
-  return unwrapData(response);
+  return withRequestCache(
+    'health:status',
+    async () => {
+      const response = await apiGet('/health');
+      return unwrapData(response);
+    },
+    10000
+  );
 }
 
 export async function getDatabaseHealthStatus() {
-  const response = await apiGet('/health/db');
-  return unwrapData(response);
+  return withRequestCache(
+    'health:db',
+    async () => {
+      const response = await apiGet('/health/db');
+      return unwrapData(response);
+    },
+    10000
+  );
 }
 
 // ===== COMPATIBILITY =====

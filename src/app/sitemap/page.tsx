@@ -22,7 +22,7 @@ export default function SitemapPage() {
               <ul className="space-y-2">
                 {section.links.map((href) => (
                   <li key={href}>
-                    <Link href={href} className="text-sm text-gray-300 hover:text-neon-400 transition-colors">
+                    <Link href={href} className="inline-flex min-h-[44px] min-w-[44px] items-center px-1 -mx-1 text-sm text-gray-300 hover:text-neon-400 transition-colors">
                       {href}
                     </Link>
                   </li>

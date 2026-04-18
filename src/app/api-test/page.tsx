@@ -51,18 +51,27 @@ export default function ApiTestPage() {
           });
         } else if (i === 2) {
           const overviewResponse = await getMarketOverview();
-          const overview = overviewResponse?.data || overviewResponse;
+          const overview =
+            overviewResponse && typeof overviewResponse === 'object' && 'data' in overviewResponse
+              ? (overviewResponse as { data?: unknown }).data
+              : overviewResponse;
           updateTest(i, {
             status: 'success',
-            message: `Captured At: ${overview?.capturedAt || 'available'}`,
+            message:
+              overview && typeof overview === 'object' && 'capturedAt' in overview
+                ? `Captured At: ${String((overview as { capturedAt?: unknown }).capturedAt || 'available')}`
+                : 'Captured At: available',
           });
         } else if (i === 3) {
           const newsResponse = await getLatestNews({ limit: 10 });
-          const newsData = newsResponse?.data || [];
-          const count = Array.isArray(newsData)
-            ? newsData.length
-            : Array.isArray(newsData?.articles)
-              ? newsData.articles.length
+          const newsPayload =
+            newsResponse && typeof newsResponse === 'object' && 'data' in newsResponse
+              ? (newsResponse as { data?: unknown }).data
+              : newsResponse;
+          const count = Array.isArray(newsPayload)
+            ? newsPayload.length
+            : newsPayload && typeof newsPayload === 'object' && 'articles' in newsPayload && Array.isArray((newsPayload as { articles?: unknown }).articles)
+              ? ((newsPayload as { articles: unknown[] }).articles).length
               : 0;
           updateTest(i, { status: 'success', message: `Articles: ${count}` });
         }

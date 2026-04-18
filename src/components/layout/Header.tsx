@@ -79,7 +79,7 @@ const Header = () => {
         <div className="header-pill rounded-full shadow-lg border backdrop-blur-xl transition-all duration-300">
           <div className="flex items-center justify-between h-12 sm:h-14 px-3 sm:px-6">
             {/* Logo */}
-            <Link href="/" className="flex items-center group">
+            <Link href="/" className="flex min-h-[44px] items-center group">
               <div className="flex items-baseline">
                 <span className="font-mono text-lg sm:text-xl font-bold text-neon-400 neon-glow-text transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(57,255,20,0.5)]">
                   Stock
@@ -100,7 +100,7 @@ const Header = () => {
                     <Link
                       key={item.name}
                       href={item.href}
-                      className={`relative flex items-center px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
+                      className={`relative flex min-h-[44px] items-center px-3.5 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${
                         active
                           ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm neon-glow-text'
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/40'
@@ -126,7 +126,7 @@ const Header = () => {
             <div className="flex items-center space-x-2 sm:space-x-4">
               {isAuthenticated ? (
                 <div className="hidden md:flex items-center space-x-2">
-                  <Link href="/notifications" className="relative p-1.5 rounded-full border border-gray-700/40 text-gray-300 hover:text-white transition-all duration-300">
+                  <Link href="/notifications" className="relative inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-gray-700/40 text-gray-300 hover:text-white transition-all duration-300">
                     <Bell size={14} />
                     {unreadCount > 0 ? (
                       <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">
@@ -140,7 +140,7 @@ const Header = () => {
                   <button
                     type="button"
                     onClick={logout}
-                    className="inline-flex items-center px-2.5 py-1.5 rounded-full text-xs border border-gray-700/40 text-gray-300 hover:text-white hover:border-neon-400/40 transition-all duration-300"
+                    className="inline-flex min-h-[44px] items-center px-2.5 py-1.5 rounded-full text-xs border border-gray-700/40 text-gray-300 hover:text-white hover:border-neon-400/40 transition-all duration-300"
                   >
                     <LogOut size={12} className="mr-1" />
                     Logout
@@ -150,13 +150,13 @@ const Header = () => {
                 <div className="hidden md:flex items-center space-x-2">
                   <Link
                     href="/auth/login"
-                    className="px-3 py-1.5 rounded-full text-xs text-gray-300 hover:text-white border border-gray-700/40 hover:border-neon-400/40 transition-all duration-300"
+                    className="inline-flex min-h-[44px] items-center justify-center px-3 py-1.5 rounded-full text-xs text-gray-300 hover:text-white border border-gray-700/40 hover:border-neon-400/40 transition-all duration-300"
                   >
                     Login
                   </Link>
                   <Link
                     href="/auth/register"
-                    className="px-3 py-1.5 rounded-full text-xs text-black bg-neon-400 hover:bg-neon-300 transition-all duration-300"
+                    className="inline-flex min-h-[44px] items-center justify-center px-3 py-1.5 rounded-full text-xs text-black bg-neon-400 hover:bg-neon-300 transition-all duration-300"
                   >
                     Sign Up
                   </Link>
@@ -169,7 +169,7 @@ const Header = () => {
               <div className="flex lg:hidden">
                 <button
                   type="button"
-                  className="relative text-gray-400 hover:text-neon-400 p-1.5 rounded-full transition-all duration-300 hover:bg-gray-800/40"
+                  className="relative inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-gray-400 hover:text-neon-400 p-1.5 rounded-full transition-all duration-300 hover:bg-gray-800/40"
                   onClick={toggleMobileMenu}
                   aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
                 >
@@ -194,7 +194,7 @@ const Header = () => {
                     <Link
                       key={item.name}
                       href={item.href}
-                      className={`flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                      className={`flex min-h-[44px] items-center px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
                         active
                           ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm neon-glow-text'
                           : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/40'
@@ -211,7 +211,7 @@ const Header = () => {
                   <>
                     <Link
                       href="/notifications"
-                      className="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-gray-800/40 transition-all duration-300"
+                      className="flex min-h-[44px] items-center px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-gray-800/40 transition-all duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       <Bell size={16} className="mr-2.5" />
@@ -223,7 +223,7 @@ const Header = () => {
                         logout();
                         setMobileMenuOpen(false);
                       }}
-                      className="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-gray-800/40 transition-all duration-300"
+                      className="flex min-h-[44px] items-center px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-gray-200 hover:bg-gray-800/40 transition-all duration-300"
                     >
                       <LogOut size={16} className="mr-2.5" />
                       Logout
@@ -233,14 +233,14 @@ const Header = () => {
                   <div className="grid grid-cols-2 gap-2 mt-1">
                     <Link
                       href="/auth/login"
-                      className="text-center px-3 py-2 rounded-lg text-xs border border-gray-700/40 text-gray-300 hover:text-white transition-all duration-300"
+                      className="inline-flex min-h-[44px] items-center justify-center text-center px-3 py-2 rounded-lg text-xs border border-gray-700/40 text-gray-300 hover:text-white transition-all duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Login
                     </Link>
                     <Link
                       href="/auth/register"
-                      className="text-center px-3 py-2 rounded-lg text-xs bg-neon-400 text-black hover:bg-neon-300 transition-all duration-300"
+                      className="inline-flex min-h-[44px] items-center justify-center text-center px-3 py-2 rounded-lg text-xs bg-neon-400 text-black hover:bg-neon-300 transition-all duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Sign Up

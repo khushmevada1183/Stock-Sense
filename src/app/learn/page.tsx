@@ -177,7 +177,7 @@ export default function LearnPage() {
         </div>
               <input
                 type="text"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-neon-400 focus:border-neon-400"
+                className="block w-full min-h-[44px] pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-neon-400 focus:border-neon-400"
                 placeholder="Search courses..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -188,7 +188,7 @@ export default function LearnPage() {
                 <button
                   key={category}
                   onClick={() => setActiveCategory(category)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors ${
                     activeCategory === category
                       ? 'bg-neon-400 text-black'
                       : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
@@ -239,7 +239,7 @@ export default function LearnPage() {
                   <p className="text-gray-300 text-sm mb-4 line-clamp-2">{course.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 text-xs">{course.modules} modules</span>
-                    <button className="text-neon-400 hover:text-neon-300 flex items-center text-sm">
+                    <button className="text-neon-400 hover:text-neon-300 inline-flex min-h-[44px] items-center px-2 text-sm">
                       View Course <ChevronRight size={16} />
                     </button>
                   </div>
@@ -293,7 +293,7 @@ export default function LearnPage() {
                   <span>{path.courses} courses</span>
                   <span>{path.duration}</span>
                 </div>
-                <button className="w-full py-2 bg-gray-900/90 backdrop-blur-lg hover:bg-gray-900/90 backdrop-blur-lg text-white font-medium rounded-lg transition-colors border border-gray-700/50">
+                <button className="w-full py-2 min-h-[44px] bg-gray-900/90 backdrop-blur-lg hover:bg-gray-900/90 backdrop-blur-lg text-white font-medium rounded-lg transition-colors border border-gray-700/50">
                   Start Path
                 </button>
                     </div>
@@ -326,7 +326,7 @@ export default function LearnPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{resource.type}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{resource.downloads.toLocaleString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                        <button className="px-3 py-1 bg-neon-400 hover:bg-neon-300 text-black rounded text-xs font-medium transition-colors">
+                        <button className="px-3 py-1 min-h-[44px] bg-neon-400 hover:bg-neon-300 text-black rounded text-xs font-medium transition-colors">
                           Download
                         </button>
                       </td>
@@ -351,9 +351,9 @@ export default function LearnPage() {
                   <input 
                     type="email" 
                     placeholder="Your email address" 
-                    className="flex-grow px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                    className="flex-grow px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
                   />
-                  <button className="px-6 py-2 bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon">
+                  <button className="px-6 py-2 min-h-[44px] bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon">
                     Subscribe
                   </button>
                 </div>

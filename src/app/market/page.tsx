@@ -688,6 +688,27 @@ export default function MarketPage() {
       return [];
     };
 
+    const getFulfilledValue = (result: PromiseSettledResult<unknown>): unknown | null => {
+      if (result.status !== 'fulfilled') {
+        return null;
+      }
+
+      return (result as PromiseFulfilledResult<unknown>).value;
+    };
+
+    const unwrapApiData = (value: unknown): unknown => {
+      if (value && typeof value === 'object' && 'data' in value) {
+        return (value as { data?: unknown }).data ?? value;
+      }
+
+      return value;
+    };
+
+    const getFulfilledData = (result: PromiseSettledResult<unknown>): unknown | null => {
+      const value = getFulfilledValue(result);
+      return value === null ? null : unwrapApiData(value);
+    };
+
     try {
       if (showLoader) {
         setLoading(true);
@@ -721,8 +742,9 @@ export default function MarketPage() {
         stockApi.getMarketSnapshotStatus(),
       ]);
 
-      const overviewPayload = marketOverviewData.status === 'fulfilled'
-        ? ((marketOverviewData.value?.data ?? marketOverviewData.value) as Record<string, unknown> | null)
+      const overviewPayloadValue = getFulfilledData(marketOverviewData);
+      const overviewPayload = overviewPayloadValue && typeof overviewPayloadValue === 'object'
+        ? (overviewPayloadValue as Record<string, unknown>)
         : null;
       const overviewIndices = Array.isArray(overviewPayload?.indices)
         ? (overviewPayload.indices as Array<Record<string, unknown>>)
@@ -739,18 +761,24 @@ export default function MarketPage() {
       // Each item: { symbol, change_percent, last_price }
       let priceGainers: Stock[] = [];
       let priceLosers: Stock[] = [];
-      if (priceShockersData.status === 'fulfilled' && priceShockersData.value?.success && priceShockersData.value?.data) {
-        const d = priceShockersData.value.data;
+      const priceShockersEnvelope = getFulfilledValue(priceShockersData);
+      const priceShockersRecord = priceShockersEnvelope && typeof priceShockersEnvelope === 'object'
+        ? (priceShockersEnvelope as { success?: boolean; data?: unknown })
+        : null;
+      const priceShockersPayload = priceShockersRecord?.data && typeof priceShockersRecord.data === 'object'
+        ? (priceShockersRecord.data as Record<string, unknown>)
+        : null;
+      if (priceShockersRecord?.success && priceShockersPayload) {
         // Try new format first: { gainers, losers }
-        priceGainers = Array.isArray(d.gainers)
-          ? d.gainers
-          : Array.isArray(d.BSE_PriceShocker)
-            ? d.BSE_PriceShocker
+        priceGainers = Array.isArray(priceShockersPayload.gainers)
+          ? (priceShockersPayload.gainers as Stock[])
+          : Array.isArray(priceShockersPayload.BSE_PriceShocker)
+            ? (priceShockersPayload.BSE_PriceShocker as Stock[])
             : [];
-        priceLosers = Array.isArray(d.losers)
-          ? d.losers
-          : Array.isArray(d.NSE_PriceShocker)
-            ? d.NSE_PriceShocker
+        priceLosers = Array.isArray(priceShockersPayload.losers)
+          ? (priceShockersPayload.losers as Stock[])
+          : Array.isArray(priceShockersPayload.NSE_PriceShocker)
+            ? (priceShockersPayload.NSE_PriceShocker as Stock[])
             : [];
       }
 
@@ -793,17 +821,25 @@ export default function MarketPage() {
       // ---- Trending stocks -----------------------------------------------
       // Actual shape: { success, data: { stocks: [...] } }
       let trendingStocks: Stock[] = [];
-      if (trendingData.status === 'fulfilled' && trendingData.value?.success) {
-        const td = trendingData.value.data;
-        if (Array.isArray(td?.stocks)) {
-          trendingStocks = td.stocks;
-        } else if (td?.trending_stocks) {
-          trendingStocks = [
-            ...(td.trending_stocks.top_gainers || []),
-            ...(td.trending_stocks.top_losers || [])
-          ];
-        } else if (Array.isArray(td)) {
-          trendingStocks = td;
+      const trendingEnvelope = getFulfilledValue(trendingData);
+      const trendingRecord = trendingEnvelope && typeof trendingEnvelope === 'object'
+        ? (trendingEnvelope as { success?: boolean; data?: unknown })
+        : null;
+      if (trendingRecord?.success) {
+        const td = trendingRecord.data;
+        if (Array.isArray(td)) {
+          trendingStocks = td as Stock[];
+        } else if (td && typeof td === 'object') {
+          const tdRecord = td as Record<string, unknown>;
+          if (Array.isArray(tdRecord.stocks)) {
+            trendingStocks = tdRecord.stocks as Stock[];
+          } else if (tdRecord.trending_stocks && typeof tdRecord.trending_stocks === 'object') {
+            const nestedTrending = tdRecord.trending_stocks as Record<string, unknown>;
+            trendingStocks = [
+              ...(Array.isArray(nestedTrending.top_gainers) ? (nestedTrending.top_gainers as Stock[]) : []),
+              ...(Array.isArray(nestedTrending.top_losers) ? (nestedTrending.top_losers as Stock[]) : [])
+            ];
+          }
         }
       }
 
@@ -821,14 +857,16 @@ export default function MarketPage() {
 
       // Extract BSE most active data
       let bseStocks: Stock[] = [];
-      if (bseMostActiveData.status === 'fulfilled') {
-        bseStocks = normalizeMostActivePayload(bseMostActiveData.value?.data ?? bseMostActiveData.value);
+      const bsePayload = getFulfilledData(bseMostActiveData);
+      if (bsePayload !== null) {
+        bseStocks = normalizeMostActivePayload(bsePayload);
       }
 
       // Extract NSE most active data
       let nseStocks: Stock[] = [];
-      if (nseMostActiveData.status === 'fulfilled') {
-        nseStocks = normalizeMostActivePayload(nseMostActiveData.value?.data ?? nseMostActiveData.value);
+      const nsePayload = getFulfilledData(nseMostActiveData);
+      if (nsePayload !== null) {
+        nseStocks = normalizeMostActivePayload(nsePayload);
       }
 
       // Create Heat Map data from trending + most active stocks
@@ -959,26 +997,14 @@ export default function MarketPage() {
 
       setMarketData(structuredData);
 
-      const sectorHeatmapRows = sectorHeatmapApiData.status === 'fulfilled'
-        ? extractRows(sectorHeatmapApiData.value?.data ?? sectorHeatmapApiData.value)
-        : [];
-      const high52Rows = week52HighApiData.status === 'fulfilled'
-        ? extractRows(week52HighApiData.value?.data ?? week52HighApiData.value)
-        : [];
-      const low52Rows = week52LowApiData.status === 'fulfilled'
-        ? extractRows(week52LowApiData.value?.data ?? week52LowApiData.value)
-        : [];
+      const sectorHeatmapRows = extractRows(getFulfilledData(sectorHeatmapApiData));
+      const high52Rows = extractRows(getFulfilledData(week52HighApiData));
+      const low52Rows = extractRows(getFulfilledData(week52LowApiData));
       const indexHistoryRows: unknown[] = [];
-      const snapshotHistoryRows = snapshotHistoryApiData.status === 'fulfilled'
-        ? extractRows(snapshotHistoryApiData.value?.data ?? snapshotHistoryApiData.value)
-        : [];
+      const snapshotHistoryRows = extractRows(getFulfilledData(snapshotHistoryApiData));
 
-      const snapshotStatusPayload = snapshotStatusApiData.status === 'fulfilled'
-        ? (snapshotStatusApiData.value?.data ?? snapshotStatusApiData.value)
-        : null;
-      const snapshotLatestPayload = snapshotLatestApiData.status === 'fulfilled'
-        ? (snapshotLatestApiData.value?.data ?? snapshotLatestApiData.value)
-        : null;
+      const snapshotStatusPayload = getFulfilledData(snapshotStatusApiData);
+      const snapshotLatestPayload = getFulfilledData(snapshotLatestApiData);
 
       setEndpointStats({
         sectorHeatmapCount: sectorHeatmapRows.length,
@@ -1049,6 +1075,7 @@ export default function MarketPage() {
         <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
         
         <div className="container mx-auto px-4 py-8 relative z-10">
+          <h1 className="sr-only">Indian Market Dashboard</h1>
           <div className="mb-8">
             <div className="h-8 bg-gray-600/50 rounded mb-2 w-1/3"></div>
             <div className="h-4 bg-gray-600/50 rounded w-2/3"></div>

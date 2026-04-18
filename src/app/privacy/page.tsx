@@ -103,6 +103,7 @@ export default function PrivacyPage() {
         Indian Stock Analyzer is committed to protecting your privacy and ensuring your data remains secure.
       </p>
 
+      <h2 className="sr-only">Privacy Principles</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {[
           { 
@@ -321,7 +322,7 @@ export default function PrivacyPage() {
                   {item.icon}
                 </div>
                 <div>
-                  <h4 className="font-medium mb-1">{item.title}</h4>
+                  <h3 className="font-medium mb-1">{item.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{item.description}</p>
                 </div>
               </div>

@@ -160,7 +160,7 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
         {/* Expand/Collapse Button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full flex items-center justify-center gap-2 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors border-t border-slate-200 dark:border-slate-700"
+          className="w-full min-h-[44px] flex items-center justify-center gap-2 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors border-t border-slate-200 dark:border-slate-700"
         >
           {isExpanded ? 'Show Less' : 'Show More'}
           {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

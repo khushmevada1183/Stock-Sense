@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Calendar, Briefcase, Award } from 'lucide-react';
+import { Users, Calendar, Briefcase, Award, Building2, Globe, Clock3 } from 'lucide-react';
 
 interface OfficerTitle {
   Value: string;
@@ -26,9 +26,38 @@ interface Officer {
 
 interface ManagementInfoProps {
   officers: Officer[];
+  fallbackDetails?: {
+    headquarters?: string;
+    employees?: string;
+    foundedYear?: string;
+    website?: string;
+  };
 }
 
-const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers }) => {
+const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers, fallbackDetails }) => {
+  const fallbackRows = [
+    {
+      label: 'Headquarters',
+      value: fallbackDetails?.headquarters || 'N/A',
+      icon: <Building2 className="h-3.5 w-3.5 text-gray-600 mr-1.5 flex-shrink-0" />,
+    },
+    {
+      label: 'Employees',
+      value: fallbackDetails?.employees || 'N/A',
+      icon: <Users className="h-3.5 w-3.5 text-gray-600 mr-1.5 flex-shrink-0" />,
+    },
+    {
+      label: 'Founded',
+      value: fallbackDetails?.foundedYear || 'N/A',
+      icon: <Clock3 className="h-3.5 w-3.5 text-gray-600 mr-1.5 flex-shrink-0" />,
+    },
+    {
+      label: 'Website',
+      value: fallbackDetails?.website || 'N/A',
+      icon: <Globe className="h-3.5 w-3.5 text-gray-600 mr-1.5 flex-shrink-0" />,
+    },
+  ];
+
   if (!officers || officers.length === 0) {
     return (
       <Card glass>
@@ -39,7 +68,18 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-500 text-sm">Management information not available</p>
+          <p className="text-gray-500 text-sm">Leadership roster is currently unavailable from the upstream data source.</p>
+          <div className="mt-4 space-y-2">
+            {fallbackRows.map((row) => (
+              <div key={row.label} className="flex items-start justify-between gap-3 text-xs">
+                <span className="text-gray-500 flex items-center">
+                  {row.icon}
+                  {row.label}
+                </span>
+                <span className="text-gray-300 text-right break-all">{row.value}</span>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
     );

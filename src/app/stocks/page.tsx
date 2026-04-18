@@ -1199,6 +1199,7 @@ export default function StocksIndexPage() {
       </div>
       
       {/* Market Metrics Cards */}
+      <h2 className="sr-only">Market Summary Metrics</h2>
       <div ref={metricsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
         <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
           <CardHeader className="pb-2">
@@ -1374,7 +1375,7 @@ export default function StocksIndexPage() {
                         <td className="px-4 py-4 whitespace-nowrap">
                           <Link 
                             href={`/stocks/${stock.symbol}`} 
-                            className="font-medium text-indigo-400 hover:text-indigo-300"
+                            className="inline-flex min-h-[44px] min-w-[44px] items-center font-medium text-indigo-400 hover:text-indigo-300"
                           >
                             {stock.symbol}
                           </Link>
@@ -1491,7 +1492,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setStocksTablePage((prev) => Math.max(1, prev - 1))}
                       disabled={stocksTablePage === 1}
-                      className="rounded-md border border-gray-600 px-3 py-1.5 text-sm text-gray-200 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-md border border-gray-600 px-3 py-1.5 min-h-[44px] text-sm text-gray-200 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Previous
                     </button>
@@ -1502,7 +1503,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setStocksTablePage((prev) => Math.min(totalStocksPages, prev + 1))}
                       disabled={stocksTablePage === totalStocksPages}
-                      className="rounded-md border border-gray-600 px-3 py-1.5 text-sm text-gray-200 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-md border border-gray-600 px-3 py-1.5 min-h-[44px] text-sm text-gray-200 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Next
                     </button>
@@ -1734,7 +1735,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setSectorCardPage((prev) => Math.max(1, prev - 1))}
                       disabled={sectorCardPage === 1}
-                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Previous sector page"
                     >
                       <ChevronLeft className="h-4 w-4" />
@@ -1744,7 +1745,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setSectorCardPage((prev) => Math.min(totalSectorPages, prev + 1))}
                       disabled={sectorCardPage === totalSectorPages}
-                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Next sector page"
                     >
                       <ChevronRight className="h-4 w-4" />
@@ -1798,7 +1799,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setPerformanceCardPage((prev) => Math.max(1, prev - 1))}
                       disabled={performanceCardPage === 1}
-                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Previous stock performance page"
                     >
                       <ChevronLeft className="h-4 w-4" />
@@ -1808,7 +1809,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setPerformanceCardPage((prev) => Math.min(totalPerformancePages, prev + 1))}
                       disabled={performanceCardPage === totalPerformancePages}
-                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Next stock performance page"
                     >
                       <ChevronRight className="h-4 w-4" />
@@ -1875,7 +1876,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setHighLowCardPage((prev) => Math.max(1, prev - 1))}
                       disabled={highLowCardPage === 1}
-                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Previous 52-week range page"
                     >
                       <ChevronLeft className="h-4 w-4" />
@@ -1885,7 +1886,7 @@ export default function StocksIndexPage() {
                       type="button"
                       onClick={() => setHighLowCardPage((prev) => Math.min(totalHighLowPages, prev + 1))}
                       disabled={highLowCardPage === totalHighLowPages}
-                      className="rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-gray-600 p-1.5 text-gray-300 transition-colors hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Next 52-week range page"
                     >
                       <ChevronRight className="h-4 w-4" />

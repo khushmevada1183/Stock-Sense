@@ -20,6 +20,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import * as stockApi from '@/api/api';
+import { useAuth } from '@/context/AuthContext';
 import { useWebSocket } from '@/hooks/useWebSocket';
 
 interface PortfolioHolding {
@@ -85,6 +86,7 @@ const formatLargeNumber = (value: number): string => {
 };
 
 const PortfolioDashboard = () => {
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
   const [summary, setSummary] = useState<PortfolioSummary | null>(null);
   const [authRequired, setAuthRequired] = useState(false);
@@ -103,6 +105,23 @@ const PortfolioDashboard = () => {
   const dashboardRef = useRef<HTMLDivElement>(null);
 
   const fetchPortfolioData = useCallback(async () => {
+    if (authLoading) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      setAuthRequired(true);
+      setApiMessage('Please log in to access portfolio analytics.');
+      setHoldings([]);
+      setSummary(null);
+      setSelectedPortfolioId('');
+      setPortfolioDetails(null);
+      setPerformancePoints([]);
+      setXirrValue(null);
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     try {
       const userPortfoliosResponse = await stockApi.getUserPortfolios();
@@ -162,7 +181,7 @@ const PortfolioDashboard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [authLoading, isAuthenticated]);
 
   const handleExport = async () => {
     if (!selectedPortfolioId) {
@@ -233,11 +252,15 @@ const PortfolioDashboard = () => {
   });
   
   useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+
     void fetchPortfolioData();
-  }, [fetchPortfolioData]);
+  }, [authLoading, fetchPortfolioData]);
 
   useEffect(() => {
-    if (!selectedPortfolioId) {
+    if (authLoading || !isAuthenticated || !selectedPortfolioId) {
       return;
     }
 
@@ -245,9 +268,13 @@ const PortfolioDashboard = () => {
     return () => {
       unsubscribePortfolio(selectedPortfolioId);
     };
-  }, [selectedPortfolioId, subscribePortfolio, unsubscribePortfolio]);
+  }, [authLoading, isAuthenticated, selectedPortfolioId, subscribePortfolio, unsubscribePortfolio]);
 
   useEffect(() => {
+    if (authLoading || !isAuthenticated) {
+      return;
+    }
+
     const interval = window.setInterval(() => {
       void fetchPortfolioData();
     }, 60000);
@@ -255,7 +282,7 @@ const PortfolioDashboard = () => {
     return () => {
       window.clearInterval(interval);
     };
-  }, [fetchPortfolioData]);
+  }, [authLoading, isAuthenticated, fetchPortfolioData]);
   
   // Animation effect for dashboard elements
   useEffect(() => {
@@ -282,6 +309,7 @@ const PortfolioDashboard = () => {
       <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
         <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
         <div className="container mx-auto px-4 py-6 relative z-10">
+          <h1 className="sr-only">Portfolio Dashboard</h1>
           <div className="min-h-[600px] flex items-center justify-center">
             <div className="flex flex-col items-center">
               <div className="w-16 h-16 border-4 border-neon-400 border-t-transparent rounded-full animate-spin"></div>
@@ -298,6 +326,7 @@ const PortfolioDashboard = () => {
       <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
         <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
         <div className="container mx-auto px-4 py-6 relative z-10">
+          <h1 className="sr-only">Portfolio Dashboard</h1>
           <div className="bg-red-900/20 backdrop-blur-lg border border-red-800/50 rounded-xl p-6 text-center glass">
             <h3 className="text-lg font-medium text-red-400">Portfolio Unavailable</h3>
             {authRequired ? (

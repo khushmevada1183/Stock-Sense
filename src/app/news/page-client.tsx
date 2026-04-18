@@ -199,7 +199,7 @@ export default function NewsPageClient() {
             type="button"
             onClick={() => void handleSyncNews()}
             disabled={syncing}
-            className="mt-2 px-3 py-1.5 rounded-md text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white"
+            className="mt-2 px-3 py-1.5 min-h-[44px] rounded-md text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white"
           >
             {syncing ? 'Syncing News...' : 'Trigger News Sync'}
           </button>
@@ -287,9 +287,9 @@ export default function NewsPageClient() {
               <input 
                 type="email" 
                 placeholder="Your email address" 
-                  className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-sm focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                  className="w-full px-3 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-sm focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
               />
-                <button className="w-full bg-neon-400 hover:bg-neon-300 text-black py-2 rounded-lg text-sm transition-colors hover:shadow-neon-sm">
+                <button className="w-full bg-neon-400 hover:bg-neon-300 text-black py-2 min-h-[44px] rounded-lg text-sm transition-colors hover:shadow-neon-sm">
                 Subscribe
               </button>
               </div>

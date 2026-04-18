@@ -124,7 +124,7 @@ export default function ContactPage() {
             </p>
                 <button 
                   onClick={() => setFormSubmitted(false)} 
-                  className="mt-4 px-4 py-2 bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon"
+                  className="mt-4 px-4 py-2 min-h-[44px] bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon"
                 >
                   Send Another Message
                 </button>
@@ -143,7 +143,7 @@ export default function ContactPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                      className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                      className="w-full px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
                       placeholder="John Doe"
               />
             </div>
@@ -158,7 +158,7 @@ export default function ContactPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                      className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                      className="w-full px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
                       placeholder="john@example.com"
               />
                   </div>
@@ -175,7 +175,7 @@ export default function ContactPage() {
                 value={formData.subject}
                 onChange={handleChange}
                 required
-                    className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                    className="w-full px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
                     placeholder="How can we help you?"
               />
             </div>
@@ -199,7 +199,7 @@ export default function ContactPage() {
                 <div>
             <button
               type="submit"
-                    className="px-6 py-3 bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon flex items-center justify-center"
+                  className="px-6 py-3 min-h-[44px] bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon flex items-center justify-center"
             >
                     <Send className="h-4 w-4 mr-2" />
               Send Message
@@ -270,7 +270,7 @@ export default function ContactPage() {
                   <a 
                     key={social}
                     href="#" 
-                    className="h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-neon-400/20 transition-colors"
+                    className="h-11 w-11 rounded-full bg-gray-700 flex items-center justify-center hover:bg-neon-400/20 transition-colors"
                   >
                     <span className="text-neon-400 text-lg font-bold uppercase">{social.charAt(0)}</span>
                   </a>

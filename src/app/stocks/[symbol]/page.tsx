@@ -22,12 +22,6 @@ import {
 } from 'lucide-react';
 import {
   apiHelpers,
-  getStockFinancials,
-  getStockHistory,
-  getStockPeers,
-  getStockQuote,
-  getStockTechnical,
-  getStockTicks,
 } from '@/api/api';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { normalizeStockData, type NormalizedStock } from '@/lib/normalizeStock';
@@ -114,6 +108,7 @@ export default function Page() {
   const financialRatiosRef = useRef<HTMLDivElement>(null); 
   const financialStatementsRef = useRef<HTMLDivElement>(null);
   const animationTimerRef = useRef<number | null>(null);
+  const chartInitTimerRef = useRef<number | null>(null);
 
   const { subscribeStock, unsubscribeStock } = useWebSocket({
     onLiveTick: (payload) => {
@@ -160,6 +155,11 @@ export default function Page() {
   
   // Cleanup function for charts
   const cleanupCharts = () => {
+    if (chartInitTimerRef.current !== null) {
+      window.clearTimeout(chartInitTimerRef.current);
+      chartInitTimerRef.current = null;
+    }
+
     // Destroy previous chart instances if they exist
     if (sectorChartInstanceRef.current) {
       sectorChartInstanceRef.current.destroy();
@@ -191,23 +191,6 @@ export default function Page() {
 
     // Fetch stock data and normalize NSE India response structure
     const fetchStockData = async () => {
-      const extractRows = (value: unknown): unknown[] => {
-        if (Array.isArray(value)) {
-          return value;
-        }
-
-        if (value && typeof value === 'object') {
-          const data = value as Record<string, unknown>;
-          for (const key of ['items', 'rows', 'results', 'data', 'records', 'history', 'ticks', 'peers', 'financials']) {
-            if (Array.isArray(data[key])) {
-              return data[key] as unknown[];
-            }
-          }
-        }
-
-        return [];
-      };
-
       try {
         setLoading(true);
         logger.debug(`Fetching stock data for symbol: ${symbol}`);
@@ -224,36 +207,13 @@ export default function Page() {
           if (!normalized) {
             setError(`Could not parse data for "${symbol}". Unexpected data format.`);
           }
-
-          const [quoteRes, technicalRes, financialsRes, peersRes, historyRes, ticksRes] = await Promise.allSettled([
-            getStockQuote(symbol),
-            getStockTechnical(symbol),
-            getStockFinancials(symbol),
-            getStockPeers(symbol),
-            getStockHistory(symbol, { limit: 30 }),
-            getStockTicks(symbol, { limit: 30 }),
-          ]);
-
-          const financialRows = financialsRes.status === 'fulfilled'
-            ? extractRows((financialsRes.value as { data?: unknown })?.data ?? financialsRes.value).length
-            : 0;
-          const peersRows = peersRes.status === 'fulfilled'
-            ? extractRows((peersRes.value as { data?: unknown })?.data ?? peersRes.value).length
-            : 0;
-          const historyRows = historyRes.status === 'fulfilled'
-            ? extractRows((historyRes.value as { data?: unknown })?.data ?? historyRes.value).length
-            : 0;
-          const ticksRows = ticksRes.status === 'fulfilled'
-            ? extractRows((ticksRes.value as { data?: unknown })?.data ?? ticksRes.value).length
-            : 0;
-
           setEndpointStats({
-            quoteLoaded: quoteRes.status === 'fulfilled',
-            technicalLoaded: technicalRes.status === 'fulfilled',
-            financialRows,
-            peersRows,
-            historyRows,
-            ticksRows,
+            quoteLoaded: Boolean(normalized),
+            technicalLoaded: false,
+            financialRows: 0,
+            peersRows: 0,
+            historyRows: 0,
+            ticksRows: 0,
           });
         } else {
           setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
@@ -365,15 +325,30 @@ export default function Page() {
   const initializeCharts = () => {
     // Only proceed if we have data and chart refs
     if (!stock) return;
-    
-    // Clean up any existing charts first
-    cleanupCharts();
-    
-    setTimeout(() => {
+
+    if (chartInitTimerRef.current !== null) {
+      window.clearTimeout(chartInitTimerRef.current);
+      chartInitTimerRef.current = null;
+    }
+
+    chartInitTimerRef.current = window.setTimeout(() => {
+      chartInitTimerRef.current = null;
+
       // First, make sure the canvas elements exist and are accessible
       if (!sectorDistributionChartRef.current || !performanceChartRef.current) {
         logger.debug('Canvas elements not available yet');
         return;
+      }
+
+      // Destroy stale chart instances right before creating new ones to avoid canvas reuse collisions.
+      if (sectorChartInstanceRef.current) {
+        sectorChartInstanceRef.current.destroy();
+        sectorChartInstanceRef.current = null;
+      }
+
+      if (performanceChartInstanceRef.current) {
+        performanceChartInstanceRef.current.destroy();
+        performanceChartInstanceRef.current = null;
       }
     
     // Create dummy sector distribution data (replace with real data when available)
@@ -655,14 +630,52 @@ export default function Page() {
   // Market status
   const marketCapValue = stock?.marketCap || undefined;
 
-  // Management team
-  const officers: React.ComponentProps<typeof Overview>['officers'] = [];
+  const toOptionalText = (value: unknown): string | undefined => {
+    if (value === null || value === undefined) {
+      return undefined;
+    }
+
+    const text = String(value).trim();
+    return text.length > 0 ? text : undefined;
+  };
+
+  const rawStock = stock && typeof stock._raw === 'object'
+    ? (stock._raw as Record<string, unknown>)
+    : {};
+  const profileCandidate = rawStock.profile;
+  const rawProfile = profileCandidate && typeof profileCandidate === 'object'
+    ? (profileCandidate as Record<string, unknown>)
+    : rawStock;
+
+  const managementPayload = rawProfile.management;
+  let officers: React.ComponentProps<typeof Overview>['officers'] = [];
+  if (Array.isArray(managementPayload)) {
+    officers = managementPayload as React.ComponentProps<typeof Overview>['officers'];
+  } else if (managementPayload && typeof managementPayload === 'object') {
+    const nestedList = Object.values(managementPayload as Record<string, unknown>).find((value) => Array.isArray(value));
+    if (Array.isArray(nestedList)) {
+      officers = nestedList as React.ComponentProps<typeof Overview>['officers'];
+    }
+  }
+
+  const rawEmployees = rawProfile.employees;
+  const employeesText = typeof rawEmployees === 'number'
+    ? rawEmployees.toLocaleString('en-IN')
+    : toOptionalText(rawEmployees);
+
+  const managementFallbackDetails: React.ComponentProps<typeof Overview>['managementFallbackDetails'] = {
+    headquarters: toOptionalText(rawProfile.headquarters),
+    employees: employeesText,
+    foundedYear: toOptionalText(rawProfile.foundedYear),
+    website: toOptionalText(rawProfile.website),
+  };
 
   // Financial data (NSE India doesn't return detailed financials in equityDetails)
   const financialData: React.ComponentProps<typeof Overview>['financialData'] = [];
   
   // Company description from securityInfo or industryInfo
-  const description = `${companyName} is listed on the NSE under the ${industry} sector.`;
+  const description = toOptionalText(rawProfile.businessSummary)
+    || `${companyName} is listed on the NSE under the ${industry} sector.`;
 
   // Recent news
   const recentNews: React.ComponentProps<typeof Overview>['recentNews'] = [];  // Tab configuration
@@ -873,14 +886,20 @@ export default function Page() {
         {/* Tabbed Interface — Modern Pill Design */}
         <div className="mb-8">
           {/* Tab Category Groups */}
-          <div className="space-y-3">
+          <div className="space-y-3" role="tablist" aria-label="Stock detail analysis tabs">
             {/* Primary Tabs Row */}
             <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1">
               <span className="text-[10px] uppercase tracking-widest text-gray-600 font-semibold mr-1 flex-shrink-0 hidden lg:block">Core</span>
               {tabs.slice(0, 3).map((tab) => (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setActiveTab(tab.id)}
+                  role="tab"
+                  id={`stock-tab-${tab.id}`}
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`stock-tabpanel-${tab.id}`}
+                  tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
                       ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
@@ -906,7 +925,13 @@ export default function Page() {
               {tabs.slice(3, 6).map((tab) => (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setActiveTab(tab.id)}
+                  role="tab"
+                  id={`stock-tab-${tab.id}`}
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`stock-tabpanel-${tab.id}`}
+                  tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
                       ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
@@ -934,7 +959,13 @@ export default function Page() {
               {tabs.slice(6).map((tab) => (
                 <button
                   key={tab.id}
+                  type="button"
                   onClick={() => setActiveTab(tab.id)}
+                  role="tab"
+                  id={`stock-tab-${tab.id}`}
+                  aria-selected={activeTab === tab.id}
+                  aria-controls={`stock-tabpanel-${tab.id}`}
+                  tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
                       ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
@@ -972,7 +1003,14 @@ export default function Page() {
           </div>
 
           {/* Tab Content */}
-          <div ref={tabContentRef} className="p-6">
+          <div
+            ref={tabContentRef}
+            className="p-6"
+            role="tabpanel"
+            id={`stock-tabpanel-${activeTab}`}
+            aria-labelledby={`stock-tab-${activeTab}`}
+            tabIndex={0}
+          >
             {activeTab === 'overview' && (
               <Overview 
                 stockData={stock?._raw || stockData || {}}
@@ -991,6 +1029,7 @@ export default function Page() {
                 financialData={financialData}
                 recentNews={recentNews}
                 officers={officers}
+                managementFallbackDetails={managementFallbackDetails}
                 performanceChartRef={performanceChartRef}
                 sectorDistributionChartRef={sectorDistributionChartRef}
                 aboutRef={aboutRef}
@@ -1081,31 +1120,31 @@ export default function Page() {
 
           <div className="px-6 pb-6">
             <div className="bg-gray-900/90 border border-gray-700/60 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-3">Stock Endpoint Coverage</h3>
+              <h3 className="text-white font-semibold mb-3">On-Demand Data Coverage</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
                 <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
-                  <p className="text-gray-400">Quote Endpoint</p>
-                  <p className="text-neon-400 font-semibold">{endpointStats.quoteLoaded ? 'Loaded' : 'Not loaded'}</p>
+                  <p className="text-gray-400">Core Profile</p>
+                  <p className="text-neon-400 font-semibold">{endpointStats.quoteLoaded ? 'Loaded' : 'Pending'}</p>
                 </div>
                 <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
                   <p className="text-gray-400">Technical Endpoint</p>
-                  <p className="text-neon-400 font-semibold">{endpointStats.technicalLoaded ? 'Loaded' : 'Not loaded'}</p>
+                  <p className="text-neon-400 font-semibold">{activeTab === 'technical' ? 'Loaded in tab' : 'Deferred'}</p>
                 </div>
                 <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
                   <p className="text-gray-400">Financial Rows</p>
-                  <p className="text-neon-400 font-semibold">{endpointStats.financialRows}</p>
+                  <p className="text-neon-400 font-semibold">{activeTab === 'fundamental' ? 'Loaded in tab' : 'Deferred'}</p>
                 </div>
                 <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
                   <p className="text-gray-400">Peers Rows</p>
-                  <p className="text-neon-400 font-semibold">{endpointStats.peersRows}</p>
+                  <p className="text-neon-400 font-semibold">{activeTab === 'industry' ? 'Loaded in tab' : 'Deferred'}</p>
                 </div>
                 <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
                   <p className="text-gray-400">History Rows</p>
-                  <p className="text-neon-400 font-semibold">{endpointStats.historyRows}</p>
+                  <p className="text-neon-400 font-semibold">{activeTab === 'technical' ? 'Loaded in tab' : 'Deferred'}</p>
                 </div>
                 <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
                   <p className="text-gray-400">Tick Rows</p>
-                  <p className="text-neon-400 font-semibold">{endpointStats.ticksRows}</p>
+                  <p className="text-neon-400 font-semibold">{activeTab === 'technical' ? 'Loaded in tab' : 'Deferred'}</p>
                 </div>
               </div>
             </div>

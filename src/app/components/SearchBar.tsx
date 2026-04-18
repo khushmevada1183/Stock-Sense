@@ -128,8 +128,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
         );
         break;
       case 'Enter':
-        e.preventDefault();
         if (highlightedIndex >= 0 && highlightedIndex < results.length) {
+          e.preventDefault();
           const selected = results[highlightedIndex];
           handleResultClick(selected.symbol, selected.companyName);
         }
@@ -224,6 +224,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
             onKeyDown={handleKeyDown}
             placeholder={compact ? "Search stocks (e.g., RELIANCE)" : "Search for stocks (e.g., RELIANCE, TATASTEEL)"}
             className={`w-full 
+              min-h-[44px]
               ${compact && !isMobile ? 'py-1.5 text-sm' : isMobile ? 'py-1.5 sm:py-2 text-sm' : 'py-3'} 
               ${compact && !isMobile ? 'pl-9 pr-4' : isMobile ? 'pl-8 sm:pl-10 pr-4' : 'pl-10 pr-4'} 
               bg-gray-900/90 backdrop-blur-lg border 
@@ -245,7 +246,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
           </div>
           <button 
             type="submit" 
-            className={`absolute inset-y-0 right-0 flex items-center pr-3 
+            className={`absolute inset-y-0 right-0 flex min-w-[44px] items-center justify-center 
               ${compact ? 'text-gray-300 hover:text-white font-mono' : 'text-cyan-400 hover:text-blue-300'}`}
             data-testid="search-button"
           >

@@ -188,7 +188,7 @@ export async function requestApi<T>(path: string, options: RequestOptions = {}):
     requiresAuth = false,
     retryOnAuthFail = true,
     retryOnRateLimit = true,
-    rateLimitRetries = 2,
+    rateLimitRetries = 0,
     signal,
     cache,
   } = options;

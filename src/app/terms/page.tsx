@@ -50,6 +50,7 @@ export default function TermsPage() {
           Please read these terms carefully before using Indian Stock Analyzer services.
       </p>
 
+        <h2 className="sr-only">Terms Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {[
           { 

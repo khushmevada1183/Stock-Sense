@@ -59,6 +59,10 @@ const endpointGroups = [
 ];
 
 export default function ApiDocsPage() {
+  const displayedApiBaseUrl =
+    process.env.NEXT_PUBLIC_API_URL ||
+    'https://stock-sense-backend-ocjo.onrender.com/api/v1';
+
   return (
     <main className="container mx-auto px-4 py-10">
       <div className="max-w-5xl mx-auto space-y-6">
@@ -67,7 +71,7 @@ export default function ApiDocsPage() {
           <p className="text-gray-300">
             Frontend is integrated with backend API v1 at
             {' '}
-            <span className="font-mono text-neon-400">http://localhost:10000/api/v1</span>.
+            <span className="font-mono text-neon-400">{displayedApiBaseUrl}</span>.
           </p>
         </header>
 

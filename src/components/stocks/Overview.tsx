@@ -24,6 +24,7 @@ interface OverviewProps {
   financialData: React.ComponentProps<typeof FinancialHighlights>['financialData'];
   recentNews: React.ComponentProps<typeof StockNewsSection>['news'];
   officers: React.ComponentProps<typeof ManagementInfo>['officers'];
+  managementFallbackDetails?: React.ComponentProps<typeof ManagementInfo>['fallbackDetails'];
   // Chart refs
   performanceChartRef: React.RefObject<HTMLCanvasElement>;
   sectorDistributionChartRef: React.RefObject<HTMLCanvasElement>;
@@ -40,6 +41,7 @@ const Overview: React.FC<OverviewProps> = ({
   financialData,
   recentNews,
   officers,
+  managementFallbackDetails,
   performanceChartRef,
   sectorDistributionChartRef,
   aboutRef,
@@ -135,7 +137,7 @@ const Overview: React.FC<OverviewProps> = ({
         
         {/* Key Management - Basic version for overview */}
         <div className="lg:col-span-1">
-          <ManagementInfo officers={officers} />
+          <ManagementInfo officers={officers} fallbackDetails={managementFallbackDetails} />
         </div>
       </div>
 

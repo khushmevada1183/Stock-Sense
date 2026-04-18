@@ -71,12 +71,12 @@ const Footer = () => {
               <h3 className="font-semibold text-neon-400 mb-4 text-sm uppercase tracking-wider">
                 {group.heading}
               </h3>
-              <ul className="space-y-2.5">
+              <ul className="space-y-1">
                 {group.links.map((link) => (
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-sm text-gray-500 hover:text-gray-300 transition-colors duration-300 hover-underline"
+                      className="inline-flex min-h-[44px] min-w-[44px] items-center px-1 -mx-1 text-sm text-gray-500 hover:text-gray-300 transition-colors duration-300 hover-underline"
                     >
                       {link.name}
                     </Link>
@@ -103,7 +103,7 @@ const Footer = () => {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="h-9 w-9 rounded-full bg-gray-800/60 border border-gray-700/30 flex items-center justify-center text-gray-400 hover:text-neon-400 hover:border-neon-400/30 hover:bg-gray-800/90 hover:shadow-neon-sm transition-all duration-300"
+                  className="h-11 w-11 rounded-full bg-gray-800/60 border border-gray-700/30 flex items-center justify-center text-gray-400 hover:text-neon-400 hover:border-neon-400/30 hover:bg-gray-800/90 hover:shadow-neon-sm transition-all duration-300"
                   aria-label={social.name}
                   title={social.name}
                 >
@@ -141,11 +141,11 @@ const Footer = () => {
             This platform is for informational purposes only and does not constitute financial advice.
           </p>
           <div className="mt-3 flex items-center justify-center space-x-3">
-            <Link href="/sitemap" className="text-xs text-gray-600 hover:text-neon-400 transition-colors duration-300">
+            <Link href="/sitemap" className="inline-flex min-h-[44px] items-center px-2 text-xs text-gray-600 hover:text-neon-400 transition-colors duration-300">
               Sitemap
             </Link>
             <span className="text-gray-700 text-xs">•</span>
-            <Link href="/accessibility" className="text-xs text-gray-600 hover:text-neon-400 transition-colors duration-300">
+            <Link href="/accessibility" className="inline-flex min-h-[44px] items-center px-2 text-xs text-gray-600 hover:text-neon-400 transition-colors duration-300">
               Accessibility
             </Link>
           </div>

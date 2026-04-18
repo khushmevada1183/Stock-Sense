@@ -6,6 +6,14 @@ import { IndexData } from '@/types/market';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
+type MarketOverviewIndexItem = {
+  index?: string;
+  indexSymbol?: string;
+  last?: number | string;
+  variation?: number | string;
+  percentChange?: number | string;
+};
+
 export default function MarketOverview() {
   const [indices, setIndices] = useState<IndexData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,48 +26,73 @@ export default function MarketOverview() {
     { name: 'NIFTY IT', symbol: 'NIFTYIT', value: 34892.8, change: 412.95, changePercent: 1.20 }
   ];
 
+  const toFiniteNumber = (value: unknown, fallback: number) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : fallback;
+  };
+
+  const normalizeLabel = (value: string | undefined) => String(value || '').trim().toUpperCase();
+
+  const findIndexRow = (rows: MarketOverviewIndexItem[], labels: string[]) => {
+    const expected = labels.map((label) => normalizeLabel(label));
+    return rows.find((row) => {
+      const index = normalizeLabel(row.index);
+      const symbol = normalizeLabel(row.indexSymbol);
+      return expected.some((label) => label === index || label === symbol);
+    });
+  };
+
+  const toIndexCard = (
+    row: MarketOverviewIndexItem | undefined,
+    fallback: IndexData
+  ): IndexData => {
+    if (!row) {
+      return fallback;
+    }
+
+    return {
+      ...fallback,
+      value: toFiniteNumber(row.last, fallback.value),
+      change: toFiniteNumber(row.variation, fallback.change),
+      changePercent: toFiniteNumber(row.percentChange, fallback.changePercent),
+    };
+  };
+
   useEffect(() => {
     const fetchMarketData = async () => {
       try {
-        const response = await stockApi.getBSEMostActive();
+        const response = await stockApi.getMarketOverview();
         setError(null);
 
-        // Try to extract real index data if the API provides it
-        // Shape attempt: { success, data: { indices: { nifty, sensex, bank_nifty, it_nifty } } }
-        const indicesData = response?.data?.indices || response?.data?.data?.indices;
+        const overviewPayload =
+          response && typeof response === 'object' && 'data' in response
+            ? (response as { data?: unknown }).data
+            : response;
 
-        if (indicesData && indicesData.nifty) {
-          const marketIndices: IndexData[] = [
-            {
-              name: 'NIFTY 50', symbol: 'NIFTY',
-              value: parseFloat(indicesData.nifty?.value ?? '22654.5'),
-              change: parseFloat(indicesData.nifty?.change ?? '127.45'),
-              changePercent: parseFloat(indicesData.nifty?.percent_change ?? '0.57')
-            },
-            {
-              name: 'BSE SENSEX', symbol: 'SENSEX',
-              value: parseFloat(indicesData.sensex?.value ?? '74683.7'),
-              change: parseFloat(indicesData.sensex?.change ?? '260.30'),
-              changePercent: parseFloat(indicesData.sensex?.percent_change ?? '0.35')
-            },
-            {
-              name: 'NIFTY BANK', symbol: 'BANKNIFTY',
-              value: parseFloat(indicesData.bank_nifty?.value ?? '48521.6'),
-              change: parseFloat(indicesData.bank_nifty?.change ?? '-73.25'),
-              changePercent: parseFloat(indicesData.bank_nifty?.percent_change ?? '-0.15')
-            },
-            {
-              name: 'NIFTY IT', symbol: 'NIFTYIT',
-              value: parseFloat(indicesData.it_nifty?.value ?? '34892.8'),
-              change: parseFloat(indicesData.it_nifty?.change ?? '412.95'),
-              changePercent: parseFloat(indicesData.it_nifty?.percent_change ?? '1.20')
-            }
-          ];
-          setIndices(marketIndices);
-        } else {
-          // BSE endpoint returns empty mock — always use fallback
+        const indexRows =
+          overviewPayload &&
+          typeof overviewPayload === 'object' &&
+          'indices' in overviewPayload &&
+          Array.isArray((overviewPayload as { indices?: unknown }).indices)
+          ? ((overviewPayload as { indices: MarketOverviewIndexItem[] }).indices)
+          : [];
+
+        if (indexRows.length === 0) {
           setIndices(fallbackIndices);
+          return;
         }
+
+        const nifty50Row = findIndexRow(indexRows, ['NIFTY 50']);
+        const sensexRow = findIndexRow(indexRows, ['SENSEX', 'BSE SENSEX']);
+        const niftyBankRow = findIndexRow(indexRows, ['NIFTY BANK']);
+        const niftyItRow = findIndexRow(indexRows, ['NIFTY IT']);
+
+        setIndices([
+          toIndexCard(nifty50Row, fallbackIndices[0]),
+          toIndexCard(sensexRow, fallbackIndices[1]),
+          toIndexCard(niftyBankRow, fallbackIndices[2]),
+          toIndexCard(niftyItRow, fallbackIndices[3]),
+        ]);
       } catch (error) {
         logger.error('Failed to fetch market indices:', error);
         setError('Unable to load live market data. Showing fallback values.');

@@ -2,13 +2,13 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { IpoItem } from '@/types/ipo';
 import { logger } from '@/lib/logger';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import { initIpoPageAnimations } from '@/animations/pages/ipoAnimations';
 import { createCardHoverEffect, createIPOItemHoverEffect } from '@/animations/shared/AnimationUtils';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { FEATURES, API_CONFIG } from '@/services/config.js';
 
@@ -862,18 +862,15 @@ export default function IpoPage() {
   // Get animation context
   const { isAnimationEnabled } = useAnimation();
 
-  // Function to scroll carousel horizontally
-  const scrollCarousel = (carouselRef: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
-    if (!carouselRef.current) return;
-    
-    const scrollAmount = 300; // px to scroll
-    const scrollPosition = direction === 'left' 
-      ? carouselRef.current.scrollLeft - scrollAmount 
-      : carouselRef.current.scrollLeft + scrollAmount;
-      
-    carouselRef.current.scrollTo({
-      left: scrollPosition,
-      behavior: 'smooth'
+  const scrollCarousel = (element: HTMLDivElement | null, direction: 'left' | 'right') => {
+    if (!element) {
+      return;
+    }
+
+    const scrollAmount = 340;
+    element.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
     });
   };
 
@@ -1518,26 +1515,25 @@ export default function IpoPage() {
                     </div>
                   )}
           </div>
-          
-          {/* Carousel navigation buttons */}
-          {upcomingIpos.length > 3 && (
+
+                {upcomingIpos.length > 3 && (
                   <div className="flex justify-end px-6 pb-4 gap-2">
-              <button 
-                onClick={() => scrollCarousel(upcomingCarouselRef, 'left')}
+                    <button
+                      onClick={() => scrollCarousel(upcomingCarouselRef.current, 'left')}
                       className="p-2 rounded-full bg-gray-900/90 backdrop-blur-lg dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Scroll left"
-              >
-                <ChevronLeft size={18} />
-              </button>
-              <button 
-                onClick={() => scrollCarousel(upcomingCarouselRef, 'right')}
+                      aria-label="Scroll left"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      onClick={() => scrollCarousel(upcomingCarouselRef.current, 'right')}
                       className="p-2 rounded-full bg-gray-900/90 backdrop-blur-lg dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
-                aria-label="Scroll right"
-              >
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          )}
+                      aria-label="Scroll right"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+                )}
         </div>
         </div>
 
@@ -1565,19 +1561,18 @@ export default function IpoPage() {
                       ))}
                     </div>
                   </div>
-                  
-                  {/* Carousel navigation buttons */}
+
                   {activeIpos.length > 3 && (
                     <div className="flex justify-end px-6 pb-4 gap-2">
-                      <button 
-                        onClick={() => scrollCarousel(activeCarouselRef, 'left')}
+                      <button
+                        onClick={() => scrollCarousel(activeCarouselRef.current, 'left')}
                         className="p-2 rounded-full bg-gray-900/90 backdrop-blur-lg dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                         aria-label="Scroll left"
                       >
                         <ChevronLeft size={18} />
                       </button>
-                      <button 
-                        onClick={() => scrollCarousel(activeCarouselRef, 'right')}
+                      <button
+                        onClick={() => scrollCarousel(activeCarouselRef.current, 'right')}
                         className="p-2 rounded-full bg-gray-900/90 backdrop-blur-lg dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                         aria-label="Scroll right"
                       >
@@ -1640,19 +1635,18 @@ export default function IpoPage() {
                     </div>
                   )}
           </div>
-          
-                {/* Carousel navigation buttons - only show if we have enough cards */}
-          {newListedIpos.length > 3 && (
+
+                {newListedIpos.length > 3 && (
                   <div className="flex justify-end px-6 pb-4 gap-2">
               <button 
-                onClick={() => scrollCarousel(newListedCarouselRef, 'left')}
+                      onClick={() => scrollCarousel(newListedCarouselRef.current, 'left')}
                       className="p-2 rounded-full bg-gray-900/90 backdrop-blur-lg dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                 aria-label="Scroll left"
               >
                 <ChevronLeft size={18} />
               </button>
               <button 
-                onClick={() => scrollCarousel(newListedCarouselRef, 'right')}
+                      onClick={() => scrollCarousel(newListedCarouselRef.current, 'right')}
                       className="p-2 rounded-full bg-gray-900/90 backdrop-blur-lg dark:bg-gray-700 text-gray-700 dark:text-gray-300 shadow hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
                 aria-label="Scroll right"
               >

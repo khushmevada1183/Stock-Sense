@@ -27,25 +27,7 @@ interface TrendingResponse {
 
 const StockSearchPage: React.FC = () => {
   const [popularStocks, setPopularStocks] = useState<PopularStock[]>([]);
-  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
-    if (typeof window === 'undefined') {
-      return [];
-    }
-
-    try {
-      const history = localStorage.getItem('stockSearchHistory');
-      if (!history) {
-        return [];
-      }
-
-      const parsed: unknown = JSON.parse(history);
-      return Array.isArray(parsed)
-        ? parsed.filter((item): item is string => typeof item === 'string')
-        : [];
-    } catch {
-      return [];
-    }
-  });
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
   const router = useRouter();
 
   const toNumber = (value: number | string | undefined) => {
@@ -70,6 +52,22 @@ const StockSearchPage: React.FC = () => {
     };
 
     void loadPopular();
+  }, []);
+
+  useEffect(() => {
+    try {
+      const history = localStorage.getItem('stockSearchHistory');
+      if (!history) {
+        return;
+      }
+
+      const parsed: unknown = JSON.parse(history);
+      if (Array.isArray(parsed)) {
+        setSearchHistory(parsed.filter((item): item is string => typeof item === 'string'));
+      }
+    } catch {
+      setSearchHistory([]);
+    }
   }, []);
 
   // This function will be passed to the SearchBar component
@@ -115,7 +113,7 @@ const StockSearchPage: React.FC = () => {
                 </CardTitle>
                 <button
                   onClick={clearHistory}
-                  className="text-sm text-gray-400 hover:text-gray-300"
+                  className="inline-flex min-h-[44px] items-center px-2 text-sm text-gray-400 hover:text-gray-300"
                 >
                   Clear History
                 </button>
@@ -130,7 +128,7 @@ const StockSearchPage: React.FC = () => {
                       // Navigate to stock details or trigger new search
                       router.push(`/stocks/${query}`);
                     }}
-                    className="px-3 py-1 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 rounded-full text-sm transition-colors"
+                    className="px-3 py-2 min-h-[44px] bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 rounded-full text-sm transition-colors"
                   >
                     {query}
                   </button>

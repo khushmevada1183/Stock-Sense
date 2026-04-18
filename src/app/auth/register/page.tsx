@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { UserPlus, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -68,9 +68,7 @@ const RegisterPage: React.FC = () => {
             <div className="mx-auto w-12 h-12 bg-green-600/20 rounded-full flex items-center justify-center mb-4">
               <UserPlus className="w-6 h-6 text-green-400" />
             </div>
-            <CardTitle className="text-2xl font-bold text-white">
-              Create Account
-            </CardTitle>
+            <h1 className="text-2xl font-bold text-white">Create Account</h1>
             <p className="text-gray-400 mt-2">
               Join Stock Sense to track your investments
             </p>
