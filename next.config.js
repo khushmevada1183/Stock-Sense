@@ -1,4 +1,37 @@
+const fs = require('fs');
 const path = require('path');
+
+const parseDotEnv = (filePath) => {
+  if (!fs.existsSync(filePath)) {
+    return {};
+  }
+
+  const content = fs.readFileSync(filePath, 'utf8');
+  return content.split(/\r?\n/).reduce((acc, line) => {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) {
+      return acc;
+    }
+
+    const match = trimmed.match(/^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+    if (!match) {
+      return acc;
+    }
+
+    const key = match[1];
+    const rawValue = match[2];
+    const value = rawValue.replace(/^['"]|['"]$/g, '');
+    acc[key] = value;
+    return acc;
+  }, {});
+};
+
+const envFromDotEnv = parseDotEnv(path.join(__dirname, '.env'));
+
+// Force .env precedence over .env.local for this project.
+Object.entries(envFromDotEnv).forEach(([key, value]) => {
+  process.env[key] = value;
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -67,7 +100,7 @@ const nextConfig = {
   },
   // Environment variables
   env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api',
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api/v1',
     NEXT_PUBLIC_APP_ENV: process.env.NODE_ENV || 'development'
   },
   // Proper API routing
@@ -75,11 +108,11 @@ const nextConfig = {
     let apiUrl;
     if (process.env.RENDER_EXTERNAL_URL) {
       // We are on Render, construct the URL
-      apiUrl = `${process.env.RENDER_EXTERNAL_URL}/api`;
+      apiUrl = `${process.env.RENDER_EXTERNAL_URL}/api/v1`;
     } else {
       // Fallback for other environments (like Vercel or local)
       // Ensure NEXT_PUBLIC_API_URL is a full URL in those environments
-      apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api';
+      apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:10000/api/v1';
     }
     
     console.log(`Configuring API rewrites to: ${apiUrl}`);
