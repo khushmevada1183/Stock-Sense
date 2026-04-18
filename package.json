@@ -4,7 +4,8 @@
   "private": true,
   "homepage": "https://khushmevada1183.github.io/Stock-Sense/",
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "next dev --turbopack",
+    "dev:webpack": "next dev --webpack",
     "build": "next build --webpack",
     "build:production": "NODE_ENV=production next build --webpack",
     "start": "next start",

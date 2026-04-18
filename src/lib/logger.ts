@@ -15,6 +15,36 @@ interface LogEntry {
 class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development';
   private logs: LogEntry[] = [];
+  private readonly maxLogs = 50;
+
+  private compactData(data: unknown): unknown {
+    if (data === undefined || data === null) {
+      return data;
+    }
+
+    if (typeof data === 'string') {
+      return data.length > 400 ? `${data.slice(0, 400)}...` : data;
+    }
+
+    if (typeof data === 'number' || typeof data === 'boolean') {
+      return data;
+    }
+
+    if (data instanceof Error) {
+      return { message: data.message, stack: this.isDevelopment ? data.stack : undefined };
+    }
+
+    try {
+      const serialized = JSON.stringify(data);
+      if (!serialized) {
+        return undefined;
+      }
+
+      return serialized.length > 1000 ? `${serialized.slice(0, 1000)}...` : serialized;
+    } catch {
+      return String(data);
+    }
+  }
 
   private toLogRecord(value: unknown): Record<string, unknown> {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -70,12 +100,12 @@ class Logger {
       timestamp: this.formatTimestamp(),
       level,
       message,
-      data
+      data: this.compactData(data)
     };
     this.logs.push(entry);
     
-    // Keep only last 100 logs in memory
-    if (this.logs.length > 100) {
+    // Keep only the latest logs in memory with a bounded footprint.
+    if (this.logs.length > this.maxLogs) {
       this.logs.shift();
     }
   }

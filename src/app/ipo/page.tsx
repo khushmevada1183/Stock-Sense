@@ -69,6 +69,11 @@ interface APIResponse {
   };
 }
 
+// Keep a bounded in-memory payload per section to reduce client-side retention pressure.
+const MAX_IPOS_PER_SECTION = 30;
+
+const limitIpoItems = (items: IpoItem[]) => items.slice(0, MAX_IPOS_PER_SECTION);
+
 const toIpoDetailsHref = (ipo: IpoCardData) => {
   const identifier = String(ipo.id || ipo.symbol || '').trim();
   return `/ipo/${encodeURIComponent(identifier)}`;
@@ -1044,9 +1049,9 @@ export default function IpoPage() {
         
         // Map API data to our component's expected format
         logger.debug('Mapping API data to UI format...');
-        const upcoming = (data.upcoming || []).map(mapToIpoItem);
-        const active = (data.active || []).map(mapToIpoItem);
-        const listed = (data.listed || []).map(mapToIpoItem);
+        const upcoming = limitIpoItems((data.upcoming || []).map(mapToIpoItem));
+        const active = limitIpoItems((data.active || []).map(mapToIpoItem));
+        const listed = limitIpoItems((data.listed || []).map(mapToIpoItem));
         
         logger.debug(`Setting UI data: ${upcoming.length} upcoming, ${active.length} active, ${listed.length} recently listed IPOs`);
         
@@ -1169,9 +1174,9 @@ export default function IpoPage() {
           ]
         };
         
-        const upcomingFallback = fallbackData.upcoming.map(mapToIpoItem);
-        const activeFallback = fallbackData.active.map(mapToIpoItem);
-        const listedFallback = fallbackData.listed.map(mapToIpoItem);
+        const upcomingFallback = limitIpoItems(fallbackData.upcoming.map(mapToIpoItem));
+        const activeFallback = limitIpoItems(fallbackData.active.map(mapToIpoItem));
+        const listedFallback = limitIpoItems(fallbackData.listed.map(mapToIpoItem));
         
         setUpcomingIpos(upcomingFallback);
         setActiveIpos(activeFallback);

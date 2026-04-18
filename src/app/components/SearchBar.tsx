@@ -38,6 +38,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   const [searchMode, setSearchMode] = useState<'indian'>('indian');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const searchRef = useRef<HTMLDivElement>(null);
+  const lastFetchedQueryRef = useRef('');
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 500); // 500ms debounce
 
@@ -61,12 +62,20 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     const fetchResults = async () => {
       if (debouncedQuery.length < 2) {
+        lastFetchedQueryRef.current = '';
         setResults([]);
         setIsResultsVisible(false);
         setError(null);
         setIsLoading(false);
         return;
       }
+
+      if (debouncedQuery === lastFetchedQueryRef.current) {
+        setIsLoading(false);
+        return;
+      }
+
+      lastFetchedQueryRef.current = debouncedQuery;
 
       setIsLoading(true);
       setError(null);

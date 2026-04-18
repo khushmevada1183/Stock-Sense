@@ -154,6 +154,35 @@ let marketOverviewCache = {
 };
 
 const requestCacheStore = new Map();
+const REQUEST_CACHE_MAX_ENTRIES = 200;
+
+const pruneRequestCacheStore = (now = Date.now()) => {
+  // Drop expired entries that are no longer in-flight.
+  for (const [cacheKey, entry] of requestCacheStore.entries()) {
+    if (!entry?.inFlight && entry?.expiresAt <= now) {
+      requestCacheStore.delete(cacheKey);
+    }
+  }
+
+  // Keep cache bounded to avoid silent memory growth in long dev sessions.
+  if (requestCacheStore.size <= REQUEST_CACHE_MAX_ENTRIES) {
+    return;
+  }
+
+  const overflowCount = requestCacheStore.size - REQUEST_CACHE_MAX_ENTRIES;
+  let removed = 0;
+
+  for (const [cacheKey, entry] of requestCacheStore.entries()) {
+    if (removed >= overflowCount) {
+      break;
+    }
+
+    if (!entry?.inFlight) {
+      requestCacheStore.delete(cacheKey);
+      removed += 1;
+    }
+  }
+};
 
 const buildCacheKey = (prefix, params = {}) => {
   const query = Object.entries(params)
@@ -167,6 +196,7 @@ const buildCacheKey = (prefix, params = {}) => {
 
 const withRequestCache = async (key, fetcher, ttlMs = 3500) => {
   const now = Date.now();
+  pruneRequestCacheStore(now);
   const cached = requestCacheStore.get(key);
 
   if (cached?.inFlight) {
