@@ -6,13 +6,11 @@ import { StockProvider } from '../context/StockContext';
 import { AuthProvider } from '../context/AuthContext';
 import { AnimationProvider } from '../animations/shared/AnimationContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-import Header from '../components/layout/Header';
-import Footer from '../components/layout/Footer';
 import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
-import ClientScrollProgressIndicator from '../components/layout/ClientScrollProgressIndicator';
 import KeepAlive from '../components/KeepAlive';
 import AppQueryProvider from '../components/providers/AppQueryProvider';
+import AppShell from '../components/layout/AppShell';
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -48,12 +46,7 @@ export default function RootLayout({
                   <AnimationProvider>
                     <ErrorBoundary>
                       <div className="flex flex-col min-h-screen relative z-20">
-                        <ClientScrollProgressIndicator />
-                        <Header />
-                        <main className="flex-grow">
-                          {children}
-                        </main>
-                        <Footer />
+                        <AppShell>{children}</AppShell>
 
                         {/* Global UI components */}
                         <Toasts />

@@ -326,7 +326,7 @@ export default function IpoSection() {
           <Button
             size="sm"
             className="mx-auto"
-            onClick={() => router.push('/auth/register')}
+            onClick={() => router.push('/signup')}
           >
             Open a Demat Account
           </Button>

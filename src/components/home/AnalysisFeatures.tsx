@@ -297,8 +297,8 @@ export default function AnalysisFeatures() {
 
       <div ref={graphRef} className="relative mx-auto mt-12 h-[min(92vw,31rem)] w-full max-w-5xl sm:h-[min(78vw,36rem)] lg:h-[36rem]">
         <svg aria-hidden className="absolute inset-0 h-full w-full text-slate-600 dark:text-slate-200">
-          {renderableRingEdges.map((edge) => (
-            <line
+          {renderableRingEdges.map((edge, index) => (
+            <motion.line
               key={edge.id}
               x1={`${edge.start.x}%`}
               y1={`${edge.start.y}%`}
@@ -307,12 +307,21 @@ export default function AnalysisFeatures() {
               stroke="currentColor"
               strokeWidth={`${edge.strokeWidth}`}
               strokeDasharray={edge.dashed ? '4 8' : undefined}
-              opacity={edge.baseOpacity}
+              initial={{ opacity: edge.baseOpacity }}
+              animate={{
+                opacity: [edge.baseOpacity * 0.75, Math.min(edge.baseOpacity + 0.1, 0.4), edge.baseOpacity * 0.75],
+              }}
+              transition={{
+                duration: 4.3 + (index % 3) * 0.7,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: index * 0.12,
+                ease: 'easeInOut',
+              }}
             />
           ))}
 
-          {renderableMeshEdges.map((edge) => (
-            <line
+          {renderableMeshEdges.map((edge, index) => (
+            <motion.line
               key={edge.id}
               x1={`${edge.start.x}%`}
               y1={`${edge.start.y}%`}
@@ -320,12 +329,21 @@ export default function AnalysisFeatures() {
               y2={`${edge.end.y}%`}
               stroke="currentColor"
               strokeWidth={`${edge.strokeWidth}`}
-              opacity={edge.baseOpacity}
+              initial={{ opacity: edge.baseOpacity }}
+              animate={{
+                opacity: [edge.baseOpacity * 0.7, Math.min(edge.baseOpacity + 0.08, 0.32), edge.baseOpacity * 0.7],
+              }}
+              transition={{
+                duration: 5 + (index % 4) * 0.65,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: 0.25 + index * 0.08,
+                ease: 'easeInOut',
+              }}
             />
           ))}
 
-          {renderableCoreEdges.map((edge) => (
-            <line
+          {renderableCoreEdges.map((edge, index) => (
+            <motion.line
               key={edge.id}
               x1={`${edge.start.x}%`}
               y1={`${edge.start.y}%`}
@@ -333,7 +351,16 @@ export default function AnalysisFeatures() {
               y2={`${edge.end.y}%`}
               stroke="currentColor"
               strokeWidth={`${edge.strokeWidth}`}
-              opacity={edge.baseOpacity}
+              initial={{ opacity: edge.baseOpacity }}
+              animate={{
+                opacity: [edge.baseOpacity * 0.75, Math.min(edge.baseOpacity + 0.14, 0.44), edge.baseOpacity * 0.75],
+              }}
+              transition={{
+                duration: 3.1 + (index % 5) * 0.32,
+                repeat: Number.POSITIVE_INFINITY,
+                delay: 0.12 + index * 0.09,
+                ease: 'easeInOut',
+              }}
             />
           ))}
         </svg>
@@ -346,6 +373,7 @@ export default function AnalysisFeatures() {
         >
           {renderableSignalTracks.map((track, index) => {
             const signalColor = '#facc15';
+            const repeatDelay = 0.35 + (index % 3) * 0.25;
             const trailOffset = getTrailOffsetInPercent(
               track.start,
               track.end,
@@ -381,27 +409,53 @@ export default function AnalysisFeatures() {
 
             return (
               <g key={track.id}>
-                <line
+                <motion.line
                   x1={startGlow.x}
                   y1={startGlow.y}
-                  x2={endGlow.x}
-                  y2={endGlow.y}
+                  x2={track.start.x}
+                  y2={track.start.y}
                   stroke={signalColor}
                   strokeWidth="0.000003"
                   strokeLinecap="square"
-                  opacity={0.28 + (index % 3) * 0.06}
+                  animate={{
+                    x1: [startGlow.x, endGlow.x],
+                    y1: [startGlow.y, endGlow.y],
+                    x2: [track.start.x, track.end.x],
+                    y2: [track.start.y, track.end.y],
+                    opacity: [0, 0.48, 0],
+                  }}
+                  transition={{
+                    duration: track.duration,
+                    delay: track.delay,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatDelay,
+                    ease: 'linear',
+                  }}
                   style={{ filter: `blur(0.25px) drop-shadow(0 0 4px ${signalColor})` }}
                 />
 
-                <line
+                <motion.line
                   x1={startTail.x}
                   y1={startTail.y}
-                  x2={endTail.x}
-                  y2={endTail.y}
+                  x2={track.start.x}
+                  y2={track.start.y}
                   stroke={signalColor}
                   strokeWidth="0.2"
                   strokeLinecap="square"
-                  opacity={0.46 + (index % 4) * 0.08}
+                  animate={{
+                    x1: [startTail.x, endTail.x],
+                    y1: [startTail.y, endTail.y],
+                    x2: [track.start.x, track.end.x],
+                    y2: [track.start.y, track.end.y],
+                    opacity: [0, 1, 0],
+                  }}
+                  transition={{
+                    duration: track.duration,
+                    delay: track.delay,
+                    repeat: Number.POSITIVE_INFINITY,
+                    repeatDelay,
+                    ease: 'linear',
+                  }}
                   style={{ filter: `drop-shadow(0 0 2px ${signalColor}) drop-shadow(0 0 4px ${signalColor})` }}
                 />
               </g>

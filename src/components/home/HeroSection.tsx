@@ -80,7 +80,7 @@ export default function HeroSection() {
                 <Button
                   size="lg"
                   className="rounded-lg px-8 py-4"
-                  onClick={() => router.push('/auth/register')}
+                  onClick={() => router.push('/signup')}
                 >
                   <span className="flex items-center">
                     Get Started <ArrowRight className="ml-2 h-4 w-4" />

@@ -333,7 +333,7 @@ const PortfolioDashboard = () => {
               <>
                 <p className="mt-2 text-red-300/80">Please log in to access portfolio analytics.</p>
                 <Link
-                  href="/auth/login"
+                  href="/login"
                   className="mt-4 inline-block px-6 py-2 bg-blue-600/30 hover:bg-blue-600/40 border border-blue-500/50 rounded-lg text-blue-200 transition-all duration-200"
                 >
                   Go to Login

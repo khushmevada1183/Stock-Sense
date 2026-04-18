@@ -100,7 +100,7 @@ export default function CtaSection() {
               variant="outline"
               size="lg"
               className="group inline-flex min-w-[240px] items-center justify-center rounded-2xl border !border-slate-900 !bg-slate-900 px-8 py-4 font-[var(--font-sans)] text-base font-semibold tracking-[-0.015em] !text-slate-50 shadow-[0_16px_34px_-20px_rgba(15,23,42,0.86)] transition-all duration-300 hover:-translate-y-0.5 hover:!bg-slate-800 hover:shadow-[0_18px_42px_-22px_rgba(15,23,42,0.9)] dark:!border-slate-100 dark:!bg-slate-100 dark:!text-slate-950 dark:hover:!bg-slate-200"
-              onClick={() => router.push('/auth/register')}
+              onClick={() => router.push('/signup')}
             >
               Create Free Account
               <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />

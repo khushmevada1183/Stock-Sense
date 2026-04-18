@@ -203,7 +203,7 @@ export default function WatchlistsPage() {
         <div className="max-w-2xl mx-auto bg-gray-900/90 border border-gray-700/50 rounded-xl p-6">
           <h1 className="text-2xl font-bold text-white mb-2">Watchlists</h1>
           <p className="text-gray-300 mb-4">Please log in to create and manage watchlists.</p>
-          <Link href="/auth/login" className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm inline-block">
+          <Link href="/login" className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm inline-block">
             Go to Login
           </Link>
         </div>

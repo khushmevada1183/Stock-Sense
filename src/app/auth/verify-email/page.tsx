@@ -109,7 +109,7 @@ function VerifyEmailContent() {
         <p className="text-xs text-gray-400 mt-4">
           Back to
           {' '}
-          <Link href="/auth/login" className="text-blue-400 hover:text-blue-300">Login</Link>
+          <Link href="/login" className="text-blue-400 hover:text-blue-300">Login</Link>
         </p>
       </div>
     </div>

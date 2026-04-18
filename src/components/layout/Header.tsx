@@ -149,13 +149,13 @@ const Header = () => {
               ) : (
                 <div className="hidden md:flex items-center space-x-2">
                   <Link
-                    href="/auth/login"
+                    href="/login"
                     className="inline-flex min-h-[44px] items-center justify-center px-3 py-1.5 rounded-full text-xs text-gray-300 hover:text-white border border-gray-700/40 hover:border-neon-400/40 transition-all duration-300"
                   >
                     Login
                   </Link>
                   <Link
-                    href="/auth/register"
+                    href="/signup"
                     className="inline-flex min-h-[44px] items-center justify-center px-3 py-1.5 rounded-full text-xs text-black bg-neon-400 hover:bg-neon-300 transition-all duration-300"
                   >
                     Sign Up
@@ -232,14 +232,14 @@ const Header = () => {
                 ) : (
                   <div className="grid grid-cols-2 gap-2 mt-1">
                     <Link
-                      href="/auth/login"
+                      href="/login"
                       className="inline-flex min-h-[44px] items-center justify-center text-center px-3 py-2 rounded-lg text-xs border border-gray-700/40 text-gray-300 hover:text-white transition-all duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       Login
                     </Link>
                     <Link
-                      href="/auth/register"
+                      href="/signup"
                       className="inline-flex min-h-[44px] items-center justify-center text-center px-3 py-2 rounded-lg text-xs bg-neon-400 text-black hover:bg-neon-300 transition-all duration-300"
                       onClick={() => setMobileMenuOpen(false)}
                     >

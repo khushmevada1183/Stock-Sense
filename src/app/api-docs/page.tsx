@@ -81,7 +81,7 @@ export default function ApiDocsPage() {
             <Link href="/api-test" className="px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm">
               Open API Test Page
             </Link>
-            <Link href="/auth/login" className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm">
+            <Link href="/login" className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm">
               Open Auth Login
             </Link>
             <Link href="/alerts" className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm">
