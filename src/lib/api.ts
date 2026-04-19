@@ -366,6 +366,24 @@ const toStringValue = (value: unknown, fallback = '') => {
   return fallback;
 };
 
+const extractResponseMessage = (payload: unknown): string | undefined => {
+  if (!isRecord(payload)) {
+    return undefined;
+  }
+
+  const topLevelMessage = toStringValue(payload.message, '').trim();
+  if (topLevelMessage) {
+    return topLevelMessage;
+  }
+
+  if (!isRecord(payload.data)) {
+    return undefined;
+  }
+
+  const nestedMessage = toStringValue(payload.data.message, '').trim();
+  return nestedMessage || undefined;
+};
+
 const makeSuccess = <T>(data: T, message?: string): ApiResponse<T> => {
   return message ? { success: true, data, message } : { success: true, data };
 };
@@ -547,7 +565,7 @@ const normalizePasswordPolicy = (payload: unknown): PasswordPolicyData => {
 const fetchWithFallback = async <T>(request: () => Promise<unknown>, fallback: T, normalize: (payload: unknown) => T): Promise<ApiResponse<T>> => {
   try {
     const payload = await request();
-    return makeSuccess(normalize(unwrapPayload(payload, fallback)));
+    return makeSuccess(normalize(unwrapPayload(payload, fallback)), extractResponseMessage(payload));
   } catch (error) {
     if (shouldUseFallback(error)) {
       return makeSuccess(fallback);
@@ -560,7 +578,7 @@ const fetchWithFallback = async <T>(request: () => Promise<unknown>, fallback: T
 const mutateWithFallback = async <T>(request: () => Promise<unknown>, fallback: T, normalize: (payload: unknown) => T): Promise<ApiResponse<T>> => {
   try {
     const payload = await request();
-    return makeSuccess(normalize(unwrapPayload(payload, fallback)));
+    return makeSuccess(normalize(unwrapPayload(payload, fallback)), extractResponseMessage(payload));
   } catch (error) {
     if (shouldUseFallback(error)) {
       return makeSuccess(fallback);

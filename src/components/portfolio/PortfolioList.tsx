@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import * as stockApi from '@/api/api';
 import { Trash2, Edit, ChevronRight, PlusCircle } from 'lucide-react';
+import { toastApiError, toastApiSuccess, toastWarning } from '@/lib/toast';
 
 interface Stock {
   symbol: string;
@@ -32,7 +33,9 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
       setPortfolios(data.portfolios || []);
       setError('');
     } catch (err) {
-      setError('Failed to load portfolios. Please try again.');
+      const message = 'Failed to load portfolios. Please try again.';
+      setError(message);
+      toastApiError(err, message);
       console.error('Error fetching portfolios:', err);
     } finally {
       setIsLoading(false);
@@ -50,11 +53,16 @@ const PortfolioList = ({ userId = '1' }: { userId?: string }) => {
         if (response.success) {
           setPortfolios((prev) => prev.filter((portfolio) => portfolio.id !== portfolioId));
           setError('');
+          toastApiSuccess(response, 'Portfolio deleted successfully.');
         } else {
-          setError(response.message || 'Failed to delete portfolio.');
+          const message = response.message || 'Failed to delete portfolio.';
+          setError(message);
+          toastWarning(message);
         }
       } catch (err) {
-        setError('Failed to delete portfolio.');
+        const message = 'Failed to delete portfolio.';
+        setError(message);
+        toastApiError(err, message);
         console.error('Error deleting portfolio:', err);
       }
     }

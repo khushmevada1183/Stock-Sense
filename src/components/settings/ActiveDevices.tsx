@@ -6,6 +6,7 @@ import { Laptop, LogOut, RefreshCw, Smartphone } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import { ActiveDevice, getSettingsActiveDevices, logoutAllSettingsDevices, logoutSettingsDevice } from '@/lib/api';
+import { toastApiError, toastApiSuccess } from '@/lib/toast';
 
 const formatDistance = (value: string) => {
   const parsed = new Date(value);
@@ -55,15 +56,23 @@ export default function ActiveDevices() {
 
   const logoutDeviceMutation = useMutation({
     mutationFn: logoutSettingsDevice,
-    onSuccess: async () => {
+    onSuccess: async (response) => {
       await queryClient.invalidateQueries({ queryKey: ['settings', 'active-devices'] });
+      toastApiSuccess(response, 'Device logged out successfully.');
+    },
+    onError: (error) => {
+      toastApiError(error, 'Failed to log out selected device.');
     },
   });
 
   const logoutAllMutation = useMutation({
     mutationFn: logoutAllSettingsDevices,
-    onSuccess: async () => {
+    onSuccess: async (response) => {
       await queryClient.invalidateQueries({ queryKey: ['settings', 'active-devices'] });
+      toastApiSuccess(response, response.data.message || 'All sessions have been logged out.');
+    },
+    onError: (error) => {
+      toastApiError(error, 'Failed to log out all devices.');
     },
   });
 

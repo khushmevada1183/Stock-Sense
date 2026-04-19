@@ -11,6 +11,7 @@ import {
   getSettingsBasicDetails,
   updateSettingsBasicDetails,
 } from '@/lib/api';
+import { toastApiError, toastApiSuccess } from '@/lib/toast';
 
 type EditableField =
   | 'fullName'
@@ -166,8 +167,6 @@ export default function BasicDetails() {
 
   const [editingField, setEditingField] = useState<EditableField | null>(null);
   const [draft, setDraft] = useState<BasicDetailsData | null>(null);
-  const [localMessage, setLocalMessage] = useState('');
-  const [localError, setLocalError] = useState('');
 
   const mutation = useMutation({
     mutationFn: updateSettingsBasicDetails,
@@ -175,11 +174,10 @@ export default function BasicDetails() {
       queryClient.setQueryData(['settings', 'basic-details'], response);
       setDraft(null);
       setEditingField(null);
-      setLocalError('');
-      setLocalMessage('Basic details updated successfully.');
+      toastApiSuccess(response, 'Basic details updated successfully.');
     },
     onError: (error) => {
-      setLocalError(error instanceof Error ? error.message : 'Failed to update basic details');
+      toastApiError(error, 'Failed to update basic details.');
     },
   });
 
@@ -202,8 +200,6 @@ export default function BasicDetails() {
       return;
     }
 
-    setLocalMessage('');
-    setLocalError('');
     setEditingField(field);
     setDraft(details);
   };
@@ -217,9 +213,6 @@ export default function BasicDetails() {
     if (!details && !draft) {
       return;
     }
-
-    setLocalMessage('');
-    setLocalError('');
 
     await mutation.mutateAsync(draft || details!);
   };
@@ -301,18 +294,6 @@ export default function BasicDetails() {
         </CardHeader>
 
         <CardContent className="pt-4">
-          {localMessage ? (
-            <div className="mb-3 rounded-[18px] border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-200">
-              {localMessage}
-            </div>
-          ) : null}
-
-          {localError ? (
-            <div className="mb-3 rounded-[18px] border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-200">
-              {localError}
-            </div>
-          ) : null}
-
           <div className="grid gap-4 xl:grid-cols-2">
             <section className="space-y-3 rounded-[20px] border border-slate-200 bg-slate-50 p-4 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
               <div>

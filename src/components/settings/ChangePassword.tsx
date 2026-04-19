@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import { Input } from '@/components/ui/input';
 import { changeSettingsPassword, getSettingsPasswordPolicy } from '@/lib/api';
+import { toastApiError, toastApiSuccess, toastWarning } from '@/lib/toast';
 
 const formatDate = (value: string) => {
   const parsed = new Date(value);
@@ -33,7 +34,6 @@ export default function ChangePassword() {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [formError, setFormError] = useState('');
-  const [formMessage, setFormMessage] = useState('');
 
   const policy = query.data?.data;
 
@@ -41,7 +41,7 @@ export default function ChangePassword() {
     mutationFn: changeSettingsPassword,
     onSuccess: (response) => {
       setFormError('');
-      setFormMessage(response.data.message);
+      toastApiSuccess(response, 'Password updated successfully.');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -50,7 +50,9 @@ export default function ChangePassword() {
       setShowConfirm(false);
     },
     onError: (error) => {
-      setFormError(error instanceof Error ? error.message : 'Failed to update password');
+      const message = error instanceof Error ? error.message : 'Failed to update password';
+      setFormError(message);
+      toastApiError(error, 'Failed to update password.');
     },
   });
 
@@ -112,12 +114,11 @@ export default function ChangePassword() {
     const error = validate();
     if (error) {
       setFormError(error);
-      setFormMessage('');
+      toastWarning(error);
       return;
     }
 
     setFormError('');
-    setFormMessage('');
 
     await mutation.mutateAsync({
       currentPassword,
@@ -214,7 +215,6 @@ export default function ChangePassword() {
               <p className="mt-1 text-sm leading-6 text-slate-600 dark:text-slate-400">Use the same password only if it satisfies the current policy.</p>
             </div>
 
-            {formMessage ? <div className="rounded-[18px] border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-200">{formMessage}</div> : null}
             {formError ? <div className="rounded-[18px] border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-200">{formError}</div> : null}
 
             <div className="space-y-3">

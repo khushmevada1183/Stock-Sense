@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import { Input } from '@/components/ui/input';
 import { TradingDetailsData, getSettingsTradingDetails, updateSettingsTradingDetails } from '@/lib/api';
+import { toastApiError, toastApiSuccess } from '@/lib/toast';
 
 const selectClasses =
   'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-950 outline-none transition focus:border-emerald-400/40 focus:ring-2 focus:ring-emerald-400/20 dark:border-slate-800 dark:bg-slate-950 dark:text-white';
@@ -19,19 +20,16 @@ export default function TradingDetails() {
   });
 
   const [draft, setDraft] = useState<TradingDetailsData | null>(null);
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
 
   const mutation = useMutation({
     mutationFn: updateSettingsTradingDetails,
     onSuccess: (response) => {
       queryClient.setQueryData(['settings', 'trading-details'], response);
       setDraft(null);
-      setError('');
-      setMessage('Trading preferences updated successfully.');
+      toastApiSuccess(response, 'Trading preferences updated successfully.');
     },
     onError: (cause) => {
-      setError(cause instanceof Error ? cause.message : 'Failed to update trading preferences');
+      toastApiError(cause, 'Failed to update trading preferences.');
     },
   });
 
@@ -62,8 +60,6 @@ export default function TradingDetails() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError('');
-    setMessage('');
 
     if (!formData) {
       return;
@@ -95,9 +91,6 @@ export default function TradingDetails() {
       </CardHeader>
 
       <CardContent className="pt-4">
-        {message ? <div className="mb-3 rounded-[18px] border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-200">{message}</div> : null}
-        {error ? <div className="mb-3 rounded-[18px] border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-200">{error}</div> : null}
-
         <form onSubmit={handleSubmit} className="grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
           <section className="space-y-3 rounded-[20px] border border-slate-200 bg-slate-50 p-4 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900">
             <div>

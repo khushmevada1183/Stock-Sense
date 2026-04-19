@@ -6,11 +6,11 @@ import { StockProvider } from '../context/StockContext';
 import { AuthProvider } from '../context/AuthContext';
 import { AnimationProvider } from '../animations/shared/AnimationContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-import Toasts from '../components/ui/Toasts';
 import ModalContainer from '../components/ui/ModalContainer';
 import KeepAlive from '../components/KeepAlive';
 import AppQueryProvider from '../components/providers/AppQueryProvider';
 import AppShell from '../components/layout/AppShell';
+import HotToastProvider from '../components/providers/HotToastProvider';
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -49,7 +49,7 @@ export default function RootLayout({
                         <AppShell>{children}</AppShell>
 
                         {/* Global UI components */}
-                        <Toasts />
+                        <HotToastProvider />
                         <ModalContainer />
                         <KeepAlive />
                       </div>

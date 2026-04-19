@@ -29,32 +29,16 @@ type MenuActionItemProps = {
   onClick?: () => void;
   icon: typeof Bell;
   label: string;
-  description?: string;
   badge?: string | number;
   danger?: boolean;
   compact?: boolean;
 };
-
-function getAccountInitials(name?: string, email?: string | null) {
-  const source = (name || email?.split('@')[0] || 'Guest').replace(/[^a-zA-Z0-9]+/g, ' ').trim();
-  const parts = source.split(/\s+/).filter(Boolean);
-
-  if (parts.length === 0) {
-    return 'GA';
-  }
-
-  return parts
-    .slice(0, 2)
-    .map((part) => part.charAt(0).toUpperCase())
-    .join('');
-}
 
 function MenuActionItem({
   href,
   onClick,
   icon: Icon,
   label,
-  description,
   badge,
   danger = false,
   compact = false,
@@ -94,7 +78,6 @@ function MenuActionItem({
             </span>
           ) : null}
         </span>
-        {description && !compact ? <span className="mt-0.5 block text-xs leading-5 text-slate-400">{description}</span> : null}
       </span>
     </>
   );
@@ -118,14 +101,10 @@ const Header = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { isMobileMenuOpen, setMobileMenuOpen } = useUI();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
-
-  const accountDisplayName = user?.fullName || user?.email?.split('@')[0] || 'your account';
-  const accountDisplayEmail = user?.email || 'Sign in to manage alerts, profile, and settings.';
-  const accountInitials = getAccountInitials(user?.fullName ?? undefined, user?.email ?? undefined);
 
   const navItems = [
     { name: 'Home', href: '/', icon: Home },
@@ -143,20 +122,17 @@ const Header = () => {
           href: '/alerts',
           icon: Bell,
           label: 'Alerts',
-          description: unreadCount > 0 ? `${unreadCount} unread notifications` : 'Market and account alerts',
           badge: unreadCount > 0 ? unreadCount : undefined,
         },
         {
           href: '/auth/profile',
           icon: User,
           label: 'Profile',
-          description: user?.fullName || user?.email || 'Account profile',
         },
         {
           href: '/settings',
           icon: Settings2,
           label: 'Settings',
-          description: 'Security, devices, and trading preferences',
         },
       ]
     : [
@@ -164,14 +140,12 @@ const Header = () => {
           href: '/alerts',
           icon: Bell,
           label: 'Alerts',
-          description: 'Review market and account alerts',
           badge: unreadCount > 0 ? unreadCount : undefined,
         },
         {
           href: '/login',
           icon: LogIn,
           label: 'Login',
-          description: 'Sign in to manage your account',
         },
       ];
 
@@ -187,10 +161,14 @@ const Header = () => {
     setIsAccountMenuOpen((current) => !current);
   };
 
-  const handleLogout = () => {
-    logout();
+  const closeMenus = () => {
     setIsAccountMenuOpen(false);
     setMobileMenuOpen(false);
+  };
+
+  const handleLogout = () => {
+    logout();
+    closeMenus();
     router.push('/login');
   };
 
@@ -228,71 +206,41 @@ const Header = () => {
   }, [isAuthenticated]);
 
   const renderAccountMenuContent = (compact = false) => (
-    <>
-      <div className={`account-menu-hero ${compact ? 'px-4 pb-3 pt-4' : 'px-5 pb-4 pt-5'}`}>
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex min-w-0 items-start gap-3">
-            <div className={`account-menu-avatar ${compact ? 'h-10 w-10 text-sm' : 'h-12 w-12 text-base'}`}>
-              {accountInitials}
-            </div>
+    <div className={`account-menu-list space-y-2 ${compact ? 'px-2 py-2' : 'px-4 py-4'}`}>
+      {!compact ? (
+        <p className="px-1 pb-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">
+          Account
+        </p>
+      ) : null}
 
-            <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-emerald-500">Menu</p>
-              <h3 className={`mt-1 font-semibold text-slate-950 dark:text-white ${compact ? 'text-base' : 'text-lg'}`}>
-                Quick access
-              </h3>
-              <p className={`mt-1 leading-6 text-slate-500 dark:text-slate-400 ${compact ? 'text-xs' : 'text-sm'}`}>
-                {isAuthenticated
-                  ? `Signed in as ${accountDisplayName}.`
-                  : 'Sign in to manage alerts, profile, and settings.'}
-              </p>
-            </div>
-          </div>
+      {accountItems.map((item) => (
+        <MenuActionItem
+          key={item.label}
+          href={item.href}
+          icon={item.icon}
+          label={item.label}
+          badge={item.badge}
+          onClick={closeMenus}
+          compact={compact}
+        />
+      ))}
 
-          <span className={`account-menu-status ${compact ? 'px-2.5 py-1 text-[10px]' : 'px-3 py-1 text-[11px]'}`}>
-            {isAuthenticated ? 'Signed in' : 'Guest'}
-          </span>
-        </div>
-
-        {isAuthenticated ? (
-          <p className={`mt-4 truncate font-medium uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500 ${compact ? 'text-[10px]' : 'text-xs'}`}>
-            {accountDisplayEmail}
-          </p>
-        ) : null}
-      </div>
-
-      <div className={`account-menu-list space-y-2 ${compact ? 'px-3 pb-3 pt-3' : 'px-4 pb-4 pt-4'}`}>
-        {accountItems.map((item) => (
-          <MenuActionItem
-            key={item.label}
-            href={item.href}
-            icon={item.icon}
-            label={item.label}
-            description={item.description}
-            badge={item.badge}
-            onClick={() => setIsAccountMenuOpen(false)}
-            compact={compact}
-          />
-        ))}
-
-        {isAuthenticated ? (
-          <MenuActionItem
-            icon={LogOut}
-            label="Logout"
-            description="Sign out of this device"
-            danger
-            compact={compact}
-            onClick={handleLogout}
-          />
-        ) : null}
-      </div>
-    </>
+      {isAuthenticated ? (
+        <MenuActionItem
+          icon={LogOut}
+          label="Logout"
+          danger
+          compact={compact}
+          onClick={handleLogout}
+        />
+      ) : null}
+    </div>
   );
 
   return (
     <header className="sticky top-0 z-50 w-full">
       <div className="mx-auto w-[98%] px-1 pt-2 sm:w-[95%] sm:px-2 sm:pt-4">
-        <div className="header-pill rounded-full border transition-all duration-300">
+        <div className="header-pill relative rounded-full border transition-all duration-300">
           <div className="flex h-12 items-center justify-between px-3 sm:h-14 sm:px-6">
             <Link href="/" className="group flex min-h-[44px] items-center">
               <div className="flex items-baseline">
@@ -373,7 +321,7 @@ const Header = () => {
               ) : null}
 
               {isAccountMenuOpen ? (
-                <div className="account-menu-panel absolute right-0 top-[calc(100%+0.75rem)] z-[60] w-[360px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[32px] animate-scale-in">
+                <div className="account-menu-panel absolute right-0 top-[calc(100%+0.75rem)] z-[60] w-[320px] max-w-[calc(100vw-20px)] overflow-hidden rounded-[28px] animate-scale-in">
                   {renderAccountMenuContent(false)}
                 </div>
               ) : null}
@@ -381,12 +329,8 @@ const Header = () => {
           </div>
 
           {isMobileMenuOpen ? (
-            <div className="header-pill absolute inset-x-4 top-16 animate-scale-in rounded-2xl border px-4 py-4 shadow-[0_20px_50px_rgba(0,0,0,0.35)] md:hidden">
-              <div className="space-y-3">
-                <div className="account-menu-panel overflow-hidden rounded-[28px]">
-                  {renderAccountMenuContent(true)}
-                </div>
-
+            <div className="header-pill absolute inset-x-2 top-[calc(100%+0.5rem)] z-[60] max-h-[calc(100dvh-5.5rem)] overflow-y-auto rounded-2xl border px-3 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.35)] md:hidden">
+              <div className="space-y-3 pb-2">
                 <nav className="flex flex-col space-y-1 px-1">
                   {navItems.map((item) => {
                     const active = isActive(item.href);
@@ -401,7 +345,7 @@ const Header = () => {
                             ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm neon-glow-text'
                             : 'text-gray-500 hover:bg-gray-100/80 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800/40 dark:hover:text-gray-200'
                         }`}
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={closeMenus}
                       >
                         <Icon size={16} className={`mr-2.5 ${active ? 'text-neon-400' : 'text-gray-500'}`} />
                         {item.name}
@@ -410,7 +354,13 @@ const Header = () => {
                   })}
                 </nav>
 
-                <div className="mt-4 px-1">
+                <div className="account-menu-divider mx-1 h-px" />
+
+                <div className="rounded-2xl border border-gray-200/20 px-1 py-1">
+                  {renderAccountMenuContent(true)}
+                </div>
+
+                <div className="px-1">
                   <SearchBar compact={true} isMobile={true} showDetailsInline={false} onSearchComplete={() => {}} />
                 </div>
               </div>
