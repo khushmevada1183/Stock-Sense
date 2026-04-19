@@ -166,15 +166,13 @@ html.dark {
 
 /* ── HEADER PILL ────────────────────────────────────────────────────────────*/
 .dark .header-pill {
-  background: rgba(22, 27, 34, 0.96);
-  border-color: rgba(48,54,61,0.9);
-  backdrop-filter: blur(20px);
+  background: #111827;
+  border-color: #374151;
 }
 .header-pill {
-  background: rgba(255, 255, 255, 0.96);
+  background: #ffffff;
   border-color: var(--app-border);
   box-shadow: 0 2px 16px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
-  backdrop-filter: blur(20px);
 }
 
 /* ===========================================================================
@@ -1098,17 +1096,17 @@ canvas {
 /* Dynamic-island glassmorphism */
 html.dark body header .header-pill,
 html:not(.dark) body header .header-pill {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04)) !important;
-  border-color: rgba(255, 255, 255, 0.22) !important;
-  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
-  backdrop-filter: blur(9px) saturate(1.05) !important;
-  -webkit-backdrop-filter: blur(9px) saturate(1.05) !important;
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.22) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 html:not(.dark) body header .header-pill {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.28)) !important;
+  background: #ffffff !important;
   border-color: rgba(15, 23, 42, 0.12) !important;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.14) !important;
 }
 
 html.dark body header [class*="bg-gray-900/30"],
@@ -1152,9 +1150,110 @@ html:not(.dark) body header .border-gray-700\/30 {
 
 /* Dark mode tone correction for glass (reduces whitish/milky cast) */
 html.dark body header .header-pill {
-  background: linear-gradient(135deg, rgba(22, 27, 34, 0.62), rgba(13, 17, 23, 0.36)) !important;
-  border-color: rgba(139, 148, 158, 0.28) !important;
-  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  background: #0f172a !important;
+  border-color: rgba(71, 85, 105, 0.95) !important;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.34) !important;
+}
+
+/* Settings page theme normalization */
+.settings-solid-surface {
+  --settings-page-bg-light: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  --settings-page-bg-dark: linear-gradient(180deg, #07111a 0%, #0c1520 100%);
+}
+
+html:not(.dark) .settings-solid-surface {
+  background: var(--settings-page-bg-light) !important;
+  color: #0f172a !important;
+}
+
+html.dark .settings-solid-surface {
+  background: var(--settings-page-bg-dark) !important;
+  color: #e2e8f0 !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="backdrop-blur"],
+html.dark .settings-solid-surface [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="bg-white/5"],
+html:not(.dark) .settings-solid-surface [class*="bg-white/10"],
+html:not(.dark) .settings-solid-surface [class*="bg-white/[0.03]"],
+html:not(.dark) .settings-solid-surface [class*="bg-slate-950"],
+html:not(.dark) .settings-solid-surface [class*="bg-slate-900"],
+html:not(.dark) .settings-solid-surface [class*="bg-slate-800"] {
+  background-color: #ffffff !important;
+}
+
+html.dark .settings-solid-surface [class*="bg-white/5"],
+html.dark .settings-solid-surface [class*="bg-white/10"],
+html.dark .settings-solid-surface [class*="bg-white/[0.03]"],
+html.dark .settings-solid-surface [class*="bg-slate-950"],
+html.dark .settings-solid-surface [class*="bg-slate-900"],
+html.dark .settings-solid-surface [class*="bg-slate-800"] {
+  background-color: #0f172a !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="border-white/10"],
+html:not(.dark) .settings-solid-surface [class*="border-white/20"],
+html:not(.dark) .settings-solid-surface [class*="border-slate-800"] {
+  border-color: rgba(15, 23, 42, 0.10) !important;
+}
+
+html.dark .settings-solid-surface [class*="border-white/10"],
+html.dark .settings-solid-surface [class*="border-white/20"],
+html.dark .settings-solid-surface [class*="border-slate-800"] {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="shadow-[0_24px_60px"],
+html:not(.dark) .settings-solid-surface [class*="shadow-[0_30px_80px"],
+html:not(.dark) .settings-solid-surface [class*="shadow-[0_16px_40px"] {
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08) !important;
+}
+
+html.dark .settings-solid-surface [class*="shadow-[0_24px_60px"],
+html.dark .settings-solid-surface [class*="shadow-[0_30px_80px"],
+html.dark .settings-solid-surface [class*="shadow-[0_16px_40px"] {
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.30) !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="text-slate-100"],
+html:not(.dark) .settings-solid-surface [class*="text-slate-200"] {
+  color: #0f172a !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="text-slate-300"] {
+  color: #334155 !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="text-slate-400"] {
+  color: #475569 !important;
+}
+
+html:not(.dark) .settings-solid-surface [class*="text-slate-500"] {
+  color: #64748b !important;
+}
+
+html.dark .settings-solid-surface [class*="text-slate-100"] {
+  color: #f8fafc !important;
+}
+
+html.dark .settings-solid-surface [class*="text-slate-200"] {
+  color: #e2e8f0 !important;
+}
+
+html.dark .settings-solid-surface [class*="text-slate-300"] {
+  color: #cbd5e1 !important;
+}
+
+html.dark .settings-solid-surface [class*="text-slate-400"] {
+  color: #94a3b8 !important;
+}
+
+html.dark .settings-solid-surface [class*="text-slate-500"] {
+  color: #64748b !important;
 }
 
 html.dark body header [class*="bg-gray-900/30"],
@@ -1169,4 +1268,143 @@ html.dark body header input[class*="bg-gray-900/90"],
 html.dark body header input[class*="bg-gray-900\\/90"] {
   background-color: rgba(13, 17, 23, 0.48) !important;
   border-color: rgba(139, 148, 158, 0.28) !important;
+}
+
+/* Header account menu solid surface */
+html:not(.dark) body header .account-menu-panel {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.18) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.dark body header .account-menu-panel {
+  background: #0f172a !important;
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.46) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html:not(.dark) body header .account-menu-hero {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 1) 0%, rgba(255, 255, 255, 1) 62%, rgba(236, 253, 245, 0.72) 100%) !important;
+}
+
+html.dark body header .account-menu-hero {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.98) 58%, rgba(6, 182, 212, 0.08) 100%) !important;
+}
+
+html:not(.dark) body header .account-menu-status {
+  background-color: #ecfdf5 !important;
+  color: #047857 !important;
+}
+
+html.dark body header .account-menu-status {
+  background-color: rgba(16, 185, 129, 0.16) !important;
+  color: #a7f3d0 !important;
+}
+
+html:not(.dark) body header .account-menu-avatar {
+  background: linear-gradient(135deg, #0f172a 0%, #334155 100%) !important;
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.16) !important;
+}
+
+html.dark body header .account-menu-avatar {
+  background: linear-gradient(135deg, #059669 0%, #0f766e 100%) !important;
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  box-shadow: 0 16px 28px rgba(2, 6, 23, 0.32) !important;
+}
+
+html:not(.dark) body header .account-menu-divider {
+  background-color: rgba(15, 23, 42, 0.06) !important;
+}
+
+html.dark body header .account-menu-divider {
+  background-color: rgba(148, 163, 184, 0.14) !important;
+}
+
+html:not(.dark) body header .account-menu-item {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.03), 0 1px 0 rgba(15, 23, 42, 0.02) !important;
+}
+
+html:not(.dark) body header .account-menu-item:hover {
+  background-color: #ecfdf5 !important;
+  box-shadow: 0 14px 26px rgba(15, 23, 42, 0.08) !important;
+}
+
+html.dark body header .account-menu-item {
+  background-color: #111827 !important;
+  color: #e2e8f0 !important;
+  box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.06), 0 1px 0 rgba(255, 255, 255, 0.02) !important;
+}
+
+html.dark body header .account-menu-item:hover {
+  background-color: #1f2937 !important;
+  box-shadow: 0 14px 26px rgba(0, 0, 0, 0.24) !important;
+}
+
+html:not(.dark) body header .account-menu-item-danger {
+  background-color: #fff1f2 !important;
+  color: #be123c !important;
+}
+
+html:not(.dark) body header .account-menu-item-danger:hover {
+  background-color: #ffe4e6 !important;
+}
+
+html.dark body header .account-menu-item-danger {
+  background-color: rgba(127, 29, 29, 0.3) !important;
+  color: #fecdd3 !important;
+}
+
+html.dark body header .account-menu-item-danger:hover {
+  background-color: rgba(190, 18, 60, 0.18) !important;
+}
+
+html:not(.dark) body header .account-menu-icon {
+  background-color: #e2e8f0 !important;
+  color: #334155 !important;
+}
+
+html:not(.dark) body header .account-menu-item:hover .account-menu-icon {
+  background-color: #bbf7d0 !important;
+  color: #059669 !important;
+}
+
+html:not(.dark) body header .account-menu-item-danger .account-menu-icon {
+  background-color: #fecdd3 !important;
+  color: #be123c !important;
+}
+
+html.dark body header .account-menu-icon {
+  background-color: #1f2937 !important;
+  color: #cbd5e1 !important;
+}
+
+html.dark body header .account-menu-item:hover .account-menu-icon {
+  background-color: #065f46 !important;
+  color: #d1fae5 !important;
+}
+
+html.dark body header .account-menu-item-danger .account-menu-icon {
+  background-color: rgba(127, 29, 29, 0.42) !important;
+  color: #fecdd3 !important;
+}
+
+html:not(.dark) body header .account-menu-badge {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+html.dark body header .account-menu-badge {
+  background-color: rgba(16, 185, 129, 0.16) !important;
+  color: #a7f3d0 !important;
 }

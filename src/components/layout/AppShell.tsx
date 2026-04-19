@@ -18,6 +18,8 @@ const isAuthRoute = (pathname: string | null) => {
   return (
     pathname === '/login' ||
     pathname === '/signup' ||
+    pathname === '/settings' ||
+    pathname.startsWith('/settings/') ||
     pathname === '/auth' ||
     pathname.startsWith('/auth/')
   );

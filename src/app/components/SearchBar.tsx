@@ -236,7 +236,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
               min-h-[44px]
               ${compact && !isMobile ? 'py-1.5 text-sm' : isMobile ? 'py-1.5 sm:py-2 text-sm' : 'py-3'} 
               ${compact && !isMobile ? 'pl-9 pr-4' : isMobile ? 'pl-8 sm:pl-10 pr-4' : 'pl-10 pr-4'} 
-              bg-gray-900/90 backdrop-blur-lg border 
+              bg-gray-900 border 
               ${compact && !isMobile ? 'border-gray-700/30 rounded-full' : isMobile ? 'border-gray-700/30 rounded-lg' : 'border-gray-800/30 rounded-lg'} 
               focus:outline-none 
               ${compact ? 'focus:ring-1 focus:ring-gray-500' : 'focus:ring-2 focus:ring-blue-500'} 
@@ -269,7 +269,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
         {isResultsVisible && (
           <div 
-            className="absolute z-50 w-full mt-1 bg-gray-950/90 backdrop-blur-xl rounded-xl shadow-lg border border-gray-800/30 max-h-96 overflow-y-auto" 
+            className="absolute z-50 w-full mt-1 bg-gray-950 rounded-xl shadow-lg border border-gray-800/30 max-h-96 overflow-y-auto" 
             suppressHydrationWarning
             role="listbox"
             id="search-results-list"

@@ -7,7 +7,7 @@ interface LoadingSkeletonProps {
 }
 
 const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ className }) => (
-  <div className={`bg-gray-800/60 rounded-lg shimmer ${className || ''}`} />
+  <div className={`rounded-lg bg-slate-200/80 shimmer dark:bg-slate-800/70 ${className || ''}`} />
 );
 
 export default LoadingSkeleton;
