@@ -412,16 +412,12 @@ export default function AnalysisFeatures() {
                 <motion.line
                   x1={startGlow.x}
                   y1={startGlow.y}
-                  x2={track.start.x}
-                  y2={track.start.y}
+                  x2={endGlow.x}
+                  y2={endGlow.y}
                   stroke={signalColor}
                   strokeWidth="0.000003"
                   strokeLinecap="square"
                   animate={{
-                    x1: [startGlow.x, endGlow.x],
-                    y1: [startGlow.y, endGlow.y],
-                    x2: [track.start.x, track.end.x],
-                    y2: [track.start.y, track.end.y],
                     opacity: [0, 0.48, 0],
                   }}
                   transition={{
@@ -437,16 +433,12 @@ export default function AnalysisFeatures() {
                 <motion.line
                   x1={startTail.x}
                   y1={startTail.y}
-                  x2={track.start.x}
-                  y2={track.start.y}
+                  x2={endTail.x}
+                  y2={endTail.y}
                   stroke={signalColor}
                   strokeWidth="0.2"
                   strokeLinecap="square"
                   animate={{
-                    x1: [startTail.x, endTail.x],
-                    y1: [startTail.y, endTail.y],
-                    x2: [track.start.x, track.end.x],
-                    y2: [track.start.y, track.end.y],
                     opacity: [0, 1, 0],
                   }}
                   transition={{

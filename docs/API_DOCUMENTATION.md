@@ -493,27 +493,56 @@ Authorization: Bearer {accessToken}
 {
   "success": true,
   "data": {
-    "message": "Reset email sent",
-    "resetTokenId": "token-uuid-123"
+    "message": "If the account exists, a password reset code has been generated.",
+    "expiresAt": "2026-04-20T18:20:00.000Z"
   }
 }
 ```
 
 **Frontend Tips:**
 - Show confirmation message even if email not found (security)
-- Send user to password reset form
-- Token is sent via email link
+- Send user to reset-password screen to verify code
+- Do not expose whether account exists
 
-### 12. `POST /auth/reset-password` - Reset Password
+### 12. `POST /auth/verify-reset-code` - Verify Reset Code
 
 **Type:** `REST`
 
-**Purpose:** Complete password reset using token
+**Purpose:** Verify reset code before allowing password update
 
 **Request Payload:**
 ```json
 {
-  "resetToken": "token-from-email",
+  "email": "user@example.com",
+  "resetCode": "A7K9M2PQ"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "data": {
+    "message": "Reset code verified successfully."
+  }
+}
+```
+
+**Frontend Tips:**
+- Validate code format before submit (8 characters, uppercase alphanumeric)
+- Keep email and code in state for final reset call
+
+### 13. `POST /auth/reset-password` - Reset Password
+
+**Type:** `REST`
+
+**Purpose:** Complete password reset after code verification
+
+**Request Payload:**
+```json
+{
+  "email": "user@example.com",
+  "resetCode": "A7K9M2PQ",
   "newPassword": "NewSecurePassword123!"
 }
 ```

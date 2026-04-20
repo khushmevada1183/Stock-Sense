@@ -105,16 +105,16 @@ export default function AuthSessionsPage() {
   };
 
   if (authLoading) {
-    return <div className="container mx-auto px-4 py-10 text-gray-300">Loading authentication...</div>;
+    return <div className="auth-shell container mx-auto min-h-screen px-4 py-10 text-gray-300">Loading authentication...</div>;
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-10">
-        <div className="max-w-2xl mx-auto bg-gray-900/90 border border-gray-700/50 rounded-xl p-6">
-          <h1 className="text-2xl font-bold text-white mb-2">Security Sessions</h1>
-          <p className="text-gray-300 mb-4">Please log in to view active sessions and audit logs.</p>
-          <Link href="/login" className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm inline-block">
+      <div className="auth-shell container mx-auto min-h-screen px-4 py-10">
+        <div className="auth-panel max-w-2xl mx-auto bg-gray-900/90 border border-gray-700/50 rounded-xl p-6">
+          <h1 className="auth-title text-2xl font-bold text-white mb-2">Security Sessions</h1>
+          <p className="auth-copy text-gray-300 mb-4">Please log in to view active sessions and audit logs.</p>
+          <Link href="/login" className="auth-button-primary px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm inline-block">
             Go to Login
           </Link>
         </div>
@@ -123,11 +123,11 @@ export default function AuthSessionsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
+    <div className="auth-shell container mx-auto min-h-screen px-4 py-8 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-white">Security Sessions</h1>
-          <p className="text-gray-400 mt-1">Manage your active sessions and review sign-in history.</p>
+          <h1 className="auth-title text-3xl font-bold text-white">Security Sessions</h1>
+          <p className="auth-copy text-gray-400 mt-1">Manage your active sessions and review sign-in history.</p>
         </div>
         <button
           type="button"
@@ -140,41 +140,41 @@ export default function AuthSessionsPage() {
       </div>
 
       {error ? (
-        <div className="bg-red-900/20 border border-red-700/50 rounded-lg p-3 text-red-300 text-sm">{error}</div>
+        <div className="auth-feedback-error bg-red-900/20 border border-red-700/50 rounded-lg p-3 text-red-300 text-sm">{error}</div>
       ) : null}
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Active Sessions</h2>
+      <div className="auth-panel bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
+        <h2 className="auth-title text-lg font-semibold text-white mb-4">Active Sessions</h2>
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading sessions...</p>
+          <p className="auth-copy text-gray-400 text-sm">Loading sessions...</p>
         ) : sessions.length === 0 ? (
-          <p className="text-gray-400 text-sm">No active sessions available.</p>
+          <p className="auth-copy text-gray-400 text-sm">No active sessions available.</p>
         ) : (
           <div className="space-y-2">
             {sessions.map((session) => (
-              <div key={session.id} className="border border-gray-700 rounded-lg p-3 bg-gray-800/60">
-                <p className="text-white text-sm font-medium">{session.deviceName || 'Unknown device'}</p>
-                <p className="text-xs text-gray-400">{session.ipAddress || 'Unknown IP'} • {session.lastActivity || session.createdAt || ''}</p>
-                <p className="text-xs text-gray-500 mt-1 truncate">{session.userAgent || ''}</p>
+              <div key={session.id} className="auth-panel border border-gray-700 rounded-lg p-3 bg-gray-800/60">
+                <p className="auth-title text-white text-sm font-medium">{session.deviceName || 'Unknown device'}</p>
+                <p className="auth-copy text-xs text-gray-400">{session.ipAddress || 'Unknown IP'} • {session.lastActivity || session.createdAt || ''}</p>
+                <p className="auth-muted text-xs text-gray-500 mt-1 truncate">{session.userAgent || ''}</p>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Audit Logs</h2>
+      <div className="auth-panel bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
+        <h2 className="auth-title text-lg font-semibold text-white mb-4">Audit Logs</h2>
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading audit logs...</p>
+          <p className="auth-copy text-gray-400 text-sm">Loading audit logs...</p>
         ) : logs.length === 0 ? (
-          <p className="text-gray-400 text-sm">No audit events found.</p>
+          <p className="auth-copy text-gray-400 text-sm">No audit events found.</p>
         ) : (
           <div className="space-y-2">
             {logs.map((log) => (
-              <div key={log.id} className="border border-gray-700 rounded-lg p-3 bg-gray-800/60">
-                <p className="text-white text-sm font-medium">{log.event || 'auth_event'}</p>
-                <p className="text-xs text-gray-400">{log.ipAddress || 'Unknown IP'} • {log.timestamp || ''}</p>
-                <p className="text-xs text-gray-500 mt-1 truncate">{log.userAgent || ''}</p>
+              <div key={log.id} className="auth-panel border border-gray-700 rounded-lg p-3 bg-gray-800/60">
+                <p className="auth-title text-white text-sm font-medium">{log.event || 'auth_event'}</p>
+                <p className="auth-copy text-xs text-gray-400">{log.ipAddress || 'Unknown IP'} • {log.timestamp || ''}</p>
+                <p className="auth-muted text-xs text-gray-500 mt-1 truncate">{log.userAgent || ''}</p>
               </div>
             ))}
           </div>

@@ -525,6 +525,196 @@ html:not(.dark) .glass-premium .text-gray-500 {
   color: #64748b !important;
 }
 
+/* ==========================================================================
+   AUTH PALETTE TOKENS
+   Shared palette for login, signup, reset, verify, and sessions pages.
+   ========================================================================== */
+.auth-shell {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(22, 163, 74, 0.10) 0%, transparent 30%),
+    radial-gradient(circle at 82% 14%, rgba(6, 182, 212, 0.08) 0%, transparent 24%),
+    linear-gradient(135deg, #f8fafc 0%, #eef2f7 48%, #e2e8f0 100%) !important;
+}
+
+html.dark .auth-shell {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(57, 255, 20, 0.12) 0%, transparent 28%),
+    radial-gradient(circle at 82% 14%, rgba(6, 182, 212, 0.08) 0%, transparent 24%),
+    linear-gradient(135deg, #0d1117 0%, #111827 52%, #161b22 100%) !important;
+}
+
+.auth-shell-overlay {
+  background:
+    radial-gradient(circle at 14% 20%, rgba(22, 163, 74, 0.12) 0%, transparent 28%),
+    radial-gradient(circle at 76% 22%, rgba(14, 165, 233, 0.08) 0%, transparent 24%),
+    radial-gradient(circle at 68% 78%, rgba(15, 23, 42, 0.18) 0%, transparent 26%) !important;
+}
+
+html.dark .auth-shell-overlay {
+  background:
+    radial-gradient(circle at 14% 20%, rgba(57, 255, 20, 0.12) 0%, transparent 28%),
+    radial-gradient(circle at 76% 22%, rgba(14, 165, 233, 0.10) 0%, transparent 24%),
+    radial-gradient(circle at 68% 78%, rgba(2, 6, 23, 0.26) 0%, transparent 26%) !important;
+}
+
+.auth-panel {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+  color: #0f172a !important;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+}
+
+html.dark .auth-panel {
+  background: rgba(22, 27, 34, 0.96) !important;
+  border-color: rgba(48, 54, 61, 0.88) !important;
+  color: #e6edf3 !important;
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.38) !important;
+}
+
+.auth-title {
+  color: #0f172a !important;
+}
+
+html.dark .auth-title {
+  color: #e6edf3 !important;
+}
+
+.auth-copy,
+.auth-muted {
+  color: #475569 !important;
+}
+
+html.dark .auth-copy,
+html.dark .auth-muted {
+  color: #8b949e !important;
+}
+
+.auth-label {
+  color: #334155 !important;
+}
+
+html.dark .auth-label {
+  color: #c9d1d9 !important;
+}
+
+.auth-input {
+  background: #f8fafc !important;
+  border-color: rgba(148, 163, 184, 0.34) !important;
+  color: #0f172a !important;
+}
+
+html.dark .auth-input {
+  background: #1c2128 !important;
+  border-color: rgba(71, 85, 105, 0.72) !important;
+  color: #e6edf3 !important;
+}
+
+.auth-input::placeholder {
+  color: #64748b !important;
+}
+
+html.dark .auth-input::placeholder {
+  color: #8b949e !important;
+}
+
+.auth-input:focus {
+  border-color: var(--app-accent) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px var(--app-accent-soft) !important;
+}
+
+html.dark .auth-input:focus {
+  background: #1c2128 !important;
+}
+
+.auth-button-primary {
+  background: linear-gradient(90deg, #16a34a 0%, #15803d 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 30px rgba(22, 163, 74, 0.20) !important;
+}
+
+html.dark .auth-button-primary {
+  background: linear-gradient(90deg, #39ff14 0%, #22c55e 100%) !important;
+  color: #0d1117 !important;
+  box-shadow: 0 14px 30px rgba(57, 255, 20, 0.18) !important;
+}
+
+.auth-button-secondary {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border-color: rgba(15, 23, 42, 0.12) !important;
+  color: #334155 !important;
+}
+
+html.dark .auth-button-secondary {
+  background: rgba(28, 33, 40, 0.96) !important;
+  border-color: rgba(71, 85, 105, 0.62) !important;
+  color: #e2e8f0 !important;
+}
+
+.auth-link {
+  color: var(--app-accent) !important;
+}
+
+.auth-social-button {
+  background: rgba(255, 255, 255, 0.88) !important;
+  border-color: rgba(15, 23, 42, 0.08) !important;
+}
+
+html.dark .auth-social-button {
+  background: rgba(28, 33, 40, 0.96) !important;
+  border-color: rgba(71, 85, 105, 0.7) !important;
+}
+
+.auth-social-label {
+  color: #334155 !important;
+}
+
+html.dark .auth-social-label {
+  color: #c9d1d9 !important;
+}
+
+.auth-feedback-error {
+  background: rgba(254, 242, 242, 0.94) !important;
+  border-color: rgba(239, 68, 68, 0.20) !important;
+  color: #b91c1c !important;
+}
+
+html.dark .auth-feedback-error {
+  background: rgba(69, 10, 10, 0.54) !important;
+  border-color: rgba(239, 68, 68, 0.34) !important;
+  color: #fecaca !important;
+}
+
+.auth-feedback-success {
+  background: rgba(236, 253, 245, 0.94) !important;
+  border-color: rgba(16, 185, 129, 0.18) !important;
+  color: #047857 !important;
+}
+
+html.dark .auth-feedback-success {
+  background: rgba(6, 78, 59, 0.54) !important;
+  border-color: rgba(16, 185, 129, 0.34) !important;
+  color: #a7f3d0 !important;
+}
+
+.auth-badge {
+  background: rgba(22, 163, 74, 0.12) !important;
+  border-color: rgba(22, 163, 74, 0.20) !important;
+  color: var(--app-accent) !important;
+}
+
+.auth-badge-soft {
+  background: rgba(148, 163, 184, 0.12) !important;
+  border-color: rgba(148, 163, 184, 0.20) !important;
+  color: #64748b !important;
+}
+
+html.dark .auth-badge-soft {
+  color: #c9d1d9 !important;
+}
+
 /* Enhanced glass card with hover state */
 /* Performance-first glass card — uses solid dark bg instead of expensive blur */
 .glass-card {
@@ -1054,17 +1244,17 @@ html:not(.dark) .gradient-text {
 }
 
 /* ============================================================================
-   TEMP COMPARISON MODE
-   Remove all backgrounds globally (header, body, cards, and elements)
-   so visual structure can be compared without any surface fills.
+   TEMP COMPARISON MODE (OPT-IN)
+   Apply class "comparison-mode" on <html> only when this visual debugging
+   mode is explicitly required.
    ============================================================================ */
-html,
-body,
-body::before,
-body::after,
-body *,
-body *::before,
-body *::after {
+html.comparison-mode,
+html.comparison-mode body,
+html.comparison-mode body::before,
+html.comparison-mode body::after,
+html.comparison-mode body *,
+html.comparison-mode body *::before,
+html.comparison-mode body *::after {
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
@@ -1072,8 +1262,8 @@ body *::after {
   -webkit-backdrop-filter: none !important;
 }
 
-html.dark body *[class],
-html:not(.dark) body *[class] {
+html.comparison-mode.dark body *[class],
+html.comparison-mode:not(.dark) body *[class] {
   background: transparent !important;
   background-color: transparent !important;
   background-image: none !important;
@@ -1081,15 +1271,15 @@ html:not(.dark) body *[class] {
   -webkit-backdrop-filter: none !important;
 }
 
-.header-pill,
-.dark .header-pill,
-.glass,
-.glass-premium,
-.glass-card {
+html.comparison-mode .header-pill,
+html.comparison-mode.dark .header-pill,
+html.comparison-mode .glass,
+html.comparison-mode .glass-premium,
+html.comparison-mode .glass-card {
   box-shadow: none !important;
 }
 
-canvas {
+html.comparison-mode canvas {
   background: transparent !important;
 }
 

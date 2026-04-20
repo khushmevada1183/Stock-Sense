@@ -1,4 +1,5 @@
 import {
+  ApiClientError,
   apiClientConfig,
   apiDelete,
   apiGet,
@@ -6,6 +7,13 @@ import {
   apiPost,
   apiPut,
 } from '@/lib/apiClient';
+import {
+  clearPendingPasswordResetSession,
+  clearPendingPasswordResetToken,
+  getPendingPasswordResetToken,
+  savePendingPasswordResetEmail,
+  savePendingPasswordResetToken,
+} from '@/lib/authFlow';
 import { clearAuthTokens, saveAuthTokens } from '@/lib/auth';
 import { logger } from '@/lib/logger';
 
@@ -315,11 +323,61 @@ export async function resendVerification(payload) {
 }
 
 export async function forgotPassword(payload) {
-  return apiPost('/auth/forgot-password', payload);
+  const response = await apiPost('/auth/forgot-password', payload);
+  const normalizedEmail = String(payload?.email || '').trim().toLowerCase();
+
+  clearPendingPasswordResetSession();
+
+  if (normalizedEmail) {
+    savePendingPasswordResetEmail(normalizedEmail);
+  }
+
+  return response;
+}
+
+export async function verifyResetCode(payload) {
+  const response = await apiPost('/auth/verify-reset-code', payload);
+  const normalizedEmail = String(payload?.email || '').trim().toLowerCase();
+  const data = unwrapData(response);
+
+  if (normalizedEmail) {
+    savePendingPasswordResetEmail(normalizedEmail);
+  }
+
+  if (data?.resetToken) {
+    savePendingPasswordResetToken({
+      resetToken: data.resetToken,
+      expiresAt: data.expiresAt || null,
+    });
+  }
+
+  return response;
 }
 
 export async function resetPassword(payload) {
-  return apiPost('/auth/reset-password', payload);
+  const providedResetToken = String(payload?.resetToken || '').trim();
+  const storedResetToken = getPendingPasswordResetToken();
+  const resetToken = providedResetToken || storedResetToken;
+
+  if (!resetToken) {
+    throw new Error('Reset token is missing. Verify your reset code first.');
+  }
+
+  try {
+    const response = await apiPost('/auth/reset-password', {
+      resetToken,
+      newPassword: payload?.newPassword,
+    });
+
+    clearPendingPasswordResetSession();
+    return response;
+  } catch (error) {
+    if (error instanceof ApiClientError && error.code === 'ERR_INVALID_RESET_TOKEN') {
+      clearPendingPasswordResetToken();
+    }
+
+    throw error;
+  }
 }
 
 export async function getProfile() {
