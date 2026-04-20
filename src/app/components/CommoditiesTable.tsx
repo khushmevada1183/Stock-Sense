@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import * as stockApi from '@/api/api';
 import { logger } from '@/lib/logger';
-import LoadingSpinner from './LoadingSpinner';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 
 interface Commodity {
   commoditySymbol: string;
@@ -85,7 +85,7 @@ const CommoditiesTable: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center items-center min-h-[300px]">
-          <LoadingSpinner />
+          <CursiveLoader />
         </CardContent>
       </Card>
     );

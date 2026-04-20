@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
 import * as stockApi from '@/api/api';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 
 type IpoDetail = {
   id: string;
@@ -430,8 +431,8 @@ export default function IpoDetailPage() {
         </Link>
 
         {loading ? (
-          <div className="rounded-xl border border-gray-700/50 bg-gray-900/90 p-8 text-gray-300">
-            Loading IPO details...
+          <div className="rounded-xl border border-gray-700/50 bg-gray-900/90 p-8 text-gray-300 flex items-center justify-center min-h-[120px]">
+            <CursiveLoader />
           </div>
         ) : null}
 

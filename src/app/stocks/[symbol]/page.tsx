@@ -26,7 +26,7 @@ import {
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { normalizeStockData, type NormalizedStock } from '@/lib/normalizeStock';
 // Removed separate financial API imports - now using single /stock endpoint
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 import TechnicalAnalysis from '@/components/stocks/TechnicalAnalysis';
 import MacroeconomicIndicators from '@/components/stocks/MacroeconomicIndicators';
 import SentimentAnalysis from '@/components/stocks/SentimentAnalysis';
@@ -570,7 +570,7 @@ export default function Page() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <LoadingSpinner />
+        <CursiveLoader className="min-h-[120px]" />
       </div>
     );
   }

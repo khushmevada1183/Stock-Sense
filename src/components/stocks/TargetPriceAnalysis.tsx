@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import * as stockApi from '@/api/api';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 import { Progress } from '@/components/ui/progress';
 
 interface TargetPriceProps {
@@ -91,7 +91,7 @@ const TargetPriceAnalysis: React.FC<TargetPriceProps> = ({ symbol, currentPrice 
           <CardDescription>Target price analysis and recommendations</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center items-center min-h-[200px]">
-          <LoadingSpinner />
+          <CursiveLoader />
         </CardContent>
       </Card>
     );

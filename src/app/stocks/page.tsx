@@ -12,6 +12,7 @@ import { logger } from '@/lib/logger';
 import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
 import { GlowCard } from '@/components/spotlight-card';
 import { useWebSocket } from '@/hooks/useWebSocket';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -1163,6 +1164,10 @@ export default function StocksIndexPage() {
             <div className="h-6 bg-gray-700 rounded w-32 mb-4"></div>
             <div className="h-48 bg-gray-700 rounded"></div>
           </div>
+        </div>
+
+        <div className="flex items-center justify-center py-6">
+          <CursiveLoader />
         </div>
       </div>
     );

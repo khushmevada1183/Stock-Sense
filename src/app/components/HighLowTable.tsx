@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import * as stockApi from '@/api/api';
-import LoadingSpinner from './LoadingSpinner';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 import Link from 'next/link';
 import { logger } from '@/lib/logger';
 
@@ -62,7 +62,7 @@ const HighLowTable: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center items-center min-h-[300px]">
-          <LoadingSpinner />
+          <CursiveLoader />
         </CardContent>
       </Card>
     );

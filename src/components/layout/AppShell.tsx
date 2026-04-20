@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import Header from './Header';
 import Footer from './Footer';
-import ClientScrollProgressIndicator from './ClientScrollProgressIndicator';
 
 interface AppShellProps {
   children: ReactNode;
@@ -35,7 +34,6 @@ export default function AppShell({ children }: AppShellProps) {
 
   return (
     <>
-      <ClientScrollProgressIndicator />
       <Header />
       <main className="flex-grow">{children}</main>
       <Footer />

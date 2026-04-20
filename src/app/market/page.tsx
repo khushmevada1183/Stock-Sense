@@ -10,6 +10,7 @@ import { logger } from '@/lib/logger';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import marketAnimations from '@/animations/pages/marketAnimations';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 
 // Market data interfaces
 interface MarketIndex {
@@ -185,10 +186,7 @@ const SectorPerformance = ({ data }: SectorPerformanceProps) => {
       <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 h-full border border-gray-700/50">
         <h3 className="text-lg font-semibold mb-4 text-white">Sector Performance</h3>
         <div className="h-72 flex items-center justify-center">
-          <div className="text-center text-gray-300">
-            <p>Loading sector data...</p>
-            <p className="text-sm mt-2">Fetching Banking, IT, and Pharma sector performance</p>
-          </div>
+          <CursiveLoader />
         </div>
       </div>
     );
@@ -498,9 +496,8 @@ const HeatMap = ({ data }: HeatMapProps) => {
     return (
       <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 border border-gray-700/50">
         <h3 className="text-lg font-semibold mb-4 text-white">Market Heat Map</h3>
-        <div className="text-center py-8 text-gray-300">
-          <p>Loading heat map data...</p>
-          <p className="text-sm mt-2">Fetching trending and most active stocks</p>
+        <div className="py-8 flex items-center justify-center">
+          <CursiveLoader />
         </div>
       </div>
     );
@@ -1113,8 +1110,8 @@ export default function MarketPage() {
               ))}
             </div>
             
-            <div className="text-center text-gray-300">
-              <p>Loading market data from Indian Stock API...</p>
+            <div className="text-center text-gray-300 flex items-center justify-center">
+              <CursiveLoader />
             </div>
           </div>
         </div>
@@ -1181,8 +1178,8 @@ export default function MarketPage() {
               ))}
             </div>
             
-            <div className="text-center text-gray-300">
-              <p>Loading market data from Indian Stock API...</p>
+            <div className="text-center text-gray-300 flex items-center justify-center">
+              <CursiveLoader />
             </div>
           </div>
         ) : (

@@ -11,6 +11,7 @@ import { createCardHoverEffect, createIPOItemHoverEffect } from '@/animations/sh
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { FEATURES, API_CONFIG } from '@/services/config.js';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 
 const IPO_NEWS = [
   { title: "Mouri Tech refiles DRHP with SEBI", date: "8 May, 2:56 PM" },
@@ -1388,6 +1389,9 @@ export default function IpoPage() {
                 <div key={i} className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg h-64 border border-gray-700/50"></div>
                 ))}
               </div>
+              <div className="flex items-center justify-center py-2">
+                <CursiveLoader />
+              </div>
             </div>
         </div>
       </div>
@@ -1493,11 +1497,8 @@ export default function IpoPage() {
                 >
                   {loading ? (
                     <div className="flex items-center justify-center w-full py-12 text-gray-500 dark:text-gray-400">
-                      <div className="text-center">
-                        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
-                        <p className="mt-4">Loading upcoming IPO data...</p>
-                          </div>
-                        </div>
+                      <CursiveLoader />
+                    </div>
                   ) : upcomingIpos.length === 0 ? (
                     <div className="flex items-center justify-center w-full py-12 text-gray-500 dark:text-gray-400">
                       <div className="text-center">
@@ -1612,10 +1613,7 @@ export default function IpoPage() {
                 >
                   {loading ? (
                     <div className="flex items-center justify-center w-full py-12 text-gray-500 dark:text-gray-400">
-                      <div className="text-center">
-                        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" role="status"></div>
-                        <p className="mt-4">Loading recently listed IPO data...</p>
-                      </div>
+                      <CursiveLoader />
                     </div>
                   ) : newListedIpos.length === 0 ? (
                     <div className="flex items-center justify-center w-full py-12 text-gray-500 dark:text-gray-400">

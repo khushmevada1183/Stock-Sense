@@ -4,7 +4,7 @@ import React from 'react';
 import { BarChart4 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import FinancialStatements, { type FinancialPeriod } from '@/components/stocks/FinancialStatements';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 
 interface FinancialRatios {
   peRatio?: string | number;
@@ -97,7 +97,7 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
           </CardContent>
         </Card>
       )}
-      {loadingRatios && <LoadingSpinner />}
+      {loadingRatios && <CursiveLoader className="min-h-[120px] w-full" />}
       {!loadingRatios && typeof errorRatios === 'string' && errorRatios.length > 0 && (
         <Card glass>
           <CardContent className="p-6">
@@ -112,7 +112,7 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
           financialData={transformFetchedFinancialStatements(financialStatements)}
         />
       )}
-      {loadingStatements && <LoadingSpinner />}
+      {loadingStatements && <CursiveLoader className="min-h-[120px] w-full" />}
       {!loadingStatements && typeof errorStatements === 'string' && errorStatements.length > 0 && (
         <Card glass>
           <CardContent className="p-6">
