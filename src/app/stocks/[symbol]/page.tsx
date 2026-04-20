@@ -569,7 +569,7 @@ export default function Page() {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <CursiveLoader className="min-h-[120px]" />
       </div>
     );
@@ -577,7 +577,7 @@ export default function Page() {
   
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-950 p-8">
+      <div className="min-h-screen p-8">
         <div className="glass-card rounded-xl p-6 border-red-500/20 max-w-2xl mx-auto">
           <div className="flex items-center text-red-400">
             <Info className="h-5 w-5 mr-3 flex-shrink-0" />
@@ -749,13 +749,7 @@ export default function Page() {
   ];
   
   return (
-    <div className="min-h-screen bg-gray-950 relative">
-      {/* Background effects */}
-      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0" />
-      <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute w-[600px] h-[600px] rounded-full bg-neon-400/[0.02] blur-[120px] -top-40 -right-40" />
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-cyan-500/[0.02] blur-[100px] bottom-20 -left-40" />
-      </div>
+    <div className="min-h-screen relative">
 
       <div className="stock-details-page min-h-screen text-white p-4 md:p-8 relative z-10">
         {/* Header Section */}

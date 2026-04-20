@@ -419,9 +419,10 @@ html:not(.dark) .table-row-premium-hover:hover {
   background-color: rgba(15, 23, 42, 0.05) !important;
   box-shadow: inset 3px 0 0 rgba(59, 130, 246, 0.32);
 }
-/* Grid overlay design-for-dark — hide in light */
-html:not(.dark) .bg-grid-white\/\[0\.02\] {
-  display: none;
+/* Grid overlay disabled globally (both themes) */
+.bg-grid-white\/\[0\.02\] {
+  display: none !important;
+  background-image: none !important;
 }
 
 /* ── GRADIENT CARD OVERRIDES (light mode) ───────────────────────────────────
@@ -503,18 +504,7 @@ html.dark .text-gray-200 {
   z-index: 1;
 }
 
-/* Grid background pattern */
-.bg-grid-white\/\[0\.02\] {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(255 255 255 / 0.02)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-  background-size: 32px 32px;
-  background-repeat: repeat;
-  /* Removed background-attachment:fixed — forces repaint on scroll */
-}
-
-/* Light mode grid pattern */
-:root:not(.dark) .bg-grid-white\/\[0\.02\] {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='rgb(0 0 0 / 0.02)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
-}
+/* Grid background pattern intentionally removed site-wide. */
 
 /* ============================================================================
    GLASS MORPHISM SYSTEM
