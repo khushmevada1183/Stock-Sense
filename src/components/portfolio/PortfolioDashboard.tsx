@@ -306,8 +306,7 @@ const PortfolioDashboard = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
-        <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-6 relative z-10">
           <h1 className="sr-only">Portfolio Dashboard</h1>
           <div className="min-h-[600px] flex items-center justify-center">
@@ -323,8 +322,7 @@ const PortfolioDashboard = () => {
 
   if (!summary) {
     return (
-      <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
-        <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
+      <div className="min-h-screen">
         <div className="container mx-auto px-4 py-6 relative z-10">
           <h1 className="sr-only">Portfolio Dashboard</h1>
           <div className="bg-red-900/20 backdrop-blur-lg border border-red-800/50 rounded-xl p-6 text-center glass">
@@ -360,10 +358,7 @@ const PortfolioDashboard = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-850 noise-bg min-h-screen">
-      {/* Grid overlay for entire page */}
-      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
-      
+    <div className="min-h-screen">
       <div ref={dashboardRef} className="container mx-auto px-4 py-6 relative z-10 space-y-8">
         {/* Header Section */}
         <div className="flex flex-col space-y-2 mb-8">
