@@ -9,7 +9,6 @@ import {
   BarChart3,
   Download,
   Eye,
-  IndianRupee,
   Plus,
   PieChart,
   RefreshCw,
@@ -480,12 +479,11 @@ const PortfolioDashboard = () => {
         <section className={`${panelShellClass} overflow-hidden p-5 sm:p-6`}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 dark:bg-emerald-400/10 dark:text-emerald-400">
-                <IndianRupee className="h-5 w-5" />
+              <div className="space-y-1">
+                <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500">Portfolio overview</p>
               </div>
               <div className="sr-only">
                 <p>Portfolio overview</p>
-                <p>Selected portfolio {selectedPortfolioLabel}.</p>
                 <p>XIRR {xirrDisplay}.</p>
               </div>
             </div>
@@ -518,68 +516,71 @@ const PortfolioDashboard = () => {
 
           <div className="mt-5 grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className={`${insetPanelClass} sm:col-span-2 p-5 sm:p-6`}>
-                <div className="flex items-end justify-between gap-4">
+              <div className={`${insetPanelClass} sm:col-span-2 p-4 sm:p-5`}>
+                <div className="flex items-end">
                   <div className="space-y-2">
-                    <p className="sr-only">Portfolio value</p>
-                    <p className="text-4xl font-semibold tracking-tight text-slate-950 dark:text-white sm:text-5xl">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">Portfolio value</p>
+                    <p className="text-3xl font-semibold tracking-tight text-slate-950 dark:text-white sm:text-4xl">
                       {formatLargeNumber(totalValue)}
                     </p>
                   </div>
-                  <div className="rounded-2xl bg-emerald-500/10 p-3 text-emerald-500 dark:text-emerald-400">
-                    <IndianRupee className="h-5 w-5" />
+                </div>
+              </div>
+
+              <div className={`${insetPanelClass} p-4 sm:p-5`}>
+                <div className="flex items-end justify-between gap-3">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">Total P&amp;L</p>
+                    <p className={`text-xl font-semibold tracking-tight ${totalProfitLoss >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                      {formatLargeNumber(totalProfitLoss)}
+                    </p>
+                  </div>
+                  <div className={`rounded-2xl p-2.5 ${totalProfitLoss >= 0 ? 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-500 dark:text-rose-400'}`}>
+                    {totalProfitLoss >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
                   </div>
                 </div>
               </div>
 
-              <div className={`${insetPanelClass} p-5 sm:p-6`}>
-                <div className="flex items-end justify-between gap-4">
-                  <p className="sr-only">Total P&amp;L</p>
-                  <p className={`text-2xl font-semibold tracking-tight ${totalProfitLoss >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                    {formatLargeNumber(totalProfitLoss)}
-                  </p>
-                  <div className={`rounded-2xl p-3 ${totalProfitLoss >= 0 ? 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-500 dark:text-rose-400'}`}>
-                    {totalProfitLoss >= 0 ? <TrendingUp className="h-5 w-5" /> : <TrendingDown className="h-5 w-5" />}
+              <div className={`${insetPanelClass} p-4 sm:p-5`}>
+                <div className="flex items-end justify-between gap-3">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">Day change</p>
+                    <p className={`text-xl font-semibold tracking-tight ${dayGain >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                      {formatLargeNumber(dayGain)}
+                    </p>
+                  </div>
+                  <div className={`rounded-2xl p-2.5 ${dayGain >= 0 ? 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-500 dark:text-rose-400'}`}>
+                    <Activity className="h-4 w-4" />
                   </div>
                 </div>
               </div>
 
-              <div className={`${insetPanelClass} p-5 sm:p-6`}>
-                <div className="flex items-end justify-between gap-4">
-                  <p className="sr-only">Day change</p>
-                  <p className={`text-2xl font-semibold tracking-tight ${dayGain >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                    {formatLargeNumber(dayGain)}
-                  </p>
-                  <div className={`rounded-2xl p-3 ${dayGain >= 0 ? 'bg-emerald-500/10 text-emerald-500 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-500 dark:text-rose-400'}`}>
-                    <Activity className="h-5 w-5" />
-                  </div>
-                </div>
-              </div>
-
-              <div className={`${insetPanelClass} p-5 sm:p-6`}>
-                <div className="flex items-end justify-between gap-4">
-                  <p className="sr-only">Holdings</p>
-                  <p className="text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">
-                    {holdingsCount}
-                  </p>
-                  <div className="rounded-2xl bg-sky-500/10 p-3 text-sky-500 dark:text-sky-400">
-                    <BarChart3 className="h-5 w-5" />
+              <div className={`${insetPanelClass} p-4 sm:p-5`}>
+                <div className="flex items-end justify-between gap-3">
+                  <div className="space-y-2">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">Holdings</p>
+                    <p className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">
+                      {holdingsCount}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className={`${insetPanelClass} overflow-hidden p-5 sm:p-6`}>
+            <div className={`${insetPanelClass} overflow-hidden p-4 sm:p-5`}>
               <div className="flex items-center justify-between gap-4">
-                <span className="sr-only">Performance chart</span>
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">Performance</p>
+                  <p className="mt-1.5 text-xs text-slate-600 dark:text-slate-400">Chart only</p>
+                </div>
                 <span
                   className={`h-2.5 w-2.5 rounded-full ${performanceChart.hasData ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-white/20'}`}
                   aria-hidden="true"
                 />
               </div>
 
-              <div className="mt-4 rounded-[26px] border border-slate-200/70 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
-                <svg viewBox="0 0 320 160" className="h-44 w-full">
+              <div className="mt-3 rounded-[22px] border border-slate-200/70 bg-white/70 p-3.5 dark:border-white/10 dark:bg-white/5">
+                <svg viewBox="0 0 320 160" className="h-36 w-full">
                   <defs>
                     <linearGradient id="portfolio-line" x1="0" x2="1" y1="0" y2="0">
                       <stop offset="0%" stopColor="#34d399" />
