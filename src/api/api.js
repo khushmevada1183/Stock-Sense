@@ -1153,7 +1153,10 @@ export async function getPortfolioXirr(userId = DEFAULT_USER_ID, portfolioId = n
 }
 
 export async function getPortfolioExport(portfolioId, params = {}) {
-  const response = await apiGet(`/portfolios/${encodeURIComponent(String(portfolioId || '').trim())}/export`, params, {
+  const response = await apiGet('/portfolios/export', {
+    ...params,
+    portfolioId: portfolioId || undefined,
+  }, {
     requiresAuth: true,
   });
   const data = unwrapData(response);
