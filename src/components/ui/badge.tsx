@@ -4,17 +4,17 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors",
+  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
   {
     variants: {
       variant: {
-        default: "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white",
-        secondary: "bg-slate-200 text-slate-900 dark:bg-slate-700 dark:text-white",
-        destructive: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-        outline: "border border-slate-300 text-slate-900 dark:border-slate-600 dark:text-white",
-        success: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-        warning: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-        info: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+        default: "border-[color:var(--app-border)] bg-[color:var(--app-surface-2)] text-[color:var(--app-text-1)]",
+        secondary: "border-[color:var(--app-border)] bg-[color:var(--app-surface)] text-[color:var(--app-text-2)]",
+        destructive: "border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-300",
+        outline: "border-[color:var(--app-border)] bg-transparent text-[color:var(--app-text-1)]",
+        success: "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+        warning: "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+        info: "border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300",
       },
     },
     defaultVariants: {

@@ -1,5 +1,5 @@
 import './globals.css';
-import { Inter, Roboto_Mono, Geist } from 'next/font/google';
+import { Roboto_Mono, Geist } from 'next/font/google';
 import { ThemeProvider } from '../components/ui/ThemeProvider';
 import { UIProvider } from '../context/UIContext';
 import { StockProvider } from '../context/StockContext';
@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
-const inter = Inter({ subsets: ['latin'], display: 'swap' });
 const robotoMono = Roboto_Mono({ subsets: ['latin'], variable: '--font-roboto-mono', display: 'swap' });
 
 export const metadata = {
@@ -30,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={cn("font-sans", geist.variable)}>
-      <body className={`${inter.className} ${robotoMono.variable} min-h-screen flex flex-col antialiased relative`} suppressHydrationWarning>
+      <body className={`${geist.className} ${robotoMono.variable} min-h-screen flex flex-col antialiased relative`} suppressHydrationWarning>
 
         
         <ThemeProvider 

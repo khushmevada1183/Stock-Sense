@@ -1,74 +1,88 @@
 'use client';
 
 import Link from 'next/link';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Clock3, FileText, RefreshCw, Sparkles, TrendingUp } from 'lucide-react';
 import * as stockApi from '@/api/api';
-import CursiveLoader from '@/components/ui/CursiveLoader';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  EMPTY_IPO_SECTIONS,
+  buildIpoOverview,
+  daysUntil,
+  formatCurrency,
+  formatDateLabel,
+  formatLotSize,
+  formatPercent,
+  formatPriceBand,
+  formatRatio,
+  formatTimestampLabel,
+  getIpoStatusLabel,
+  getIpoStatusTone,
+  normalizeIpoCalendarSections,
+  normalizeIpoEntry,
+  type IpoCalendarEntry,
+  type IpoCalendarSections,
+} from '@/lib/ipo';
+import { IpoEmptyState, IpoMetricCard, PremiumSection } from '@/components/ipo/IpoPanels';
 
-type IpoDetail = {
-  id: string;
-  symbol: string;
-  companyName: string;
-  status: string;
-  priceMin?: number;
-  priceMax?: number;
+type SubscriptionRow = {
+  label: string;
+  date?: string;
+  retail?: number;
+  qib?: number;
+  nii?: number;
+  total?: number;
+  status?: string;
+  note?: string;
+};
+
+type GmpRow = {
+  label: string;
+  date?: string;
+  gmp?: number;
   issuePrice?: number;
-  listingPrice?: number;
-  listingGainsPercent?: number;
-  biddingStartDate?: string;
-  biddingEndDate?: string;
-  listingDate?: string;
-  lotSize?: number;
-  issueSizeText?: string;
-  isSme?: boolean;
+  premiumPercent?: number;
+  status?: string;
+  note?: string;
 };
 
-type SubscriptionSnapshot = {
-  snapshotDate?: string;
-  totalSubscribed?: number;
-  retailSubscribed?: number;
-  niiSubscribed?: number;
-  qibSubscribed?: number;
-  employeeSubscribed?: number;
-  updatedAt?: string;
-};
-
-type GmpSnapshot = {
-  snapshotDate?: string;
-  gmpPrice?: number;
-  gmpPercent?: number;
-  expectedListingPrice?: number;
-  sentiment?: string;
-  updatedAt?: string;
-};
-
-const UUID_REGEX = /^[0-9a-fA-F-]{36}$/;
-
-const asArray = <T,>(value: unknown): T[] => (Array.isArray(value) ? value : []);
-
-const toNumber = (value: unknown): number | undefined => {
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return value;
+const extractApiData = (response: unknown) => {
+  if (response && typeof response === 'object' && 'data' in response) {
+    return (response as { data?: unknown }).data;
   }
 
-  if (typeof value === 'string') {
-    const cleaned = value.replace(/[₹,]/g, '').trim();
-    if (!cleaned) {
-      return undefined;
-    }
-
-    const parsed = Number(cleaned);
-    if (Number.isFinite(parsed)) {
-      return parsed;
-    }
-  }
-
-  return undefined;
+  return response;
 };
 
-const toText = (...values: unknown[]): string | undefined => {
+const withTimeout = async <T,>(promise: Promise<T>, timeoutMs = 12000): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timer = setTimeout(() => {
+          reject(new Error('IPO detail request timed out.'));
+        }, timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timer) {
+      clearTimeout(timer);
+    }
+  }
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+};
+
+const toText = (...values: unknown[]) => {
   for (const value of values) {
     if (typeof value === 'string') {
       const trimmed = value.trim();
@@ -81,579 +95,725 @@ const toText = (...values: unknown[]): string | undefined => {
   return undefined;
 };
 
-const toTitleCase = (value: string): string => {
-  return value
-    .split(/[_\s-]+/)
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
-    .join(' ');
-};
+const toNumber = (...values: unknown[]) => {
+  for (const value of values) {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
 
-const toDateLabel = (value?: string): string => {
-  if (!value) {
-    return 'N/A';
+    if (typeof value === 'string') {
+      const cleaned = value.replace(/[₹,%x,]/g, '').trim();
+      if (!cleaned) {
+        continue;
+      }
+
+      const parsed = Number(cleaned);
+      if (Number.isFinite(parsed)) {
+        return parsed;
+      }
+    }
   }
 
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) {
-    return value;
+  return undefined;
+};
+
+const collectRecords = (payload: unknown): unknown[] => {
+  const data = extractApiData(payload);
+
+  if (Array.isArray(data)) {
+    return data;
   }
 
-  return parsed.toLocaleDateString('en-IN', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  });
-};
-
-const toCurrency = (value?: number): string => {
-  if (value === undefined) {
-    return 'N/A';
-  }
-
-  return new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 2,
-  }).format(value);
-};
-
-const toPercent = (value?: number): string => {
-  if (value === undefined) {
-    return 'N/A';
-  }
-
-  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
-};
-
-const statusClassMap: Record<string, string> = {
-  upcoming: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
-  active: 'bg-green-500/15 text-green-300 border-green-500/30',
-  listed: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
-  closed: 'bg-gray-500/15 text-gray-300 border-gray-500/30',
-};
-
-const sentimentClassMap: Record<string, string> = {
-  bullish: 'bg-green-500/15 text-green-300 border-green-500/30',
-  positive: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
-  neutral: 'bg-gray-500/15 text-gray-300 border-gray-500/30',
-  bearish: 'bg-red-500/15 text-red-300 border-red-500/30',
-};
-
-const mergeCalendarEntries = (calendarData: unknown): Record<string, unknown>[] => {
-  if (!calendarData || typeof calendarData !== 'object') {
+  if (!isRecord(data)) {
     return [];
   }
 
-  const data = calendarData as {
-    entries?: unknown[];
-    upcoming?: unknown[];
-    active?: unknown[];
-    listed?: unknown[];
-    closed?: unknown[];
-  };
+  const record = data as Record<string, unknown>;
+  const candidates: unknown[] = [];
+  const objectKeys = ['data', 'ipo', 'item', 'result', 'record', 'details', 'info'];
+  const arrayKeys = ['items', 'ipos', 'history', 'records', 'subscriptions', 'gmp', 'results'];
 
-  if (Array.isArray(data.entries)) {
-    return data.entries as Record<string, unknown>[];
+  for (const key of objectKeys) {
+    const value = record[key];
+    if (value !== undefined && value !== null) {
+      candidates.push(value);
+    }
   }
 
-  return [
-    ...asArray<Record<string, unknown>>(data.upcoming),
-    ...asArray<Record<string, unknown>>(data.active),
-    ...asArray<Record<string, unknown>>(data.listed),
-    ...asArray<Record<string, unknown>>(data.closed),
-  ];
+  for (const key of arrayKeys) {
+    const value = record[key];
+    if (Array.isArray(value)) {
+      candidates.push(...value);
+    }
+  }
+
+  return candidates.length > 0 ? candidates : [data];
 };
 
-const normalizeIpo = (raw: unknown): IpoDetail | null => {
-  if (!raw || typeof raw !== 'object') {
-    return null;
+const mergeEntries = (primary: IpoCalendarEntry | null, fallback: IpoCalendarEntry | null) => {
+  if (primary && fallback) {
+    return { ...fallback, ...primary };
   }
 
-  const row = raw as Record<string, unknown>;
-  const id = toText(row.id, row.externalKey);
-  const symbol = toText(row.symbol)?.toUpperCase();
-  const companyName = toText(row.companyName, row.company_name, row.name);
-
-  if (!symbol || !companyName) {
-    return null;
-  }
-
-  return {
-    id: id || symbol,
-    symbol,
-    companyName,
-    status: toText(row.status)?.toLowerCase() || 'upcoming',
-    priceMin: toNumber(row.priceMin ?? row.min_price),
-    priceMax: toNumber(row.priceMax ?? row.max_price),
-    issuePrice: toNumber(row.issuePrice ?? row.issue_price),
-    listingPrice: toNumber(row.listingPrice ?? row.listing_price),
-    listingGainsPercent: toNumber(row.listingGainsPercent ?? row.listing_gains),
-    biddingStartDate: toText(row.biddingStartDate, row.bidding_start_date),
-    biddingEndDate: toText(row.biddingEndDate, row.bidding_end_date),
-    listingDate: toText(row.listingDate, row.listing_date),
-    lotSize: toNumber(row.lotSize ?? row.lot_size),
-    issueSizeText: toText(row.issueSizeText, row.issue_size),
-    isSme: Boolean(row.isSme ?? row.is_sme),
-  };
+  return primary || fallback || null;
 };
 
-const normalizeSubscription = (raw: unknown): SubscriptionSnapshot | null => {
-  if (!raw || typeof raw !== 'object') {
-    return null;
-  }
+const findCalendarEntry = (sections: IpoCalendarSections, ipoId: string) => {
+  const normalizedId = ipoId.trim().toLowerCase();
+  const allEntries = [...sections.upcoming, ...sections.active, ...sections.listed, ...sections.closed];
 
-  const row = raw as Record<string, unknown>;
-
-  return {
-    snapshotDate: toText(row.snapshotDate, row.snapshot_date),
-    totalSubscribed: toNumber(row.totalSubscribed ?? row.total_subscribed),
-    retailSubscribed: toNumber(row.retailSubscribed ?? row.retail_subscribed),
-    niiSubscribed: toNumber(row.niiSubscribed ?? row.nii_subscribed),
-    qibSubscribed: toNumber(row.qibSubscribed ?? row.qib_subscribed),
-    employeeSubscribed: toNumber(row.employeeSubscribed ?? row.employee_subscribed),
-    updatedAt: toText(row.updatedAt, row.updated_at),
-  };
+  return allEntries.find((entry) => {
+    const entryId = String(entry.id || '').trim().toLowerCase();
+    const entrySymbol = String(entry.symbol || '').trim().toLowerCase();
+    return entryId === normalizedId || entrySymbol === normalizedId;
+  }) || null;
 };
 
-const normalizeGmp = (raw: unknown): GmpSnapshot | null => {
-  if (!raw || typeof raw !== 'object') {
-    return null;
-  }
+const normalizeIpoDetail = (payload: unknown, ipoId: string) => {
+  const normalizedId = ipoId.trim().toLowerCase();
+  const candidates = collectRecords(payload)
+    .map((item) => normalizeIpoEntry(item))
+    .filter((item): item is IpoCalendarEntry => Boolean(item));
 
-  const row = raw as Record<string, unknown>;
-
-  return {
-    snapshotDate: toText(row.snapshotDate, row.snapshot_date),
-    gmpPrice: toNumber(row.gmpPrice ?? row.gmp_price),
-    gmpPercent: toNumber(row.gmpPercent ?? row.gmp_percent),
-    expectedListingPrice: toNumber(row.expectedListingPrice ?? row.expected_listing_price),
-    sentiment: toText(row.sentiment)?.toLowerCase(),
-    updatedAt: toText(row.updatedAt, row.updated_at),
-  };
+  return candidates.find((entry) => {
+    const entryId = String(entry.id || '').trim().toLowerCase();
+    const entrySymbol = String(entry.symbol || '').trim().toLowerCase();
+    return entryId === normalizedId || entrySymbol === normalizedId;
+  }) || candidates[0] || null;
 };
 
-const formatSubscriptionRatio = (value?: number): string => {
-  if (value === undefined) {
-    return 'N/A';
+const normalizeSubscriptionRows = (payload: unknown): SubscriptionRow[] => {
+  return collectRecords(payload).flatMap((item, index) => {
+    if (!isRecord(item)) {
+      return [];
+    }
+
+    const row = item as Record<string, unknown>;
+    const normalized: SubscriptionRow = {
+      label: toText(row.companyName, row.company_name, row.name, row.symbol, row.ipoName, row.ipo_name) || `Snapshot ${index + 1}`,
+      date: toText(row.date, row.createdAt, row.created_at, row.timestamp, row.updatedAt, row.updated_at),
+      retail: toNumber(row.retail, row.retail_subscription, row.retail_sub, row.retailPercent, row.retail_percent),
+      qib: toNumber(row.qib, row.qib_subscription, row.qib_sub, row.qibPercent, row.qib_percent),
+      nii: toNumber(row.nii, row.nii_subscription, row.nii_sub, row.niiPercent, row.nii_percent),
+      total: toNumber(row.total, row.subscription, row.total_subscription, row.overall, row.aggregate),
+      status: toText(row.status, row.stage),
+      note: toText(row.note, row.message, row.comment),
+    };
+
+    return [normalized];
+  });
+};
+
+const normalizeGmpRows = (payload: unknown): GmpRow[] => {
+  return collectRecords(payload).flatMap((item, index) => {
+    if (!isRecord(item)) {
+      return [];
+    }
+
+    const row = item as Record<string, unknown>;
+    const gmp = toNumber(row.gmp, row.gray_market_premium, row.premium, row.amount);
+    const issuePrice = toNumber(row.issuePrice, row.issue_price, row.price, row.issue);
+    const premiumPercent =
+      toNumber(row.premiumPercent, row.premium_percent, row.percent, row.changePercent, row.change_percent) ??
+      (gmp !== undefined && issuePrice ? (gmp / issuePrice) * 100 : undefined);
+    const normalized: GmpRow = {
+      label: toText(row.companyName, row.company_name, row.name, row.symbol, row.ipoName, row.ipo_name) || `GMP ${index + 1}`,
+      date: toText(row.date, row.createdAt, row.created_at, row.timestamp, row.updatedAt, row.updated_at),
+      gmp,
+      issuePrice,
+      premiumPercent,
+      status: toText(row.status, row.stage),
+      note: toText(row.note, row.message, row.comment),
+    };
+
+    return [normalized];
+  });
+};
+
+const formatWindowLabel = (ipo: IpoCalendarEntry | null) => {
+  if (!ipo) {
+    return 'Awaiting IPO data';
   }
 
-  return `${value.toFixed(2)}x`;
+  if (ipo.status === 'upcoming') {
+    return ipo.biddingStartDate ? `Opens ${formatDateLabel(ipo.biddingStartDate)}` : 'Opening soon';
+  }
+
+  if (ipo.status === 'active') {
+    return ipo.biddingEndDate ? `Closes ${formatDateLabel(ipo.biddingEndDate)}` : 'Open now';
+  }
+
+  if (ipo.status === 'listed') {
+    return ipo.listingDate ? `Listed ${formatDateLabel(ipo.listingDate)}` : 'Recently listed';
+  }
+
+  return ipo.listingDate ? `Archived ${formatDateLabel(ipo.listingDate)}` : 'Archived';
 };
 
 export default function IpoDetailPage() {
-  const params = useParams<{ ipoId?: string }>();
-  const routeParam = useMemo(() => decodeURIComponent(String(params?.ipoId || '').trim()), [params?.ipoId]);
-
-  const [ipo, setIpo] = useState<IpoDetail | null>(null);
-  const [resolvedIpoId, setResolvedIpoId] = useState<string | null>(null);
-  const [subscriptionLatest, setSubscriptionLatest] = useState<SubscriptionSnapshot | null>(null);
-  const [subscriptionHistory, setSubscriptionHistory] = useState<SubscriptionSnapshot[]>([]);
-  const [gmpLatest, setGmpLatest] = useState<GmpSnapshot | null>(null);
-  const [gmpHistory, setGmpHistory] = useState<GmpSnapshot[]>([]);
+  const routeParams = useParams<{ ipoId: string }>();
+  const ipoId = String(routeParams?.ipoId || '').trim();
+  const [detailSource, setDetailSource] = useState<unknown>(null);
+  const [calendarSections, setCalendarSections] = useState<IpoCalendarSections>(EMPTY_IPO_SECTIONS);
+  const [entry, setEntry] = useState<IpoCalendarEntry | null>(null);
+  const [subscriptionLatest, setSubscriptionLatest] = useState<SubscriptionRow[]>([]);
+  const [subscriptionHistory, setSubscriptionHistory] = useState<SubscriptionRow[]>([]);
+  const [gmpLatest, setGmpLatest] = useState<GmpRow[]>([]);
+  const [gmpHistory, setGmpHistory] = useState<GmpRow[]>([]);
+  const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
+  const [gmpError, setGmpError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
 
-  const loadIpoDetails = async () => {
-    if (!routeParam) {
-      setError('Missing IPO identifier in route.');
-      setLoading(false);
-      return;
-    }
-
+  const loadIpoDetail = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setSubscriptionError(null);
+    setGmpError(null);
 
     try {
-      const looksLikeUuid = UUID_REGEX.test(routeParam);
-      let ipoDetail: IpoDetail | null = null;
-      let ipoId: string | null = looksLikeUuid ? routeParam : null;
-      let symbolHint = routeParam.toUpperCase();
-
-      if (ipoId) {
-        try {
-          const ipoResponse = await stockApi.getIpoById(ipoId);
-          ipoDetail = normalizeIpo((ipoResponse as { data?: { ipo?: unknown } })?.data?.ipo);
-        } catch {
-          ipoDetail = null;
-        }
-      }
-
-      if (!ipoDetail) {
-        const calendarResponse = await stockApi.getIPOCalendar({ grouped: false, limit: 500 });
-        const calendarData = (calendarResponse as { data?: unknown })?.data;
-        const entries = mergeCalendarEntries(calendarData);
-
-        const match = entries.find((entry) => {
-          const entryId = toText(entry.id);
-          const entrySymbol = toText(entry.symbol)?.toUpperCase();
-          return entryId === routeParam || entrySymbol === symbolHint;
-        });
-
-        ipoDetail = normalizeIpo(match || null);
-
-        if (ipoDetail?.id && UUID_REGEX.test(ipoDetail.id)) {
-          ipoId = ipoDetail.id;
-        }
-
-        if (ipoDetail?.symbol) {
-          symbolHint = ipoDetail.symbol;
-        }
-      }
-
-      if (!ipoDetail) {
-        throw new Error('Unable to find IPO details for this identifier.');
-      }
-
-      if (ipoId) {
-        try {
-          const exactDetailResponse = await stockApi.getIpoById(ipoId);
-          const exactDetail = normalizeIpo((exactDetailResponse as { data?: { ipo?: unknown } })?.data?.ipo);
-          if (exactDetail) {
-            ipoDetail = exactDetail;
-          }
-        } catch {
-          // Keep the resolved detail from calendar.
-        }
-      }
-
-      setIpo(ipoDetail);
-      setResolvedIpoId(ipoId);
-
-      let nextSubscriptionLatest: SubscriptionSnapshot | null = null;
-      let nextSubscriptionHistory: SubscriptionSnapshot[] = [];
-      let nextGmpLatest: GmpSnapshot | null = null;
-      let nextGmpHistory: GmpSnapshot[] = [];
-
-      if (ipoId) {
-        const [subscriptionResult, gmpResult] = await Promise.allSettled([
-          stockApi.getIpoSubscriptionHistory(ipoId, { limit: 12 }),
-          stockApi.getIpoGmpHistory(ipoId, { limit: 12 }),
+      const [detailResult, calendarResult, subscriptionLatestResult, subscriptionHistoryResult, gmpLatestResult, gmpHistoryResult] =
+        await Promise.allSettled([
+          withTimeout(stockApi.getIpoById(ipoId)),
+          withTimeout(stockApi.getIPOCalendar()),
+          withTimeout(stockApi.getIpoSubscriptionsLatest()),
+          withTimeout(stockApi.getIpoSubscriptionHistory(ipoId)),
+          withTimeout(stockApi.getIpoGmpLatest()),
+          withTimeout(stockApi.getIpoGmpHistory(ipoId)),
         ]);
 
-        if (subscriptionResult.status === 'fulfilled') {
-          const payload = (subscriptionResult.value as { data?: { latest?: unknown; history?: unknown[] } })?.data;
-          nextSubscriptionLatest = normalizeSubscription(payload?.latest || null);
-          nextSubscriptionHistory = asArray(payload?.history)
-            .map((item) => normalizeSubscription(item))
-            .filter((item): item is SubscriptionSnapshot => Boolean(item));
-        }
+      const detailPayload = detailResult.status === 'fulfilled' ? extractApiData(detailResult.value) : null;
+      const calendarPayload = calendarResult.status === 'fulfilled' ? extractApiData(calendarResult.value) : null;
+      const normalizedCalendarSections = normalizeIpoCalendarSections(calendarPayload);
+      const calendarMatch = findCalendarEntry(normalizedCalendarSections, ipoId);
+      const detailMatch = normalizeIpoDetail(detailPayload, ipoId);
+      const mergedEntry = mergeEntries(detailMatch, calendarMatch);
 
-        if (gmpResult.status === 'fulfilled') {
-          const payload = (gmpResult.value as { data?: { latest?: unknown; history?: unknown[] } })?.data;
-          nextGmpLatest = normalizeGmp(payload?.latest || null);
-          nextGmpHistory = asArray(payload?.history)
-            .map((item) => normalizeGmp(item))
-            .filter((item): item is GmpSnapshot => Boolean(item));
-        }
+      setDetailSource(detailPayload);
+      setCalendarSections(normalizedCalendarSections);
+      setEntry(mergedEntry);
+      setSubscriptionLatest(subscriptionLatestResult.status === 'fulfilled' ? normalizeSubscriptionRows(subscriptionLatestResult.value) : []);
+      setSubscriptionHistory(subscriptionHistoryResult.status === 'fulfilled' ? normalizeSubscriptionRows(subscriptionHistoryResult.value) : []);
+      setGmpLatest(gmpLatestResult.status === 'fulfilled' ? normalizeGmpRows(gmpLatestResult.value) : []);
+      setGmpHistory(gmpHistoryResult.status === 'fulfilled' ? normalizeGmpRows(gmpHistoryResult.value) : []);
+      setSubscriptionError(
+        subscriptionLatestResult.status === 'rejected' || subscriptionHistoryResult.status === 'rejected'
+          ? 'Subscription snapshots are partially unavailable from the live API.'
+          : null
+      );
+      setGmpError(
+        gmpLatestResult.status === 'rejected' || gmpHistoryResult.status === 'rejected'
+          ? 'GMP snapshots are partially unavailable from the live API.'
+          : null
+      );
+
+      if (!mergedEntry) {
+        setError('Unable to locate IPO details for this route.');
       }
 
-      // If per-IPO history was unavailable, fallback to latest snapshot lists and filter by symbol/id.
-      if (!nextSubscriptionLatest || nextSubscriptionHistory.length === 0) {
-        const latestSubscriptionResponse = await stockApi.getIpoSubscriptionsLatest({ limit: 200 });
-        const snapshots = asArray<Record<string, unknown>>(
-          (latestSubscriptionResponse as { data?: { snapshots?: unknown[] } })?.data?.snapshots
-        ).filter((item) => {
-          const itemIpoId = toText(item.ipoId);
-          const itemSymbol = toText(item.symbol)?.toUpperCase();
-          return itemIpoId === ipoId || itemSymbol === symbolHint;
-        });
-
-        const normalized = snapshots
-          .map((item) => normalizeSubscription(item))
-          .filter((item): item is SubscriptionSnapshot => Boolean(item));
-
-        if (!nextSubscriptionLatest) {
-          nextSubscriptionLatest = normalized[0] || null;
-        }
-
-        if (nextSubscriptionHistory.length === 0) {
-          nextSubscriptionHistory = normalized.slice(0, 10);
-        }
-      }
-
-      if (!nextGmpLatest || nextGmpHistory.length === 0) {
-        const latestGmpResponse = await stockApi.getIpoGmpLatest({ limit: 200 });
-        const snapshots = asArray<Record<string, unknown>>(
-          (latestGmpResponse as { data?: { snapshots?: unknown[] } })?.data?.snapshots
-        ).filter((item) => {
-          const itemIpoId = toText(item.ipoId);
-          const itemSymbol = toText(item.symbol)?.toUpperCase();
-          return itemIpoId === ipoId || itemSymbol === symbolHint;
-        });
-
-        const normalized = snapshots
-          .map((item) => normalizeGmp(item))
-          .filter((item): item is GmpSnapshot => Boolean(item));
-
-        if (!nextGmpLatest) {
-          nextGmpLatest = normalized[0] || null;
-        }
-
-        if (nextGmpHistory.length === 0) {
-          nextGmpHistory = normalized.slice(0, 10);
-        }
-      }
-
-      setSubscriptionLatest(nextSubscriptionLatest);
-      setSubscriptionHistory(nextSubscriptionHistory);
-      setGmpLatest(nextGmpLatest);
-      setGmpHistory(nextGmpHistory);
+      setLastUpdated(new Date().toISOString());
     } catch (loadError) {
-      setError(loadError instanceof Error ? loadError.message : 'Unable to load IPO details.');
-      setIpo(null);
-      setResolvedIpoId(null);
-      setSubscriptionLatest(null);
-      setSubscriptionHistory([]);
-      setGmpLatest(null);
-      setGmpHistory([]);
+      setError(loadError instanceof Error ? loadError.message : 'Unable to load IPO details right now.');
+      setEntry(null);
+      setCalendarSections({ ...EMPTY_IPO_SECTIONS });
     } finally {
       setLoading(false);
     }
-  };
+  }, [ipoId]);
 
   useEffect(() => {
-    void loadIpoDetails();
-  }, [routeParam]);
+    void loadIpoDetail();
+  }, [loadIpoDetail]);
 
-  const statusClass = statusClassMap[ipo?.status || 'upcoming'] || statusClassMap.upcoming;
-  const sentimentClass = sentimentClassMap[gmpLatest?.sentiment || 'neutral'] || sentimentClassMap.neutral;
+  const overview = useMemo(() => buildIpoOverview(calendarSections), [calendarSections]);
+  const statusLabel = getIpoStatusLabel(entry?.status);
+  const statusTone = getIpoStatusTone(entry?.status);
+  const statusClass =
+    statusTone === 'emerald'
+      ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+      : statusTone === 'amber'
+        ? 'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+        : statusTone === 'sky'
+          ? 'border-sky-500/20 bg-sky-500/10 text-sky-700 dark:text-sky-300'
+          : 'border-slate-500/20 bg-slate-500/10 text-slate-700 dark:text-slate-300';
+  const windowLabel = formatWindowLabel(entry);
+  const primaryDocumentUrl = toText(
+    detailSource && isRecord(detailSource) ? detailSource.documentUrl : undefined,
+    detailSource && isRecord(detailSource) ? detailSource.document_url : undefined,
+    detailSource && isRecord(detailSource) ? detailSource.rhpLink : undefined,
+    detailSource && isRecord(detailSource) ? detailSource.rhp_link : undefined,
+    detailSource && isRecord(detailSource) ? detailSource.drhpLink : undefined,
+    detailSource && isRecord(detailSource) ? detailSource.drhp_link : undefined
+  );
+  const detailCards = [
+    {
+      label: 'Price band',
+      value: entry ? formatPriceBand(entry) : 'N/A',
+      hint: 'Live issue range from the calendar',
+      tone: 'sky' as const,
+      icon: <Sparkles className="h-5 w-5" />,
+    },
+    {
+      label: 'Issue size',
+      value: entry?.issueSizeText || 'TBA',
+      hint: entry?.issueType || 'Public offer',
+      tone: 'emerald' as const,
+      icon: <TrendingUp className="h-5 w-5" />,
+    },
+    {
+      label: 'Lot size',
+      value: formatLotSize(entry?.lotSize),
+      hint: windowLabel,
+      tone: 'amber' as const,
+      icon: <CalendarDays className="h-5 w-5" />,
+    },
+    {
+      label: 'Listing date',
+      value: formatDateLabel(entry?.listingDate),
+      hint: lastUpdated ? `Updated ${formatTimestampLabel(lastUpdated)}` : 'Awaiting refresh',
+      tone: 'slate' as const,
+      icon: <Clock3 className="h-5 w-5" />,
+    },
+  ];
+  const subscriptionRows = subscriptionHistory.length > 0 ? subscriptionHistory : subscriptionLatest;
+  const gmpRows = gmpHistory.length > 0 ? gmpHistory : gmpLatest;
+  const subscriptionHighlight = subscriptionLatest[0] || subscriptionHistory[0] || null;
+  const gmpHighlight = gmpLatest[0] || gmpHistory[0] || null;
+
+  if (loading) {
+    return (
+      <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
+          <div className="premium-shell h-[24rem] animate-pulse p-6 sm:p-8 lg:p-10" />
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+            <div className="premium-card h-28 animate-pulse" />
+            <div className="premium-card h-28 animate-pulse" />
+            <div className="premium-card h-28 animate-pulse sm:col-span-2 xl:col-span-1" />
+            <div className="premium-card h-28 animate-pulse sm:col-span-2 xl:col-span-1" />
+          </div>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div className="premium-card h-72 animate-pulse" />
+          <div className="premium-card h-72 animate-pulse" />
+        </div>
+      </main>
+    );
+  }
+
+  if (!entry && error) {
+    return (
+      <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+        <Card className="border-red-500/20 bg-red-500/[0.04]">
+          <CardHeader>
+            <CardTitle className="text-red-700 dark:text-red-200">IPO detail unavailable</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4 pb-6">
+            <p className="max-w-3xl text-sm leading-6 text-[color:var(--app-text-2)]">{error}</p>
+            <Button asChild variant="outline">
+              <Link href="/ipo">
+                <ArrowLeft className="h-4 w-4" />
+                Back to IPO calendar
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </main>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
-      <div className="mx-auto max-w-6xl px-4 py-8 space-y-6">
-        <Link
-          href="/ipo"
-          className="inline-flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Back to IPO List
-        </Link>
+    <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
+        <div className="premium-shell relative overflow-hidden p-6 sm:p-8 lg:p-10">
+          <div className="absolute right-0 top-0 h-40 w-40 -translate-y-8 translate-x-12 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden="true" />
+          <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-8 translate-y-8 rounded-full bg-sky-500/10 blur-3xl" aria-hidden="true" />
 
-        {loading ? (
-          <div className="rounded-xl border border-gray-700/50 bg-gray-900/90 p-8 text-gray-300 flex items-center justify-center min-h-[120px]">
-            <CursiveLoader />
+          <div className="relative z-10 space-y-6">
+            <div className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--app-text-3)]">
+              <Link href="/ipo" className="inline-flex items-center gap-2 transition-colors hover:text-[color:var(--app-text-1)]">
+                <ArrowLeft className="h-4 w-4" />
+                IPO calendar
+              </Link>
+              <span>·</span>
+              <span>{entry?.symbol || ipoId}</span>
+              <Badge variant="outline" className={statusClass}>
+                {statusLabel}
+              </Badge>
+              {entry?.isSme ? (
+                <Badge variant="outline" className="border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                  SME
+                </Badge>
+              ) : null}
+            </div>
+
+            <div className="max-w-3xl space-y-4">
+              <p className="premium-kicker">IPO Detail</p>
+              <h1 className="premium-title">{entry?.companyName || ipoId}</h1>
+              <p className="premium-subtitle">
+                {entry
+                  ? `The live API resolves this issue into a compact detail view with offer timing, subscription snapshots, and GMP history.`
+                  : 'The live API could not resolve this issue yet, but the page still retains the calendar context and retry controls.'}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Link href="#offer-details" className="premium-chip">
+                Offer details <span className="font-mono text-[10px] tracking-[0.14em]">{overview.total}</span>
+              </Link>
+              <Link href="#subscription" className="premium-chip">
+                Subscription <span className="font-mono text-[10px] tracking-[0.14em]">{subscriptionRows.length}</span>
+              </Link>
+              <Link href="#gmp" className="premium-chip">
+                GMP <span className="font-mono text-[10px] tracking-[0.14em]">{gmpRows.length}</span>
+              </Link>
+              <span className="premium-chip">
+                {windowLabel}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3 text-sm text-[color:var(--app-text-3)]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--app-border)] bg-[color:var(--app-surface)] px-3 py-2">
+                <Sparkles className="h-4 w-4 text-[color:var(--app-accent-strong)]" />
+                Live IPO detail
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--app-border)] bg-[color:var(--app-surface)] px-3 py-2">
+                <Clock3 className="h-4 w-4 text-[color:var(--app-accent-strong)]" />
+                Updated {lastUpdated ? formatTimestampLabel(lastUpdated) : 'just now'}
+              </span>
+              <Button onClick={() => void loadIpoDetail()} variant="outline" size="sm" className="ml-0 sm:ml-auto">
+                <RefreshCw className="h-4 w-4" />
+                Refresh
+              </Button>
+            </div>
           </div>
-        ) : null}
+        </div>
 
-        {!loading && error ? (
-          <div className="rounded-xl border border-red-700/50 bg-red-900/20 p-6 space-y-4">
-            <p className="text-red-200">{error}</p>
-            <button
-              type="button"
-              onClick={() => {
-                void loadIpoDetails();
-              }}
-              className="inline-flex items-center gap-2 rounded-md bg-red-700 hover:bg-red-600 px-3 py-2 text-sm"
-            >
-              <RefreshCw size={14} />
-              Retry
-            </button>
-          </div>
-        ) : null}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+          {detailCards.map((card) => (
+            <IpoMetricCard
+              key={card.label}
+              label={card.label}
+              value={card.value}
+              hint={card.hint}
+              tone={card.tone}
+              icon={card.icon}
+            />
+          ))}
+        </div>
+      </section>
 
-        {!loading && !error && ipo ? (
-          <>
-            <section className="rounded-2xl border border-gray-700/50 bg-gradient-to-br from-gray-900/95 via-gray-900/90 to-gray-800/90 p-6 space-y-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm text-gray-400">IPO Detail</p>
-                  <h1 className="text-3xl font-bold tracking-tight">{ipo.companyName}</h1>
-                  <div className="mt-2 flex items-center gap-2 text-sm text-gray-300">
-                    <span className="font-mono">{ipo.symbol}</span>
-                    {resolvedIpoId ? <span className="text-gray-500">ID: {resolvedIpoId}</span> : null}
-                    {ipo.isSme ? (
-                      <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-xs text-amber-300">
-                        SME
-                      </span>
-                    ) : null}
-                  </div>
-                </div>
+      {error ? (
+        <Card className="border-red-500/20 bg-red-500/[0.04]">
+          <CardHeader>
+            <CardTitle className="text-red-700 dark:text-red-200">Primary IPO response unavailable</CardTitle>
+          </CardHeader>
+          <CardContent className="pb-6">
+            <p className="max-w-4xl text-sm leading-6 text-[color:var(--app-text-2)]">{error}</p>
+          </CardContent>
+        </Card>
+      ) : null}
 
-                <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${statusClass}`}>
-                  {toTitleCase(ipo.status)}
-                </span>
+      <section className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
+        <Card id="offer-details" className="premium-card">
+          <CardHeader>
+            <CardDescription className="premium-kicker">Offer</CardDescription>
+            <CardTitle className="text-2xl tracking-[-0.03em] text-[color:var(--app-text-1)]">Issue overview</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2">
+            {[
+              ['Price band', entry ? formatPriceBand(entry) : 'N/A'],
+              ['Issue size', entry?.issueSizeText || 'TBA'],
+              ['Lot size', formatLotSize(entry?.lotSize)],
+              ['Issue type', entry?.issueType || 'Book built'],
+              ['Bidding window', formatWindowLabel(entry)],
+              ['Listing date', formatDateLabel(entry?.listingDate)],
+            ].map(([label, value]) => (
+              <div key={label} className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4">
+                <p className="premium-label">{label}</p>
+                <p className="mt-2 text-sm font-medium text-[color:var(--app-text-1)]">{value}</p>
               </div>
+            ))}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-                <div className="rounded-lg border border-gray-700/60 bg-gray-900/70 p-3">
-                  <p className="text-xs text-gray-400">Price Band</p>
-                  <p className="mt-1 text-sm font-semibold">
-                    {ipo.priceMin !== undefined && ipo.priceMax !== undefined
-                      ? `${toCurrency(ipo.priceMin)} - ${toCurrency(ipo.priceMax)}`
-                      : toCurrency(ipo.issuePrice)}
-                  </p>
-                </div>
-                <div className="rounded-lg border border-gray-700/60 bg-gray-900/70 p-3">
-                  <p className="text-xs text-gray-400">Issue Size</p>
-                  <p className="mt-1 text-sm font-semibold">{ipo.issueSizeText || 'N/A'}</p>
-                </div>
-                <div className="rounded-lg border border-gray-700/60 bg-gray-900/70 p-3">
-                  <p className="text-xs text-gray-400">Lot Size</p>
-                  <p className="mt-1 text-sm font-semibold">{ipo.lotSize ? ipo.lotSize.toLocaleString('en-IN') : 'N/A'}</p>
-                </div>
-                <div className="rounded-lg border border-gray-700/60 bg-gray-900/70 p-3">
-                  <p className="text-xs text-gray-400">Listing Gain</p>
-                  <p
-                    className={`mt-1 text-sm font-semibold ${
-                      (ipo.listingGainsPercent || 0) > 0
-                        ? 'text-green-300'
-                        : (ipo.listingGainsPercent || 0) < 0
-                          ? 'text-red-300'
-                          : 'text-gray-200'
-                    }`}
-                  >
-                    {toPercent(ipo.listingGainsPercent)}
-                  </p>
-                </div>
+            {entry?.additionalText ? (
+              <div className="sm:col-span-2 rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4 text-sm leading-6 text-[color:var(--app-text-2)]">
+                {entry.additionalText}
               </div>
+            ) : null}
+          </CardContent>
+        </Card>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                <div className="rounded-lg border border-gray-700/60 bg-gray-900/70 p-3">
-                  <p className="text-xs text-gray-400">Open Date</p>
-                  <p className="mt-1 font-medium">{toDateLabel(ipo.biddingStartDate)}</p>
-                </div>
-                <div className="rounded-lg border border-gray-700/60 bg-gray-900/70 p-3">
-                  <p className="text-xs text-gray-400">Close Date</p>
-                  <p className="mt-1 font-medium">{toDateLabel(ipo.biddingEndDate)}</p>
-                </div>
-                <div className="rounded-lg border border-gray-700/60 bg-gray-900/70 p-3">
-                  <p className="text-xs text-gray-400">Listing Date</p>
-                  <p className="mt-1 font-medium">{toDateLabel(ipo.listingDate)}</p>
-                </div>
+        <Card>
+          <CardHeader>
+            <CardDescription className="premium-kicker">Context</CardDescription>
+            <CardTitle className="text-2xl tracking-[-0.03em] text-[color:var(--app-text-1)]">Calendar and documents</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4">
+                <p className="premium-label">Calendar buckets</p>
+                <p className="mt-2 text-lg font-semibold tracking-[-0.03em] text-[color:var(--app-text-1)]">{overview.total}</p>
+                <p className="mt-1 text-xs text-[color:var(--app-text-3)]">Loaded from the live API</p>
               </div>
-            </section>
+              <div className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4">
+                <p className="premium-label">Days away</p>
+                <p className="mt-2 text-lg font-semibold tracking-[-0.03em] text-[color:var(--app-text-1)]">
+                  {daysUntil(entry?.listingDate) ?? daysUntil(entry?.biddingStartDate) ?? 'N/A'}
+                </p>
+                <p className="mt-1 text-xs text-[color:var(--app-text-3)]">Relative to the next event</p>
+              </div>
+            </div>
 
-            <section className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <div className="rounded-xl border border-gray-700/50 bg-gray-900/90 p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Subscription Snapshot</h2>
-                  <span className="text-xs text-gray-400">
-                    {toDateLabel(subscriptionLatest?.snapshotDate || subscriptionLatest?.updatedAt)}
-                  </span>
-                </div>
+            <div className="space-y-3">
+              <p className="premium-label">Documents</p>
+              <div className="flex flex-wrap gap-3">
+                {primaryDocumentUrl ? (
+                  <Button asChild variant="outline">
+                    <a href={primaryDocumentUrl} target="_blank" rel="noreferrer">
+                      <FileText className="h-4 w-4" />
+                      Prospectus
+                    </a>
+                  </Button>
+                ) : null}
+                <Button asChild variant="outline">
+                  <Link href="/ipo">
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to calendar
+                  </Link>
+                </Button>
+              </div>
+            </div>
 
-                {subscriptionLatest ? (
+            {subscriptionError || gmpError ? (
+              <div className="rounded-2xl border border-amber-500/20 bg-amber-500/[0.04] p-4 text-sm leading-6 text-[color:var(--app-text-2)]">
+                {subscriptionError || gmpError}
+              </div>
+            ) : null}
+          </CardContent>
+        </Card>
+      </section>
+
+      <PremiumSection
+        id="subscription"
+        eyebrow="Subscription"
+        title="Subscription snapshots"
+        description="Latest data and historical snapshots are kept side by side so the trend remains legible without leaving the page."
+      >
+        {subscriptionRows.length > 0 || subscriptionHighlight ? (
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+            <Card>
+              <CardHeader>
+                <CardDescription className="premium-kicker">Latest snapshot</CardDescription>
+                <CardTitle className="text-xl tracking-[-0.03em] text-[color:var(--app-text-1)]">
+                  {subscriptionHighlight?.label || 'Subscription summary'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {subscriptionHighlight ? (
                   <>
-                    <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-4">
-                      <p className="text-xs text-green-300">Total Subscription</p>
-                      <p className="mt-1 text-2xl font-bold text-green-200">
-                        {formatSubscriptionRatio(subscriptionLatest.totalSubscribed)}
-                      </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        ['Retail', formatRatio(subscriptionHighlight.retail)],
+                        ['QIB', formatRatio(subscriptionHighlight.qib)],
+                        ['NII', formatRatio(subscriptionHighlight.nii)],
+                        ['Total', formatRatio(subscriptionHighlight.total)],
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-3">
+                          <p className="premium-label">{label}</p>
+                          <p className="mt-2 text-sm font-medium text-[color:var(--app-text-1)]">{value}</p>
+                        </div>
+                      ))}
                     </div>
-
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="rounded-lg border border-gray-700/60 bg-gray-900/80 p-3">
-                        <p className="text-xs text-gray-400">QIB</p>
-                        <p className="mt-1 font-semibold">{formatSubscriptionRatio(subscriptionLatest.qibSubscribed)}</p>
-                      </div>
-                      <div className="rounded-lg border border-gray-700/60 bg-gray-900/80 p-3">
-                        <p className="text-xs text-gray-400">NII</p>
-                        <p className="mt-1 font-semibold">{formatSubscriptionRatio(subscriptionLatest.niiSubscribed)}</p>
-                      </div>
-                      <div className="rounded-lg border border-gray-700/60 bg-gray-900/80 p-3">
-                        <p className="text-xs text-gray-400">Retail</p>
-                        <p className="mt-1 font-semibold">{formatSubscriptionRatio(subscriptionLatest.retailSubscribed)}</p>
-                      </div>
-                      <div className="rounded-lg border border-gray-700/60 bg-gray-900/80 p-3">
-                        <p className="text-xs text-gray-400">Employee</p>
-                        <p className="mt-1 font-semibold">{formatSubscriptionRatio(subscriptionLatest.employeeSubscribed)}</p>
-                      </div>
+                    <div className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4 text-sm leading-6 text-[color:var(--app-text-2)]">
+                      <p className="font-medium text-[color:var(--app-text-1)]">{subscriptionHighlight.date ? formatDateLabel(subscriptionHighlight.date) : 'N/A'}</p>
+                      {subscriptionHighlight.note ? <p className="mt-2">{subscriptionHighlight.note}</p> : null}
                     </div>
                   </>
                 ) : (
-                  <div className="rounded-lg border border-gray-700/50 bg-gray-900/70 p-4 text-sm text-gray-300">
-                    Subscription data is not available for this IPO yet.
-                  </div>
+                  <IpoEmptyState
+                    title="Subscription snapshots unavailable"
+                    description="The subscription API did not return a usable snapshot for this IPO yet."
+                    className="border-0 shadow-none"
+                  />
                 )}
+              </CardContent>
+            </Card>
 
-                {subscriptionHistory.length > 0 ? (
-                  <div className="overflow-x-auto rounded-lg border border-gray-700/50">
-                    <table className="min-w-full text-sm">
-                      <thead className="bg-gray-800/70 text-gray-300">
-                        <tr>
-                          <th className="px-3 py-2 text-left">Date</th>
-                          <th className="px-3 py-2 text-left">Total</th>
-                          <th className="px-3 py-2 text-left">Retail</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {subscriptionHistory.slice(0, 6).map((item, index) => (
-                          <tr key={`${item.snapshotDate || 'sub'}-${index}`} className="border-t border-gray-800/80">
-                            <td className="px-3 py-2 text-gray-300">{toDateLabel(item.snapshotDate || item.updatedAt)}</td>
-                            <td className="px-3 py-2">{formatSubscriptionRatio(item.totalSubscribed)}</td>
-                            <td className="px-3 py-2">{formatSubscriptionRatio(item.retailSubscribed)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : null}
-              </div>
+            <div className="premium-table-shell">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Snapshot</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Retail</TableHead>
+                    <TableHead>QIB</TableHead>
+                    <TableHead>NII</TableHead>
+                    <TableHead>Total</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {subscriptionRows.map((row) => (
+                    <TableRow key={`${row.label}-${row.date || 'latest'}`}>
+                      <TableCell className="font-medium text-[color:var(--app-text-1)]">{row.label}</TableCell>
+                      <TableCell>{row.date ? formatDateLabel(row.date) : 'N/A'}</TableCell>
+                      <TableCell>{formatRatio(row.retail)}</TableCell>
+                      <TableCell>{formatRatio(row.qib)}</TableCell>
+                      <TableCell>{formatRatio(row.nii)}</TableCell>
+                      <TableCell>{formatRatio(row.total)}</TableCell>
+                      <TableCell>{row.status || 'N/A'}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        ) : (
+          <IpoEmptyState
+            title="No subscription snapshots available"
+            description="The live subscription APIs did not return data for this IPO yet."
+            icon={<TrendingUp className="h-5 w-5" />}
+          />
+        )}
+      </PremiumSection>
 
-              <div className="rounded-xl border border-gray-700/50 bg-gray-900/90 p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-lg font-semibold">Grey Market Premium</h2>
-                  <span className="text-xs text-gray-400">
-                    {toDateLabel(gmpLatest?.snapshotDate || gmpLatest?.updatedAt)}
-                  </span>
-                </div>
-
-                {gmpLatest ? (
+      <PremiumSection
+        id="gmp"
+        eyebrow="GMP"
+        title="Grey market premium"
+        description="GMP history is rendered against the same API-backed row structure so market sentiment stays easy to read."
+      >
+        {gmpRows.length > 0 || gmpHighlight ? (
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+            <Card>
+              <CardHeader>
+                <CardDescription className="premium-kicker">Latest GMP</CardDescription>
+                <CardTitle className="text-xl tracking-[-0.03em] text-[color:var(--app-text-1)]">{gmpHighlight?.label || 'GMP summary'}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {gmpHighlight ? (
                   <>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <div className="rounded-lg border border-gray-700/60 bg-gray-900/80 p-3">
-                        <p className="text-xs text-gray-400">GMP Price</p>
-                        <p className="mt-1 text-xl font-semibold">{toCurrency(gmpLatest.gmpPrice)}</p>
-                      </div>
-                      <div className="rounded-lg border border-gray-700/60 bg-gray-900/80 p-3">
-                        <p className="text-xs text-gray-400">Expected Listing Price</p>
-                        <p className="mt-1 text-xl font-semibold">{toCurrency(gmpLatest.expectedListingPrice)}</p>
-                      </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        ['GMP', formatCurrency(gmpHighlight.gmp)],
+                        ['Issue price', formatCurrency(gmpHighlight.issuePrice)],
+                        ['Premium', formatPercent(gmpHighlight.premiumPercent)],
+                        [
+                          'Indicative listing',
+                          gmpHighlight.gmp !== undefined && gmpHighlight.issuePrice !== undefined
+                            ? formatCurrency(gmpHighlight.gmp + gmpHighlight.issuePrice)
+                            : 'N/A',
+                        ],
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-3">
+                          <p className="premium-label">{label}</p>
+                          <p className="mt-2 text-sm font-medium text-[color:var(--app-text-1)]">{value}</p>
+                        </div>
+                      ))}
                     </div>
-
-                    <div className="flex flex-wrap items-center gap-3">
-                      <span className="rounded-md border border-gray-700/60 bg-gray-900/80 px-3 py-2 text-sm">
-                        GMP Change: {toPercent(gmpLatest.gmpPercent)}
-                      </span>
-                      <span className={`rounded-md border px-3 py-2 text-sm ${sentimentClass}`}>
-                        Sentiment: {toTitleCase(gmpLatest.sentiment || 'neutral')}
-                      </span>
+                    <div className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4 text-sm leading-6 text-[color:var(--app-text-2)]">
+                      <p className="font-medium text-[color:var(--app-text-1)]">{gmpHighlight.date ? formatDateLabel(gmpHighlight.date) : 'N/A'}</p>
+                      {gmpHighlight.note ? <p className="mt-2">{gmpHighlight.note}</p> : null}
                     </div>
                   </>
                 ) : (
-                  <div className="rounded-lg border border-gray-700/50 bg-gray-900/70 p-4 text-sm text-gray-300">
-                    GMP data is not available for this IPO yet.
-                  </div>
+                  <IpoEmptyState
+                    title="GMP snapshots unavailable"
+                    description="The live GMP API did not return a usable row for this IPO yet."
+                    className="border-0 shadow-none"
+                  />
                 )}
+              </CardContent>
+            </Card>
 
-                {gmpHistory.length > 0 ? (
-                  <div className="overflow-x-auto rounded-lg border border-gray-700/50">
-                    <table className="min-w-full text-sm">
-                      <thead className="bg-gray-800/70 text-gray-300">
-                        <tr>
-                          <th className="px-3 py-2 text-left">Date</th>
-                          <th className="px-3 py-2 text-left">GMP</th>
-                          <th className="px-3 py-2 text-left">Percent</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {gmpHistory.slice(0, 6).map((item, index) => (
-                          <tr key={`${item.snapshotDate || 'gmp'}-${index}`} className="border-t border-gray-800/80">
-                            <td className="px-3 py-2 text-gray-300">{toDateLabel(item.snapshotDate || item.updatedAt)}</td>
-                            <td className="px-3 py-2">{toCurrency(item.gmpPrice)}</td>
-                            <td className="px-3 py-2">{toPercent(item.gmpPercent)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ) : null}
-              </div>
-            </section>
-          </>
-        ) : null}
-      </div>
-    </div>
+            <div className="premium-table-shell">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Snapshot</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>GMP</TableHead>
+                    <TableHead>Issue price</TableHead>
+                    <TableHead>Premium</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {gmpRows.map((row) => (
+                    <TableRow key={`${row.label}-${row.date || 'latest'}`}>
+                      <TableCell className="font-medium text-[color:var(--app-text-1)]">{row.label}</TableCell>
+                      <TableCell>{row.date ? formatDateLabel(row.date) : 'N/A'}</TableCell>
+                      <TableCell>{formatCurrency(row.gmp)}</TableCell>
+                      <TableCell>{formatCurrency(row.issuePrice)}</TableCell>
+                      <TableCell>{formatPercent(row.premiumPercent)}</TableCell>
+                      <TableCell>{row.status || 'N/A'}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        ) : (
+          <IpoEmptyState
+            title="No GMP snapshots available"
+            description="The live GMP APIs did not return data for this IPO yet."
+            icon={<Sparkles className="h-5 w-5" />}
+          />
+        )}
+      </PremiumSection>
+
+      <PremiumSection
+        id="faq"
+        eyebrow="FAQ"
+        title="IPO notes"
+        description="A short reminder of the practical checks investors usually make before submitting a bid."
+      >
+        <div className="premium-panel overflow-hidden">
+          <Accordion type="single" collapsible className="w-full">
+            {[
+              {
+                question: 'What should I check before applying?',
+                answer:
+                  'Review the price band, lot size, issue type, prospectus, and the final subscription trend before placing a bid.',
+              },
+              {
+                question: 'Where do I find the official documents?',
+                answer:
+                  'The prospectus button in the documents card opens the live document URL returned by the IPO API when it is available.',
+              },
+              {
+                question: 'What does GMP indicate?',
+                answer:
+                  'Grey market premium is a sentiment indicator. It is not a guarantee of listing gains and should be used with the rest of the issue data.',
+              },
+            ].map((item, index) => (
+              <AccordionItem key={item.question} value={`note-${index}`}>
+                <AccordionTrigger className="px-5 py-4 text-left text-[color:var(--app-text-1)] hover:no-underline">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="px-5 pb-4 text-sm leading-6 text-[color:var(--app-text-2)]">
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </PremiumSection>
+
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-[color:var(--app-border)] bg-[color:var(--app-surface)] px-5 py-4 text-sm text-[color:var(--app-text-3)] shadow-[var(--app-shadow)]">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-[color:var(--app-accent-strong)]" />
+          <span>
+            Live API route: {overview.total} IPO buckets loaded across the calendar, plus subscription and GMP detail endpoints.
+          </span>
+        </div>
+        <Button asChild variant="outline">
+          <Link href="/ipo">
+            <ArrowLeft className="h-4 w-4" />
+            Back to IPO calendar
+          </Link>
+        </Button>
+      </section>
+    </main>
   );
 }

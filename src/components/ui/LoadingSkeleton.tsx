@@ -1,17 +1,18 @@
 'use client';
 
 import React from 'react';
-import CursiveLoader from '@/components/ui/CursiveLoader';
 
 interface LoadingSkeletonProps {
   className?: string;
 }
 
 const LoadingSkeleton: React.FC<LoadingSkeletonProps> = ({ className }) => (
-  <div className={`relative rounded-lg bg-slate-200/80 shimmer dark:bg-slate-800/70 ${className || ''}`}>
-    <div className="absolute inset-0 flex items-center justify-center">
-      <CursiveLoader textClassName="text-base sm:text-lg" />
-    </div>
+  <div
+    className={`relative overflow-hidden rounded-[24px] border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/80 shimmer ${className || ''}`}
+    aria-hidden="true"
+  >
+    <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-60 dark:via-white/10" />
+    <div className="absolute inset-0 rounded-[inherit] bg-[color:var(--app-surface)]/35" />
   </div>
 );
 

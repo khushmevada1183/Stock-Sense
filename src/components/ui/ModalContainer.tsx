@@ -83,13 +83,13 @@ const Modal = ({ id, title, isTopMost, onClose, children }: ModalProps) => {
   
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-lg"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4 backdrop-blur-xl"
       onMouseDown={handleBackdropMouseDown}
     >
       <div
         ref={modalRef}
         tabIndex={-1}
-        className="relative w-full max-w-lg mx-auto bg-gray-900/90 backdrop-blur-lg dark:bg-gray-900 rounded-lg shadow-xl p-6"
+        className="relative mx-auto w-full max-w-lg rounded-[28px] border border-[color:var(--app-border)] bg-[color:var(--app-surface-strong)] p-6 text-[color:var(--app-text-1)] shadow-[0_40px_110px_rgba(15,23,42,0.32)]"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
@@ -98,7 +98,7 @@ const Modal = ({ id, title, isTopMost, onClose, children }: ModalProps) => {
 
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-1 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+          className="absolute right-4 top-4 rounded-full p-1 text-[color:var(--app-text-3)] transition-colors hover:text-[color:var(--app-text-1)]"
           aria-label="Close modal"
         >
           <X size={20} />

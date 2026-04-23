@@ -244,15 +244,15 @@ const Header = () => {
           <div className="flex h-12 items-center justify-between px-3 sm:h-14 sm:px-6">
             <Link href="/" className="group flex min-h-[44px] items-center">
               <div className="flex items-baseline">
-                <span className="font-mono text-lg font-bold text-neon-400 transition-all duration-300 group-hover:drop-shadow-[0_0_12px_rgba(57,255,20,0.5)] sm:text-xl">
+                <span className="font-mono text-lg font-bold text-[color:var(--app-accent-strong)] transition-colors duration-300 group-hover:text-[color:var(--app-accent)] sm:text-xl">
                   Stock
                 </span>
-                <span className="font-flex ml-1 text-lg font-light text-gray-300 sm:text-xl">Sense</span>
+                <span className="font-flex ml-1 text-lg font-light text-[color:var(--app-text-2)] sm:text-xl">Sense</span>
               </div>
             </Link>
 
             <nav className="hidden items-center lg:flex">
-              <div className="flex space-x-0.5 rounded-full border border-gray-800/20 bg-gray-900/30 p-1">
+              <div className="flex space-x-0.5 rounded-full border border-[color:var(--app-border)] bg-[color:var(--app-surface)]/80 p-1 shadow-[0_14px_34px_rgba(15,23,42,0.08)] backdrop-blur-xl">
                 {navItems.map((item) => {
                   const active = isActive(item.href);
                   const Icon = item.icon;
@@ -263,13 +263,13 @@ const Header = () => {
                       href={item.href}
                       className={`relative flex min-h-[44px] items-center rounded-full px-3.5 py-1.5 text-sm font-medium transition-all duration-300 ${
                         active
-                          ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm neon-glow-text'
-                          : 'text-gray-500 hover:bg-gray-100/80 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800/40 dark:hover:text-gray-200'
+                          ? 'bg-[color:var(--app-accent-soft)] text-[color:var(--app-accent-strong)] shadow-[0_10px_26px_rgba(16,185,129,0.16)]'
+                          : 'text-[color:var(--app-text-3)] hover:bg-[color:var(--app-surface-2)]/70 hover:text-[color:var(--app-text-1)]'
                       }`}
                     >
-                      <Icon size={15} className={`mr-1.5 transition-colors duration-300 ${active ? 'text-neon-400' : 'text-gray-500'}`} />
+                      <Icon size={15} className={`mr-1.5 transition-colors duration-300 ${active ? 'text-[color:var(--app-accent-strong)]' : 'text-[color:var(--app-text-3)]'}`} />
                       {item.name}
-                      {active ? <span className="absolute -bottom-0.5 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-neon-400 shadow-neon-sm" /> : null}
+                      {active ? <span className="absolute -bottom-0.5 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-[color:var(--app-accent)]" /> : null}
                     </Link>
                   );
                 })}
@@ -288,8 +288,8 @@ const Header = () => {
                   type="button"
                   className={`inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border p-1.5 transition-all duration-300 ${
                     isAccountMenuOpen
-                      ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200 shadow-[0_0_0_1px_rgba(16,185,129,0.12)]'
-                      : 'border-gray-700/40 text-gray-300 hover:border-emerald-400/30 hover:bg-emerald-400/10 hover:text-emerald-200'
+                      ? 'border-[color:var(--app-accent)]/30 bg-[color:var(--app-accent-soft)] text-[color:var(--app-accent-strong)] shadow-[0_0_0_1px_rgba(16,185,129,0.12)]'
+                      : 'border-[color:var(--app-border)] text-[color:var(--app-text-2)] hover:border-[color:var(--app-accent)]/30 hover:bg-[color:var(--app-accent-soft)] hover:text-[color:var(--app-accent-strong)]'
                   }`}
                   onClick={toggleAccountMenu}
                   aria-label={isAccountMenuOpen ? 'Close account menu' : 'Open account menu'}
@@ -303,7 +303,7 @@ const Header = () => {
               <div className="flex md:hidden">
                 <button
                   type="button"
-                  className="relative inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-1.5 text-gray-400 transition-all duration-300 hover:bg-gray-800/40 hover:text-neon-400"
+                  className="relative inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-[color:var(--app-border)] bg-[color:var(--app-surface)] p-1.5 text-[color:var(--app-text-3)] transition-all duration-300 hover:text-[color:var(--app-accent-strong)]"
                   onClick={toggleMobileMenu}
                   aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
                 >
@@ -342,12 +342,12 @@ const Header = () => {
                         href={item.href}
                         className={`flex min-h-[44px] items-center rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-300 ${
                           active
-                            ? 'bg-neon-400/10 text-neon-400 shadow-neon-sm neon-glow-text'
-                            : 'text-gray-500 hover:bg-gray-100/80 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800/40 dark:hover:text-gray-200'
+                            ? 'bg-[color:var(--app-accent-soft)] text-[color:var(--app-accent-strong)]'
+                            : 'text-[color:var(--app-text-3)] hover:bg-[color:var(--app-surface-2)]/70 hover:text-[color:var(--app-text-1)]'
                         }`}
                         onClick={closeMenus}
                       >
-                        <Icon size={16} className={`mr-2.5 ${active ? 'text-neon-400' : 'text-gray-500'}`} />
+                        <Icon size={16} className={`mr-2.5 ${active ? 'text-[color:var(--app-accent-strong)]' : 'text-[color:var(--app-text-3)]'}`} />
                         {item.name}
                       </Link>
                     );
@@ -356,7 +356,7 @@ const Header = () => {
 
                 <div className="account-menu-divider mx-1 h-px" />
 
-                <div className="rounded-2xl border border-gray-200/20 px-1 py-1">
+                <div className="rounded-2xl border border-[color:var(--app-border)] px-1 py-1">
                   {renderAccountMenuContent(true)}
                 </div>
 
