@@ -97,20 +97,6 @@ interface MarketData {
   rangeLows: Stock[];
 }
 
-interface MarketEndpointStats {
-  sectorHeatmapCount: number;
-  high52Count: number;
-  low52Count: number;
-  indexHistoryPoints: number;
-  snapshotHistoryCount: number;
-  snapshotStatus: string;
-  snapshotCapturedAt: string;
-  snapshotFreshnessLabel: string;
-  schedulerRunning: boolean;
-  schedulerEnabled: boolean;
-  snapshotErrorCount: number;
-}
-
 const MARKET_PANEL_CLASS = [
   'rounded-[28px]',
   'border',
@@ -612,77 +598,139 @@ const HeatMap = ({ data }: HeatMapProps) => {
     );
   }
 
-  const getColorIntensity = (change: number): string => {
-    if (change > 0) {
-      if (change > 5) return 'bg-green-600/80 border-green-500';
-      if (change > 3) return 'bg-green-500/80 border-green-400';
-      if (change > 1) return 'bg-green-400/80 border-green-300';
-      return 'bg-green-300/80 border-green-200';
-    } else {
-      if (change < -5) return 'bg-red-600/80 border-red-500';
-      if (change < -3) return 'bg-red-500/80 border-red-400';
-      if (change < -1) return 'bg-red-400/80 border-red-300';
-      return 'bg-red-300/80 border-red-200';
-    }
+  const sectorAggregation = new Map<string, HeatMapStock[]>();
+
+  data.forEach((sector) => {
+    const normalizedStocks = (sector.stocks || [])
+      .map((stock) => ({
+        ...stock,
+        symbol: String(stock.symbol || 'N/A').toUpperCase(),
+        name: String(stock.name || stock.symbol || 'Unknown'),
+        change: Number(stock.change || 0),
+        marketCap: Math.max(1, Number(stock.marketCap || 1)),
+      }))
+      .filter((stock) => stock.symbol !== 'N/A' || stock.name !== 'Unknown');
+
+    const sectorName = String(sector.sector || 'Other');
+    const existing = sectorAggregation.get(sectorName) || [];
+    sectorAggregation.set(sectorName, [...existing, ...normalizedStocks]);
+  });
+
+  const normalizedSectors = Array.from(sectorAggregation.entries())
+    .map(([sectorName, stocks]) => {
+      const dedupedStocks = stocks
+        .sort((a, b) => b.marketCap - a.marketCap)
+        .filter((stock, index, array) => array.findIndex((item) => item.symbol === stock.symbol) === index)
+        .slice(0, 10);
+
+      return {
+        sector: sectorName,
+        stocks: dedupedStocks,
+      };
+    })
+    .filter((sector) => sector.stocks.length > 0)
+    .slice(0, 8);
+
+  if (normalizedSectors.length === 0) {
+    return (
+      <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
+        <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
+        <div className="py-8 flex items-center justify-center">
+          <CursiveLoader />
+        </div>
+      </div>
+    );
+  }
+
+  const allCaps = normalizedSectors.flatMap((sector) => sector.stocks.map((stock) => stock.marketCap));
+  const minCap = Math.min(...allCaps);
+  const maxCap = Math.max(...allCaps);
+  const capRange = Math.max(maxCap - minCap, 1);
+
+  const getTileSpanClass = (marketCap: number): string => {
+    const weight = (marketCap - minCap) / capRange;
+    if (weight >= 0.8) return 'col-span-4 sm:col-span-4';
+    if (weight >= 0.55) return 'col-span-3 sm:col-span-3';
+    if (weight >= 0.3) return 'col-span-2 sm:col-span-2';
+    return 'col-span-2 sm:col-span-1';
   };
 
-  // Calculate block size based on market cap
-  const getBlockSize = (marketCap: number): string => {
-    if (marketCap > 100000) return 'h-24 w-24';
-    if (marketCap > 50000) return 'h-20 w-20';
-    if (marketCap > 20000) return 'h-16 w-16';
-    return 'h-12 w-12';
+  const getTileToneClass = (change: number): string => {
+    const magnitude = Math.abs(change);
+
+    if (change >= 0) {
+      if (magnitude >= 4) return 'border-emerald-300/70 bg-emerald-600 text-white';
+      if (magnitude >= 2) return 'border-emerald-200/70 bg-emerald-500 text-white';
+      if (magnitude >= 0.75) return 'border-emerald-100/70 bg-emerald-300 text-emerald-950';
+      return 'border-emerald-100/80 bg-emerald-200 text-emerald-950';
+    }
+
+    if (magnitude >= 4) return 'border-rose-300/70 bg-rose-600 text-white';
+    if (magnitude >= 2) return 'border-rose-200/70 bg-rose-500 text-white';
+    if (magnitude >= 0.75) return 'border-rose-100/70 bg-rose-300 text-rose-950';
+    return 'border-rose-100/80 bg-rose-200 text-rose-950';
   };
 
   return (
-    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Sector blocks derived from the live 52-week range feeds and active market data.</p>
-        </div>
+    <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
+      <div className="border-b border-slate-200/70 px-4 py-4 sm:px-6 dark:border-white/10">
+        <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Clean square tiles sized by relative market weight and colored by intraday strength.</p>
       </div>
-      
-      <div className="mb-5 flex flex-wrap gap-2">
-        <div className={`${MARKET_INSET_CLASS} flex items-center gap-2 px-3 py-2`}>
-          <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Momentum above range midpoint</span>
+
+      <div className="p-4 sm:p-6">
+        <div className="rounded-[24px] border border-slate-200/80 bg-slate-100/80 p-2 dark:border-white/10 dark:bg-slate-900/60">
+          <div className="grid gap-2 xl:grid-cols-2">
+            {normalizedSectors.map((sector, sectorIdx) => {
+              const greenTiles = sector.stocks.filter((stock) => stock.change >= 0).length;
+
+              return (
+                <section key={`${sector.sector}-${sectorIdx}`} className="sector-group overflow-hidden rounded-2xl border border-slate-200/80 bg-white/95 dark:border-white/10 dark:bg-slate-950/60">
+                  <div className="flex items-center justify-between gap-3 border-b border-slate-200/80 px-3 py-2 dark:border-white/10">
+                    <h4 className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-300">{sector.sector}</h4>
+                    <span className="text-[0.68rem] font-medium text-slate-500 dark:text-slate-400">{greenTiles}/{sector.stocks.length} green</span>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-[1px] bg-slate-200/90 p-[1px] sm:grid-cols-6 lg:grid-cols-8 dark:bg-slate-700/70">
+                    {sector.stocks.map((stock, stockIdx) => {
+                      const tileSpanClass = getTileSpanClass(stock.marketCap);
+                      const toneClass = getTileToneClass(stock.change);
+                      const prominent = stock.marketCap >= minCap + capRange * 0.45;
+                      const shortName = stock.name.length > 14 ? `${stock.name.slice(0, 14)}...` : stock.name;
+
+                      return (
+                        <article
+                          key={`${sector.sector}-${stock.symbol}-${stockIdx}`}
+                          className={`heat-map-item ${tileSpanClass} ${toneClass} aspect-square border p-2 transition-transform duration-200 hover:scale-[1.02]`}
+                          title={`${stock.name} (${stock.symbol}) ${stock.change >= 0 ? '+' : ''}${stock.change.toFixed(2)}%`}
+                        >
+                          <div className="flex h-full flex-col justify-between overflow-hidden">
+                            <div className="truncate text-[0.68rem] font-semibold uppercase tracking-[0.08em]">{stock.symbol}</div>
+                            <div>
+                              {prominent && <div className="truncate text-[0.62rem] font-medium opacity-90">{shortName}</div>}
+                              <div className="mt-1 text-xs font-semibold">{stock.change >= 0 ? '+' : ''}{stock.change.toFixed(2)}%</div>
+                            </div>
+                          </div>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
         </div>
-        <div className={`${MARKET_INSET_CLASS} flex items-center gap-2 px-3 py-2`}>
-          <div className="h-3 w-3 rounded-full bg-rose-500"></div>
-          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Momentum below range midpoint</span>
-        </div>
-      </div>
-      
-      <div className="overflow-x-auto">
-        <div className="min-w-max">
-          {data.map((sector, idx) => (
-            <div key={idx} className="mb-6">
-              <h4 className="mb-2 text-sm font-semibold tracking-tight text-slate-950 dark:text-white">{sector.sector}</h4>
-              <div className="flex flex-wrap gap-2">
-                {sector.stocks && sector.stocks.map((stock, stockIdx) => {
-                  const change = parseFloat(stock.change?.toString() || '0');
-                  const marketCap = parseInt(stock.marketCap?.toString() || '1000000');
-                  
-                  return (
-                    <div
-                      key={stockIdx}
-                      className={`${getBlockSize(marketCap)} ${getColorIntensity(change)} rounded-2xl border cursor-pointer p-2 text-center transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_50px_rgba(15,23,42,0.14)] dark:hover:shadow-[0_18px_50px_rgba(0,0,0,0.35)]`}
-                      title={`${stock.name} (${stock.symbol}): ${change > 0 ? '+' : ''}${change.toFixed(2)}%`}
-                    >
-                      <div className="font-bold text-[0.7rem] text-white truncate w-full">
-                        {stock.symbol}
-                      </div>
-                      <div className="text-[0.65rem] text-white/90 truncate w-full">
-                        {stock.name.length > 8 ? stock.name.substring(0, 8) + '...' : stock.name}  
-                      </div>
-                      <div className="text-[0.65rem] font-semibold text-white">
-                        {change > 0 ? '+' : ''}{change.toFixed(1)}%
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {[
+            { label: 'Deep red', tone: 'bg-rose-600 text-white', hint: '< -4%' },
+            { label: 'Red', tone: 'bg-rose-400 text-rose-950', hint: '-4% to 0%' },
+            { label: 'Green', tone: 'bg-emerald-400 text-emerald-950', hint: '0% to +4%' },
+            { label: 'Strong green', tone: 'bg-emerald-600 text-white', hint: '> +4%' },
+          ].map((legend) => (
+            <div key={legend.label} className={`${MARKET_INSET_CLASS} flex items-center gap-2 px-3 py-2`}>
+              <span className={`inline-flex min-w-[3.5rem] items-center justify-center rounded-md px-2 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.08em] ${legend.tone}`}>{legend.label}</span>
+              <span className="text-[0.68rem] font-medium text-slate-500 dark:text-slate-400">{legend.hint}</span>
             </div>
           ))}
         </div>
@@ -707,19 +755,6 @@ export default function MarketPage() {
     rangeHighs: [],
     rangeLows: []
   });
-  const [endpointStats, setEndpointStats] = useState<MarketEndpointStats>({
-    sectorHeatmapCount: 0,
-    high52Count: 0,
-    low52Count: 0,
-    indexHistoryPoints: 0,
-    snapshotHistoryCount: 0,
-    snapshotStatus: 'unknown',
-    snapshotCapturedAt: '',
-    snapshotFreshnessLabel: 'fresh',
-    schedulerRunning: false,
-    schedulerEnabled: false,
-    snapshotErrorCount: 0,
-  });
 
   const containerRef = useRef<HTMLDivElement>(null);
   const lastSocketRefreshRef = useRef(0);
@@ -736,12 +771,6 @@ export default function MarketPage() {
       }
     };
   }, [loading, isAnimationEnabled]);
-  
-  const currentDate = new Date().toLocaleDateString('en-GB', { 
-    day: '2-digit', 
-    month: 'short', 
-    year: 'numeric' 
-  });
 
   const fetchMarketData = useCallback(async (showLoader = false) => {
     const extractRows = (value: unknown): unknown[] => {
@@ -892,9 +921,6 @@ export default function MarketPage() {
         sectorHeatmapApiData,
         week52HighApiData,
         week52LowApiData,
-        snapshotLatestApiData,
-        snapshotHistoryApiData,
-        snapshotStatusApiData,
       ] = await Promise.allSettled([
         stockApi.getMarketOverview(),
         stockApi.getTrendingStocks(),
@@ -904,9 +930,6 @@ export default function MarketPage() {
         stockApi.getMarketSectorHeatmap(),
         stockApi.get52WeekHigh(),
         stockApi.get52WeekLow(),
-        stockApi.getMarketSnapshotLatest(),
-        stockApi.getMarketSnapshotHistory({ limit: 30 }),
-        stockApi.getMarketSnapshotStatus(),
       ]);
 
       const overviewPayloadValue = getFulfilledData(marketOverviewData);
@@ -1249,51 +1272,6 @@ export default function MarketPage() {
 
       setMarketData(structuredData);
 
-      const sectorHeatmapRows = extractRows(getFulfilledData(sectorHeatmapApiData));
-      const high52Rows = extractRows(getFulfilledData(week52HighApiData));
-      const low52Rows = extractRows(getFulfilledData(week52LowApiData));
-      const indexHistoryRows: unknown[] = [];
-      const snapshotHistoryRows = extractRows(getFulfilledData(snapshotHistoryApiData));
-
-      const snapshotStatusPayload = getFulfilledData(snapshotStatusApiData) as Record<string, unknown> | null;
-      const snapshotLatestPayload = getFulfilledData(snapshotLatestApiData) as Record<string, unknown> | null;
-
-      const freshnessPayload = snapshotStatusPayload?.freshness && typeof snapshotStatusPayload.freshness === 'object'
-        ? snapshotStatusPayload.freshness as Record<string, unknown>
-        : null;
-      const schedulerPayload = snapshotStatusPayload?.scheduler && typeof snapshotStatusPayload.scheduler === 'object'
-        ? snapshotStatusPayload.scheduler as Record<string, unknown>
-        : null;
-      const latestSnapshotPayload = snapshotStatusPayload?.latestSnapshot && typeof snapshotStatusPayload.latestSnapshot === 'object'
-        ? snapshotStatusPayload.latestSnapshot as Record<string, unknown>
-        : null;
-
-      setEndpointStats({
-        sectorHeatmapCount: sectorHeatmapRows.length,
-        high52Count: high52Rows.length,
-        low52Count: low52Rows.length,
-        indexHistoryPoints: indexHistoryRows.length,
-        snapshotHistoryCount: snapshotHistoryRows.length,
-        snapshotStatus: String(
-          schedulerPayload?.running ? 'running' :
-          schedulerPayload?.enabled ? 'enabled' :
-          latestSnapshotPayload?.syncStatus ? 'partial' :
-          'unknown'
-        ),
-        snapshotCapturedAt: String(
-          snapshotLatestPayload?.capturedAt ||
-          latestSnapshotPayload?.capturedAt ||
-          snapshotLatestPayload?.updatedAt ||
-          ''
-        ),
-        snapshotFreshnessLabel: String(
-          freshnessPayload?.isStale === true ? 'stale' : 'fresh'
-        ),
-        schedulerRunning: Boolean(schedulerPayload?.running),
-        schedulerEnabled: Boolean(schedulerPayload?.enabled),
-        snapshotErrorCount: Number(latestSnapshotPayload?.errorCount ?? 0),
-      });
-
     } catch (error) {
       logger.error('Error fetching market data', error);
       setError('Failed to load market data from API.');
@@ -1397,47 +1375,6 @@ export default function MarketPage() {
       <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:56px_56px] pointer-events-none z-0"></div>
       
       <div ref={containerRef} className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header */}
-        <section className={`${MARKET_PANEL_CLASS} mb-8 overflow-hidden p-6 sm:p-8`}>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-3xl">
-              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/15 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                Live Indian market overview
-              </div>
-              <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl dark:text-white">
-                Indian Market Dashboard
-              </h1>
-              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
-                A premium live market surface for breadth, range leaders, sector momentum, and snapshot health. The page keeps its structure even when a feed is empty.
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2 text-sm text-slate-500 dark:text-slate-400">
-                <span className={`${MARKET_INSET_CLASS} px-3 py-2`}>Last updated {currentDate}</span>
-                <span className={`${MARKET_INSET_CLASS} px-3 py-2`}>Snapshot {endpointStats.snapshotFreshnessLabel === 'checking' ? 'checking' : endpointStats.snapshotFreshnessLabel}</span>
-                <span className={`${MARKET_INSET_CLASS} px-3 py-2`}>Scheduler {endpointStats.schedulerRunning ? 'running' : endpointStats.schedulerEnabled ? 'enabled' : 'checking'}</span>
-              </div>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3 lg:w-[31rem] lg:grid-cols-3">
-              <div className={`${MARKET_INSET_CLASS} p-4`}>
-                <div className={MARKET_LABEL_CLASS}>Breadth</div>
-                <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{marketData.breadth.advances}/{marketData.breadth.declines}</div>
-                <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">Advances vs declines</div>
-              </div>
-              <div className={`${MARKET_INSET_CLASS} p-4`}>
-                <div className={MARKET_LABEL_CLASS}>52W Rows</div>
-                <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.high52Count + endpointStats.low52Count}</div>
-                <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">High + low coverage</div>
-              </div>
-              <div className={`${MARKET_INSET_CLASS} p-4`}>
-                <div className={MARKET_LABEL_CLASS}>Snapshot</div>
-                <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.snapshotStatus === 'unknown' ? 'checking' : endpointStats.snapshotStatus}</div>
-                <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{endpointStats.snapshotCapturedAt || 'awaiting capture'}</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Error Message */}
         {error && (
           <div className={`${MARKET_INSET_CLASS} mb-8 px-4 py-3 text-amber-800 dark:text-amber-200`}>
@@ -1507,8 +1444,8 @@ export default function MarketPage() {
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">The most reliable live data source on this page right now, derived directly from the 52-week high/low endpoints.</p>
                 </div>
                 <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
-                  <div className={MARKET_LABEL_CLASS}>Snapshot</div>
-                  <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white capitalize">{endpointStats.snapshotFreshnessLabel}</div>
+                  <div className={MARKET_LABEL_CLASS}>Rows loaded</div>
+                  <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white">{marketData.rangeHighs.length + marketData.rangeLows.length}</div>
                 </div>
               </div>
 
@@ -1516,7 +1453,7 @@ export default function MarketPage() {
                 <div className={`${MARKET_INSET_CLASS} p-4 sm:p-5`}>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <h4 className="text-sm font-semibold tracking-tight text-slate-950 dark:text-white">52W Highs</h4>
-                    <span className={MARKET_LABEL_CLASS}>{endpointStats.high52Count} rows</span>
+                    <span className={MARKET_LABEL_CLASS}>{marketData.rangeHighs.length} rows</span>
                   </div>
                   <div className="overflow-hidden rounded-[20px] border border-slate-200/70 dark:border-white/10">
                     <table className="min-w-full">
@@ -1553,7 +1490,7 @@ export default function MarketPage() {
                 <div className={`${MARKET_INSET_CLASS} p-4 sm:p-5`}>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <h4 className="text-sm font-semibold tracking-tight text-slate-950 dark:text-white">52W Lows</h4>
-                    <span className={MARKET_LABEL_CLASS}>{endpointStats.low52Count} rows</span>
+                    <span className={MARKET_LABEL_CLASS}>{marketData.rangeLows.length} rows</span>
                   </div>
                   <div className="overflow-hidden rounded-[20px] border border-slate-200/70 dark:border-white/10">
                     <table className="min-w-full">
@@ -1585,53 +1522,6 @@ export default function MarketPage() {
                       </tbody>
                     </table>
                   </div>
-                </div>
-              </div>
-            </section>
-
-            <section className={`${MARKET_PANEL_CLASS} mb-8 p-5 sm:p-6`}>
-              <div className="mb-4 flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Endpoint Coverage</h3>
-                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Backend feed health, snapshot freshness, and live data coverage at a glance.</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
-                  <div className={MARKET_LABEL_CLASS}>Status</div>
-                  <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white capitalize">{endpointStats.snapshotStatus === 'unknown' ? 'checking' : endpointStats.snapshotStatus}</div>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                <div className={`${MARKET_INSET_CLASS} p-4`}>
-                  <p className={MARKET_LABEL_CLASS}>Sector Heatmap Rows</p>
-                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.sectorHeatmapCount}</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} p-4`}>
-                  <p className={MARKET_LABEL_CLASS}>52W High Rows</p>
-                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.high52Count}</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} p-4`}>
-                  <p className={MARKET_LABEL_CLASS}>52W Low Rows</p>
-                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.low52Count}</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} p-4`}>
-                  <p className={MARKET_LABEL_CLASS}>Snapshot History Rows</p>
-                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.snapshotHistoryCount}</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} p-4 sm:col-span-2 xl:col-span-2`}>
-                  <p className={MARKET_LABEL_CLASS}>Snapshot Captured At</p>
-                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white break-all">{endpointStats.snapshotCapturedAt || 'n/a'}</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} p-4`}>
-                  <p className={MARKET_LABEL_CLASS}>Freshness</p>
-                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white capitalize">{endpointStats.snapshotFreshnessLabel}</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} p-4`}>
-                  <p className={MARKET_LABEL_CLASS}>Scheduler</p>
-                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white">{endpointStats.schedulerRunning ? 'Running' : 'Idle'}</p>
-                </div>
-                <div className={`${MARKET_INSET_CLASS} p-4`}>
-                  <p className={MARKET_LABEL_CLASS}>Snapshot Errors</p>
-                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white">{endpointStats.snapshotErrorCount}</p>
                 </div>
               </div>
             </section>

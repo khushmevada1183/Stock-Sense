@@ -56,15 +56,6 @@ interface FetchedFinancialStatementsData {
     period?: number;
   }>;
 }
-
-interface StockEndpointStats {
-  quoteLoaded: boolean;
-  technicalLoaded: boolean;
-  financialRows: number;
-  peersRows: number;
-  historyRows: number;
-  ticksRows: number;
-}
 import { FinancialItem, FinancialPeriod } from '@/components/stocks/FinancialStatements'; // Import for transformFinancialData
 
 // Register Chart.js components
@@ -76,14 +67,6 @@ export default function Page() {
   const symbol = params?.symbol as string || '';
   const [stockData, setStockData] = useState<unknown | null>(null);           // raw API response
   const [stock, setStock] = useState<NormalizedStock | null>(null); // normalized data
-  const [endpointStats, setEndpointStats] = useState<StockEndpointStats>({
-    quoteLoaded: false,
-    technicalLoaded: false,
-    financialRows: 0,
-    peersRows: 0,
-    historyRows: 0,
-    ticksRows: 0,
-  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('overview');
@@ -207,14 +190,6 @@ export default function Page() {
           if (!normalized) {
             setError(`Could not parse data for "${symbol}". Unexpected data format.`);
           }
-          setEndpointStats({
-            quoteLoaded: Boolean(normalized),
-            technicalLoaded: false,
-            financialRows: 0,
-            peersRows: 0,
-            historyRows: 0,
-            ticksRows: 0,
-          });
         } else {
           setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
         }
@@ -1110,38 +1085,6 @@ export default function Page() {
                 industry={industry}
               />
             )}
-          </div>
-
-          <div className="px-6 pb-6">
-            <div className="bg-gray-900/90 border border-gray-700/60 rounded-lg p-4">
-              <h3 className="text-white font-semibold mb-3">On-Demand Data Coverage</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
-                  <p className="text-gray-400">Core Profile</p>
-                  <p className="text-neon-400 font-semibold">{endpointStats.quoteLoaded ? 'Loaded' : 'Pending'}</p>
-                </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
-                  <p className="text-gray-400">Technical Endpoint</p>
-                  <p className="text-neon-400 font-semibold">{activeTab === 'technical' ? 'Loaded in tab' : 'Deferred'}</p>
-                </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
-                  <p className="text-gray-400">Financial Rows</p>
-                  <p className="text-neon-400 font-semibold">{activeTab === 'fundamental' ? 'Loaded in tab' : 'Deferred'}</p>
-                </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
-                  <p className="text-gray-400">Peers Rows</p>
-                  <p className="text-neon-400 font-semibold">{activeTab === 'industry' ? 'Loaded in tab' : 'Deferred'}</p>
-                </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
-                  <p className="text-gray-400">History Rows</p>
-                  <p className="text-neon-400 font-semibold">{activeTab === 'technical' ? 'Loaded in tab' : 'Deferred'}</p>
-                </div>
-                <div className="bg-gray-800 border border-gray-700 rounded-md p-3">
-                  <p className="text-gray-400">Tick Rows</p>
-                  <p className="text-neon-400 font-semibold">{activeTab === 'technical' ? 'Loaded in tab' : 'Deferred'}</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
