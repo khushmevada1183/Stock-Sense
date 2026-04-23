@@ -115,21 +115,21 @@ export default function IpoSection() {
 
   if (loading) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-6">
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
         <div className="flex gap-5 overflow-hidden">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="rounded-lg border border-slate-200 dark:border-gray-700/50 bg-white dark:bg-gray-900/90 p-5 min-w-[300px] animate-pulse">
+            <div key={i} className="min-w-[300px] animate-pulse rounded-[24px] border border-slate-200/70 bg-white/75 p-5 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
               <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-slate-200 dark:bg-gray-700/70 rounded-lg" />
+                <div className="h-12 w-12 rounded-2xl bg-slate-200 dark:bg-slate-700" />
                 <div className="ml-3">
-                  <div className="h-5 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-32 mb-2" />
-                  <div className="h-3 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-16" />
+                  <div className="mb-2 h-4 w-32 rounded-full bg-slate-200 dark:bg-slate-700" />
+                  <div className="h-3 w-16 rounded-full bg-slate-200 dark:bg-slate-700" />
                 </div>
               </div>
               <div className="space-y-3">
-                <div className="h-4 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-full" />
-                <div className="h-4 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-3/4" />
-                <div className="h-4 bg-slate-200 dark:bg-gray-700/70 rounded-lg w-2/3" />
+                <div className="h-4 w-full rounded-full bg-slate-200 dark:bg-slate-700" />
+                <div className="h-4 w-3/4 rounded-full bg-slate-200 dark:bg-slate-700" />
+                <div className="h-4 w-2/3 rounded-full bg-slate-200 dark:bg-slate-700" />
               </div>
             </div>
           ))}
@@ -140,7 +140,7 @@ export default function IpoSection() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 dark:border-red-900/30 dark:bg-red-900/10 p-4 text-red-700 dark:text-red-400">
+      <div className="rounded-[24px] border border-rose-200/70 bg-rose-50/80 p-4 text-rose-700 backdrop-blur-xl dark:border-rose-900/30 dark:bg-rose-900/10 dark:text-rose-300">
         {error}
       </div>
     );
@@ -148,8 +148,8 @@ export default function IpoSection() {
 
   if (ipoData.length === 0) {
     return (
-      <div className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-6">
-        <p className="text-slate-600 dark:text-slate-400 text-center py-8">
+      <div className="rounded-[28px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+        <p className="py-8 text-center text-slate-600 dark:text-slate-400">
           No upcoming IPO data available at this time.
         </p>
       </div>
@@ -159,9 +159,9 @@ export default function IpoSection() {
   const displayedIpos = ipoData.slice(0, 5);
 
   return (
-    <div ref={sectionRef} className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 overflow-hidden">
+    <div ref={sectionRef} className="overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/75 backdrop-blur-xl shadow-[0_24px_80px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.34)]">
       <div className="p-6">
-        <div className="text-slate-600 dark:text-slate-400 text-sm mb-6">
+        <div className="mb-6 text-sm text-slate-600 dark:text-slate-400">
           Companies that have filed for an IPO with SEBI. Details might be disclosed later.
         </div>
 
@@ -169,9 +169,9 @@ export default function IpoSection() {
         <div className="relative mb-4">
           <div
             ref={carouselRef}
-            className="overflow-x-auto pb-4 relative max-w-full hide-scrollbar"
+            className="relative max-w-full overflow-x-auto pb-4 hide-scrollbar"
           >
-            <div ref={cardsRef} className="flex gap-5 px-1 py-2 min-w-full">
+            <div ref={cardsRef} className="flex min-w-full gap-4 px-1 py-2">
               {displayedIpos.map((ipo, index) => (
                 <div
                   key={index}
@@ -183,10 +183,10 @@ export default function IpoSection() {
                     const isPositiveStatus = /(oversubscribed|subscribed|open|strong|bullish)/.test(statusText);
 
                     return (
-                      <div className="relative w-full min-h-[330px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-5 hover:shadow-md transition-shadow flex flex-col">
+                      <div className="relative flex min-h-[330px] w-full flex-col rounded-[28px] border border-slate-200/70 bg-white/75 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.34)]">
                         <div className="flex items-center mb-4">
                           {ipo.logo ? (
-                            <div className="w-12 h-12 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center overflow-hidden mr-3">
+                            <div className="mr-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-slate-100/80 dark:bg-white/10">
                               <Image
                                 src={ipo.logo}
                                 alt={`${ipo.company_name} logo`}
@@ -196,19 +196,19 @@ export default function IpoSection() {
                               />
                             </div>
                           ) : (
-                            <div className="w-12 h-12 flex items-center justify-center bg-slate-100 dark:bg-gray-800/80 rounded-lg mr-3 text-slate-900 dark:text-white font-bold text-lg">
+                            <div className="mr-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100/80 text-lg font-semibold text-slate-900 dark:bg-white/10 dark:text-white">
                               {ipo.symbol?.substring(0, 2) || ipo.company_name?.substring(0, 2) || 'IP'}
                             </div>
                           )}
                           <div>
-                            <div className="font-bold text-slate-900 dark:text-white mb-0.5">{ipo.company_name}</div>
-                            <div className="text-slate-500 dark:text-slate-400 text-sm">{ipo.symbol}</div>
+                            <div className="mb-0.5 font-semibold tracking-tight text-slate-950 dark:text-white">{ipo.company_name}</div>
+                            <div className="text-sm text-slate-500 dark:text-slate-400">{ipo.symbol}</div>
                           </div>
                         </div>
 
                         <div className="space-y-3 mb-4">
                           <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
-                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mr-2.5">
+                            <div className="mr-2.5 flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-white/10">
                               <IndianRupee size={14} className="text-slate-600 dark:text-slate-400" />
                             </div>
                             <div className="text-sm">
@@ -218,7 +218,7 @@ export default function IpoSection() {
                           </div>
 
                           <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
-                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mr-2.5">
+                            <div className="mr-2.5 flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-white/10">
                               <TrendingUp size={14} className="text-slate-600 dark:text-slate-400" />
                             </div>
                             <div className="text-sm">
@@ -228,7 +228,7 @@ export default function IpoSection() {
                           </div>
 
                           <div className="metric-item flex items-center text-slate-700 dark:text-slate-300">
-                            <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-gray-800/80 flex items-center justify-center mr-2.5">
+                            <div className="mr-2.5 flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100/80 dark:bg-white/10">
                               <Calendar size={14} className="text-slate-600 dark:text-slate-400" />
                             </div>
                             <div className="text-sm">
@@ -240,8 +240,8 @@ export default function IpoSection() {
 
                         {/* Subscription bar */}
                         <div className="mb-4">
-                          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1.5">Expected Interest</div>
-                          <div className="h-2 bg-slate-200 dark:bg-gray-700/70 rounded-full overflow-hidden">
+                          <div className="mb-1.5 text-xs text-slate-500 dark:text-slate-400">Expected interest</div>
+                          <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
                             <div
                               className={`h-full rounded-full ${
                                 isPositiveStatus
@@ -301,14 +301,14 @@ export default function IpoSection() {
             <div className="flex justify-end mt-2 gap-2">
               <button
                 onClick={() => scrollCarousel('left')}
-                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="rounded-full border border-slate-300/80 bg-white/80 p-2 text-slate-600 transition-transform duration-200 hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
                 aria-label="Scroll left"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={() => scrollCarousel('right')}
-                className="p-2 rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
+                className="rounded-full border border-slate-300/80 bg-white/80 p-2 text-slate-600 transition-transform duration-200 hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
                 aria-label="Scroll right"
               >
                 <ChevronRight size={16} />
@@ -318,14 +318,14 @@ export default function IpoSection() {
         </div>
 
         {/* Demat Account CTA */}
-        <div className="mt-6 rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-5 text-center">
-          <div className="font-semibold text-slate-900 dark:text-white mb-2">Applying for IPOs?</div>
-          <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">
+          <div className="mt-6 rounded-[28px] border border-slate-200/70 bg-white/75 p-5 text-center backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+            <div className="mb-2 font-semibold tracking-tight text-slate-950 dark:text-white">Applying for IPOs?</div>
+            <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
             To apply for IPOs, you need a Demat account. Open your account now to start investing.
           </p>
           <Button
             size="sm"
-            className="mx-auto"
+              className="mx-auto rounded-full bg-slate-950 px-4 py-2.5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
             onClick={() => router.push('/signup')}
           >
             Open a Demat Account

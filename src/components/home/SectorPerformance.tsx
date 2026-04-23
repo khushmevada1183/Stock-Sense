@@ -70,11 +70,11 @@ export default function SectorPerformance() {
   if (loading) {
     return (
       <div ref={sectionRef}>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-4 animate-pulse">
-              <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4 mb-3" />
-              <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/2" />
+            <div key={i} className="animate-pulse rounded-[24px] border border-slate-200/70 bg-white/75 p-4 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <div className="mb-3 h-3.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-700" />
+              <div className="h-5 w-1/2 rounded-full bg-slate-200 dark:bg-slate-700" />
             </div>
           ))}
         </div>
@@ -84,7 +84,7 @@ export default function SectorPerformance() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400">
+      <div className="rounded-[24px] border border-rose-200/70 bg-rose-50/80 p-4 text-rose-700 backdrop-blur-xl dark:border-rose-900/30 dark:bg-rose-900/10 dark:text-rose-300">
         {error}
       </div>
     );
@@ -94,7 +94,7 @@ export default function SectorPerformance() {
   const maxAbsChange = Math.max(...sectors.map(s => Math.abs(s.changePercent)), 1);
 
   return (
-    <div ref={sectionRef} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div ref={sectionRef} className="grid grid-cols-2 gap-3 md:grid-cols-4">
       {sectors.map((sector, index) => {
         const positive = sector.changePercent >= 0;
         const barWidth = (Math.abs(sector.changePercent) / maxAbsChange) * 100;
@@ -104,11 +104,11 @@ export default function SectorPerformance() {
             key={sector.name || index}
             className="relative overflow-hidden"
           >
-            <div className="w-full min-h-[122px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-4 hover:shadow-md transition-shadow">
-              <h3 className="font-medium text-slate-700 dark:text-slate-300 mb-2 text-sm leading-tight">
+            <div className="w-full min-h-[122px] rounded-[24px] border border-slate-200/70 bg-white/75 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_22px_60px_rgba(0,0,0,0.32)]">
+              <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500 leading-tight">
                 {sector.name}
               </h3>
-              <div className={`flex items-center font-bold text-lg ${
+              <div className={`flex items-center text-base font-semibold tracking-tight ${
                 positive 
                   ? 'text-green-600 dark:text-green-400' 
                   : 'text-red-600 dark:text-red-400'

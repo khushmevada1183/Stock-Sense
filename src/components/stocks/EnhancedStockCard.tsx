@@ -99,18 +99,21 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
   };
 
   return (
-    <div className="h-fit rounded-lg border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all duration-300 dark:border-slate-700 dark:bg-slate-950 p-5">
-      <div className="flex justify-between items-start">
+    <div className="group h-fit overflow-hidden rounded-[28px] border border-white/10 bg-slate-950/70 p-5 shadow-[0_24px_70px_rgba(2,6,23,0.38)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-400/20 hover:shadow-[0_30px_90px_rgba(2,6,23,0.52)]">
+      <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <h3 className="text-slate-900 dark:text-white text-base font-semibold truncate">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-[var(--font-roboto-mono)] text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-slate-300">
+            Live stock
+          </div>
+          <h3 className="truncate text-base font-semibold tracking-tight text-white">
             {stock.company_name || stock.displayName || stock.name || 'Unknown Company'}
           </h3>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-slate-600 dark:text-slate-400 text-sm">
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-sm text-slate-400">
               {stock.nseCode || stock.ric?.split('.')[0] || stock.symbol || stock.ticker_id}
             </span>
             {(stock.exchange_type || stock.exchangeType) && (
-              <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-200 text-xs rounded">
+              <span className="rounded-full border border-emerald-400/15 bg-emerald-400/10 px-2 py-0.5 text-xs font-medium text-emerald-300">
                 {stock.exchange_type || stock.exchangeType}
               </span>
             )}
@@ -118,158 +121,147 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
         </div>
         
         <div className="text-right">
-          <div className="text-lg font-bold text-slate-900 dark:text-white">
+          <div className="text-lg font-semibold tracking-tight text-white">
             {formatCurrency(stock.price || stock.current_price)}
           </div>
           <div className={`flex items-center justify-end gap-1 text-sm font-medium ${
-            isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+            isPositive ? 'text-emerald-400' : 'text-rose-400'
           }`}>
-            {isPositive ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+            {isPositive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
             {isPositive ? '+' : ''}{percentChange.toFixed(2)}%
           </div>
         </div>
       </div>
 
-      <div className="space-y-3 mt-5 pt-5 border-t border-slate-200 dark:border-slate-700">
-        {/* Compact Essential Info */}
+      <div className="mt-5 space-y-4 border-t border-white/10 pt-5">
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <div className="text-xs text-slate-600 dark:text-slate-400">Day Range</div>
-            <div className="text-slate-900 dark:text-slate-100 truncate">
+            <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Day Range</div>
+            <div className="truncate text-slate-100">
               {formatCurrency(stock.low)} - {formatCurrency(stock.high)}
             </div>
           </div>
           <div>
-            <div className="text-xs text-slate-600 dark:text-slate-400">Volume</div>
-            <div className="text-slate-900 dark:text-slate-100 flex items-center gap-1">
-              <Volume className="w-3 h-3" />
+            <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Volume</div>
+            <div className="flex items-center gap-1 text-slate-100">
+              <Volume className="h-3 w-3 text-emerald-400" />
               {formatVolume(stock.volume)}
             </div>
           </div>
         </div>
 
-        {/* Rating */}
         {rating && (
-          <div className="flex justify-center">
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRatingColor(rating)}`}>
+          <div className="flex justify-start">
+            <span className={`rounded-full px-3 py-1 text-xs font-medium ${getRatingColor(rating)}`}>
               {rating}
             </span>
           </div>
         )}
 
-        {/* Expand/Collapse Button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full min-h-[44px] flex items-center justify-center gap-2 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors border-t border-slate-200 dark:border-slate-700"
+          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-2 text-sm text-slate-300 transition-colors hover:border-white/15 hover:bg-white/10 hover:text-white"
         >
           {isExpanded ? 'Show Less' : 'Show More'}
-          {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
 
-        {/* Expanded Content */}
         {isExpanded && (
-          <div className="space-y-3 pt-3 border-t border-slate-200 dark:border-slate-700">
-            {/* Circuit Limits */}
+          <div className="space-y-4 border-t border-white/10 pt-4">
             {(stock.low_circuit_limit || stock.up_circuit_limit) && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Lower Circuit</div>
-                  <div className="text-sm text-red-600 dark:text-red-400">
+                  <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Lower Circuit</div>
+                  <div className="text-sm text-rose-400">
                     {formatCurrency(stock.low_circuit_limit)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Upper Circuit</div>
-                  <div className="text-sm text-green-600 dark:text-green-400">
+                  <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Upper Circuit</div>
+                  <div className="text-sm text-emerald-400">
                     {formatCurrency(stock.up_circuit_limit)}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* 52-Week Range */}
             {(stock['52_week_low'] !== undefined || stock.year_low !== undefined || stock['52_week_high'] !== undefined || stock.year_high !== undefined) && (
               <div>
-                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">52-Week Range</div>
-                <div className="text-sm text-slate-900 dark:text-slate-100">
+                <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">52-Week Range</div>
+                <div className="text-sm text-slate-100">
                   {formatCurrency(stock['52_week_low'] || stock.year_low || 0)} - {formatCurrency(stock['52_week_high'] || stock.year_high || 0)}
                 </div>
               </div>
             )}
 
-            {/* Bid/Ask */}
             {(stock.bid || stock.ask) && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Bid</div>
-                  <div className="text-sm text-green-600 dark:text-green-400">
+                  <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Bid</div>
+                  <div className="text-sm text-emerald-400">
                     {formatCurrency(stock.bid)} ({stock.bid_size || 0})
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Ask</div>
-                  <div className="text-sm text-red-600 dark:text-red-400">
+                  <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Ask</div>
+                  <div className="text-sm text-rose-400">
                     {formatCurrency(stock.ask)} ({stock.ask_size || 0})
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Open & Close Prices */}
             {(stock.open || stock.close) && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Open</div>
-                  <div className="text-sm text-slate-900 dark:text-slate-100">
+                  <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Open</div>
+                  <div className="text-sm text-slate-100">
                     {formatCurrency(stock.open)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Previous Close</div>
-                  <div className="text-sm text-slate-900 dark:text-slate-100">
+                  <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Previous Close</div>
+                  <div className="text-sm text-slate-100">
                     {formatCurrency(stock.close)}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Trends */}
             {(shortTrend || longTrend) && (
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="flex flex-wrap gap-2">
                 {shortTrend && (
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRatingColor(shortTrend)}`}>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${getRatingColor(shortTrend)}`}>
                     ST: {shortTrend}
                   </span>
                 )}
                 {longTrend && (
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRatingColor(longTrend)}`}>
+                  <span className={`rounded-full px-2 py-1 text-xs font-medium ${getRatingColor(longTrend)}`}>
                     LT: {longTrend}
                   </span>
                 )}
               </div>
             )}
 
-            {/* Additional Technical Info */}
-            <div className="grid grid-cols-2 gap-2 text-xs text-slate-600 dark:text-slate-400">
+            <div className="grid grid-cols-2 gap-2 text-xs text-slate-400">
               {stock.date && <div>Date: {stock.date}</div>}
               {stock.time && <div>Time: {stock.time}</div>}
               {(stock.lot_size || stock.lotSize) && <div>Lot Size: {stock.lot_size || stock.lotSize}</div>}
               {stock.net_change && <div>Net Change: ₹{stock.net_change}</div>}
             </div>
 
-            {/* Market Cap & Advanced Metrics */}
             {(stock.marketCap || stock.market_cap) && (
               <div>
-                <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Market Cap</div>
-                <div className="text-sm text-slate-900 dark:text-slate-100">
+                <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Market Cap</div>
+                <div className="text-sm text-slate-100">
                   {formatMarketCap(stock.marketCap || stock.market_cap)}
                 </div>
               </div>
             )}
 
             {stock.description && (
-              <div className="p-2 bg-slate-100 dark:bg-slate-900 rounded text-xs text-slate-700 dark:text-slate-300">
-                <Info className="w-3 h-3 inline mr-1" />
+              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-xs leading-relaxed text-slate-300">
+                <Info className="mr-1 inline h-3 w-3 text-emerald-400" />
                 {stock.description}
               </div>
             )}

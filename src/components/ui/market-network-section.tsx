@@ -9,25 +9,27 @@ export default function MarketNetworkSection() {
         aria-hidden="true"
         className={cn(
           'pointer-events-none absolute -top-24 left-1/2 h-[70vmin] w-[70vmin] -translate-x-1/2 rounded-full',
-          'bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.14),transparent_60%)] blur-3xl'
+          'bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.12),transparent_60%)] blur-3xl dark:bg-[radial-gradient(ellipse_at_center,rgba(57,255,20,0.14),transparent_60%)]'
         )}
       />
 
-      <div className="relative w-full py-3 md:py-4">
-        <h2 className="mb-4 text-center">
-          <span className="mb-5 inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:border-gray-700/70 dark:bg-gray-900/80 dark:text-slate-300">
-            <Sparkles className="mr-1.5 h-3.5 w-3.5" />
-            India Market Network
-          </span>
-          <span className="mt-1 block text-2xl font-bold text-slate-600 dark:text-slate-400">
-            Trusted by Exchanges, Institutions, and Blue-Chip Leaders
-          </span>
-          <span className="mt-5 block tracking-tight text-3xl font-black text-slate-900 dark:text-white md:text-4xl">
-            NSE • BSE • RBI • SEBI • Top Indian Companies
-          </span>
-        </h2>
+      <div className="relative w-full py-4 md:py-6">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/75 px-5 py-6 text-center shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60 dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)] md:px-8 md:py-8">
+            <div className="mx-auto mb-4 inline-flex items-center rounded-full border border-slate-300/80 bg-white/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-600 backdrop-blur-md dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
+              <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+              India market network
+            </div>
+            <h2 className="text-[clamp(1.75rem,3vw,2.75rem)] font-semibold tracking-[-0.04em] text-slate-950 dark:text-white">
+              Trusted by exchanges, institutions, and blue-chip leaders.
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400 md:text-base">
+              NSE, BSE, RBI, SEBI, and India&apos;s most relevant companies kept in a calm, premium network layer.
+            </p>
 
-        <MarketEntityTicker className="mt-8 md:mt-10" entities={entities} />
+            <MarketEntityTicker className="mt-8 md:mt-10" entities={entities} />
+          </div>
+        </div>
       </div>
     </div>
   );

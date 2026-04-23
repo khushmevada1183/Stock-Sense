@@ -274,28 +274,33 @@ export default function AnalysisFeatures() {
   );
 
   return (
-    <div className="relative px-2 py-10 text-slate-900 sm:px-4 md:px-6 md:py-14 dark:text-slate-100">
-
-      <div className="relative mx-auto max-w-3xl text-center">
-        <div className="mb-5 flex items-center justify-center gap-2 font-[var(--font-roboto-mono)] text-[0.66rem] font-semibold uppercase tracking-[0.28em] text-slate-500 dark:text-zinc-300">
-          <span className="h-1.5 w-1.5 rounded-full bg-slate-700 dark:bg-white" />
-          Comprehensive Coverage
-        </div>
-
-        <h2 className="font-[family-name:var(--font-display)] text-[clamp(2rem,4.2vw,3.4rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-slate-900 dark:text-white">
-          Comprehensive Stock Analysis
-        </h2>
-
-        <p className="mx-auto mt-4 max-w-2xl text-[1.03rem] leading-relaxed text-slate-600 dark:text-zinc-300 md:text-[1.18rem]">
-          Our platform analyzes stocks across ten key dimensions to give you the most complete picture.
-        </p>
-
-        <p className="mx-auto mt-4 max-w-2xl font-[var(--font-roboto-mono)] text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-zinc-400">
-          Indicative outcome weights • vary by market regime
-        </p>
+    <div className="relative px-4 py-12 text-slate-950 md:py-16 dark:text-slate-100">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="absolute -left-24 top-12 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.12)_0%,rgba(16,185,129,0)_70%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(57,255,20,0.12)_0%,rgba(57,255,20,0)_70%)]" />
+        <div className="absolute right-0 top-28 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(15,23,42,0.08)_0%,rgba(15,23,42,0)_72%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(148,163,184,0.12)_0%,rgba(148,163,184,0)_72%)]" />
       </div>
 
-      <div ref={graphRef} className="relative mx-auto mt-12 h-[min(92vw,31rem)] w-full max-w-5xl sm:h-[min(78vw,36rem)] lg:h-[36rem]">
+      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/75 px-6 py-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60 dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)] md:px-8 md:py-10 lg:px-10 lg:py-12">
+        <div className="relative mx-auto max-w-3xl text-center">
+          <div className="mb-5 flex items-center justify-center gap-2 font-[var(--font-roboto-mono)] text-[0.66rem] font-semibold uppercase tracking-[0.28em] text-slate-500 dark:text-zinc-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            Research framework
+          </div>
+
+          <h2 className="font-[family-name:var(--font-display)] text-[clamp(2rem,4.2vw,3.4rem)] font-semibold leading-[1.05] tracking-[-0.03em] text-slate-950 dark:text-white">
+            Comprehensive Stock Analysis
+          </h2>
+
+          <p className="mx-auto mt-4 max-w-2xl text-[1.03rem] leading-relaxed text-slate-600 dark:text-zinc-300 md:text-[1.18rem]">
+            Our platform analyzes stocks across ten key dimensions to give you the most complete picture.
+          </p>
+
+          <p className="mx-auto mt-4 max-w-2xl font-[var(--font-roboto-mono)] text-[0.68rem] font-semibold uppercase tracking-[0.22em] text-slate-500 dark:text-zinc-400">
+            Indicative outcome weights • vary by market regime
+          </p>
+        </div>
+
+        <div ref={graphRef} className="relative mx-auto mt-10 h-[min(92vw,31rem)] w-full max-w-5xl sm:h-[min(78vw,36rem)] lg:h-[36rem]">
         <svg aria-hidden className="absolute inset-0 h-full w-full text-slate-600 dark:text-slate-200">
           {renderableRingEdges.map((edge, index) => (
             <motion.line
@@ -521,25 +526,26 @@ export default function AnalysisFeatures() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.35, delay: index * 0.03 }}
-            className="border-b border-slate-300/70 px-1 py-3 last:border-b-0 dark:border-white/15"
+            className="rounded-[22px] border border-slate-200/70 bg-white/75 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-[0_22px_60px_rgba(0,0,0,0.32)]"
           >
             <div className="flex items-start justify-between gap-4">
-              <h3 className="text-sm font-semibold leading-snug text-slate-900 dark:text-white">
+              <h3 className="text-sm font-semibold leading-snug tracking-tight text-slate-950 dark:text-white">
                 <span className="mr-2 font-[var(--font-roboto-mono)] text-[0.6rem] font-semibold uppercase tracking-[0.2em] text-slate-500 dark:text-zinc-400">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 {feature.title}
               </h3>
-              <span className="shrink-0 font-[var(--font-roboto-mono)] text-xs font-semibold tabular-nums text-slate-700 dark:text-zinc-200">
+              <span className="shrink-0 rounded-full bg-emerald-500/10 px-2.5 py-1 font-[var(--font-roboto-mono)] text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-300">
                 {feature.outcomeWeight}%
               </span>
             </div>
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-600 dark:text-zinc-300">
+            <p className="mt-3 text-xs leading-relaxed text-slate-600 dark:text-zinc-300">
               {feature.description}
             </p>
           </motion.li>
         ))}
       </ul>
+      </div>
     </div>
   );
 }

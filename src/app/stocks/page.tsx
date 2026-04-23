@@ -6,11 +6,10 @@ import { Chart, registerables } from 'chart.js';
 import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, IndianRupee, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { useAnimation } from '@/animations/shared/AnimationContext';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 import { logger } from '@/lib/logger';
 import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
-import { GlowCard } from '@/components/spotlight-card';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import CursiveLoader from '@/components/ui/CursiveLoader';
 
@@ -62,6 +61,7 @@ interface LooseStock {
   ticker_id?: string;
   tickerId?: string;
   ticker?: string;
+  identifier?: string;
   symbol?: string;
   nseCode?: string;
   ric?: string;
@@ -119,13 +119,17 @@ interface LooseStock {
   long_term_trends?: string;
   longTermTrends?: string;
   year_low?: number;
+  yearLow?: number;
   ylow?: number;
   low_52_week?: number;
   '52_week_low'?: number;
   year_high?: number;
+  yearHigh?: number;
   yhigh?: number;
   high_52_week?: number;
   '52_week_high'?: number;
+  change_percent?: number;
+  variation?: number;
   deviation?: number;
   actualDeviation?: number;
   description?: string;
@@ -145,10 +149,24 @@ interface StocksSurfaceCardProps {
   className?: string;
 }
 
+const STOCKS_SURFACE_CARD_CLASS = [
+  'rounded-[28px]',
+  'border',
+  'border-white/10',
+  'bg-slate-950/70',
+  'shadow-[0_24px_80px_rgba(2,6,23,0.42)]',
+  'backdrop-blur-xl',
+  'transition-all',
+  'duration-300',
+  'hover:-translate-y-0.5',
+  'hover:border-emerald-400/20',
+  'hover:shadow-[0_30px_90px_rgba(2,6,23,0.58)]',
+].join(' ');
+
 const StocksSurfaceCard = ({ children, className = '' }: StocksSurfaceCardProps) => (
-  <GlowCard customSize className={`rounded-2xl border border-gray-700/50 bg-gray-900/90 !p-0 shadow-lg ${className}`}>
+  <div className={`${STOCKS_SURFACE_CARD_CLASS} ${className}`}>
     {children}
-  </GlowCard>
+  </div>
 );
 
 export default function StocksIndexPage() {
@@ -256,6 +274,15 @@ export default function StocksIndexPage() {
   const totalHighLowPages = Math.max(1, Math.ceil(highLowData.length / HIGH_LOW_CARD_PAGE_SIZE));
   const highLowStartIndex = (highLowCardPage - 1) * HIGH_LOW_CARD_PAGE_SIZE;
   const paginatedHighLowData = highLowData.slice(highLowStartIndex, highLowStartIndex + HIGH_LOW_CARD_PAGE_SIZE);
+  const hasMeaningfulNumeric = (value: unknown) => {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && numeric !== 0;
+  };
+
+  const isMeaningfulText = (value: unknown) => {
+    const text = String(value || '').trim();
+    return text.length > 0 && text.toLowerCase() !== 'neutral';
+  };
 
   useEffect(() => {
     setStocksTablePage((prev) => Math.min(prev, totalStocksPages));
@@ -1154,7 +1181,7 @@ export default function StocksIndexPage() {
             ))}
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           <div className="lg:col-span-2 bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl p-6 h-72 animate-pulse">
             <div className="h-6 bg-gray-700 rounded w-32 mb-4"></div>
             <div className="h-48 bg-gray-700 rounded"></div>
@@ -1194,12 +1221,56 @@ export default function StocksIndexPage() {
       <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
       
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative z-10">
-      <div ref={headerRef} className="mb-12">
-        <div className="text-start">
-          <h1 className="text-4xl font-bold text-white bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            Stock Market Dashboard
-          </h1>
-          <p className="text-gray-300 mt-2 text-lg align-start">Real-time insights and analytics for the Indian stock market</p>
+      <div ref={headerRef} className="mb-10 overflow-hidden rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.35)] backdrop-blur-xl lg:p-8">
+        <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-3xl text-start">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 font-[var(--font-roboto-mono)] text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-emerald-300">
+              Live market intelligence
+            </div>
+            <h1 className="text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
+              Stock Market Dashboard
+            </h1>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+              Real-time insights and analytics for the Indian stock market.
+            </p>
+
+            <div className="actions mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/market"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-emerald-400/30 hover:bg-emerald-400/10 hover:text-emerald-200"
+              >
+                Open market
+              </Link>
+              <Link
+                href="/portfolio"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+              >
+                View portfolio
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[34rem]">
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_16px_40px_rgba(2,6,23,0.2)]">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-400">Live universe</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-white">{stocks.length}</p>
+              <p className="mt-1 text-xs text-slate-400">Stocks tracked now</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_16px_40px_rgba(2,6,23,0.2)]">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-400">Market balance</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                {marketMetrics.gainers}/{marketMetrics.losers}
+              </p>
+              <p className="mt-1 text-xs text-slate-400">Gainers vs losers</p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_16px_40px_rgba(2,6,23,0.2)]">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-400">Active feeds</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                {bseActive.length + nseActive.length}
+              </p>
+              <p className="mt-1 text-xs text-slate-400">BSE and NSE watchlists</p>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -1288,7 +1359,7 @@ export default function StocksIndexPage() {
       </div>
       
       {/* Data Sources Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 items-start">
         <StocksSurfaceCard className="metric-card hover:bg-gray-700/50 transition-all duration-300">
           <CardContent className="pt-8 pb-6">
             <div className="flex items-center justify-between">
@@ -1333,7 +1404,7 @@ export default function StocksIndexPage() {
       </div>
       
       {/* Main dashboard grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12 items-start">
         {/* Featured Stocks - Left Column (2/3 width) */}
         <div ref={stocksRef} className="xl:col-span-2 space-y-6 lg:space-y-8">
           <StocksSurfaceCard>
@@ -1361,16 +1432,7 @@ export default function StocksIndexPage() {
                         Change
                       </th>
                       <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        High/Low
-                      </th>
-                      <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Volume
-                      </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Rating
-                      </th>
-                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        More Info
                       </th>
                     </tr>
                   </thead>
@@ -1386,9 +1448,24 @@ export default function StocksIndexPage() {
                           </Link>
                         </td>
                         <td className="px-4 py-4">
-                          <div className="flex flex-col">
+                          <div className="flex flex-col gap-1">
                             <div className="text-white font-medium">{stock.company_name}</div>
-                            <div className="text-xs text-gray-400">{stock.sector_name}</div>
+                            <div className="flex flex-wrap items-center gap-2">
+                              <div className="text-xs text-gray-400">{stock.sector_name}</div>
+                              <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                                stock.overall_rating === 'Bullish' 
+                                  ? 'bg-green-900 text-green-200' 
+                                  : stock.overall_rating === 'Bearish'
+                                  ? 'bg-red-900 text-red-200'
+                                  : stock.overall_rating === 'Neutral'
+                                  ? 'bg-gray-700 text-gray-300'
+                                  : stock.overall_rating?.includes('Bearish')
+                                  ? 'bg-red-900 text-red-200'
+                                  : 'bg-gray-700 text-gray-300'
+                              }`}>
+                                {stock.overall_rating}
+                              </span>
+                            </div>
                           </div>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap">
@@ -1428,53 +1505,11 @@ export default function StocksIndexPage() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right">
                           <div className="flex flex-col text-xs">
-                            <div className="text-green-400">H: ₹{stock.high.toFixed(2)}</div>
-                            <div className="text-red-400">L: ₹{stock.low.toFixed(2)}</div>
-                            <div className="text-gray-400 text-[10px] mt-1">
-                              52W: ₹{stock.year_low.toFixed(0)}-₹{stock.year_high.toFixed(0)}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-right">
-                          <div className="flex flex-col text-xs">
                             <div className="text-white font-medium">
                               {(stock.volume / 1000000).toFixed(1)}M
                             </div>
                             <div className="text-gray-400">
                               Lot: {stock.lot_size}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <div className="flex flex-col items-center space-y-1">
-                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                              stock.overall_rating === 'Bullish' 
-                                ? 'bg-green-900 text-green-200' 
-                                : stock.overall_rating === 'Bearish'
-                                ? 'bg-red-900 text-red-200'
-                                : stock.overall_rating === 'Neutral'
-                                ? 'bg-gray-700 text-gray-300'
-                                : stock.overall_rating.includes('Bearish')
-                                ? 'bg-red-900 text-red-200'
-                                : 'bg-gray-700 text-gray-300'
-                            }`}>
-                              {stock.overall_rating}
-                            </span>
-                            <div className="text-[10px] text-gray-400">
-                              ST: {stock.short_term_trends}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4 whitespace-nowrap text-center">
-                          <div className="flex flex-col text-xs space-y-1">
-                            <div className="text-gray-400">
-                              Bid: ₹{stock.bid.toFixed(2)}
-                            </div>
-                            <div className="text-gray-400">
-                              Ask: ₹{stock.ask.toFixed(2)}
-                            </div>
-                            <div className="text-[10px] text-gray-500">
-                              {stock.date} {stock.time}
                             </div>
                           </div>
                         </td>
@@ -1521,7 +1556,7 @@ export default function StocksIndexPage() {
           {/* Detailed Stock Information Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {stocks.slice(0, Math.min(2, stocks.length)).map((stock) => (
-              <Card key={stock.id} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+              <StocksSurfaceCard key={stock.id}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -1648,13 +1683,13 @@ export default function StocksIndexPage() {
                     </p>
                   </div>
                 </CardContent>
-              </Card>
+              </StocksSurfaceCard>
             ))}
           </div>
 
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-            <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
+            <StocksSurfaceCard>
               <CardHeader className="pb-4">
                 <CardTitle className="text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-red-400 rounded-full mr-3"></div>
@@ -1667,9 +1702,9 @@ export default function StocksIndexPage() {
                   <canvas ref={gainersLosersChartRef} className="rounded-lg" />
                 </div>
               </CardContent>
-            </Card>
+            </StocksSurfaceCard>
             
-            <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
+            <StocksSurfaceCard>
               <CardHeader className="pb-4">
                 <CardTitle className="text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-3"></div>
@@ -1682,13 +1717,13 @@ export default function StocksIndexPage() {
                   <canvas ref={volumeChartRef} className="rounded-lg" />
                 </div>
               </CardContent>
-            </Card>
+            </StocksSurfaceCard>
           </div>
         </div>
         
         {/* Market Insights - Right Column (1/3 width) */}
         <div ref={sectorsRef} className="space-y-6 lg:space-y-8">
-          <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
+          <StocksSurfaceCard>
             <CardHeader className="pb-4">
               <CardTitle className="text-white flex items-center text-lg font-semibold">
                 <div className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-pink-400 rounded-full mr-3"></div>
@@ -1759,9 +1794,9 @@ export default function StocksIndexPage() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </StocksSurfaceCard>
           
-          <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <StocksSurfaceCard>
             <CardHeader className="pb-2">
               <CardTitle className="text-white">Stock Performance</CardTitle>
               <CardDescription className="text-gray-400">Price Change % by Stock</CardDescription>
@@ -1823,9 +1858,9 @@ export default function StocksIndexPage() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </StocksSurfaceCard>
           
-          <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+          <StocksSurfaceCard>
             <CardHeader className="pb-2">
               <CardTitle className="text-white">52-Week High/Low Range</CardTitle>
               <CardDescription className="text-gray-400">Top performers with position indicators</CardDescription>
@@ -1900,14 +1935,14 @@ export default function StocksIndexPage() {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </StocksSurfaceCard>
           </div>
         </div>
       </div>
 
       {/* Enhanced Stock Cards Section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+        <StocksSurfaceCard>
           <CardHeader>
             <CardTitle className="text-white">📈 Detailed Stock Analysis</CardTitle>
             <CardDescription className="text-gray-400">
@@ -1915,8 +1950,8 @@ export default function StocksIndexPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-              {stocks.slice(0, 18).map((stock) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {stocks.slice(0, 8).map((stock) => (
                 <EnhancedStockCard
                   key={stock.id}
                   stock={stock}
@@ -1938,10 +1973,11 @@ export default function StocksIndexPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </StocksSurfaceCard>
       </section>
 
       {/* BSE Most Active Section */}
+      {bseActive.length > 0 && (
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <div className="bg-gray-900/90 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50 shadow-2xl">
           <h2 className="text-3xl font-bold mb-8 text-white flex items-center">
@@ -1952,7 +1988,7 @@ export default function StocksIndexPage() {
           
           {/* BSE Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
+            <StocksSurfaceCard>
               <CardHeader className="pb-4">
                 <CardTitle className="text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
@@ -1965,9 +2001,9 @@ export default function StocksIndexPage() {
                   <canvas ref={bseVolumeChartRef} className="rounded-lg" />
                 </div>
               </CardContent>
-            </Card>
+            </StocksSurfaceCard>
             
-            <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
+            <StocksSurfaceCard>
               <CardHeader className="pb-4">
                 <CardTitle className="text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-red-400 to-pink-400 rounded-full mr-3"></div>
@@ -1980,13 +2016,13 @@ export default function StocksIndexPage() {
                   <canvas ref={bsePerformanceChartRef} className="rounded-lg" />
                 </div>
               </CardContent>
-            </Card>
+            </StocksSurfaceCard>
           </div>
           
           {/* BSE Stock Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {bseActive.map((stock, index) => (
-              <Card key={stock.ticker || index} className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 hover:bg-gray-700/50 transition-colors shadow-lg">
+            {bseActive.slice(0, 6).map((stock, index) => (
+              <StocksSurfaceCard key={stock.ticker || index}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -2011,41 +2047,64 @@ export default function StocksIndexPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">High/Low:</span>
-                      <span className="text-white">₹{stock.high?.toFixed(2)} / ₹{stock.low?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Open/Close:</span>
-                      <span className="text-white">₹{stock.open?.toFixed(2)} / ₹{stock.close?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">52W Range:</span>
-                      <span className="text-white">₹{stock['52_week_low']?.toFixed(2)} - ₹{stock['52_week_high']?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Rating:</span>
-                      <span className={`font-medium ${
-                        stock.overall_rating === 'Bullish' ? 'text-green-400' :
-                        stock.overall_rating === 'Bearish' ? 'text-red-400' : 'text-yellow-400'
-                      }`}>
-                        {stock.overall_rating}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Trends:</span>
-                      <span className="text-gray-300 text-xs">
-                        ST: {stock.short_term_trend} | LT: {stock.long_term_trend}
-                      </span>
-                    </div>
+                  <div className="grid gap-3 text-sm sm:grid-cols-2">
+                    {(hasMeaningfulNumeric(stock.high) || hasMeaningfulNumeric(stock.low)) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">High / Low</div>
+                        <div className="mt-1 text-white">
+                          ₹{stock.high?.toFixed(2)} / ₹{stock.low?.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {(hasMeaningfulNumeric(stock.open) || hasMeaningfulNumeric(stock.close)) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Open / Close</div>
+                        <div className="mt-1 text-white">
+                          ₹{stock.open?.toFixed(2)} / ₹{stock.close?.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {(hasMeaningfulNumeric(stock['52_week_low']) || hasMeaningfulNumeric(stock['52_week_high'])) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">52W Range</div>
+                        <div className="mt-1 text-white">
+                          ₹{stock['52_week_low']?.toFixed(2)} - ₹{stock['52_week_high']?.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {isMeaningfulText(stock.overall_rating) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Rating</div>
+                        <div className={`mt-1 font-medium ${
+                          stock.overall_rating === 'Bullish' ? 'text-emerald-400' :
+                          stock.overall_rating === 'Bearish' ? 'text-rose-400' : 'text-slate-200'
+                        }`}>
+                          {stock.overall_rating}
+                        </div>
+                      </div>
+                    )}
+
+                    {(isMeaningfulText(stock.short_term_trend) || isMeaningfulText(stock.long_term_trend)) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 sm:col-span-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Trends</div>
+                        <div className="mt-1 text-xs text-slate-300">
+                          {isMeaningfulText(stock.short_term_trend) ? `ST: ${stock.short_term_trend}` : ''}
+                          {isMeaningfulText(stock.short_term_trend) && isMeaningfulText(stock.long_term_trend) ? ' | ' : ''}
+                          {isMeaningfulText(stock.long_term_trend) ? `LT: ${stock.long_term_trend}` : ''}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
-              </Card>
+              </StocksSurfaceCard>
             ))}
           </div>
         </div>
       </section>
+      )}
 
       {/* NSE Most Active Section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
@@ -2058,7 +2117,7 @@ export default function StocksIndexPage() {
           
           {/* NSE Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
+            <StocksSurfaceCard>
               <CardHeader className="pb-4">
                 <CardTitle className="text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-teal-400 rounded-full mr-3"></div>
@@ -2071,9 +2130,9 @@ export default function StocksIndexPage() {
                   <canvas ref={nseVolumeChartRef} className="rounded-lg" />
                 </div>
               </CardContent>
-            </Card>
+            </StocksSurfaceCard>
             
-            <Card className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-gray-700/50 shadow-2xl hover:shadow-3xl transition-all duration-300">
+            <StocksSurfaceCard>
               <CardHeader className="pb-4">
                 <CardTitle className="text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-red-400 to-pink-400 rounded-full mr-3"></div>
@@ -2086,13 +2145,13 @@ export default function StocksIndexPage() {
                   <canvas ref={nsePerformanceChartRef} className="rounded-lg" />
                 </div>
               </CardContent>
-            </Card>
+            </StocksSurfaceCard>
           </div>
           
           {/* NSE Stock Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {nseActive.map((stock, index) => (
-              <Card key={stock.ticker || index} className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 hover:bg-gray-700/50 transition-colors shadow-lg">
+            {nseActive.slice(0, 6).map((stock, index) => (
+              <StocksSurfaceCard key={stock.ticker || index}>
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -2117,37 +2176,59 @@ export default function StocksIndexPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">High/Low:</span>
-                      <span className="text-white">₹{stock.high?.toFixed(2)} / ₹{stock.low?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Open/Close:</span>
-                      <span className="text-white">₹{stock.open?.toFixed(2)} / ₹{stock.close?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">52W Range:</span>
-                      <span className="text-white">₹{stock['52_week_low']?.toFixed(2)} - ₹{stock['52_week_high']?.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Rating:</span>
-                      <span className={`font-medium ${
-                        stock.overall_rating === 'Bullish' ? 'text-green-400' :
-                        stock.overall_rating === 'Bearish' ? 'text-red-400' : 'text-yellow-400'
-                      }`}>
-                        {stock.overall_rating}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Trends:</span>
-                      <span className="text-gray-300 text-xs">
-                        ST: {stock.short_term_trend} | LT: {stock.long_term_trend}
-                      </span>
-                    </div>
+                  <div className="grid gap-3 text-sm sm:grid-cols-2">
+                    {(hasMeaningfulNumeric(stock.high) || hasMeaningfulNumeric(stock.low)) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">High / Low</div>
+                        <div className="mt-1 text-white">
+                          ₹{stock.high?.toFixed(2)} / ₹{stock.low?.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {(hasMeaningfulNumeric(stock.open) || hasMeaningfulNumeric(stock.close)) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Open / Close</div>
+                        <div className="mt-1 text-white">
+                          ₹{stock.open?.toFixed(2)} / ₹{stock.close?.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {(hasMeaningfulNumeric(stock['52_week_low']) || hasMeaningfulNumeric(stock['52_week_high'])) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">52W Range</div>
+                        <div className="mt-1 text-white">
+                          ₹{stock['52_week_low']?.toFixed(2)} - ₹{stock['52_week_high']?.toFixed(2)}
+                        </div>
+                      </div>
+                    )}
+
+                    {isMeaningfulText(stock.overall_rating) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Rating</div>
+                        <div className={`mt-1 font-medium ${
+                          stock.overall_rating === 'Bullish' ? 'text-emerald-400' :
+                          stock.overall_rating === 'Bearish' ? 'text-rose-400' : 'text-slate-200'
+                        }`}>
+                          {stock.overall_rating}
+                        </div>
+                      </div>
+                    )}
+
+                    {(isMeaningfulText(stock.short_term_trend) || isMeaningfulText(stock.long_term_trend)) && (
+                      <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2 sm:col-span-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Trends</div>
+                        <div className="mt-1 text-xs text-slate-300">
+                          {isMeaningfulText(stock.short_term_trend) ? `ST: ${stock.short_term_trend}` : ''}
+                          {isMeaningfulText(stock.short_term_trend) && isMeaningfulText(stock.long_term_trend) ? ' | ' : ''}
+                          {isMeaningfulText(stock.long_term_trend) ? `LT: ${stock.long_term_trend}` : ''}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
-              </Card>
+              </StocksSurfaceCard>
             ))}
           </div>
         </div>
@@ -2165,7 +2246,7 @@ export default function StocksIndexPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Market Summary Cards */}
               <div className="grid grid-cols-1 gap-4">
-                <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+                <StocksSurfaceCard>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-white text-lg">BSE Summary</CardTitle>
                   </CardHeader>
@@ -2195,9 +2276,9 @@ export default function StocksIndexPage() {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </StocksSurfaceCard>
                 
-                <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg">
+                <StocksSurfaceCard>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-white text-lg">NSE Summary</CardTitle>  
                   </CardHeader>
@@ -2227,12 +2308,12 @@ export default function StocksIndexPage() {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </StocksSurfaceCard>
               </div>
               
               {/* Top Performers Comparison */}
               <div className="lg:col-span-2">
-                <Card className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg h-full">
+                <StocksSurfaceCard>
                   <CardHeader className="pb-2">
                     <CardTitle className="text-white">Top Performers by Exchange</CardTitle>
                     <CardDescription className="text-gray-400">Best and worst performing stocks</CardDescription>
@@ -2310,7 +2391,7 @@ export default function StocksIndexPage() {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                </StocksSurfaceCard>
               </div>
             </div>
           </div>

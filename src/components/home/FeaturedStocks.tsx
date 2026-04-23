@@ -189,19 +189,19 @@ export default function FeaturedStocks() {
 
   if (loading) {
     return (
-      <div ref={sectionRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div ref={sectionRef} className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="glass-card rounded-xl p-6">
+          <div key={i} className="rounded-[24px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
             <div className="flex justify-between mb-4">
               <div>
-                <div className="h-5 bg-gray-800/60 rounded-lg w-20 mb-2 shimmer" />
-                <div className="h-4 bg-gray-800/60 rounded-lg w-36 shimmer" />
+                <div className="mb-2 h-4 w-20 rounded-full bg-slate-200 shimmer dark:bg-slate-700" />
+                <div className="h-3.5 w-36 rounded-full bg-slate-200 shimmer dark:bg-slate-700" />
               </div>
-              <div className="h-7 bg-gray-800/60 rounded-full w-20 shimmer" />
+              <div className="h-7 w-20 rounded-full bg-slate-200 shimmer dark:bg-slate-700" />
             </div>
-            <div className="h-8 bg-gray-800/60 rounded-lg w-28 mb-4 shimmer" />
-            <div className="h-2 bg-gray-800/60 rounded-full mb-4 shimmer" />
-            <div className="h-10 bg-gray-800/60 rounded-lg shimmer" />
+            <div className="mb-4 h-8 w-28 rounded-full bg-slate-200 shimmer dark:bg-slate-700" />
+            <div className="mb-4 h-2 rounded-full bg-slate-200 shimmer dark:bg-slate-700" />
+            <div className="h-10 rounded-full bg-slate-200 shimmer dark:bg-slate-700" />
           </div>
         ))}
       </div>
@@ -210,7 +210,7 @@ export default function FeaturedStocks() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400">
+      <div className="rounded-[24px] border border-rose-200/70 bg-rose-50/80 p-4 text-rose-700 backdrop-blur-xl dark:border-rose-900/30 dark:bg-rose-900/10 dark:text-rose-300">
         {error}
       </div>
     );
@@ -218,7 +218,7 @@ export default function FeaturedStocks() {
 
   if (stocks.length === 0) {
     return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-700 text-center dark:border-amber-900/30 dark:bg-amber-900/10 dark:text-amber-400">
+      <div className="rounded-[24px] border border-amber-200/70 bg-amber-50/80 p-4 text-center text-amber-700 backdrop-blur-xl dark:border-amber-900/30 dark:bg-amber-900/10 dark:text-amber-300">
         No featured stocks available at this time.
       </div>
     );
@@ -246,7 +246,7 @@ export default function FeaturedStocks() {
   ));
 
   return (
-    <div ref={sectionRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div ref={sectionRef} className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <div ref={cardsRef} className="contents">
         {stocks.map((stock, index) => {
           const currentPrice = typeof stock.current_price === 'number' 
@@ -261,20 +261,20 @@ export default function FeaturedStocks() {
               key={stock.id || stock.symbol || index} 
               className="stock-card"
             >
-              <div className="w-full rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-5 hover:shadow-md transition-shadow">
+              <div className="w-full rounded-[28px] border border-slate-200/70 bg-white/75 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.34)]">
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-                        <Link href={`/stocks/${stock.symbol}`} className="hover:text-neon-500 dark:hover:text-neon-300 transition-colors duration-300">
+                      <h3 className="mb-1 text-lg font-semibold tracking-tight text-slate-950 dark:text-white">
+                        <Link href={`/stocks/${stock.symbol}`} className="transition-colors duration-300 hover:text-emerald-600 dark:hover:text-emerald-400">
                           {stock.symbol}
                         </Link>
                       </h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-sm">
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
                         {stock.company_name || 'N/A'}
                       </p>
                     </div>
-                    <span className={`price-element text-sm font-semibold rounded-full px-3 py-1 flex items-center ${
+                    <span className={`price-element flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
                       positive
                         ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                         : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
@@ -285,17 +285,17 @@ export default function FeaturedStocks() {
                     </span>
                   </div>
 
-                  <div className="price-element text-2xl font-bold mb-4 text-slate-900 dark:text-white">
+                  <div className="price-element mb-4 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">
                     ₹{currentPrice.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                   </div>
 
                   {/* Price progress bar */}
                   <div className="mb-5">
-                    <div className="flex justify-between text-xs mb-1.5">
-                      <span className="text-slate-600 dark:text-slate-400">Price vs. Category</span>
+                    <div className="mb-1.5 flex justify-between text-xs">
+                      <span className="text-slate-500 dark:text-slate-400">Price vs. category</span>
                       <span className="text-slate-500 dark:text-slate-400">{Math.round(percentOfMax)}%</span>
                     </div>
-                    <div className="h-2 bg-slate-200 dark:bg-gray-700/70 rounded-full overflow-hidden">
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-white/10">
                       <div
                         className={`price-bar-fill h-full ${
                           positive
@@ -308,7 +308,7 @@ export default function FeaturedStocks() {
                   </div>
 
                   {/* Sector info */}
-                  <div className="flex items-center text-sm mb-5 text-slate-500 dark:text-slate-400">
+                  <div className="mb-5 flex items-center text-sm text-slate-500 dark:text-slate-400">
                     <BarChart2 size={14} className="mr-1.5" />
                     <span>{stock.sector_name || 'Various Sectors'}</span>
                   </div>
@@ -317,7 +317,7 @@ export default function FeaturedStocks() {
                   <Button
                     variant="outline"
                     size="default"
-                    className="w-full flex items-center justify-center"
+                    className="flex w-full items-center justify-center rounded-full border border-slate-300/80 bg-white/80 px-4 py-2.5 text-sm font-medium text-slate-700 transition-transform duration-200 hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
                     onClick={() => router.push(`/stocks/${stock.symbol}`)}
                   >
                     View Analysis

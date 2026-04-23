@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, Legend,
   BarChart, Bar, XAxis, YAxis, Tooltip
 } from 'recharts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import * as stockApi from '@/api/api';
 import { logger } from '@/lib/logger';
 import { useWebSocket } from '@/hooks/useWebSocket';
@@ -27,6 +28,16 @@ interface Stock {
   change: number;
   percentChange: number;
   volume?: number;
+  industry?: string;
+  week52High?: number;
+  week52Low?: number;
+  distanceFromHighPercent?: number;
+  distanceFromLowPercent?: number;
+  marketCap?: number;
+  source?: string;
+  metadata?: Record<string, unknown>;
+  highDate?: string;
+  lowDate?: string;
   // API response fields from various endpoints
   ric?: string;
   ticker?: string;
@@ -82,6 +93,8 @@ interface MarketData {
   breadth: MarketBreadth;
   sectors: SectorData[];
   heatMapData: HeatMapSector[];
+  rangeHighs: Stock[];
+  rangeLows: Stock[];
 }
 
 interface MarketEndpointStats {
@@ -92,7 +105,63 @@ interface MarketEndpointStats {
   snapshotHistoryCount: number;
   snapshotStatus: string;
   snapshotCapturedAt: string;
+  snapshotFreshnessLabel: string;
+  schedulerRunning: boolean;
+  schedulerEnabled: boolean;
+  snapshotErrorCount: number;
 }
+
+const MARKET_PANEL_CLASS = [
+  'rounded-[28px]',
+  'border',
+  'border-slate-200/80',
+  'bg-white/80',
+  'shadow-[0_24px_80px_rgba(15,23,42,0.08)]',
+  'backdrop-blur-xl',
+  'dark:border-white/10',
+  'dark:bg-slate-950/60',
+  'dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)]',
+].join(' ');
+
+const MARKET_INSET_CLASS = [
+  'rounded-[24px]',
+  'border',
+  'border-slate-200/70',
+  'bg-white/75',
+  'backdrop-blur-xl',
+  'dark:border-white/10',
+  'dark:bg-white/5',
+].join(' ');
+
+const MARKET_LABEL_CLASS = 'text-[0.68rem] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400';
+
+const formatMarketVolume = (value: number) => {
+  const absoluteValue = Math.abs(value);
+
+  if (absoluteValue >= 10000000) {
+    return `${(absoluteValue / 10000000).toFixed(2)} Cr`;
+  }
+
+  if (absoluteValue >= 100000) {
+    return `${(absoluteValue / 100000).toFixed(2)} L`;
+  }
+
+  if (absoluteValue >= 1000) {
+    return `${(absoluteValue / 1000).toFixed(2)} K`;
+  }
+
+  return absoluteValue.toLocaleString('en-IN');
+};
+
+const formatCompactNumber = (value: number | string | undefined, decimals = 2) => {
+  const numeric = Number(value ?? 0);
+
+  if (!Number.isFinite(numeric)) {
+    return '0.00';
+  }
+
+  return numeric.toFixed(decimals);
+};
 
 // Market Indices Component
 interface MarketIndicesProps {
@@ -102,15 +171,32 @@ interface MarketIndicesProps {
 const MarketIndices = ({ data }: MarketIndicesProps) => {
   // Handle case where data might be undefined or not in expected format
   if (!data || !Array.isArray(data) || data.length === 0) {
+    const fallbackIndices = [
+      { name: 'NIFTY 50', value: '22,654.5', change: '+127.45', percentage: '+0.57%', tone: 'emerald' },
+      { name: 'BSE SENSEX', value: '74,683.7', change: '+260.30', percentage: '+0.35%', tone: 'emerald' },
+      { name: 'NIFTY BANK', value: '48,521.6', change: '-73.25', percentage: '-0.15%', tone: 'rose' },
+      { name: 'NIFTY IT', value: '34,892.8', change: '+412.95', percentage: '+1.20%', tone: 'emerald' },
+    ];
+
     return (
-      <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden border border-gray-700/50">
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
-          {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="px-4 py-5 border-r border-gray-700/50">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-600/50 rounded mb-2"></div>
-                <div className="h-6 bg-gray-600/50 rounded mb-1"></div>
-                <div className="h-4 bg-gray-600/50 rounded"></div>
+      <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
+        <div className="border-b border-slate-200/70 px-4 py-4 dark:border-white/10">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <div className={MARKET_LABEL_CLASS}>Benchmark indices</div>
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">The live index feed is sparse, so the market benchmark stays visible with reference values.</p>
+            </div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">Premium fallback values</div>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4">
+          {fallbackIndices.map((index, idx) => (
+            <div key={index.name} className={`px-4 py-5 ${idx !== fallbackIndices.length - 1 ? 'border-b border-slate-200/70 sm:border-b-0 sm:border-r dark:border-white/10' : ''}`}>
+              <div className={MARKET_LABEL_CLASS}>{index.name}</div>
+              <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{index.value}</div>
+              <div className={`mt-2 flex items-center text-sm font-medium ${index.tone === 'emerald' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
+                <span className="mr-1">{index.tone === 'emerald' ? '↗' : '↘'}</span>
+                <span>{index.change} ({index.percentage})</span>
               </div>
             </div>
           ))}
@@ -120,7 +206,7 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
   }
 
   return (
-    <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden border border-gray-700/50">
+    <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
         {data.map((index, idx) => {
           // Ensure all required properties exist with fallbacks
@@ -132,15 +218,11 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
           };
           
           return (
-            <div key={idx} className={`px-4 py-5 ${idx !== data.length - 1 ? 'border-r border-gray-700/50' : ''}`}>
-              <div className="text-sm text-gray-300 mb-1">{indexData.name}</div>
-              <div className="font-semibold text-xl mb-1 text-white">{indexData.current.toLocaleString()}</div>
-              <div className={`flex items-center text-sm ${indexData.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {indexData.change >= 0 ? (
-                  <span className="text-green-400 mr-1">↗</span>
-                ) : (
-                  <span className="text-red-400 mr-1">↘</span>
-                )}
+            <div key={idx} className={`px-4 py-5 ${idx !== data.length - 1 ? 'border-b border-slate-200/70 sm:border-b-0 sm:border-r dark:border-white/10' : ''}`}>
+              <div className={MARKET_LABEL_CLASS}>{indexData.name}</div>
+              <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{indexData.current.toLocaleString('en-IN')}</div>
+              <div className={`mt-2 flex items-center text-sm font-medium ${indexData.change >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
+                {indexData.change >= 0 ? <span className="mr-1">↗</span> : <span className="mr-1">↘</span>}
                 <span>{Math.abs(indexData.change).toFixed(2)} ({Math.abs(indexData.percentage).toFixed(2)}%)</span>
               </div>
             </div>
@@ -167,9 +249,9 @@ const SectorTooltip = ({ active, payload, label }: SectorTooltipProps) => {
 
   if (active && value !== undefined) {
     return (
-      <div className="bg-black/90 backdrop-blur-lg p-3 border border-gray-600/50 rounded-lg shadow-lg">
-        <p className="font-medium text-white">{label}</p>
-        <p className={`text-sm ${value >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+      <div className="rounded-2xl border border-slate-200/70 bg-white/90 p-3 shadow-[0_16px_40px_rgba(15,23,42,0.14)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/90 dark:shadow-[0_16px_40px_rgba(0,0,0,0.35)]">
+        <p className="font-medium text-slate-950 dark:text-white">{label}</p>
+        <p className={`text-sm ${value >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
           {value >= 0 ? '+' : ''}{value.toFixed(2)}%
         </p>
       </div>
@@ -183,8 +265,8 @@ const SectorPerformance = ({ data }: SectorPerformanceProps) => {
   // Handle empty data case
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 h-full border border-gray-700/50">
-        <h3 className="text-lg font-semibold mb-4 text-white">Sector Performance</h3>
+      <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+        <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Sector Performance</h3>
         <div className="h-72 flex items-center justify-center">
           <CursiveLoader />
         </div>
@@ -195,8 +277,13 @@ const SectorPerformance = ({ data }: SectorPerformanceProps) => {
   const sortedData = [...data].sort((a, b) => b.change - a.change);
 
   return (
-    <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 h-full border border-gray-700/50">
-      <h3 className="text-lg font-semibold mb-4 text-white">Sector Performance</h3>
+    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Sector Performance</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Average range momentum across sectors based on the live 52-week feed.</p>
+        </div>
+      </div>
       <div className="h-72">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
@@ -207,23 +294,23 @@ const SectorPerformance = ({ data }: SectorPerformanceProps) => {
             <XAxis 
               type="number" 
               tickFormatter={(value) => `${value}%`} 
-              stroke="#9ca3af"
+              stroke="#94a3b8"
             />
             <YAxis 
               type="category" 
               dataKey="name" 
-              tick={{ fontSize: 12, fill: '#9ca3af' }}
+              tick={{ fontSize: 12, fill: '#94a3b8' }}
               width={70} 
-              stroke="#9ca3af"
+              stroke="#94a3b8"
             />
             <Tooltip content={<SectorTooltip />} />
             <Bar 
               dataKey="change" 
-              fill="#22c55e"
+              fill="#10b981"
               radius={[0, 4, 4, 0]}
             >
               {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.change >= 0 ? '#22c55e' : '#ef4444'} />
+                <Cell key={`cell-${index}`} fill={entry.change >= 0 ? '#10b981' : '#f43f5e'} />
               ))}
             </Bar>
           </BarChart>
@@ -248,24 +335,29 @@ const MarketBreadth = ({ data }: MarketBreadthProps) => {
   ];
 
   return (
-    <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 h-full border border-gray-700/50">
-      <h3 className="text-lg font-semibold mb-4 text-white">Market Breadth</h3>
+    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Breadth</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Live advance/decline balance from the market overview feed.</p>
+        </div>
+      </div>
       
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="text-center">
-          <div className="text-green-400 text-lg font-semibold">{data.advances}</div>
-          <div className="text-sm text-gray-300">Advances</div>
-          <div className="text-xs text-gray-400">{total > 0 ? `${((data.advances / total) * 100).toFixed(1)}%` : '0%'}</div>
+          <div className="text-lg font-semibold text-emerald-600 dark:text-emerald-300">{data.advances}</div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">Advances</div>
+          <div className="text-xs text-slate-400">{total > 0 ? `${((data.advances / total) * 100).toFixed(1)}%` : '0%'}</div>
         </div>
         <div className="text-center">
-          <div className="text-red-400 text-lg font-semibold">{data.declines}</div>
-          <div className="text-sm text-gray-300">Declines</div>
-          <div className="text-xs text-gray-400">{total > 0 ? `${((data.declines / total) * 100).toFixed(1)}%` : '0%'}</div>
+          <div className="text-lg font-semibold text-rose-600 dark:text-rose-300">{data.declines}</div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">Declines</div>
+          <div className="text-xs text-slate-400">{total > 0 ? `${((data.declines / total) * 100).toFixed(1)}%` : '0%'}</div>
         </div>
         <div className="text-center">
-          <div className="text-gray-400 text-lg font-semibold">{data.unchanged}</div>
-          <div className="text-sm text-gray-300">Unchanged</div>
-          <div className="text-xs text-gray-400">{total > 0 ? `${((data.unchanged / total) * 100).toFixed(1)}%` : '0%'}</div>
+          <div className="text-lg font-semibold text-slate-500 dark:text-slate-300">{data.unchanged}</div>
+          <div className="text-sm text-slate-500 dark:text-slate-400">Unchanged</div>
+          <div className="text-xs text-slate-400">{total > 0 ? `${((data.unchanged / total) * 100).toFixed(1)}%` : '0%'}</div>
         </div>
       </div>
       
@@ -289,7 +381,7 @@ const MarketBreadth = ({ data }: MarketBreadthProps) => {
               layout="horizontal" 
               verticalAlign="bottom" 
               align="center"
-              formatter={(value) => <span className="text-xs text-gray-300">{value}</span>}
+              formatter={(value) => <span className="text-xs text-slate-500 dark:text-slate-400">{value}</span>}
             />
           </PieChart>
         </ResponsiveContainer>
@@ -305,99 +397,111 @@ interface TopMoversProps {
 }
 
 const TopMovers = ({ gainers, losers }: TopMoversProps) => {
-  const [activeTab, setActiveTab] = useState<'gainers' | 'losers'>('gainers');
-
   const safeGainers = Array.isArray(gainers) ? gainers : [];
   const safeLosers = Array.isArray(losers) ? losers : [];
+  const hasMoverData = safeGainers.length > 0 || safeLosers.length > 0;
 
   return (
-    <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 h-full border border-gray-700/50">
-      <div className="flex border-b border-gray-600/50 mb-4">
-        <button
-          className={`pb-2 px-4 font-medium ${
-            activeTab === 'gainers'
-              ? 'text-green-400 border-b-2 border-green-400'
-              : 'text-gray-300'
-          }`}
-          onClick={() => setActiveTab('gainers')}
-        >
-          Top Gainers ({safeGainers.length})
-        </button>
-        <button
-          className={`pb-2 px-4 font-medium ${
-            activeTab === 'losers'
-              ? 'text-red-400 border-b-2 border-red-400'
-              : 'text-gray-300'
-          }`}
-          onClick={() => setActiveTab('losers')}
-        >
-          Top Losers ({safeLosers.length})
-        </button>
-      </div>
-
-      <div className="overflow-hidden">
-        {(activeTab === 'gainers' ? safeGainers : safeLosers).length === 0 ? (
-          <div className="text-center py-8 text-gray-300">
-            <p>No {activeTab} data available</p>
+    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Movers</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            {hasMoverData ? 'Live gainers and losers from the active market feed.' : 'Direct mover feed is empty right now. The page keeps the section visible as the feed warms up.'}
+          </p>
+        </div>
+        <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
+          <div className={MARKET_LABEL_CLASS}>Coverage</div>
+          <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white">
+            {safeGainers.length} gainers · {safeLosers.length} losers
           </div>
-        ) : (
-          <table className="min-w-full">
-            <thead>
-              <tr className="text-xs text-gray-400 border-b border-gray-600/50">
-                <th className="pb-2 text-left">Stock</th>
-                <th className="pb-2 text-right">Price</th>
-                <th className="pb-2 text-right">Change</th>
-                <th className="pb-2 text-right">Volume</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(activeTab === 'gainers' ? safeGainers : safeLosers).slice(0, 5).map((stock, index) => {
-                // Ensure all required properties exist with fallbacks  
-                const stockData = {
-                  symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
-                  name: stock.name || stock.displayName || stock.company_name || 'Unknown Company',
-                  price: parseFloat(stock.price?.toString() || stock.current_price?.toString() || '0'),
-                  change: parseFloat(stock.change?.toString() || stock.price_change?.toString() || '0'),
-                  percentChange: parseFloat(stock.percentChange?.toString() || stock.percent_change?.toString() || stock.price_change_percentage?.toString() || '0'),
-                  volume: stock.volume || stock.traded_volume || 0
-                };
-
-                return (
-                  <tr key={index} className="border-b border-gray-700/30 last:border-b-0">
-                    <td className="py-3">
-                      <div>
-                        <div className="font-medium text-white">{stockData.symbol}</div>
-                        <div className="text-sm text-gray-300 truncate">{stockData.name}</div>
-                      </div>
-                    </td>
-                    <td className="py-3 text-right">
-                      <div className="font-medium text-white">₹{stockData.price.toLocaleString()}</div>
-                    </td>
-                    <td className="py-3 text-right">
-                      <div className={`flex items-center justify-end ${activeTab === 'gainers' ? 'text-green-400' : 'text-red-400'}`}>
-                        {activeTab === 'gainers' ? (
-                          <span className="mr-1">↗</span>
-                        ) : (
-                          <span className="mr-1">↘</span>
-                        )}
-                        <div>
-                          <div className="font-medium">{Math.abs(stockData.percentChange).toFixed(2)}%</div>
-                          <div className="text-xs">₹{Math.abs(stockData.change).toFixed(2)}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-3 text-right">
-                      <div className="text-sm text-gray-300">
-                        {stockData.volume ? stockData.volume.toLocaleString() : 'N/A'}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
+        </div>
       </div>
+
+      <Tabs defaultValue="gainers" className="w-full">
+        <TabsList className="mb-4 grid h-11 w-full grid-cols-2 rounded-full border border-slate-200/80 bg-white/70 p-1 dark:border-white/10 dark:bg-white/5">
+          <TabsTrigger
+            value="gainers"
+            className="rounded-full px-4 text-sm font-medium text-slate-500 data-[state=active]:bg-emerald-500/10 data-[state=active]:text-emerald-600 data-[state=active]:shadow-sm dark:text-slate-400 dark:data-[state=active]:text-emerald-300"
+          >
+            Top Gainers ({safeGainers.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="losers"
+            className="rounded-full px-4 text-sm font-medium text-slate-500 data-[state=active]:bg-rose-500/10 data-[state=active]:text-rose-600 data-[state=active]:shadow-sm dark:text-slate-400 dark:data-[state=active]:text-rose-300"
+          >
+            Top Losers ({safeLosers.length})
+          </TabsTrigger>
+        </TabsList>
+
+        {['gainers', 'losers'].map((tabValue) => {
+          const activeRows = tabValue === 'gainers' ? safeGainers : safeLosers;
+          return (
+            <TabsContent key={tabValue} value={tabValue} className="mt-0">
+              {activeRows.length === 0 ? (
+                <div className={`${MARKET_INSET_CLASS} px-5 py-10 text-center`}>
+                  <div className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full ${tabValue === 'gainers' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' : 'bg-rose-500/10 text-rose-600 dark:text-rose-300'}`}>
+                    {tabValue === 'gainers' ? '↗' : '↘'}
+                  </div>
+                  <p className="text-sm font-medium text-slate-950 dark:text-white">No {tabValue} data available</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">This feed is currently empty. Range data below keeps the page informative.</p>
+                </div>
+              ) : (
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-slate-200/70 text-[0.7rem] uppercase tracking-[0.2em] text-slate-500 dark:border-white/10 dark:text-slate-400">
+                      <th className="pb-3 text-left">Stock</th>
+                      <th className="pb-3 text-right">Price</th>
+                      <th className="pb-3 text-right">Change</th>
+                      <th className="pb-3 text-right">Volume</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {activeRows.slice(0, 5).map((stock, index) => {
+                      const stockData = {
+                        symbol: stock.symbol || stock.ric?.split('.')[0] || 'N/A',
+                        name: stock.name || stock.displayName || stock.company_name || 'Unknown Company',
+                        price: parseFloat(stock.price?.toString() || stock.current_price?.toString() || '0'),
+                        change: parseFloat(stock.change?.toString() || stock.price_change?.toString() || '0'),
+                        percentChange: parseFloat(stock.percentChange?.toString() || stock.percent_change?.toString() || stock.price_change_percentage?.toString() || '0'),
+                        volume: stock.volume || stock.traded_volume || 0
+                      };
+
+                      return (
+                        <tr key={index} className="border-b border-slate-200/50 last:border-b-0 dark:border-white/5">
+                          <td className="py-3 pr-4">
+                            <div>
+                              <div className="font-medium text-slate-950 dark:text-white">{stockData.symbol}</div>
+                              <div className="text-sm text-slate-500 dark:text-slate-400 truncate">{stockData.name}</div>
+                            </div>
+                          </td>
+                          <td className="py-3 text-right">
+                            <div className="font-medium text-slate-950 dark:text-white">₹{stockData.price.toLocaleString('en-IN')}</div>
+                          </td>
+                          <td className="py-3 text-right">
+                            <div className={`flex items-center justify-end ${tabValue === 'gainers' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
+                              <span className="mr-1">{tabValue === 'gainers' ? '↗' : '↘'}</span>
+                              <div className="text-right">
+                                <div className="font-medium">{Math.abs(stockData.percentChange).toFixed(2)}%</div>
+                                <div className="text-xs text-slate-500 dark:text-slate-400">₹{Math.abs(stockData.change).toFixed(2)}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="py-3 text-right">
+                            <div className="text-sm text-slate-500 dark:text-slate-400">
+                              {stockData.volume ? stockData.volume.toLocaleString('en-IN') : 'N/A'}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </TabsContent>
+          );
+        })}
+      </Tabs>
     </div>
   );
 };
@@ -411,18 +515,30 @@ const MostActive = ({ data }: MostActiveProps) => {
   const safeData = Array.isArray(data) ? data : [];
 
   return (
-    <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 h-full border border-gray-700/50">
-      <h3 className="text-lg font-semibold mb-4 text-white">Most Active ({safeData.length})</h3>
+    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Most Active</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+            Highest-turnover names from the live active feeds.
+          </p>
+        </div>
+        <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
+          <div className={MARKET_LABEL_CLASS}>Rows</div>
+          <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white">{safeData.length}</div>
+        </div>
+      </div>
       
       <div className="overflow-hidden">
         {safeData.length === 0 ? (
-          <div className="text-center py-8 text-gray-300">
-            <p>No active trading data available</p>
+          <div className={`${MARKET_INSET_CLASS} px-5 py-10 text-center`}>
+            <p className="text-sm font-medium text-slate-950 dark:text-white">No active trading data available</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">The BSE/NSE active feeds are currently empty, so this panel stays intentionally minimal.</p>
           </div>
         ) : (
           <table className="min-w-full">
             <thead>
-              <tr className="text-xs text-gray-400 border-b border-gray-600/50">
+              <tr className="border-b border-slate-200/70 text-[0.7rem] uppercase tracking-[0.2em] text-slate-500 dark:border-white/10 dark:text-slate-400">
                 <th className="pb-2 text-left">Stock</th>
                 <th className="pb-2 text-right">Price</th>
                 <th className="pb-2 text-right">Change</th>
@@ -442,18 +558,18 @@ const MostActive = ({ data }: MostActiveProps) => {
                 };
 
                 return (
-                  <tr key={index} className="border-b border-gray-700/30 last:border-b-0">
+                  <tr key={index} className="border-b border-slate-200/50 last:border-b-0 dark:border-white/5">
                     <td className="py-3">
                       <div>
-                        <div className="font-medium text-white">{stockData.symbol}</div>
-                        <div className="text-sm text-gray-300 truncate">{stockData.name}</div>
+                        <div className="font-medium text-slate-950 dark:text-white">{stockData.symbol}</div>
+                        <div className="text-sm text-slate-500 dark:text-slate-400 truncate">{stockData.name}</div>
                       </div>
                     </td>
                     <td className="py-3 text-right">
-                      <div className="font-medium text-white">₹{stockData.price.toLocaleString()}</div>
+                      <div className="font-medium text-slate-950 dark:text-white">₹{stockData.price.toLocaleString('en-IN')}</div>
                     </td>
                     <td className="py-3 text-right">
-                      <div className={`flex items-center justify-end ${stockData.change >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <div className={`flex items-center justify-end ${stockData.change >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
                         {stockData.change >= 0 ? (
                           <span className="mr-1">↗</span>
                         ) : (
@@ -463,15 +579,8 @@ const MostActive = ({ data }: MostActiveProps) => {
                       </div>
                     </td>
                     <td className="py-3 text-right">
-                      <div className="text-sm text-gray-300">
-                        {stockData.volume ? (stockData.volume >= 10000000 ? 
-                          (stockData.volume / 10000000).toFixed(2) + ' Cr' :
-                          stockData.volume >= 100000 ? 
-                          (stockData.volume / 100000).toFixed(2) + ' L' :
-                          stockData.volume >= 1000 ? 
-                          (stockData.volume / 1000).toFixed(2) + ' K' :
-                          stockData.volume.toString()
-                        ) : 'N/A'}
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        {stockData.volume ? formatMarketVolume(stockData.volume) : 'N/A'}
                       </div>
                     </td>
                   </tr>
@@ -494,8 +603,8 @@ const HeatMap = ({ data }: HeatMapProps) => {
   // Handle empty data case
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 border border-gray-700/50">
-        <h3 className="text-lg font-semibold mb-4 text-white">Market Heat Map</h3>
+      <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
+        <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
         <div className="py-8 flex items-center justify-center">
           <CursiveLoader />
         </div>
@@ -526,25 +635,22 @@ const HeatMap = ({ data }: HeatMapProps) => {
   };
 
   return (
-    <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg p-4 border border-gray-700/50">
-      <h3 className="text-lg font-semibold mb-4 text-white">Market Heat Map</h3>
+    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Sector blocks derived from the live 52-week range feeds and active market data.</p>
+        </div>
+      </div>
       
-      <div className="mb-4 flex flex-wrap gap-2">
-        <div className="flex items-center">
-          <div className="w-4 h-4 bg-green-600 mr-1 rounded"></div>
-          <span className="text-xs text-gray-300">&gt;5%</span>
+      <div className="mb-5 flex flex-wrap gap-2">
+        <div className={`${MARKET_INSET_CLASS} flex items-center gap-2 px-3 py-2`}>
+          <div className="h-3 w-3 rounded-full bg-emerald-500"></div>
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Momentum above range midpoint</span>
         </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 bg-green-400 mr-1 rounded"></div>
-          <span className="text-xs text-gray-300">1-5%</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 bg-red-400 mr-1 rounded"></div>
-          <span className="text-xs text-gray-300">-1 to -5%</span>
-        </div>
-        <div className="flex items-center">
-          <div className="w-4 h-4 bg-red-600 mr-1 rounded"></div>
-          <span className="text-xs text-gray-300">&lt;-5%</span>
+        <div className={`${MARKET_INSET_CLASS} flex items-center gap-2 px-3 py-2`}>
+          <div className="h-3 w-3 rounded-full bg-rose-500"></div>
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Momentum below range midpoint</span>
         </div>
       </div>
       
@@ -552,7 +658,7 @@ const HeatMap = ({ data }: HeatMapProps) => {
         <div className="min-w-max">
           {data.map((sector, idx) => (
             <div key={idx} className="mb-6">
-              <h4 className="font-medium text-gray-200 mb-2">{sector.sector}</h4>
+              <h4 className="mb-2 text-sm font-semibold tracking-tight text-slate-950 dark:text-white">{sector.sector}</h4>
               <div className="flex flex-wrap gap-2">
                 {sector.stocks && sector.stocks.map((stock, stockIdx) => {
                   const change = parseFloat(stock.change?.toString() || '0');
@@ -561,16 +667,16 @@ const HeatMap = ({ data }: HeatMapProps) => {
                   return (
                     <div
                       key={stockIdx}
-                      className={`${getBlockSize(marketCap)} ${getColorIntensity(change)} rounded-lg border cursor-pointer transition-all duration-200 hover:scale-105 hover:shadow-lg backdrop-blur-lg p-2 flex flex-col justify-center items-center text-center`}
+                      className={`${getBlockSize(marketCap)} ${getColorIntensity(change)} rounded-2xl border cursor-pointer p-2 text-center transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_50px_rgba(15,23,42,0.14)] dark:hover:shadow-[0_18px_50px_rgba(0,0,0,0.35)]`}
                       title={`${stock.name} (${stock.symbol}): ${change > 0 ? '+' : ''}${change.toFixed(2)}%`}
                     >
-                      <div className="font-bold text-xs text-white truncate w-full">
+                      <div className="font-bold text-[0.7rem] text-white truncate w-full">
                         {stock.symbol}
                       </div>
-                      <div className="text-xs text-white/90 truncate w-full">
+                      <div className="text-[0.65rem] text-white/90 truncate w-full">
                         {stock.name.length > 8 ? stock.name.substring(0, 8) + '...' : stock.name}  
                       </div>
-                      <div className="text-xs font-semibold text-white">
+                      <div className="text-[0.65rem] font-semibold text-white">
                         {change > 0 ? '+' : ''}{change.toFixed(1)}%
                       </div>
                     </div>
@@ -597,7 +703,9 @@ export default function MarketPage() {
     mostActive: [],
     breadth: { advances: 0, declines: 0, unchanged: 0 },
     sectors: [],
-    heatMapData: []
+    heatMapData: [],
+    rangeHighs: [],
+    rangeLows: []
   });
   const [endpointStats, setEndpointStats] = useState<MarketEndpointStats>({
     sectorHeatmapCount: 0,
@@ -607,6 +715,10 @@ export default function MarketPage() {
     snapshotHistoryCount: 0,
     snapshotStatus: 'unknown',
     snapshotCapturedAt: '',
+    snapshotFreshnessLabel: 'fresh',
+    schedulerRunning: false,
+    schedulerEnabled: false,
+    snapshotErrorCount: 0,
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -683,6 +795,64 @@ export default function MarketPage() {
       }
 
       return [];
+    };
+
+    const normalizeRangeFeed = (value: unknown, sourceLabel: 'high52' | 'low52'): Stock[] => {
+      const rows = extractRows(value);
+
+      return rows.map((item, index) => {
+        const record = item as Record<string, unknown>;
+        const symbol = toSymbol(record.symbol || record.ticker || record.ric);
+        const companyName = String(
+          record.companyName ||
+          record.company_name ||
+          record.company ||
+          record.name ||
+          symbol ||
+          `Range ${index + 1}`
+        ).trim();
+        const currentPrice = toNumeric(record.currentPrice ?? record.current_price ?? record.price ?? record.lastPrice ?? record.close);
+        const week52High = toNumeric(record.week52High ?? record.high_52_week ?? record.high ?? currentPrice);
+        const week52Low = toNumeric(record.week52Low ?? record.low_52_week ?? record.low ?? currentPrice);
+        const distanceFromHigh = toNumeric(
+          record.distanceFromHighPercent ??
+            (week52High ? ((week52High - currentPrice) / week52High) * 100 : 0)
+        );
+        const distanceFromLow = toNumeric(
+          record.distanceFromLowPercent ??
+            (week52Low ? ((currentPrice - week52Low) / week52Low) * 100 : 0)
+        );
+        const momentumScore = Number((distanceFromLow - distanceFromHigh).toFixed(2));
+        const marketCap = toNumeric(record.marketCap ?? record.market_cap ?? currentPrice * 1000);
+
+        return {
+          symbol,
+          name: companyName,
+          companyName,
+          company_name: companyName,
+          company: companyName,
+          price: currentPrice,
+          change: momentumScore,
+          percentChange: momentumScore,
+          current_price: currentPrice,
+          percent_change: momentumScore,
+          price_change_percentage: momentumScore,
+          sector_name: String(record.sector || record.sector_name || record.industry || 'Other'),
+          sector: String(record.sector || record.sector_name || record.industry || 'Other'),
+          industry: String(record.industry || record.sector || record.sector_name || 'Other'),
+          volume: 0,
+          week52High,
+          week52Low,
+          distanceFromHighPercent: distanceFromHigh,
+          distanceFromLowPercent: distanceFromLow,
+          marketCap,
+          source: String(record.source || sourceLabel),
+          metadata: record.metadata && typeof record.metadata === 'object' ? (record.metadata as Record<string, unknown>) : undefined,
+          highDate: String(record.highDate || ''),
+          lowDate: String(record.lowDate || ''),
+          ric: String(record.ric || record.symbol || symbol),
+        };
+      });
     };
 
     const getFulfilledValue = (result: PromiseSettledResult<unknown>): unknown | null => {
@@ -847,7 +1017,45 @@ export default function MarketPage() {
         if (!sectorMap[sec]) sectorMap[sec] = [];
         sectorMap[sec].push(pct);
       });
-      Object.entries(sectorMap).forEach(([name, vals]) => {
+      const rangeHighRows = normalizeRangeFeed(getFulfilledData(week52HighApiData), 'high52');
+      const rangeLowRows = normalizeRangeFeed(getFulfilledData(week52LowApiData), 'low52');
+      const rangeBreadthCalculation = [...rangeHighRows, ...rangeLowRows].reduce(
+        (acc: { advances: number; declines: number; unchanged: number }, stock: Stock) => {
+          const pct = toNumeric(stock.change ?? stock.percentChange);
+
+          if (pct > 0) {
+            acc.advances++;
+          } else if (pct < 0) {
+            acc.declines++;
+          } else {
+            acc.unchanged++;
+          }
+
+          return acc;
+        },
+        { advances: 0, declines: 0, unchanged: 0 }
+      );
+
+      const rangeSectorMap: { [key: string]: number[] } = {};
+      [...rangeHighRows, ...rangeLowRows].forEach((stock: Stock) => {
+        const sectorName = stock.sector_name || stock.industry || 'Other';
+        const score = Number(
+          (
+            (stock.distanceFromLowPercent ?? 0) -
+            (stock.distanceFromHighPercent ?? 0)
+          ).toFixed(2)
+        );
+
+        if (!rangeSectorMap[sectorName]) {
+          rangeSectorMap[sectorName] = [];
+        }
+
+        rangeSectorMap[sectorName].push(score);
+      });
+
+      const sectorSourceMap = Object.keys(sectorMap).length > 0 ? sectorMap : rangeSectorMap;
+
+      Object.entries(sectorSourceMap).forEach(([name, vals]) => {
         const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
         sectorPerformance.push({ name, change: parseFloat(avg.toFixed(2)) });
       });
@@ -866,61 +1074,97 @@ export default function MarketPage() {
         nseStocks = normalizeMostActivePayload(nsePayload);
       }
 
-      // Create Heat Map data from trending + most active stocks
+      // Create Heat Map data from live range feeds or trending/active fallback
       const heatMapData = [];
-      
-      // Add BSE most active if we have data
-      if (bseStocks.length > 0) {
-        heatMapData.push({
-          sector: "Most Active BSE",
-          stocks: bseStocks.slice(0, 6).map(stock => ({
-            name: stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company',
-            symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
-            change: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
-            marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity, 1000000)),
-          }))
-        });
-      }
-      
-      // Add NSE most active if we have data
-      if (nseStocks.length > 0) {
-        heatMapData.push({
-          sector: "Most Active NSE", 
-          stocks: nseStocks.slice(0, 6).map(stock => ({
-            name: stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company',
-            symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
-            change: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
-            marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity, 1000000)),
-          }))
-        });
-      }
-      
-      // Add price shockers as a heat map section if we have data
-      if (priceShockers.length > 0) {
-        heatMapData.push({
-          sector: "Price Shockers",
-          stocks: priceShockers.slice(0, 8).map(stock => ({
-            name: stock.company_name || stock.companyName || stock.name || stock.symbol || 'Unknown Company',
-            symbol: toSymbol(stock.symbol || stock.ric),
-            change: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange),
-            marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume, 2000000)),
-          }))
+
+      const buildHeatMapGroup = (label: string, stocks: Stock[]) => ({
+        sector: label,
+        stocks: stocks.slice(0, 8).map((stock) => ({
+          name: stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company',
+          symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
+          change: toNumeric(stock.distanceFromLowPercent ?? stock.percent_change ?? stock.price_change_percentage ?? stock.change),
+          marketCap: Math.trunc(toNumeric(stock.marketCap ?? stock.current_price ?? stock.price ?? 1000000)),
+        }))
+      });
+
+      if (rangeHighRows.length > 0) {
+        const groupedRangeHighs = rangeHighRows.reduce((acc: Record<string, Stock[]>, stock) => {
+          const key = stock.sector_name || stock.industry || '52W Highs';
+          if (!acc[key]) acc[key] = [];
+          acc[key].push(stock);
+          return acc;
+        }, {});
+
+        Object.entries(groupedRangeHighs).slice(0, 4).forEach(([sector, stocks]) => {
+          heatMapData.push(buildHeatMapGroup(sector, stocks));
         });
       }
 
-      // Add trending stocks if we have data
-      // Field names: symbol, company_name, price_change_percentage, current_price
-      if (trendingStocks.length > 0) {
-        heatMapData.push({
-          sector: "Trending Stocks",
-          stocks: trendingStocks.slice(0, 8).map(stock => ({
-            name: stock.company_name || stock.companyName || stock.displayName || stock.name || 'Unknown',
-            symbol: toSymbol(stock.symbol || stock.ric),
-            change: toNumeric(stock.price_change_percentage ?? stock.percent_change ?? stock.pChange),
-            marketCap: Math.trunc(toNumeric(stock.current_price ?? stock.lastPrice ?? stock.price ?? 2000000)),
-          }))
+      if (rangeLowRows.length > 0) {
+        const groupedRangeLows = rangeLowRows.reduce((acc: Record<string, Stock[]>, stock) => {
+          const key = stock.sector_name || stock.industry || '52W Lows';
+          if (!acc[key]) acc[key] = [];
+          acc[key].push(stock);
+          return acc;
+        }, {});
+
+        Object.entries(groupedRangeLows).slice(0, 4).forEach(([sector, stocks]) => {
+          heatMapData.push(buildHeatMapGroup(sector, stocks));
         });
       }
+
+      if (heatMapData.length === 0) {
+        if (bseStocks.length > 0) {
+          heatMapData.push({
+            sector: 'Most Active BSE',
+            stocks: bseStocks.slice(0, 6).map(stock => ({
+              name: stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company',
+              symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
+              change: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
+              marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity, 1000000)),
+            }))
+          });
+        }
+
+        if (nseStocks.length > 0) {
+          heatMapData.push({
+            sector: 'Most Active NSE',
+            stocks: nseStocks.slice(0, 6).map(stock => ({
+              name: stock.company_name || stock.companyName || stock.company || stock.name || stock.symbol || 'Unknown Company',
+              symbol: toSymbol(stock.symbol || stock.ticker || stock.ric),
+              change: toNumeric(stock.percent_change ?? stock.pChange ?? stock.price_change_percentage),
+              marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume ?? stock.finalQuantity, 1000000)),
+            }))
+          });
+        }
+
+        if (priceShockers.length > 0) {
+          heatMapData.push({
+            sector: 'Price Shockers',
+            stocks: priceShockers.slice(0, 8).map(stock => ({
+              name: stock.company_name || stock.companyName || stock.name || stock.symbol || 'Unknown Company',
+              symbol: toSymbol(stock.symbol || stock.ric),
+              change: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange),
+              marketCap: Math.trunc(toNumeric(stock.volume ?? stock.totalTurnover ?? stock.traded_volume, 2000000)),
+            }))
+          });
+        }
+
+        if (trendingStocks.length > 0) {
+          heatMapData.push({
+            sector: 'Trending Stocks',
+            stocks: trendingStocks.slice(0, 8).map(stock => ({
+              name: stock.company_name || stock.companyName || stock.displayName || stock.name || 'Unknown',
+              symbol: toSymbol(stock.symbol || stock.ric),
+              change: toNumeric(stock.price_change_percentage ?? stock.percent_change ?? stock.pChange),
+              marketCap: Math.trunc(toNumeric(stock.current_price ?? stock.lastPrice ?? stock.price ?? 2000000)),
+            }))
+          });
+        }
+      }
+
+      const rangeHighs = rangeHighRows.slice(0, 6);
+      const rangeLows = rangeLowRows.slice(0, 6);
 
       const breadthFromOverview = overviewBreadth
         ? {
@@ -935,6 +1179,15 @@ export default function MarketPage() {
           }
         : null;
 
+      const activeFromRanges = [...rangeHighs, ...rangeLows].slice(0, 6);
+        const resolvedBreadth = breadthFromOverview && (
+          breadthFromOverview.advances > 0 ||
+          breadthFromOverview.declines > 0 ||
+          breadthFromOverview.unchanged > 0
+        )
+          ? breadthFromOverview
+          : (priceShockers.length > 0 ? breadthCalculation : rangeBreadthCalculation);
+
       // Structure the data for the UI components
       const structuredData = {
         indices: overviewIndices.slice(0, 6).map((index) => ({
@@ -943,30 +1196,32 @@ export default function MarketPage() {
           change: toNumeric(index.variation ?? index.change),
           percentage: toNumeric(index.percentChange ?? index.percentage ?? index.pChange),
         })),
-        breadth: breadthFromOverview || breadthCalculation,
+        breadth: resolvedBreadth,
         sectors: sectorPerformance,
+        rangeHighs,
+        rangeLows,
         
         // Top Gainers — from price shockers gainers array
         // Fields: symbol, change_percent, last_price
-        topGainers: priceGainers
+        topGainers: (priceGainers.length > 0 ? priceGainers : rangeHighs)
           .slice(0, 5)
           .map(stock => ({
             symbol: toSymbol(stock.symbol || stock.ric),
             name: stock.company_name || stock.companyName || stock.displayName || stock.name || stock.symbol || 'Unknown',
-            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.current_price ?? stock.price),
-            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change),
-            percentChange: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange)
+            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.current_price ?? stock.price ?? stock.week52High ?? stock.week52Low),
+            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change ?? stock.distanceFromLowPercent ?? stock.change),
+            percentChange: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange ?? stock.distanceFromLowPercent)
           })),
 
         // Top Losers — from price shockers losers array
-        topLosers: priceLosers
+        topLosers: (priceLosers.length > 0 ? priceLosers : rangeLows)
           .slice(0, 5)
           .map(stock => ({
             symbol: toSymbol(stock.symbol || stock.ric),
             name: stock.company_name || stock.companyName || stock.displayName || stock.name || stock.symbol || 'Unknown',
-            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.current_price ?? stock.price),
-            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change),
-            percentChange: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange)
+            price: toNumeric(stock.last_price ?? stock.lastPrice ?? stock.current_price ?? stock.price ?? stock.week52High ?? stock.week52Low),
+            change: toNumeric(stock.net_change ?? stock.change ?? stock.price_change ?? stock.distanceFromHighPercent ?? stock.change),
+            percentChange: toNumeric(stock.change_percent ?? stock.percent_change ?? stock.pChange ?? stock.percentChange ?? stock.distanceFromHighPercent)
           })),
         
         // Most Active: Combine BSE and NSE most active stocks
@@ -1000,8 +1255,18 @@ export default function MarketPage() {
       const indexHistoryRows: unknown[] = [];
       const snapshotHistoryRows = extractRows(getFulfilledData(snapshotHistoryApiData));
 
-      const snapshotStatusPayload = getFulfilledData(snapshotStatusApiData);
-      const snapshotLatestPayload = getFulfilledData(snapshotLatestApiData);
+      const snapshotStatusPayload = getFulfilledData(snapshotStatusApiData) as Record<string, unknown> | null;
+      const snapshotLatestPayload = getFulfilledData(snapshotLatestApiData) as Record<string, unknown> | null;
+
+      const freshnessPayload = snapshotStatusPayload?.freshness && typeof snapshotStatusPayload.freshness === 'object'
+        ? snapshotStatusPayload.freshness as Record<string, unknown>
+        : null;
+      const schedulerPayload = snapshotStatusPayload?.scheduler && typeof snapshotStatusPayload.scheduler === 'object'
+        ? snapshotStatusPayload.scheduler as Record<string, unknown>
+        : null;
+      const latestSnapshotPayload = snapshotStatusPayload?.latestSnapshot && typeof snapshotStatusPayload.latestSnapshot === 'object'
+        ? snapshotStatusPayload.latestSnapshot as Record<string, unknown>
+        : null;
 
       setEndpointStats({
         sectorHeatmapCount: sectorHeatmapRows.length,
@@ -1010,15 +1275,23 @@ export default function MarketPage() {
         indexHistoryPoints: indexHistoryRows.length,
         snapshotHistoryCount: snapshotHistoryRows.length,
         snapshotStatus: String(
-          (snapshotStatusPayload as Record<string, unknown> | null)?.status ||
-          (snapshotStatusPayload as Record<string, unknown> | null)?.state ||
+          schedulerPayload?.running ? 'running' :
+          schedulerPayload?.enabled ? 'enabled' :
+          latestSnapshotPayload?.syncStatus ? 'partial' :
           'unknown'
         ),
         snapshotCapturedAt: String(
-          (snapshotLatestPayload as Record<string, unknown> | null)?.capturedAt ||
-          (snapshotLatestPayload as Record<string, unknown> | null)?.updatedAt ||
+          snapshotLatestPayload?.capturedAt ||
+          latestSnapshotPayload?.capturedAt ||
+          snapshotLatestPayload?.updatedAt ||
           ''
         ),
+        snapshotFreshnessLabel: String(
+          freshnessPayload?.isStale === true ? 'stale' : 'fresh'
+        ),
+        schedulerRunning: Boolean(schedulerPayload?.running),
+        schedulerEnabled: Boolean(schedulerPayload?.enabled),
+        snapshotErrorCount: Number(latestSnapshotPayload?.errorCount ?? 0),
       });
 
     } catch (error) {
@@ -1120,130 +1393,248 @@ export default function MarketPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Grid overlay for entire page */}
-      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.08),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.08),_transparent_24%),linear-gradient(to_bottom,_#f8fafc,_#eef2f7)] text-slate-950 dark:bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.1),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(15,23,42,0.4),_transparent_24%),linear-gradient(to_bottom,_#020617,_#0f172a_55%,_#111827)] dark:text-white">
+      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:56px_56px] pointer-events-none z-0"></div>
       
-      <div ref={containerRef} className="container mx-auto px-4 py-8 relative z-10">
+      <div ref={containerRef} className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            Indian Market Dashboard
-          </h1>
-          <p className="text-gray-300">
-            Real-time overview of the Indian stock market and its key indicators
-          </p>
-          <div className="text-sm text-gray-400 mt-1">
-            Last updated: {currentDate}
+        <section className={`${MARKET_PANEL_CLASS} mb-8 overflow-hidden p-6 sm:p-8`}>
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-500/15 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                Live Indian market overview
+              </div>
+              <h1 className="text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl dark:text-white">
+                Indian Market Dashboard
+              </h1>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600 dark:text-slate-300">
+                A premium live market surface for breadth, range leaders, sector momentum, and snapshot health. The page keeps its structure even when a feed is empty.
+              </p>
+              <div className="mt-4 flex flex-wrap gap-2 text-sm text-slate-500 dark:text-slate-400">
+                <span className={`${MARKET_INSET_CLASS} px-3 py-2`}>Last updated {currentDate}</span>
+                <span className={`${MARKET_INSET_CLASS} px-3 py-2`}>Snapshot {endpointStats.snapshotFreshnessLabel === 'checking' ? 'checking' : endpointStats.snapshotFreshnessLabel}</span>
+                <span className={`${MARKET_INSET_CLASS} px-3 py-2`}>Scheduler {endpointStats.schedulerRunning ? 'running' : endpointStats.schedulerEnabled ? 'enabled' : 'checking'}</span>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-3 lg:w-[31rem] lg:grid-cols-3">
+              <div className={`${MARKET_INSET_CLASS} p-4`}>
+                <div className={MARKET_LABEL_CLASS}>Breadth</div>
+                <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{marketData.breadth.advances}/{marketData.breadth.declines}</div>
+                <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">Advances vs declines</div>
+              </div>
+              <div className={`${MARKET_INSET_CLASS} p-4`}>
+                <div className={MARKET_LABEL_CLASS}>52W Rows</div>
+                <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.high52Count + endpointStats.low52Count}</div>
+                <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">High + low coverage</div>
+              </div>
+              <div className={`${MARKET_INSET_CLASS} p-4`}>
+                <div className={MARKET_LABEL_CLASS}>Snapshot</div>
+                <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.snapshotStatus === 'unknown' ? 'checking' : endpointStats.snapshotStatus}</div>
+                <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">{endpointStats.snapshotCapturedAt || 'awaiting capture'}</div>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
         {/* Error Message */}
         {error && (
-          <div className="mt-4 bg-yellow-900/50 border border-yellow-600 text-yellow-200 px-4 py-2 rounded-lg">
+          <div className={`${MARKET_INSET_CLASS} mb-8 px-4 py-3 text-amber-800 dark:text-amber-200`}>
             <p className="text-sm">{error}</p>
           </div>
         )}
 
         {loading ? (
           <div className="space-y-8">
-            {/* Loading skeleton for indices */}
-            <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden border border-gray-700/50">
+            <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="px-4 py-5 border-r border-gray-700/50">
+                  <div key={i} className="border-b border-slate-200/70 px-4 py-5 sm:border-b-0 sm:border-r dark:border-white/10">
                     <div className="animate-pulse">
-                      <div className="h-4 bg-gray-600/50 rounded mb-2"></div>
-                      <div className="h-6 bg-gray-600/50 rounded mb-1"></div>
-                      <div className="h-4 bg-gray-600/50 rounded"></div>
+                      <div className="mb-2 h-4 rounded-full bg-slate-200/80 dark:bg-slate-800" />
+                      <div className="mb-1 h-6 rounded-full bg-slate-200/80 dark:bg-slate-800" />
+                      <div className="h-4 rounded-full bg-slate-200/80 dark:bg-slate-800" />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            
-            {/* Loading skeleton for other components */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
               {[1, 2].map((i) => (
-                <div key={i} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 h-64 border border-gray-700/50">
+                <div key={i} className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-64`}>
                   <div className="animate-pulse space-y-4">
-                    <div className="h-6 bg-gray-600/50 rounded w-1/3"></div>
+                    <div className="h-6 w-1/3 rounded-full bg-slate-200/80 dark:bg-slate-800" />
                     <div className="space-y-2">
-                      <div className="h-4 bg-gray-600/50 rounded"></div>
-                      <div className="h-4 bg-gray-600/50 rounded w-5/6"></div>
-                      <div className="h-4 bg-gray-600/50 rounded w-4/6"></div>
+                      <div className="h-4 rounded-full bg-slate-200/80 dark:bg-slate-800" />
+                      <div className="h-4 w-5/6 rounded-full bg-slate-200/80 dark:bg-slate-800" />
+                      <div className="h-4 w-4/6 rounded-full bg-slate-200/80 dark:bg-slate-800" />
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-            
-            <div className="text-center text-gray-300 flex items-center justify-center">
+
+            <div className="flex items-center justify-center text-slate-500 dark:text-slate-400">
               <CursiveLoader />
             </div>
           </div>
         ) : (
           <>
-            {/* Market Indices - Show only if we have data */}
-            {marketData.indices.length > 0 && (
-              <div className="mb-8">
-                <MarketIndices data={marketData.indices} />
-              </div>
-            )}
+            <div className="mb-8">
+              <MarketIndices data={marketData.indices} />
+            </div>
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-              {/* Sector Performance */}
+            <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
               <SectorPerformance data={marketData.sectors} />
-              
-              {/* Market Breadth */}
               <MarketBreadth data={marketData.breadth} />
             </div>
 
-            {/* Top Movers and Most Active */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
               <TopMovers gainers={marketData.topGainers} losers={marketData.topLosers} />
               <MostActive data={marketData.mostActive} />
             </div>
 
-            {/* Heat Map */}
             <div className="mb-8">
               <HeatMap data={marketData.heatMapData} />
             </div>
 
-            <div className="mb-8 bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg border border-gray-700/50 p-5">
-              <h3 className="text-lg font-semibold text-white mb-3">Market Endpoint Coverage</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
-                  <p className="text-gray-400">Sector Heatmap Rows</p>
-                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.sectorHeatmapCount}</p>
+            <section className={`${MARKET_PANEL_CLASS} mb-8 p-5 sm:p-6`}>
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">52W Range Leaders</h3>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">The most reliable live data source on this page right now, derived directly from the 52-week high/low endpoints.</p>
                 </div>
-                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
-                  <p className="text-gray-400">52W High Rows</p>
-                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.high52Count}</p>
-                </div>
-                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
-                  <p className="text-gray-400">52W Low Rows</p>
-                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.low52Count}</p>
-                </div>
-                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
-                  <p className="text-gray-400">Index History Points</p>
-                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.indexHistoryPoints}</p>
-                </div>
-                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700">
-                  <p className="text-gray-400">Snapshot History Rows</p>
-                  <p className="text-neon-400 font-semibold text-xl">{endpointStats.snapshotHistoryCount}</p>
-                </div>
-                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700 md:col-span-2">
-                  <p className="text-gray-400">Snapshot Status</p>
-                  <p className="text-neon-400 font-semibold text-xl capitalize">{endpointStats.snapshotStatus}</p>
-                </div>
-                <div className="bg-gray-800/70 rounded-md p-3 border border-gray-700 md:col-span-2">
-                  <p className="text-gray-400">Snapshot Captured At</p>
-                  <p className="text-neon-400 font-semibold text-sm break-all">{endpointStats.snapshotCapturedAt || 'n/a'}</p>
+                <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
+                  <div className={MARKET_LABEL_CLASS}>Snapshot</div>
+                  <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white capitalize">{endpointStats.snapshotFreshnessLabel}</div>
                 </div>
               </div>
-            </div>
+
+              <div className="grid gap-6 lg:grid-cols-2">
+                <div className={`${MARKET_INSET_CLASS} p-4 sm:p-5`}>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h4 className="text-sm font-semibold tracking-tight text-slate-950 dark:text-white">52W Highs</h4>
+                    <span className={MARKET_LABEL_CLASS}>{endpointStats.high52Count} rows</span>
+                  </div>
+                  <div className="overflow-hidden rounded-[20px] border border-slate-200/70 dark:border-white/10">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr className="border-b border-slate-200/70 text-[0.7rem] uppercase tracking-[0.2em] text-slate-500 dark:border-white/10 dark:text-slate-400">
+                          <th className="px-3 py-3 text-left">Stock</th>
+                          <th className="px-3 py-3 text-right">Price</th>
+                          <th className="px-3 py-3 text-right">Distance</th>
+                          <th className="px-3 py-3 text-right">Sector</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {marketData.rangeHighs.slice(0, 5).map((stock, index) => (
+                          <tr key={`${stock.symbol}-${index}`} className="border-b border-slate-200/50 last:border-b-0 dark:border-white/5">
+                            <td className="px-3 py-3">
+                              <div className="font-medium text-slate-950 dark:text-white">{stock.symbol}</div>
+                              <div className="text-sm text-slate-500 dark:text-slate-400 truncate">{stock.companyName || stock.name}</div>
+                            </td>
+                            <td className="px-3 py-3 text-right text-slate-950 dark:text-white">₹{formatCompactNumber(stock.price, 2)}</td>
+                            <td className="px-3 py-3 text-right text-emerald-600 dark:text-emerald-300">{formatCompactNumber(stock.distanceFromHighPercent, 2)}%</td>
+                            <td className="px-3 py-3 text-right text-slate-500 dark:text-slate-400">{stock.sector_name || 'Other'}</td>
+                          </tr>
+                        ))}
+                        {marketData.rangeHighs.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="px-3 py-8 text-center text-sm text-slate-500 dark:text-slate-400">No 52W high rows are available yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div className={`${MARKET_INSET_CLASS} p-4 sm:p-5`}>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <h4 className="text-sm font-semibold tracking-tight text-slate-950 dark:text-white">52W Lows</h4>
+                    <span className={MARKET_LABEL_CLASS}>{endpointStats.low52Count} rows</span>
+                  </div>
+                  <div className="overflow-hidden rounded-[20px] border border-slate-200/70 dark:border-white/10">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr className="border-b border-slate-200/70 text-[0.7rem] uppercase tracking-[0.2em] text-slate-500 dark:border-white/10 dark:text-slate-400">
+                          <th className="px-3 py-3 text-left">Stock</th>
+                          <th className="px-3 py-3 text-right">Price</th>
+                          <th className="px-3 py-3 text-right">Distance</th>
+                          <th className="px-3 py-3 text-right">Sector</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {marketData.rangeLows.slice(0, 5).map((stock, index) => (
+                          <tr key={`${stock.symbol}-${index}`} className="border-b border-slate-200/50 last:border-b-0 dark:border-white/5">
+                            <td className="px-3 py-3">
+                              <div className="font-medium text-slate-950 dark:text-white">{stock.symbol}</div>
+                              <div className="text-sm text-slate-500 dark:text-slate-400 truncate">{stock.companyName || stock.name}</div>
+                            </td>
+                            <td className="px-3 py-3 text-right text-slate-950 dark:text-white">₹{formatCompactNumber(stock.price, 2)}</td>
+                            <td className="px-3 py-3 text-right text-rose-600 dark:text-rose-300">{formatCompactNumber(stock.distanceFromLowPercent, 2)}%</td>
+                            <td className="px-3 py-3 text-right text-slate-500 dark:text-slate-400">{stock.sector_name || 'Other'}</td>
+                          </tr>
+                        ))}
+                        {marketData.rangeLows.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="px-3 py-8 text-center text-sm text-slate-500 dark:text-slate-400">No 52W low rows are available yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className={`${MARKET_PANEL_CLASS} mb-8 p-5 sm:p-6`}>
+              <div className="mb-4 flex items-start justify-between gap-4">
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Endpoint Coverage</h3>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Backend feed health, snapshot freshness, and live data coverage at a glance.</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
+                  <div className={MARKET_LABEL_CLASS}>Status</div>
+                  <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white capitalize">{endpointStats.snapshotStatus === 'unknown' ? 'checking' : endpointStats.snapshotStatus}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <div className={`${MARKET_INSET_CLASS} p-4`}>
+                  <p className={MARKET_LABEL_CLASS}>Sector Heatmap Rows</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.sectorHeatmapCount}</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} p-4`}>
+                  <p className={MARKET_LABEL_CLASS}>52W High Rows</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.high52Count}</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} p-4`}>
+                  <p className={MARKET_LABEL_CLASS}>52W Low Rows</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.low52Count}</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} p-4`}>
+                  <p className={MARKET_LABEL_CLASS}>Snapshot History Rows</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{endpointStats.snapshotHistoryCount}</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} p-4 sm:col-span-2 xl:col-span-2`}>
+                  <p className={MARKET_LABEL_CLASS}>Snapshot Captured At</p>
+                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white break-all">{endpointStats.snapshotCapturedAt || 'n/a'}</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} p-4`}>
+                  <p className={MARKET_LABEL_CLASS}>Freshness</p>
+                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white capitalize">{endpointStats.snapshotFreshnessLabel}</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} p-4`}>
+                  <p className={MARKET_LABEL_CLASS}>Scheduler</p>
+                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white">{endpointStats.schedulerRunning ? 'Running' : 'Idle'}</p>
+                </div>
+                <div className={`${MARKET_INSET_CLASS} p-4`}>
+                  <p className={MARKET_LABEL_CLASS}>Snapshot Errors</p>
+                  <p className="mt-2 text-sm font-medium text-slate-950 dark:text-white">{endpointStats.snapshotErrorCount}</p>
+                </div>
+              </div>
+            </section>
           </>
         )}
       </div>

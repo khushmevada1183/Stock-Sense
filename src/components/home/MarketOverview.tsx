@@ -109,12 +109,12 @@ export default function MarketOverview() {
   // Loading skeleton with shimmer
   if (loading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="rounded-lg border border-slate-200 bg-white dark:border-gray-700/50 dark:bg-gray-900/90 p-6 animate-pulse">
-            <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-3/4 mb-3" />
-            <div className="h-7 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/2 mb-3" />
-            <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded-lg w-1/3" />
+          <div key={i} className="animate-pulse rounded-[24px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+            <div className="mb-3 h-3.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-700" />
+            <div className="mb-3 h-7 w-1/2 rounded-full bg-slate-200 dark:bg-slate-700" />
+            <div className="h-4 w-1/3 rounded-full bg-slate-200 dark:bg-slate-700" />
           </div>
         ))}
       </div>
@@ -123,7 +123,7 @@ export default function MarketOverview() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-900/30 dark:bg-red-900/10 dark:text-red-400">
+      <div className="rounded-[24px] border border-rose-200/70 bg-rose-50/80 p-4 text-rose-700 backdrop-blur-xl dark:border-rose-900/30 dark:bg-rose-900/10 dark:text-rose-300">
         {error}
       </div>
     );
@@ -161,7 +161,7 @@ export default function MarketOverview() {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full overflow-x-visible">
+    <div className="grid w-full grid-cols-1 gap-3 overflow-x-visible sm:grid-cols-2 lg:grid-cols-4">
       {indices.map((index, i) => {
         const positive = isPositive(index.change);
         return (
@@ -169,10 +169,10 @@ export default function MarketOverview() {
             key={i} 
             className="h-full"
           >
-            <div className="w-full min-h-[170px] rounded-lg border border-slate-200 bg-white shadow-sm dark:border-gray-700/50 dark:bg-gray-900/90 p-6 hover:shadow-md transition-shadow">
+            <div className="w-full min-h-[170px] rounded-[24px] border border-slate-200/70 bg-white/75 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
               {/* Header row */}
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-slate-600 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">{index.name}</h3>
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500">{index.name}</h3>
                 {/* Mini sparkline */}
                 <svg width="30" height="10" className="text-slate-400 dark:text-slate-500">
                   <polyline
@@ -187,7 +187,7 @@ export default function MarketOverview() {
               </div>
 
               {/* Value */}
-              <div className="text-2xl font-bold mb-2 text-slate-900 dark:text-white">
+              <div className="mb-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">
                 {typeof index.value === 'number'
                   ? index.value.toLocaleString('en-IN')
                   : parseFloat(String(index.value)).toLocaleString('en-IN') || '0'}
@@ -207,7 +207,7 @@ export default function MarketOverview() {
                 <span>
                   {positive ? '+' : ''}{formatNumber(index.change)}
                 </span>
-                <span className="mx-1.5 text-slate-400 dark:text-slate-600">|</span>
+                <span className="mx-1.5 text-slate-300 dark:text-slate-600">|</span>
                 <span>
                   {positive ? '+' : ''}{formatNumber(index.changePercent)}%
                 </span>
