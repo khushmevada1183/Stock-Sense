@@ -6,8 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   TrendingUp, 
   TrendingDown, 
-  ArrowUp, 
-  ArrowDown, 
   Activity,
   Signal,
   Target,
@@ -317,8 +315,8 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
                   </span>
                   {indicator.signal !== 'HOLD' && (
                     indicator.signal === 'BUY' ? 
-                      <ArrowUp className="w-4 h-4 text-green-400" /> :
-                      <ArrowDown className="w-4 h-4 text-red-400" />
+                      <span className="text-base font-semibold text-green-400">+</span> :
+                      <span className="text-base font-semibold text-red-400">-</span>
                   )}
                 </div>
                 <p className="text-gray-400 text-sm mt-1">{indicator.description}</p>

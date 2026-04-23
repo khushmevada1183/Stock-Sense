@@ -7,7 +7,7 @@ import Link from 'next/link';
 import * as stockApi from '@/api/api';
 import { StockData as Stock } from '@/types/stocks';
 import { gsap } from 'gsap';
-import { TrendingUp, TrendingDown, BarChart2, ArrowRight } from 'lucide-react';
+import { BarChart2, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
 interface StockLike {
@@ -279,9 +279,8 @@ export default function FeaturedStocks() {
                         ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                         : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
                     }`}>
-                      {positive ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
-                      {positive ? '+' : ''}
-                      {formatNumber(stock.price_change_percentage)}%
+                      <span className="mr-1 font-semibold">{positive ? '+' : '-'}</span>
+                      {formatNumber(Math.abs(Number(stock.price_change_percentage ?? 0)))}%
                     </span>
                   </div>
 

@@ -7,7 +7,6 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { 
-  ArrowUp, 
   BarChart4, 
   Scale, 
   Percent, 
@@ -35,7 +34,7 @@ const defaultIcons = {
   pe: <Scale className="h-5 w-5" />,
   eps: <IndianRupee className="h-5 w-5" />,
   dividendYield: <Percent className="h-5 w-5" />,
-  volume: <ArrowUp className="h-5 w-5" />
+  volume: <BarChart4 className="h-5 w-5" />
 };
 
 const DataSummaryCard: React.FC<DataSummaryCardProps> = ({ 

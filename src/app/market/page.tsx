@@ -181,8 +181,12 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
               <div className={MARKET_LABEL_CLASS}>{index.name}</div>
               <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{index.value}</div>
               <div className={`mt-2 flex items-center text-sm font-medium ${index.tone === 'emerald' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
-                <span className="mr-1">{index.tone === 'emerald' ? '↗' : '↘'}</span>
-                <span>{index.change} ({index.percentage})</span>
+                <span>
+                  {index.tone === 'emerald' ? '+' : '-'}{String(index.change).replace(/^[+-]/, '')}
+                  {' ('}
+                  {index.tone === 'emerald' ? '+' : '-'}{String(index.percentage).replace(/^[+-]/, '')}
+                  {')'}
+                </span>
               </div>
             </div>
           ))}
@@ -208,8 +212,12 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
               <div className={MARKET_LABEL_CLASS}>{indexData.name}</div>
               <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{indexData.current.toLocaleString('en-IN')}</div>
               <div className={`mt-2 flex items-center text-sm font-medium ${indexData.change >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
-                {indexData.change >= 0 ? <span className="mr-1">↗</span> : <span className="mr-1">↘</span>}
-                <span>{Math.abs(indexData.change).toFixed(2)} ({Math.abs(indexData.percentage).toFixed(2)}%)</span>
+                <span>
+                  {indexData.change >= 0 ? '+' : '-'}{Math.abs(indexData.change).toFixed(2)}
+                  {' ('}
+                  {indexData.change >= 0 ? '+' : '-'}{Math.abs(indexData.percentage).toFixed(2)}%
+                  {')'}
+                </span>
               </div>
             </div>
           );
@@ -427,7 +435,7 @@ const TopMovers = ({ gainers, losers }: TopMoversProps) => {
               {activeRows.length === 0 ? (
                 <div className={`${MARKET_INSET_CLASS} px-5 py-10 text-center`}>
                   <div className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full ${tabValue === 'gainers' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' : 'bg-rose-500/10 text-rose-600 dark:text-rose-300'}`}>
-                    {tabValue === 'gainers' ? '↗' : '↘'}
+                    {tabValue === 'gainers' ? '+' : '-'}
                   </div>
                   <p className="text-sm font-medium text-slate-950 dark:text-white">No {tabValue} data available</p>
                   <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">This feed is currently empty. Range data below keeps the page informative.</p>
@@ -466,7 +474,7 @@ const TopMovers = ({ gainers, losers }: TopMoversProps) => {
                           </td>
                           <td className="py-3 text-right">
                             <div className={`flex items-center justify-end ${tabValue === 'gainers' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
-                              <span className="mr-1">{tabValue === 'gainers' ? '↗' : '↘'}</span>
+                              <span className="mr-1 font-semibold">{tabValue === 'gainers' ? '+' : '-'}</span>
                               <div className="text-right">
                                 <div className="font-medium">{Math.abs(stockData.percentChange).toFixed(2)}%</div>
                                 <div className="text-xs text-slate-500 dark:text-slate-400">₹{Math.abs(stockData.change).toFixed(2)}</div>
@@ -556,11 +564,7 @@ const MostActive = ({ data }: MostActiveProps) => {
                     </td>
                     <td className="py-3 text-right">
                       <div className={`flex items-center justify-end ${stockData.change >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
-                        {stockData.change >= 0 ? (
-                          <span className="mr-1">↗</span>
-                        ) : (
-                          <span className="mr-1">↘</span>
-                        )}
+                        <span className="mr-1 font-semibold">{stockData.change >= 0 ? '+' : '-'}</span>
                         <span>{Math.abs(stockData.percentChange).toFixed(2)}%</span>
                       </div>
                     </td>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Clock, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import gsap from 'gsap';
 
 // Define interfaces for type safety
@@ -334,12 +334,13 @@ const PriceChange = ({ change, percentChange }: PriceChangeProps) => {
   const changeNum = typeof change === 'string' ? parseFloat(change) : change;
   const isPositive = changeNum >= 0;
   const color = isPositive ? "text-green-500" : "text-red-500";
-  const Arrow = isPositive ? ArrowUpRight : ArrowDownRight;
+  const sign = isPositive ? '+' : '-';
+  const normalizedChange = String(change).replace(/^[+-]/, '');
+  const normalizedPercent = String(percentChange).replace(/^[+-]/, '');
   
   return (
     <span className={`flex items-center ${color} text-sm font-medium`}>
-      <Arrow size={16} className="mr-1" />
-      <span>{isPositive ? "+" : ""}{change} ({isPositive ? "+" : ""}{percentChange}%)</span>
+      <span>{sign}{normalizedChange} ({sign}{normalizedPercent}%)</span>
     </span>
   );
 };

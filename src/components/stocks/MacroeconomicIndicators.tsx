@@ -10,8 +10,6 @@ import {
   Building,
   BarChart3,
   PieChart,
-  ArrowUp,
-  ArrowDown,
   Minus
 } from 'lucide-react';
 
@@ -226,8 +224,8 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
 
   const getImpactIcon = (impact: 'positive' | 'negative' | 'neutral') => {
     switch (impact) {
-      case 'positive': return <ArrowUp className="w-4 h-4" />;
-      case 'negative': return <ArrowDown className="w-4 h-4" />;
+      case 'positive': return <span className="font-semibold leading-none">+</span>;
+      case 'negative': return <span className="font-semibold leading-none">-</span>;
       default: return <Minus className="w-4 h-4" />;
     }
   };
@@ -303,8 +301,8 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
                     indicator.change > 0 ? 'text-green-400' : 
                     indicator.change < 0 ? 'text-red-400' : 'text-gray-400'
                   }`}>
-                    {indicator.change > 0 ? <ArrowUp className="w-3 h-3" /> :
-                     indicator.change < 0 ? <ArrowDown className="w-3 h-3" /> :
+                      {indicator.change > 0 ? <span className="font-semibold leading-none">+</span> :
+                       indicator.change < 0 ? <span className="font-semibold leading-none">-</span> :
                      <Minus className="w-3 h-3" />}
                     <span>{Math.abs(indicator.change)}{indicator.unit}</span>
                   </div>

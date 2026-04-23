@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { ArrowUp, ArrowDown } from 'lucide-react';
 
 interface Commodity {
   id: string;
@@ -80,13 +79,13 @@ const CommoditiesTable = () => {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end">
-                        {commodity.change > 0 ? (
-                          <ArrowUp className="h-4 w-4 text-green-500 mr-1" />
-                        ) : (
-                          <ArrowDown className="h-4 w-4 text-red-500 mr-1" />
-                        )}
                         <Badge variant={commodity.change > 0 ? "success" : "destructive"}>
-                          {commodity.change > 0 ? '+' : ''}{commodity.change.toFixed(2)} ({commodity.changePercent.toFixed(2)}%)
+                          {commodity.change > 0 ? '+' : commodity.change < 0 ? '-' : ''}
+                          {Math.abs(commodity.change).toFixed(2)}
+                          {' ('}
+                          {commodity.changePercent > 0 ? '+' : commodity.changePercent < 0 ? '-' : ''}
+                          {Math.abs(commodity.changePercent).toFixed(2)}%
+                          {')'}
                         </Badge>
                       </div>
                     </TableCell>

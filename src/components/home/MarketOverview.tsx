@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import * as stockApi from '@/api/api';
 import { IndexData } from '@/types/market';
-import { TrendingUp, TrendingDown } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 type MarketOverviewIndexItem = {
@@ -199,17 +198,13 @@ export default function MarketOverview() {
                   ? 'text-green-600 dark:text-green-400' 
                   : 'text-red-600 dark:text-red-400'
               }`}>
-                {positive ? (
-                  <TrendingUp className="h-3.5 w-3.5 mr-1.5" />
-                ) : (
-                  <TrendingDown className="h-3.5 w-3.5 mr-1.5" />
-                )}
+                <span className="mr-1.5 font-semibold">{positive ? '+' : '-'}</span>
                 <span>
-                  {positive ? '+' : ''}{formatNumber(index.change)}
+                  {formatNumber(Math.abs(Number(index.change ?? 0)))}
                 </span>
                 <span className="mx-1.5 text-slate-300 dark:text-slate-600">|</span>
                 <span>
-                  {positive ? '+' : ''}{formatNumber(index.changePercent)}%
+                  {positive ? '+' : '-'}{formatNumber(Math.abs(Number(index.changePercent ?? 0)))}%
                 </span>
               </div>
             </div>

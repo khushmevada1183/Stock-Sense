@@ -1,5 +1,4 @@
 import React from 'react';
-import { ArrowUp, ArrowDown } from 'lucide-react';
 import StockLogo from './StockLogo';
 
 interface CompanyHeaderProps {
@@ -47,14 +46,10 @@ const CompanyHeader = ({
             <span className="text-3xl md:text-4xl font-bold mr-3">
               ₹{nsePrice.toLocaleString('en-IN', { maximumFractionDigits: 2 })}
             </span>
-            <div className={`flex items-center ${isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}>
-              {isPositive ? (
-                <ArrowUp className="h-5 w-5 mr-1" />
-              ) : (
-                <ArrowDown className="h-5 w-5 mr-1" />
-              )}
-              <span className="text-lg font-medium">
-                {isPositive ? '+' : ''}{percentChange.toFixed(2)}%
+            <div className={`flex items-center text-lg ${isPositive ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500'}`}>
+              <span className="mr-1 font-semibold leading-none">{isPositive ? '+' : '-'}</span>
+              <span className="font-medium">
+                {Math.abs(percentChange).toFixed(2)}%
               </span>
             </div>
           </div>

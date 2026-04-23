@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowUpDown, Info, ArrowUp, ArrowDown, BarChart2 } from 'lucide-react';
+import { Info, BarChart2 } from 'lucide-react';
 import { 
   Card, 
   CardContent, 
@@ -100,10 +100,10 @@ const PeerComparisonTable = ({ peerCompanies, currentSymbol }: PeerComparisonTab
   };
   
   const getSortArrow = (field: string) => {
-    if (sortField !== field) return <ArrowUpDown className="h-4 w-4 ml-1 opacity-50" />;
+    if (sortField !== field) return <span className="ml-1 opacity-60">+/-</span>;
     return sortDirection === 'asc' 
-      ? <ArrowUp className="h-4 w-4 ml-1" />
-      : <ArrowDown className="h-4 w-4 ml-1" />;
+      ? <span className="ml-1 font-semibold leading-none">+</span>
+      : <span className="ml-1 font-semibold leading-none">-</span>;
   };
   
   return (

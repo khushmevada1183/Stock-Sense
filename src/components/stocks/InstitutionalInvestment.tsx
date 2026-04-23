@@ -8,8 +8,6 @@ import {
   TrendingUp, 
   TrendingDown, 
   Users,
-  ArrowUp,
-  ArrowDown,
   Activity,
   BarChart3,
   Target,
@@ -212,9 +210,9 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
   };
 
   const getChangeIcon = (change: number) => {
-    return change > 0 ? <ArrowUp className="w-3 h-3" /> : 
-           change < 0 ? <ArrowDown className="w-3 h-3" /> : 
-           <Activity className="w-3 h-3" />;
+    return change > 0 ? <span className="font-semibold leading-none">+</span> : 
+      change < 0 ? <span className="font-semibold leading-none">-</span> : 
+      <Activity className="w-3 h-3" />;
   };
 
   const formatCurrency = (value: number) => {

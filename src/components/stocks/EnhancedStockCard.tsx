@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowUp, ArrowDown, Volume, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { Volume, Info, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 
 type NumericInput = number | string | undefined;
@@ -127,8 +127,8 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
           <div className={`flex items-center justify-end gap-1 text-sm font-medium ${
             isPositive ? 'text-emerald-400' : 'text-rose-400'
           }`}>
-            {isPositive ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
-            {isPositive ? '+' : ''}{percentChange.toFixed(2)}%
+            <span className="font-semibold">{isPositive ? '+' : '-'}</span>
+            {Math.abs(percentChange).toFixed(2)}%
           </div>
         </div>
       </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect } from 'react';
-import { ArrowUp, ArrowDown } from 'lucide-react';
 import { gsap } from 'gsap';
 
 interface MetricCardProps {
@@ -18,6 +17,9 @@ const MetricCard: React.FC<MetricCardProps> = ({
   title, value, change, isPositive, icon, isAnimated = true, delay = 0
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const changeText = change === undefined || change === null
+    ? ''
+    : String(change).trim().replace(/^[+-]/, '');
 
   useEffect(() => {
     if (!isAnimated || !cardRef.current) return;
@@ -59,8 +61,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
             <div className={`flex items-center mt-1.5 text-sm font-medium ${
               isPositive ? 'text-emerald-400' : 'text-rose-400'
             }`}>
-              {isPositive ? <ArrowUp className="mr-1 h-3.5 w-3.5" /> : <ArrowDown className="mr-1 h-3.5 w-3.5" />}
-              <span>{change}</span>
+              <span className="mr-1 font-semibold">{isPositive ? '+' : '-'}</span>
+              <span>{changeText}</span>
             </div>
           )}
         </div>

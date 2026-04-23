@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import * as stockApi from '@/api/api';
-import { ArrowUp, ArrowDown } from 'lucide-react';
 import { logger } from '@/lib/logger';
 
 interface SectorData {
@@ -113,11 +112,7 @@ export default function SectorPerformance() {
                   ? 'text-green-600 dark:text-green-400' 
                   : 'text-red-600 dark:text-red-400'
               }`}>
-                {positive ? (
-                  <ArrowUp className="w-4 h-4 mr-1" />
-                ) : (
-                  <ArrowDown className="w-4 h-4 mr-1" />
-                )}
+                <span className="mr-1 font-semibold">{positive ? '+' : '-'}</span>
                 {Math.abs(sector.changePercent).toFixed(2)}%
               </div>
 

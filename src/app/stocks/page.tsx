@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Chart, registerables } from 'chart.js';
-import { ArrowUp, ArrowDown, TrendingUp, BarChart2, PieChart, IndianRupee, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BarChart2, PieChart, IndianRupee, Activity, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as stockApi from '@/api/api';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import { CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -1286,7 +1286,7 @@ export default function StocksIndexPage() {
               <div>
                 <p className="text-3xl font-bold text-white">₹{marketMetrics.totalVolume}K</p>
                 <p className="text-sm text-green-400 mt-1 flex items-center">
-                  <ArrowUp className="w-4 h-4 mr-1" />
+                  <span className="mr-1 font-semibold">+</span>
                   <span>From {stocks.length} stocks</span>
                 </p>
               </div>
@@ -1326,12 +1326,12 @@ export default function StocksIndexPage() {
               <div>
                 <p className="text-3xl font-bold text-white">{marketMetrics.gainers}</p>
                 <p className="text-sm text-green-400 mt-1 flex items-center">
-                  <ArrowUp className="w-4 h-4 mr-1" />
+                  <span className="mr-1 font-semibold">+</span>
                   <span>Positive change</span>
                 </p>
               </div>
-              <div className="p-4 bg-green-500/20 rounded-lg">
-                <TrendingUp className="w-6 h-6 text-green-400" />
+              <div className="p-4 bg-green-500/20 rounded-lg text-3xl leading-none text-green-400">
+                <span className="font-semibold">+</span>
               </div>
             </div>
           </CardContent>
@@ -1346,7 +1346,7 @@ export default function StocksIndexPage() {
               <div>
                 <p className="text-3xl font-bold text-white">{marketMetrics.losers}</p>
                 <p className="text-sm text-red-400 mt-1 flex items-center">
-                  <ArrowDown className="w-4 h-4 mr-1" />
+                  <span className="mr-1 font-semibold">-</span>
                   <span>Negative change</span>
                 </p>
               </div>
@@ -1488,14 +1488,11 @@ export default function StocksIndexPage() {
                         }`}>
                           <div className="flex flex-col items-end">
                             <div className="flex items-center">
-                              {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? (
-                                <ArrowUp className="w-4 h-4 mr-1" />
-                              ) : (
-                                <ArrowDown className="w-4 h-4 mr-1" />
-                              )}
+                              <span className="mr-1 font-semibold">
+                                {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? '+' : '-'}
+                              </span>
                               <span>
-                                {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? '+' : ''}
-                                {(stock.price_change_percentage || stock.percent_change || 0).toFixed(2)}%
+                                {Math.abs(stock.price_change_percentage || stock.percent_change || 0).toFixed(2)}%
                               </span>
                             </div>
                             <div className="text-xs text-gray-400">
@@ -1968,7 +1965,7 @@ export default function StocksIndexPage() {
                   className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
                 >
                   View All {stocks.length} Stocks
-                  <ArrowUp className="w-4 h-4 ml-2" />
+                  <span className="ml-2 font-semibold">+</span>
                 </Link>
               </div>
             )}
@@ -2036,12 +2033,8 @@ export default function StocksIndexPage() {
                       <div className={`text-sm font-medium flex items-center ${
                         (stock.percent_change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'
                       }`}>
-                        {(stock.percent_change ?? 0) >= 0 ? (
-                          <ArrowUp className="w-3 h-3 mr-1" />
-                        ) : (
-                          <ArrowDown className="w-3 h-3 mr-1" />
-                        )}
-                        {(stock.percent_change ?? 0).toFixed(2)}%
+                        <span className="mr-1 font-semibold">{(stock.percent_change ?? 0) >= 0 ? '+' : '-'}</span>
+                        {Math.abs(stock.percent_change ?? 0).toFixed(2)}%
                       </div>
                     </div>
                   </div>
@@ -2111,7 +2104,7 @@ export default function StocksIndexPage() {
         <div className="bg-gray-900/90 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50 shadow-2xl">
           <h2 className="text-3xl font-bold mb-8 text-white flex items-center">
             <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full mr-4"></div>
-            <TrendingUp className="w-7 h-7 mr-3 text-green-400" />
+            <Activity className="w-7 h-7 mr-3 text-green-400" />
             NSE Most Active Stocks
           </h2>
           
@@ -2165,12 +2158,8 @@ export default function StocksIndexPage() {
                       <div className={`text-sm font-medium flex items-center ${
                         (stock.percent_change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'
                       }`}>
-                        {(stock.percent_change ?? 0) >= 0 ? (
-                          <ArrowUp className="w-3 h-3 mr-1" />
-                        ) : (
-                          <ArrowDown className="w-3 h-3 mr-1" />
-                        )}
-                        {(stock.percent_change ?? 0).toFixed(2)}%
+                        <span className="mr-1 font-semibold">{(stock.percent_change ?? 0) >= 0 ? '+' : '-'}</span>
+                        {Math.abs(stock.percent_change ?? 0).toFixed(2)}%
                       </div>
                     </div>
                   </div>

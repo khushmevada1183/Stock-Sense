@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import {
-  ArrowDown,
-  ArrowUp,
   Activity,
   BarChart3,
   Download,
@@ -815,8 +813,8 @@ const PortfolioDashboard = () => {
                       <td className="px-4 py-4 text-sm font-medium text-slate-700 dark:text-slate-200">{formatCurrency(stock.lastPrice)}</td>
                       <td className="px-4 py-4">
                         <div className={`flex items-center gap-1.5 text-sm font-semibold ${stock.change >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
-                          {stock.change >= 0 ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
-                          <span>{stock.change.toFixed(2)}</span>
+                          <span className="leading-none">{stock.change >= 0 ? '+' : '-'}</span>
+                          <span>{Math.abs(stock.change).toFixed(2)}</span>
                           <span className="text-xs font-medium opacity-75">({formatPercent(stock.changePercent)})</span>
                         </div>
                       </td>

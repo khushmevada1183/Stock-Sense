@@ -11,8 +11,6 @@ import {
   Target,
   Users,
   BarChart3,
-  ArrowUp,
-  ArrowDown,
   Activity,
   Zap,
   Globe,
@@ -304,8 +302,8 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
                   metric.change > 0 ? 'text-green-400' : 
                   metric.change < 0 ? 'text-red-400' : 'text-gray-400'
                 }`}>
-                  {metric.change > 0 ? <ArrowUp className="w-3 h-3" /> :
-                   metric.change < 0 ? <ArrowDown className="w-3 h-3" /> :
+                  {metric.change > 0 ? <span className="font-semibold leading-none">+</span> :
+                   metric.change < 0 ? <span className="font-semibold leading-none">-</span> :
                    <Activity className="w-3 h-3" />}
                   <span>{Math.abs(metric.change)}{metric.unit}</span>
                 </div>
