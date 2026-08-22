@@ -922,7 +922,6 @@ export default function MarketPage() {
         bseMostActiveData,     // For Most Active & Heat Map
         nseMostActiveData,     // For Most Active & Heat Map
         priceShockersData,     // For Top Gainers/Losers & Market Breadth
-        sectorHeatmapApiData,
         week52HighApiData,
         week52LowApiData,
       ] = await Promise.allSettled([
@@ -931,7 +930,6 @@ export default function MarketPage() {
         stockApi.getBSEMostActive(),
         stockApi.getNSEMostActive(),
         stockApi.getPriceShockers(),
-        stockApi.getMarketSectorHeatmap(),
         stockApi.get52WeekHigh(),
         stockApi.get52WeekLow(),
       ]);
@@ -1206,8 +1204,7 @@ export default function MarketPage() {
           }
         : null;
 
-      const activeFromRanges = [...rangeHighs, ...rangeLows].slice(0, 6);
-        const resolvedBreadth = breadthFromOverview && (
+      const resolvedBreadth = breadthFromOverview && (
           breadthFromOverview.advances > 0 ||
           breadthFromOverview.declines > 0 ||
           breadthFromOverview.unchanged > 0

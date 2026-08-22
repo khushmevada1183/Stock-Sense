@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Activity, ArrowRight, BarChart3, ChevronRight, TrendingDown, TrendingUp } from 'lucide-react';
+import { Activity, ArrowRight, BarChart3, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
 
 const marketPulse = [

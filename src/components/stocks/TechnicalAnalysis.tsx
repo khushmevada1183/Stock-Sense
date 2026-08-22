@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { getStockTechnical } from '@/api/api';
+import CursiveLoader from '@/components/ui/CursiveLoader';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   TrendingUp, 
@@ -32,12 +34,49 @@ interface TechnicalAnalysisProps {
   volume?: number[];
 }
 
+type ApiLatest = {
+  rsi14?: number;
+  macd?: { MACD?: number; signal?: number; histogram?: number };
+  sma20?: number;
+  sma50?: number;
+  bollingerBands?: { lower?: number; upper?: number; middle?: number; pb?: number };
+  adx14?: { adx?: number; pdi?: number; mdi?: number };
+  atr14?: number;
+  cci20?: number;
+  mfi14?: number;
+  obv?: number;
+  stochastic14?: { k?: number; d?: number };
+  williamsR14?: number;
+};
+
 const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({ 
+  symbol,
   currentPrice, 
   priceData = [], 
   volume = [] 
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [apiLatest, setApiLatest] = useState<ApiLatest | null>(null);
+  const [apiLoading, setApiLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setApiLoading(true);
+      try {
+        const payload = await getStockTechnical(symbol);
+        const latest = (payload as { latest?: ApiLatest })?.latest ?? payload;
+        if (!cancelled && latest && typeof latest === 'object') {
+          setApiLatest(latest as ApiLatest);
+        }
+      } catch {
+        if (!cancelled) setApiLatest(null);
+      } finally {
+        if (!cancelled) setApiLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [symbol]);
 
   const calculateTechnicalIndicators = (prices: number[], volumes: number[]): TechnicalIndicator[] => {
     const indicators: TechnicalIndicator[] = [];
@@ -210,15 +249,112 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
     return 'HOLD';
   };
 
+  const indicatorsFromApi = useMemo((): TechnicalIndicator[] => {
+    if (!apiLatest) return [];
+    const out: TechnicalIndicator[] = [];
+
+    if (apiLatest.rsi14 != null) {
+      out.push({
+        name: 'RSI (14)',
+        value: apiLatest.rsi14,
+        signal: apiLatest.rsi14 > 70 ? 'SELL' : apiLatest.rsi14 < 30 ? 'BUY' : 'HOLD',
+        description: apiLatest.rsi14 > 70 ? 'Overbought' : apiLatest.rsi14 < 30 ? 'Oversold' : 'Neutral',
+      });
+    }
+
+    const hist = apiLatest.macd?.histogram;
+    if (hist != null) {
+      out.push({
+        name: 'MACD Histogram',
+        value: hist,
+        signal: hist > 0 ? 'BUY' : 'SELL',
+        description: hist > 0 ? 'Bullish momentum' : 'Bearish momentum',
+      });
+    }
+
+    if (apiLatest.sma20 != null && apiLatest.sma50 != null && apiLatest.sma50 !== 0) {
+      const spread = ((apiLatest.sma20 - apiLatest.sma50) / apiLatest.sma50) * 100;
+      out.push({
+        name: 'SMA 20/50',
+        value: spread,
+        signal: apiLatest.sma20 > apiLatest.sma50 ? 'BUY' : 'SELL',
+        description: apiLatest.sma20 > apiLatest.sma50 ? 'Golden Cross bias' : 'Death Cross bias',
+      });
+    }
+
+    const pb = apiLatest.bollingerBands?.pb;
+    if (pb != null) {
+      out.push({
+        name: 'Bollinger %B',
+        value: pb * 100,
+        signal: pb > 0.8 ? 'SELL' : pb < 0.2 ? 'BUY' : 'HOLD',
+        description: pb > 0.8 ? 'Near upper band' : pb < 0.2 ? 'Near lower band' : 'Mid-range',
+      });
+    }
+
+    if (apiLatest.adx14?.adx != null) {
+      out.push({
+        name: 'ADX (14)',
+        value: apiLatest.adx14.adx,
+        signal: apiLatest.adx14.adx > 25 ? 'BUY' : 'HOLD',
+        description: apiLatest.adx14.adx > 25 ? 'Strong trend' : 'Weak trend',
+      });
+    }
+
+    if (apiLatest.cci20 != null) {
+      out.push({
+        name: 'CCI (20)',
+        value: apiLatest.cci20,
+        signal: apiLatest.cci20 > 100 ? 'SELL' : apiLatest.cci20 < -100 ? 'BUY' : 'HOLD',
+        description: 'Commodity Channel Index',
+      });
+    }
+
+    if (apiLatest.mfi14 != null) {
+      out.push({
+        name: 'MFI (14)',
+        value: apiLatest.mfi14,
+        signal: apiLatest.mfi14 > 80 ? 'SELL' : apiLatest.mfi14 < 20 ? 'BUY' : 'HOLD',
+        description: 'Money Flow Index',
+      });
+    }
+
+    return out;
+  }, [apiLatest]);
+
+  const supportResistanceFromApi = useMemo((): SupportResistanceLevel[] => {
+    if (!apiLatest?.bollingerBands) return [];
+    const levels: SupportResistanceLevel[] = [];
+    const bb = apiLatest.bollingerBands;
+    if (bb.lower != null) {
+      levels.push({ level: bb.lower, type: 'support', strength: 'moderate' });
+    }
+    if (bb.middle != null) {
+      levels.push({ level: bb.middle, type: 'support', strength: 'weak' });
+    }
+    if (bb.upper != null) {
+      levels.push({ level: bb.upper, type: 'resistance', strength: 'moderate' });
+    }
+    if (apiLatest.sma50 != null) {
+      levels.push({
+        level: apiLatest.sma50,
+        type: apiLatest.sma50 > currentPrice ? 'resistance' : 'support',
+        strength: 'strong',
+      });
+    }
+    return levels;
+  }, [apiLatest, currentPrice]);
+
   const indicators = useMemo(
-    () => (priceData.length > 0 ? calculateTechnicalIndicators(priceData, volume) : []),
-    [priceData, volume]
+    () => (indicatorsFromApi.length > 0
+      ? indicatorsFromApi
+      : priceData.length > 0 ? calculateTechnicalIndicators(priceData, volume) : []),
+    [indicatorsFromApi, priceData, volume]
   );
 
-  const supportResistance = useMemo(
-    () => (priceData.length > 0 ? calculateSupportResistance(priceData) : []),
-    [priceData]
-  );
+  const supportResistance = supportResistanceFromApi.length > 0
+    ? supportResistanceFromApi
+    : priceData.length > 0 ? calculateSupportResistance(priceData) : [];
 
   const overallSignal = useMemo(
     () => calculateOverallSignal(indicators),
@@ -237,10 +373,9 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
 
     const tween = gsap.fromTo(
       elements,
-      { y: 20, opacity: 0 },
+      { y: 20 },
       {
         y: 0,
-        opacity: 1,
         duration: 0.6,
         stagger: 0.1,
         ease: "power3.out",
@@ -269,6 +404,10 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
       default: return <Activity className="w-4 h-4" />;
     }
   };
+
+  if (apiLoading && indicators.length === 0) {
+    return <CursiveLoader className="min-h-[120px]" />;
+  }
 
   return (
     <div ref={containerRef} className="space-y-6">

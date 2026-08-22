@@ -177,10 +177,9 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
 
     const tween = gsap.fromTo(
       elements,
-      { y: 20, opacity: 0 },
+      { y: 20 },
       {
         y: 0,
-        opacity: 1,
         duration: 0.6,
         stagger: 0.1,
         ease: "power3.out",

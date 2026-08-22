@@ -41,12 +41,6 @@ const formatDistance = (value: string) => {
   return `${days}d ago`;
 };
 
-const statusStyles: Record<string, string> = {
-  Ready: 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-200',
-  Queued: 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200',
-  Expired: 'border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-400/20 dark:bg-rose-500/10 dark:text-rose-200',
-};
-
 export default function Reports() {
   const query = useQuery({
     queryKey: ['settings', 'reports'],

@@ -29,7 +29,7 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> { neon?: boolean }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ className, neon = false, size, variant, children, ...props }, ref) => {
+    ({ className, size, variant, children, ...props }, ref) => {
         return (
             <button
                 className={cn(buttonVariants({ variant, size }), className)}

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { Volume, Info, ChevronDown, ChevronUp } from 'lucide-react';
-import { Card } from '@/components/ui/card';
 
 type NumericInput = number | string | undefined;
 

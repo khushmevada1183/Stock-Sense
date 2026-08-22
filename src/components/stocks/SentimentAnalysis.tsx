@@ -3,8 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getStockSentiment } from '@/api/api';
 import { 
-  Heart, 
+  Heart,
   ThumbsUp, 
   ThumbsDown, 
   TrendingUp, 
@@ -64,81 +65,82 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
   const fetchSentimentData = async () => {
     setLoading(true);
     try {
-      // Simulate API call - replace with actual sentiment analysis APIs
-      const mockSentimentData: SentimentData = {
-        overall: Math.floor(Math.random() * 40) + 20, // Random between 20-60
-        social: Math.floor(Math.random() * 60) - 10, // Random between -10 to 50
-        news: Math.floor(Math.random() * 50) + 10, // Random between 10-60
-        analyst: Math.floor(Math.random() * 40) + 30, // Random between 30-70
-        retail: Math.floor(Math.random() * 50) + 5, // Random between 5-55
-        institutional: Math.floor(Math.random() * 30) + 40, // Random between 40-70
-        forum: Math.floor(Math.random() * 40) + 10, // Random between 10-50
-        rating: Math.floor(Math.random() * 30) + 50 // Random between 50-80
+      const payload = await getStockSentiment(symbol);
+      const data = payload as {
+        summary?: Record<string, number>;
+        social?: { rows?: Record<string, unknown>[] };
+        news?: { rows?: Record<string, unknown>[] };
+      };
+      const summary = data.summary ?? {};
+      const socialRows = data.social?.rows ?? [];
+      const newsRows = data.news?.rows ?? [];
+
+      const avgSocial = socialRows.length
+        ? socialRows.reduce((sum, row) => sum + Number(row.sentimentScore ?? 0), 0) / socialRows.length
+        : 0;
+
+      const mappedSentiment: SentimentData = {
+        overall: Math.round((Number(summary.averageScore ?? avgSocial) || 0) * 100),
+        social: Math.round(avgSocial * 100),
+        news: Math.round((Number(summary.averageScore ?? 0) || 0) * 100),
+        analyst: 0,
+        retail: 0,
+        institutional: 0,
+        forum: 0,
+        rating: Math.round(Number(summary.averageConfidence ?? 0) * 100),
       };
 
-      const mockSources: SentimentSource[] = [
-        {
-          source: 'Twitter/X',
-          sentiment: mockSentimentData.social,
-          volume: Math.floor(Math.random() * 5000) + 1000,
-          trending_topics: ['quarterly results', 'expansion plans', 'market share'],
-          key_mentions: ['strong performance', 'growth outlook', 'dividend announcement']
-        },
-        {
-          source: 'Financial News',
-          sentiment: mockSentimentData.news,
-          volume: Math.floor(Math.random() * 200) + 50,
-          trending_topics: ['revenue growth', 'profit margins', 'market position'],
-          key_mentions: ['beat estimates', 'positive outlook', 'strong fundamentals']
-        },
-        {
-          source: 'Reddit/Forums',
-          sentiment: Math.floor(Math.random() * 40) + 10,
-          volume: Math.floor(Math.random() * 1000) + 200,
-          trending_topics: ['technical analysis', 'long term hold', 'value pick'],
-          key_mentions: ['undervalued', 'good entry point', 'solid company']
-        },
-        {
-          source: 'Analyst Reports',
-          sentiment: mockSentimentData.analyst,
-          volume: Math.floor(Math.random() * 50) + 10,
-          trending_topics: ['price target', 'recommendation', 'sector outlook'],
-          key_mentions: ['buy rating', 'target raised', 'positive coverage']
-        }
-      ];
+      const mappedSources: SentimentSource[] = socialRows.slice(0, 6).map((row) => ({
+        source: String(row.platform ?? 'Social'),
+        sentiment: Math.round(Number(row.sentimentScore ?? 0) * 100),
+        volume: Number(row.mentionCount ?? 0),
+        trending_topics: [],
+        key_mentions: [
+          `Positive: ${row.positiveCount ?? 0}`,
+          `Negative: ${row.negativeCount ?? 0}`,
+          `Neutral: ${row.neutralCount ?? 0}`,
+        ],
+      }));
 
-      const mockMarketMood: MarketMoodIndicator[] = [
+      if (newsRows.length > 0) {
+        mappedSources.push({
+          source: 'News',
+          sentiment: mappedSentiment.news,
+          volume: newsRows.length,
+          trending_topics: newsRows.slice(0, 3).map((r) => String(r.title ?? r.headline ?? 'News item')),
+          key_mentions: [],
+        });
+      }
+
+      const mappedMood: MarketMoodIndicator[] = [
         {
-          name: 'Fear & Greed Index',
-          value: Math.floor(Math.random() * 40) + 40,
-          trend: 'up',
-          description: 'Market sentiment indicator based on volatility and momentum'
+          name: 'Social Mentions',
+          value: socialRows.reduce((sum, r) => sum + Number(r.mentionCount ?? 0), 0),
+          trend: avgSocial >= 0 ? 'up' : 'down',
+          description: `${socialRows.length} social snapshots from API`,
         },
         {
-          name: 'Volatility Index (VIX)',
-          value: Math.floor(Math.random() * 20) + 15,
-          trend: 'down',
-          description: 'Market fear gauge based on options volatility'
-        },
-        {
-          name: 'Put/Call Ratio',
-          value: Math.random() * 0.5 + 0.7,
+          name: 'News Articles',
+          value: newsRows.length,
           trend: 'stable',
-          description: 'Ratio of put to call options trading volume'
+          description: 'News sentiment coverage',
         },
         {
-          name: 'Insider Trading Activity',
-          value: Math.floor(Math.random() * 30) + 50,
-          trend: 'up',
-          description: 'Recent insider buying/selling activity'
-        }
+          name: 'Average Sentiment Score',
+          value: Math.round((Number(summary.averageScore ?? avgSocial) || 0) * 100),
+          trend: avgSocial >= 0 ? 'up' : 'down',
+          description: 'Aggregate sentiment from available sources',
+        },
       ];
 
-      setSentimentData(mockSentimentData);
-      setSources(mockSources);
-      setMarketMood(mockMarketMood);
+      setSentimentData(mappedSentiment);
+      setSources(mappedSources);
+      setMarketMood(mappedMood);
     } catch (error) {
       console.error('Error fetching sentiment data:', error);
+      setSentimentData(null);
+      setSources([]);
+      setMarketMood([]);
     } finally {
       setLoading(false);
     }
@@ -155,10 +157,9 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
 
     const tween = gsap.fromTo(
       elements,
-      { y: 20, opacity: 0 },
+      { y: 20 },
       {
         y: 0,
-        opacity: 1,
         duration: 0.6,
         stagger: 0.1,
         ease: "power3.out",

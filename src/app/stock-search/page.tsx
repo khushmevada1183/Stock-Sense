@@ -25,9 +25,29 @@ interface TrendingResponse {
   };
 }
 
+const loadSearchHistory = (): string[] => {
+  if (typeof window === 'undefined') {
+    return [];
+  }
+
+  try {
+    const history = localStorage.getItem('stockSearchHistory');
+    if (!history) {
+      return [];
+    }
+
+    const parsed: unknown = JSON.parse(history);
+    return Array.isArray(parsed)
+      ? parsed.filter((item): item is string => typeof item === 'string')
+      : [];
+  } catch {
+    return [];
+  }
+};
+
 const StockSearchPage: React.FC = () => {
   const [popularStocks, setPopularStocks] = useState<PopularStock[]>([]);
-  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [searchHistory, setSearchHistory] = useState<string[]>(loadSearchHistory);
   const router = useRouter();
 
   const toNumber = (value: number | string | undefined) => {
@@ -52,22 +72,6 @@ const StockSearchPage: React.FC = () => {
     };
 
     void loadPopular();
-  }, []);
-
-  useEffect(() => {
-    try {
-      const history = localStorage.getItem('stockSearchHistory');
-      if (!history) {
-        return;
-      }
-
-      const parsed: unknown = JSON.parse(history);
-      if (Array.isArray(parsed)) {
-        setSearchHistory(parsed.filter((item): item is string => typeof item === 'string'));
-      }
-    } catch {
-      setSearchHistory([]);
-    }
   }, []);
 
   // This function will be passed to the SearchBar component

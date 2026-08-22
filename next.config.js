@@ -34,17 +34,17 @@ Object.entries(envFromDotEnv).forEach(([key, value]) => {
 });
 
 /** @type {import('next').NextConfig} */
-const isDockerBuild = process.env.DOCKER === '1';
-const isLocalDev = process.env.NODE_ENV === 'development';
+const isGithubPagesBuild = process.env.GITHUB_PAGES === '1';
 const githubPagesBasePath = '/stock-sense-frontend';
 
 const nextConfig = {
-  ...(isDockerBuild || isLocalDev
-    ? {}
-    : {
+  ...(isGithubPagesBuild
+    ? {
         basePath: githubPagesBasePath,
         assetPrefix: githubPagesBasePath,
-      }),
+        output: 'export',
+      }
+    : {}),
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -55,7 +55,7 @@ const nextConfig = {
     styledComponents: true,
   },
   // Using optimized webpack configuration for builds
-  webpack: (config, { isServer }) => {
+  webpack: (config) => {
     // Optimize handling for large pages
     config.optimization.splitChunks = {
       chunks: 'all',
@@ -91,8 +91,6 @@ const nextConfig = {
     pagesBufferLength: 5,
   },
   transpilePackages: ['@radix-ui/react-accordion'],
-  // Static export for GitHub Pages; Docker/server builds use standard output
-  ...(isDockerBuild ? {} : { output: 'export' }),
   // Pin tracing root to this project to avoid multi-lockfile root inference warnings.
   outputFileTracingRoot: path.join(__dirname),
   // Configure image handling

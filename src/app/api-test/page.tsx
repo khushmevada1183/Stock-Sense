@@ -87,7 +87,11 @@ export default function ApiTestPage() {
   };
 
   useEffect(() => {
-    void runTests();
+    const timeoutId = window.setTimeout(() => {
+      void runTests();
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
   }, []);
 
   return (

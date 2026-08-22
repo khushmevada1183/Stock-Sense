@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { getStockDetails } from '@/api/api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Users, 
@@ -79,172 +80,37 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
   const fetchManagementData = async () => {
     setLoading(true);
     try {
-      // Simulate API call - replace with actual management data APIs
-      const mockExecutives: ExecutiveProfile[] = [
-        {
-          name: 'Rajesh Kumar',
-          position: 'Chief Executive Officer',
-          tenure: 8,
-          background: 'Engineering, Business Management',
-          education: 'IIT Delhi, IIM Ahmedabad',
-          experience: 25,
-          previousRoles: ['CTO at TechCorp', 'VP Engineering at DataSoft'],
-          shareholding: 2.3
-        },
-        {
-          name: 'Priya Sharma',
-          position: 'Chief Financial Officer',
-          tenure: 4,
-          background: 'Finance, Accounting',
-          education: 'CA, CFA, Delhi School of Economics',
-          experience: 18,
-          previousRoles: ['CFO at FinanceFirst', 'Finance Director at GlobalTech'],
-          shareholding: 0.8
-        },
-        {
-          name: 'Amit Patel',
-          position: 'Chief Technology Officer',
-          tenure: 6,
-          background: 'Computer Science, Software Engineering',
-          education: 'IIT Bombay, MS Stanford',
-          experience: 22,
-          previousRoles: ['Head of Engineering at InnovateTech', 'Senior Architect at CloudSys'],
-          shareholding: 1.2
-        },
-        {
-          name: 'Sunita Reddy',
-          position: 'Chief Operating Officer',
-          tenure: 5,
-          background: 'Operations, Supply Chain',
-          education: 'ISB Hyderabad, B.Tech NIT',
-          experience: 20,
-          previousRoles: ['VP Operations at LogisticsPro', 'Operations Head at ManufacturePlus'],
-          shareholding: 0.6
-        }
-      ];
+      const payload = await getStockDetails(symbol);
+      const profile = (payload as { profile?: Record<string, unknown> })?.profile ?? payload;
+      const management = (profile as { management?: unknown }).management;
 
-      const mockGovernanceMetrics: GovernanceMetric[] = [
-        {
-          category: 'Board Independence',
-          score: 85,
-          maxScore: 100,
-          status: 'good',
-          description: 'Strong independent board representation',
-          factors: ['67% independent directors', 'Regular board meetings', 'Diverse expertise']
-        },
-        {
-          category: 'Audit Quality',
-          score: 92,
-          maxScore: 100,
-          status: 'excellent',
-          description: 'Robust audit framework and processes',
-          factors: ['Big 4 auditor', 'No material weaknesses', 'Timely reporting']
-        },
-        {
-          category: 'Executive Compensation',
-          score: 78,
-          maxScore: 100,
-          status: 'good',
-          description: 'Aligned with performance and peer benchmarks',
-          factors: ['Performance-linked pay', 'Reasonable ratios', 'Transparent disclosure']
-        },
-        {
-          category: 'Shareholder Rights',
-          score: 88,
-          maxScore: 100,
-          status: 'good',
-          description: 'Strong protection of minority shareholder interests',
-          factors: ['Equal voting rights', 'Regular communication', 'Transparent policies']
-        },
-        {
-          category: 'Risk Management',
-          score: 82,
-          maxScore: 100,
-          status: 'good',
-          description: 'Comprehensive risk identification and mitigation',
-          factors: ['Risk committee', 'Regular assessments', 'Clear framework']
-        },
-        {
-          category: 'ESG Practices',
-          score: 75,
-          maxScore: 100,
-          status: 'good',
-          description: 'Improving environmental and social initiatives',
-          factors: ['Sustainability goals', 'Social programs', 'Governance reporting']
-        }
-      ];
+      let mappedExecutives: ExecutiveProfile[] = [];
+      if (Array.isArray(management)) {
+        mappedExecutives = management.map((entry) => {
+          const row = entry as Record<string, unknown>;
+          return {
+            name: String(row.name ?? row.officerName ?? 'Unknown'),
+            position: String(row.position ?? row.designation ?? row.title ?? 'Executive'),
+            tenure: Number(row.tenure ?? 0),
+            background: String(row.background ?? row.experience ?? 'N/A'),
+            education: String(row.education ?? 'N/A'),
+            experience: Number(row.experienceYears ?? row.experience ?? 0),
+            previousRoles: Array.isArray(row.previousRoles) ? row.previousRoles.map(String) : [],
+            shareholding: Number(row.shareholding ?? 0),
+          };
+        });
+      }
 
-      const mockCompliance: ComplianceRecord[] = [
-        {
-          area: 'SEBI Regulations',
-          status: 'compliant',
-          lastAudit: '2024-01-15',
-          issues: 0,
-          description: 'Full compliance with SEBI listing regulations'
-        },
-        {
-          area: 'Companies Act 2013',
-          status: 'compliant',
-          lastAudit: '2023-12-20',
-          issues: 0,
-          description: 'Adherent to all provisions of Companies Act'
-        },
-        {
-          area: 'Income Tax Compliance',
-          status: 'compliant',
-          lastAudit: '2023-11-30',
-          issues: 0,
-          description: 'No pending tax disputes or issues'
-        },
-        {
-          area: 'Labor Law Compliance',
-          status: 'partial',
-          lastAudit: '2024-01-10',
-          issues: 2,
-          description: 'Minor issues in contractor documentation'
-        },
-        {
-          area: 'Environmental Clearances',
-          status: 'compliant',
-          lastAudit: '2023-10-25',
-          issues: 0,
-          description: 'All required environmental approvals in place'
-        }
-      ];
-
-      const mockCorporateActions: CorporateAction[] = [
-        {
-          type: 'Dividend Declaration',
-          date: '2024-02-01',
-          description: 'Interim dividend of ₹12 per share announced',
-          impact: 'positive'
-        },
-        {
-          type: 'Board Meeting',
-          date: '2024-01-25',
-          description: 'Quarterly results and strategic initiatives discussion',
-          impact: 'neutral'
-        },
-        {
-          type: 'Share Buyback',
-          date: '2023-12-15',
-          description: 'Completed buyback of 2% shares at ₹850 per share',
-          impact: 'positive'
-        },
-        {
-          type: 'Key Personnel Change',
-          date: '2023-11-20',
-          description: 'Appointed new independent director',
-          impact: 'positive'
-        }
-      ];
-
-      setExecutives(mockExecutives);
-      setGovernanceMetrics(mockGovernanceMetrics);
-      setCompliance(mockCompliance);
-      setCorporateActions(mockCorporateActions);
+      setExecutives(mappedExecutives);
+      setGovernanceMetrics([]);
+      setCompliance([]);
+      setCorporateActions([]);
     } catch (error) {
       console.error('Error fetching management data:', error);
+      setExecutives([]);
+      setGovernanceMetrics([]);
+      setCompliance([]);
+      setCorporateActions([]);
     } finally {
       setLoading(false);
     }
@@ -261,10 +127,9 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
 
     const tween = gsap.fromTo(
       elements,
-      { y: 20, opacity: 0 },
+      { y: 20 },
       {
         y: 0,
-        opacity: 1,
         duration: 0.6,
         stagger: 0.1,
         ease: "power3.out",

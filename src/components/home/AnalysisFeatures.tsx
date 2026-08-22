@@ -463,9 +463,9 @@ export default function AnalysisFeatures() {
         <div className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2">
           <motion.div
             ref={coreRef}
-            initial={{ opacity: 0, scale: 0.88 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-40px' }}
+            initial={{ scale: 0.88 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="flex h-[8.25rem] w-[8.25rem] flex-col items-center justify-center gap-1 rounded-full border border-slate-500/65 bg-[var(--app-bg)] px-3 text-center shadow-[0_16px_34px_rgba(15,23,42,0.18)] dark:border-white/45 dark:shadow-[0_18px_34px_rgba(0,0,0,0.45)] sm:h-[10.2rem] sm:w-[10.2rem]"
           >
@@ -485,9 +485,9 @@ export default function AnalysisFeatures() {
           {features.map((feature, index) => (
             <motion.li
               key={feature.title}
-              initial={{ opacity: 0, scale: 0.85 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true, margin: '-40px' }}
+              initial={{ scale: 0.85 }}
+              whileInView={{ scale: 1 }}
+              viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.45, delay: index * 0.04, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 left: `${nodePositions[index].x}%`,
@@ -522,9 +522,9 @@ export default function AnalysisFeatures() {
         {features.map((feature, index) => (
           <motion.li
             key={`${feature.title}-legend`}
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
+            initial={{ y: 10 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.35, delay: index * 0.03 }}
             className="rounded-[22px] border border-slate-200/70 bg-white/75 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-[0_22px_60px_rgba(0,0,0,0.32)]"
           >

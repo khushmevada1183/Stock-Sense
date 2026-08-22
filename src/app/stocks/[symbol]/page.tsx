@@ -22,6 +22,10 @@ import {
 } from 'lucide-react';
 import {
   apiHelpers,
+  getStockFundamental,
+  getStockFinancials,
+  getStockHistory,
+  getStockPeers,
 } from '@/api/api';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { normalizeStockData, type NormalizedStock } from '@/lib/normalizeStock';
@@ -72,12 +76,16 @@ export default function Page() {
   const [activeTab, setActiveTab] = useState('overview');
 
   // State for Fundamental Analysis Data
-  const financialRatios: FinancialRatiosData | null = null;
-  const financialStatements: FetchedFinancialStatementsData | null = null;
-  const loadingRatios = false;
-  const errorRatios: string | null = null;
-  const loadingStatements = false;
-  const errorStatements: string | null = null;
+  const [financialRatios, setFinancialRatios] = useState<FinancialRatiosData | null>(null);
+  const [financialStatements, setFinancialStatements] = useState<FetchedFinancialStatementsData | null>(null);
+  const [loadingRatios, setLoadingRatios] = useState(false);
+  const [loadingStatements, setLoadingStatements] = useState(false);
+  const [errorRatios, setErrorRatios] = useState<string | null>(null);
+  const [errorStatements, setErrorStatements] = useState<string | null>(null);
+  const [priceHistory, setPriceHistory] = useState<number[]>([]);
+  const [historyLabels, setHistoryLabels] = useState<string[]>([]);
+  const [peersSector, setPeersSector] = useState<string | null>(null);
+  const [peersIndustry, setPeersIndustry] = useState<string | null>(null);
   
   // Refs for animations and charts
   const headerRef = useRef<HTMLDivElement>(null);
@@ -190,6 +198,36 @@ export default function Page() {
           if (!normalized) {
             setError(`Could not parse data for "${symbol}". Unexpected data format.`);
           }
+
+          try {
+            const history = await getStockHistory(symbol, { bucket: '1d', limit: 30 });
+            const items = (history as { items?: Array<{ timestamp?: string; close?: number }> })?.items
+              ?? (history as { candles?: Array<{ timestamp?: string; close?: number }> })?.candles
+              ?? [];
+            const chronological = [...items].reverse();
+            setPriceHistory(chronological.map((item) => Number(item.close ?? 0)).filter((v) => v > 0));
+            setHistoryLabels(chronological.map((item) => {
+              const ts = item.timestamp ? new Date(item.timestamp) : new Date();
+              return ts.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            }));
+          } catch (historyErr) {
+            logger.warn('Failed to load price history:', historyErr);
+            setPriceHistory([]);
+            setHistoryLabels([]);
+          }
+
+          try {
+            const peers = await getStockPeers(symbol);
+            const peersData = (peers as { data?: Record<string, unknown> })?.data ?? peers;
+            const sector = (peersData as Record<string, unknown>)?.sector;
+            const industry = (peersData as Record<string, unknown>)?.industry;
+            setPeersSector(typeof sector === 'string' && sector.trim() ? sector : null);
+            setPeersIndustry(typeof industry === 'string' && industry.trim() ? industry : null);
+          } catch (peersErr) {
+            logger.warn('Failed to load peers taxonomy:', peersErr);
+            setPeersSector(null);
+            setPeersIndustry(null);
+          }
         } else {
           setError(`No data found for "${symbol}". Please check the stock name or symbol and try again.`);
         }
@@ -208,6 +246,49 @@ export default function Page() {
     
     fetchStockData();
     // fetchFinancialData(); // Removed - NSE India equityDetails is all-in-one
+  }, [symbol]);
+
+  useEffect(() => {
+    if (!symbol) return;
+
+    const fetchFinancialData = async () => {
+      setLoadingRatios(true);
+      setLoadingStatements(true);
+      setErrorRatios(null);
+      setErrorStatements(null);
+
+      try {
+        const [fundamental, financials] = await Promise.all([
+          getStockFundamental(symbol).catch(() => null),
+          getStockFinancials(symbol).catch(() => null),
+        ]);
+
+        const ratios = (fundamental as { ratios?: FinancialRatiosData })?.ratios ?? fundamental;
+        if (ratios && typeof ratios === 'object' && Object.keys(ratios).length > 0) {
+          setFinancialRatios(ratios as FinancialRatiosData);
+        } else {
+          setFinancialRatios(null);
+        }
+
+        const financialPayload = (financials as { data?: { rows?: unknown[] } })?.data ?? financials;
+        const rows = (financialPayload as { rows?: unknown[] })?.rows
+          ?? (financialPayload as { statements?: unknown[] })?.statements;
+        if (Array.isArray(rows) && rows.length > 0) {
+          setFinancialStatements({ statements: rows as FetchedFinancialStatementsData['statements'] });
+        } else {
+          setFinancialStatements(null);
+        }
+      } catch (err) {
+        logger.error('Error fetching financial data:', err);
+        setErrorRatios('Failed to load financial ratios.');
+        setErrorStatements('Failed to load financial statements.');
+      } finally {
+        setLoadingRatios(false);
+        setLoadingStatements(false);
+      }
+    };
+
+    void fetchFinancialData();
   }, [symbol]);
 
   useEffect(() => {
@@ -283,7 +364,7 @@ export default function Page() {
         gsap.set(animatedRefs, { clearProps: 'opacity,transform,filter' });
       }
     };
-  }, [loading, stock, error]);
+  }, [loading, stock, error, priceHistory, historyLabels]);
 
   // Prevent stale GSAP inline styles from previous tab content from leaving cards dimmed
   useEffect(() => {
@@ -395,19 +476,16 @@ export default function Page() {
       gradient.addColorStop(0.5, 'rgba(57, 255, 20, 0.08)');
       gradient.addColorStop(1, 'rgba(57, 255, 20, 0.0)');
       
-      // Extract price from stock data (use price field or fallback to current_price)
-      const price = extractPrice();
-      const priceFloat = parseFloat(price.toString().replace(/[₹,]/g, '')) || 100;
-      
-      // Generate sample data points around the current price
-      const lastMonthData = Array.from({ length: 30 }, () => {
-        const variation = (Math.random() - 0.5) * 20;  // Random variation ±10%
-        return priceFloat * (1 + variation / 100); // Current price with variation
-      });
-      
-      const timeLabels = Array.from({ length: 30 }, (_, i) => {
+      // Use API history when available, otherwise fall back to current price
+      const priceFloat = Number(stock?.lastPrice) || 100;
+      const lastMonthData = priceHistory.length > 0
+        ? priceHistory
+        : Array.from({ length: 30 }, () => priceFloat);
+      const timeLabels = historyLabels.length === lastMonthData.length
+        ? historyLabels
+        : Array.from({ length: lastMonthData.length }, (_, i) => {
         const date = new Date();
-        date.setDate(date.getDate() - (30 - i - 1));
+        date.setDate(date.getDate() - (lastMonthData.length - i - 1));
         return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
       });
       
@@ -566,7 +644,12 @@ export default function Page() {
   // ── Extract key info — prefer normalized stock, fall back to raw ─────────────
   const companyName = stock?.companyName || symbol;
   const displaySymbol = stock?.symbol || symbol;
-  const industry = stock?.industry || 'N/A';
+  const industry = (peersIndustry && peersIndustry !== 'UNKNOWN' ? peersIndustry : null)
+    || (stock?.industry && stock.industry !== 'UNKNOWN' ? stock.industry : null)
+    || 'N/A';
+  const sectorLabel = (peersSector && peersSector !== 'UNKNOWN' ? peersSector : null)
+    || (stock?.sector && stock.sector !== 'UNKNOWN' ? stock.sector : null)
+    || (industry !== 'N/A' ? industry : null);
   const price = extractPrice();
   
   // Percent change
@@ -577,6 +660,12 @@ export default function Page() {
   // 52-week range (NSE India: priceInfo.weekHighLow.{max,min})
   const yearHigh = stock?.yearHigh;
   const yearLow = stock?.yearLow;
+  const rawMetrics = stock && typeof stock._raw === 'object'
+    ? (stock._raw as Record<string, unknown>).metrics as Record<string, unknown> | undefined
+    : undefined;
+  const return3m = rawMetrics?.return3mPercent != null ? Number(rawMetrics.return3mPercent) : null;
+  const return12m = rawMetrics?.return12mPercent != null ? Number(rawMetrics.return12mPercent) : null;
+  const avgVolume20d = rawMetrics?.avgVolume20d != null ? Number(rawMetrics.avgVolume20d) : null;
   
   // Intraday
   const dayHigh = stock?.dayHigh;
@@ -737,10 +826,10 @@ export default function Page() {
                   {displaySymbol}
                 </span>
               </div>
-              {industry && (
+              {sectorLabel && sectorLabel !== 'N/A' && (
                 <p className="text-gray-500 mt-2 flex items-center">
                   <Building className="h-4 w-4 mr-1.5 text-gray-600" />
-                  {industry}
+                  {sectorLabel}{peersIndustry && peersIndustry !== sectorLabel ? ` · ${peersIndustry}` : ''}
                 </p>
               )}
             </div>
@@ -839,6 +928,19 @@ export default function Page() {
                 <div className="text-[10px] text-gray-600">{stock?.yearHighDate}</div>
               </div>
             </div>
+            {(return3m != null || return12m != null || avgVolume20d != null) && (
+              <div className="mt-4 pt-3 border-t border-gray-800/30 flex flex-wrap gap-6 text-xs text-gray-500">
+                {return3m != null && (
+                  <span>3M Return: <span className={return3m >= 0 ? 'text-green-400' : 'text-red-400'}>{return3m.toFixed(2)}%</span></span>
+                )}
+                {return12m != null && (
+                  <span>12M Return: <span className={return12m >= 0 ? 'text-green-400' : 'text-red-400'}>{return12m.toFixed(2)}%</span></span>
+                )}
+                {avgVolume20d != null && (
+                  <span>Avg Volume (20d): <span className="text-gray-300">{avgVolume20d.toLocaleString('en-IN')}</span></span>
+                )}
+              </div>
+            )}
             {/* Circuit Limits */}
             {(upperCircuit !== 'N/A' || lowerCircuit !== 'N/A') && (
               <div className="mt-4 pt-3 border-t border-gray-800/30 flex gap-6 text-xs">
@@ -991,7 +1093,7 @@ export default function Page() {
                 yearLow={yearLow}
                 volume={typeof volume === 'number' ? volume : 0}
                 marketCap={marketCap}
-                avgVolume={0}
+                avgVolume={avgVolume20d ?? (typeof volume === 'number' ? volume : 0)}
                 dividendYield={dividendYield}
                 debtToEquity={debtToEquity}
                 description={description}
@@ -1036,7 +1138,7 @@ export default function Page() {
             )}
 
             {activeTab === 'industry' && (
-              <IndustryAnalysis symbol={symbol} sector={industry} industry={industry} />
+              <IndustryAnalysis symbol={symbol} sector={sectorLabel || 'N/A'} industry={industry} />
             )}
 
             {activeTab === 'sentiment' && (

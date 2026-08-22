@@ -38,7 +38,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   const [isConnected, setIsConnected] = useState(false);
   const [socketId, setSocketId] = useState<string | null>(null);
 
-  const socketBaseUrl = useMemo(resolveSocketBaseUrl, []);
+  const socketBaseUrl = useMemo(() => resolveSocketBaseUrl(), []);
 
   useEffect(() => {
     onLiveTickRef.current = onLiveTick;
@@ -147,7 +147,6 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   }, []);
 
   return {
-    socket: socketRef.current,
     isConnected,
     socketId,
     connect,

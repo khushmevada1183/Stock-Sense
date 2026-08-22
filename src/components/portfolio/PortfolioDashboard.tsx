@@ -367,11 +367,6 @@ const PortfolioDashboard = () => {
   const dayGain = summary?.dayGain || 0;
   const holdingsCount = Array.isArray(holdings) ? holdings.length : 0;
   const xirrDisplay = xirrValue === null ? 'n/a' : `${xirrValue.toFixed(2)}%`;
-  const selectedPortfolioLabel = selectedPortfolioId
-    ? selectedPortfolioId.length > 16
-      ? `${selectedPortfolioId.slice(0, 8)}…${selectedPortfolioId.slice(-4)}`
-      : selectedPortfolioId
-    : 'n/a';
   const allocationItems = Array.isArray(summary?.sectorAllocation) ? summary.sectorAllocation.slice(0, 3) : [];
   const performanceValues = useMemo(() => {
     const extractedValues = performancePoints.map((point, index) => extractPerformanceValue(point, index)).filter((value) => Number.isFinite(value));

@@ -30,8 +30,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
 
     const tween = gsap.fromTo(
       element,
-      { y: 20, opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.6, delay: delay, ease: "power3.out", overwrite: "auto" }
+      { y: 20 },
+      { y: 0, duration: 0.6, delay: delay, ease: "power3.out", overwrite: "auto" }
     );
 
     return () => {

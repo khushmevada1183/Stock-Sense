@@ -169,14 +169,20 @@ export function normalizeStockData(raw: unknown): NormalizedStock | null {
   const yearLow = safeNum(weekHL.min ?? metrics.week52Low ?? metrics.low12m);
   
   // Industry
-  const industry = safeStr(industryInfo.industry ?? info.industry ?? metadata.pdSectorInd, 'N/A');
-  const sector = safeStr(industryInfo.sector, 'N/A');
+  const industry = safeStr(
+    industryInfo.industry ?? info.industry ?? profileData.industry ?? metadata.pdSectorInd,
+    'N/A'
+  );
+  const sector = safeStr(industryInfo.sector ?? profileData.sector, 'N/A');
   const macro = safeStr(industryInfo.macro, 'N/A');
   const basicIndustry = safeStr(industryInfo.basicIndustry, 'N/A');
   
   // Symbol/company
   const symbol = safeStr(info.symbol ?? metadata.symbol ?? dataRecord.symbol ?? quote.symbol, '');
-  const companyName = safeStr(info.companyName ?? metadata.companyName ?? symbol, 'N/A');
+  const companyName = safeStr(
+    info.companyName ?? profileData.companyName ?? metadata.companyName ?? symbol,
+    'N/A'
+  );
   const isin = safeStr(info.isin ?? securityInfo.isin ?? dataRecord.isin, '');
   // PE data from metadata
   const symbolPE = toNumberOrString(metadata.pdSymbolPe, 'N/A');
@@ -193,7 +199,7 @@ export function normalizeStockData(raw: unknown): NormalizedStock | null {
     safeNum(priceInfo.volume) ||
     safeNum(priceInfo.quantityTraded) ||
     safeNum(quote.volume);
-  const volume = priceInfoVolume || preOpenVolume || 0;
+  const volume = priceInfoVolume || preOpenVolume || safeNum(metrics.avgVolume20d) || 0;
   
   return {
     symbol,
@@ -229,7 +235,7 @@ export function normalizeStockData(raw: unknown): NormalizedStock | null {
     
     listingDate: safeStr(metadata.listingDate ?? info.listingDate ?? dataRecord.listingDate, 'N/A'),
     tradingStatus: safeStr(metadata.tradingStatus ?? securityInfo.tradingStatus, 'Active'),
-    lastUpdateTime: safeStr(metadata.lastUpdateTime ?? quote.asOf, 'N/A'),
+    lastUpdateTime: safeStr(metadata.lastUpdateTime ?? quote.asOf ?? dataRecord.asOf, 'N/A'),
     
     symbolPE,
     sectorPE,

@@ -5,6 +5,9 @@ const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
   {
+    ignores: ["next.config.js", "tailwind.config.js", "postcss.config.js", "scripts/**"],
+  },
+  {
     rules: {
       "react/no-unescaped-entities": "off",
       "react-hooks/exhaustive-deps": "off",

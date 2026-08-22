@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -19,15 +19,9 @@ interface Commodity {
 const LOCAL_COMMODITIES: Commodity[] = [];
 
 const CommoditiesTable = () => {
-  const [commodities, setCommodities] = useState<Commodity[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    setCommodities(LOCAL_COMMODITIES);
-    setError('');
-    setIsLoading(false);
-  }, []);
+  const [commodities] = useState<Commodity[]>(LOCAL_COMMODITIES);
+  const [isLoading] = useState(false);
+  const [error] = useState('');
 
   // Format date to readable format
   const formatDate = (dateString: string) => {

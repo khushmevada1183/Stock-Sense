@@ -335,15 +335,3 @@ export default function IpoSection() {
     </div>
   );
 }
-
-// Helper function to determine status badge color (kept for potential future use)
-function getStatusColor(status: string): string {
-  const value = status.toLowerCase();
-  if (/oversubscribed|subscribed|open|strong|bullish/.test(value)) {
-    return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-  }
-  if (/undersubscribed|closed|withdrawn|failed|weak|bearish/.test(value)) {
-    return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
-  }
-  return 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300';
-}

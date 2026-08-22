@@ -120,6 +120,13 @@ const FundamentalAnalysis: React.FC<FundamentalAnalysisProps> = ({
           </CardContent>
         </Card>
       )}
+      {!loadingRatios && !loadingStatements && !financialRatios && !financialStatements && !errorRatios && !errorStatements && (
+        <Card glass>
+          <CardContent className="p-6">
+            <p className="text-gray-400 text-sm">No fundamental data is available from the API for this symbol yet.</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

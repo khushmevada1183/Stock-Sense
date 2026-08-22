@@ -21,8 +21,11 @@ export default function CursiveLoader({ className = '', textClassName = '' }: Cu
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
-      setTypedCount(BRAND_TEXT.length);
-      return;
+      const timeoutId = window.setTimeout(() => {
+        setTypedCount(BRAND_TEXT.length);
+      }, 0);
+
+      return () => window.clearTimeout(timeoutId);
     }
 
     const typingInterval = window.setInterval(() => {

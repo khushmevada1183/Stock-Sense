@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
+import {
   Globe, 
   TrendingUp, 
   IndianRupee, 
@@ -12,6 +12,7 @@ import {
   PieChart,
   Minus
 } from 'lucide-react';
+import { getFiiDiiLatest, getFiiDiiCumulative } from '@/api/api';
 
 interface MacroIndicator {
   name: string;
@@ -37,7 +38,6 @@ interface MacroeconomicIndicatorsProps {
 }
 
 const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({ 
-  sector, 
   refreshTrigger = 0 
 }) => {
   const [indicators, setIndicators] = useState<MacroIndicator[]>([]);
@@ -52,135 +52,99 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
   const fetchMacroData = async () => {
     setLoading(true);
     try {
-      // Simulate API call - replace with actual RBI/government data APIs
-      const mockIndicators: MacroIndicator[] = [
-        {
-          name: 'Repo Rate',
-          value: 6.50,
-          unit: '%',
-          change: 0.25,
-          impact: 'negative',
-          description: 'RBI\'s benchmark lending rate',
-          category: 'monetary'
-        },
-        {
-          name: 'CPI Inflation',
-          value: 5.66,
-          unit: '%',
-          change: -0.34,
-          impact: 'positive',
-          description: 'Consumer Price Index inflation rate',
-          category: 'inflation'
-        },
-        {
-          name: 'GDP Growth',
-          value: 7.20,
-          unit: '%',
-          change: 0.50,
-          impact: 'positive',
-          description: 'Gross Domestic Product growth rate',
-          category: 'growth'
-        },
-        {
-          name: 'Unemployment Rate',
-          value: 3.20,
-          unit: '%',
-          change: -0.10,
-          impact: 'positive',
-          description: 'Unemployment rate for urban areas',
-          category: 'employment'
-        },
-        {
-          name: 'Fiscal Deficit',
-          value: 5.90,
-          unit: '% of GDP',
-          change: -0.20,
-          impact: 'positive',
-          description: 'Government fiscal deficit',
-          category: 'fiscal'
-        },
-        {
-          name: 'Current Account Deficit',
-          value: -2.80,
-          unit: '% of GDP',
-          change: 0.30,
-          impact: 'negative',
-          description: 'Current account balance',
-          category: 'external'
-        },
-        {
-          name: 'Foreign Exchange Reserves',
-          value: 645.2,
-          unit: 'Billion INR',
-          change: 12.5,
-          impact: 'positive',
-          description: 'India\'s forex reserves',
-          category: 'external'
-        },
-        {
-          name: 'WPI Inflation',
-          value: 1.84,
-          unit: '%',
-          change: -0.52,
-          impact: 'positive',
-          description: 'Wholesale Price Index inflation',
-          category: 'inflation'
-        },
-        {
-          name: 'Bank Credit Growth',
-          value: 16.20,
-          unit: '%',
-          change: 1.10,
-          impact: 'positive',
-          description: 'Year-on-year bank credit growth',
-          category: 'monetary'
-        },
-        {
-          name: 'Industrial Production',
-          value: 5.80,
-          unit: '%',
-          change: 2.30,
-          impact: 'positive',
-          description: 'Index of Industrial Production growth',
-          category: 'growth'
-        }
-      ];
+      const [latestResponse, cumulativeResponse] = await Promise.all([
+        getFiiDiiLatest({ limit: 5 }),
+        getFiiDiiCumulative({ limit: 30 }).catch(() => null),
+      ]);
 
-      const mockPolicyUpdates: PolicyUpdate[] = [
-        {
-          title: 'RBI Monetary Policy Committee Meeting',
-          date: '2024-02-08',
-          category: 'monetary',
-          impact: 'neutral',
-          description: 'RBI maintained repo rate at 6.50% with a focus on inflation targeting'
-        },
-        {
-          title: 'Union Budget 2024-25',
-          date: '2024-02-01',
-          category: 'fiscal',
-          impact: 'positive',
-          description: 'Capital expenditure increased by 11.1% to ₹11.11 lakh crore'
-        },
-        {
-          title: 'PLI Scheme Extension',
-          date: '2024-01-25',
-          category: 'fiscal',
-          impact: 'positive',
-          description: 'Production Linked Incentive scheme extended to more sectors'
-        },
-        {
-          title: 'SEBI Regulatory Updates',
-          date: '2024-01-20',
-          category: 'regulatory',
-          impact: 'neutral',
-          description: 'New guidelines for mutual fund investments and ESG disclosures'
+      const toArray = (value: unknown) => {
+        if (Array.isArray(value)) return value;
+        if (value && typeof value === 'object') {
+          const data = value as Record<string, unknown>;
+          for (const key of ['summary', 'items', 'rows', 'results', 'data', 'records']) {
+            if (Array.isArray(data[key])) return data[key] as unknown[];
+          }
         }
-      ];
+        return [];
+      };
 
-      setIndicators(mockIndicators);
-      setPolicyUpdates(mockPolicyUpdates);
+      const latestPayload = (latestResponse as { data?: unknown })?.data ?? latestResponse;
+      const flowRows = toArray(latestPayload);
+
+      const mappedIndicators: MacroIndicator[] = flowRows.slice(0, 5).flatMap((row) => {
+        const item = row as Record<string, unknown>;
+        const date = String(item.flowDate || item.date || 'Latest');
+        const fiiNet = Number(item.fiiNet ?? item.fii_net ?? 0);
+        const diiNet = Number(item.diiNet ?? item.dii_net ?? 0);
+        const totalNet = Number(item.totalNet ?? item.total_net ?? fiiNet + diiNet);
+
+        return [
+          {
+            name: `FII Net Flow (${date})`,
+            value: Math.round(fiiNet * 100) / 100,
+            unit: '₹ Cr',
+            change: fiiNet,
+            impact: fiiNet >= 0 ? 'positive' as const : 'negative' as const,
+            description: 'Foreign institutional investor net flow',
+            category: 'external' as const,
+          },
+          {
+            name: `DII Net Flow (${date})`,
+            value: Math.round(diiNet * 100) / 100,
+            unit: '₹ Cr',
+            change: diiNet,
+            impact: diiNet >= 0 ? 'positive' as const : 'negative' as const,
+            description: 'Domestic institutional investor net flow',
+            category: 'monetary' as const,
+          },
+          {
+            name: `Total Net Flow (${date})`,
+            value: Math.round(totalNet * 100) / 100,
+            unit: '₹ Cr',
+            change: totalNet,
+            impact: totalNet >= 0 ? 'positive' as const : 'negative' as const,
+            description: 'Combined FII + DII net institutional flow',
+            category: 'growth' as const,
+          },
+        ];
+      });
+
+      const cumulativePayload = cumulativeResponse
+        ? ((cumulativeResponse as { data?: unknown })?.data ?? cumulativeResponse)
+        : null;
+      const cumulativeRows = toArray(cumulativePayload);
+      if (cumulativeRows.length > 0) {
+        const latest = cumulativeRows[0] as Record<string, unknown>;
+        const fiiCumulative = Number(latest.fiiCumulative ?? latest.fii_cumulative ?? latest.fiiNet ?? 0);
+        const diiCumulative = Number(latest.diiCumulative ?? latest.dii_cumulative ?? latest.diiNet ?? 0);
+        mappedIndicators.push(
+          {
+            name: 'FII Cumulative (30d)',
+            value: Math.round(fiiCumulative * 100) / 100,
+            unit: '₹ Cr',
+            change: fiiCumulative,
+            impact: fiiCumulative >= 0 ? 'positive' : 'negative',
+            description: 'Rolling cumulative FII net flow',
+            category: 'external',
+          },
+          {
+            name: 'DII Cumulative (30d)',
+            value: Math.round(diiCumulative * 100) / 100,
+            unit: '₹ Cr',
+            change: diiCumulative,
+            impact: diiCumulative >= 0 ? 'positive' : 'negative',
+            description: 'Rolling cumulative DII net flow',
+            category: 'monetary',
+          },
+        );
+      }
+
+      setIndicators(mappedIndicators);
+      setPolicyUpdates([]);
     } catch (error) {
       console.error('Error fetching macro data:', error);
+      setIndicators([]);
+      setPolicyUpdates([]);
     } finally {
       setLoading(false);
     }
@@ -197,10 +161,9 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
 
     const tween = gsap.fromTo(
       elements,
-      { y: 20, opacity: 0 },
+      { y: 20 },
       {
         y: 0,
-        opacity: 1,
         duration: 0.6,
         stagger: 0.1,
         ease: "power3.out",
@@ -242,14 +205,6 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
     }
   };
 
-  const groupedIndicators = indicators.reduce((acc, indicator) => {
-    if (!acc[indicator.category]) {
-      acc[indicator.category] = [];
-    }
-    acc[indicator.category].push(indicator);
-    return acc;
-  }, {} as Record<string, MacroIndicator[]>);
-
   if (loading) {
     return (
       <div className="space-y-6">
@@ -269,6 +224,26 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
       </div>
     );
   }
+
+  if (!indicators.length) {
+    return (
+      <Card glass>
+        <CardContent className="p-8 text-center">
+          <Globe className="w-10 h-10 text-gray-500 mx-auto mb-3" />
+          <p className="text-gray-400">No macroeconomic flow data available from the API.</p>
+          <p className="text-gray-500 text-sm mt-1">FII/DII institutional flows will appear here when synced.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const groupedIndicators = indicators.reduce((acc, indicator) => {
+    if (!acc[indicator.category]) {
+      acc[indicator.category] = [];
+    }
+    acc[indicator.category].push(indicator);
+    return acc;
+  }, {} as Record<string, MacroIndicator[]>);
 
   return (
     <div ref={containerRef} className="space-y-6">
@@ -325,6 +300,9 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
+          {policyUpdates.length === 0 ? (
+            <p className="text-gray-400 text-sm text-center py-4">No policy updates available from the API.</p>
+          ) : (
           <div className="space-y-4">
             {policyUpdates.map((update, index) => (
               <div key={index} className="glass-card rounded-xl p-4">
@@ -348,38 +326,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
               </div>
             ))}
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Economic Health Score */}
-      <Card glass>
-        <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2">
-            <PieChart className="w-5 h-5 text-neon-400" />
-            Economic Health Score
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <div className="text-4xl font-bold text-green-400 mb-2">75/100</div>
-            <div className="text-gray-400 mb-4">
-              Strong Economic Fundamentals{sector ? ` for ${sector}` : ''}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-              <div className="glass-card rounded-xl p-3">
-                <div className="text-green-400 font-bold">Good</div>
-                <div className="text-gray-400 text-sm">Growth Metrics</div>
-              </div>
-              <div className="glass-card rounded-xl p-3">
-                <div className="text-yellow-400 font-bold">Moderate</div>
-                <div className="text-gray-400 text-sm">Inflation Control</div>
-              </div>
-              <div className="glass-card rounded-xl p-3">
-                <div className="text-green-400 font-bold">Strong</div>
-                <div className="text-gray-400 text-sm">External Position</div>
-              </div>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

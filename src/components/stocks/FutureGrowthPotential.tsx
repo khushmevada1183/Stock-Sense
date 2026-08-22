@@ -226,10 +226,8 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
 
     const tween = gsap.fromTo(cards, {
       y: 30,
-      opacity: 0
     }, {
       y: 0,
-      opacity: 1,
       duration: 0.6,
       stagger: 0.1,
       ease: "power3.out",

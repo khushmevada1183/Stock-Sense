@@ -33,7 +33,6 @@ interface SearchStockApiResult {
 const PortfolioForm = ({ 
   portfolioId, 
   initialData = { portfolioName: '', stocks: [] },
-  userId = '1'
 }: PortfolioFormProps) => {
   const router = useRouter();
   const [portfolioName, setPortfolioName] = useState(initialData.portfolioName);

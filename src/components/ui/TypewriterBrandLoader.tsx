@@ -19,13 +19,16 @@ export default function TypewriterBrandLoader() {
       window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     if (prefersReducedMotion) {
-      setTypedCount(BRAND_TEXT.length);
+      const timeoutId = window.setTimeout(() => {
+        setTypedCount(BRAND_TEXT.length);
+      }, 0);
 
       const reduceMotionTimeout = window.setTimeout(() => {
         setIsVisible(false);
       }, 200);
 
       return () => {
+        window.clearTimeout(timeoutId);
         window.clearTimeout(reduceMotionTimeout);
       };
     }
