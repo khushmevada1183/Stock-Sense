@@ -91,7 +91,7 @@ export default function ApiTestPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
+    <div className="min-h-screen text-white p-8">
       <div className="max-w-4xl mx-auto space-y-5">
         <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
           <h1 className="text-2xl font-bold mb-2">API Test Dashboard</h1>

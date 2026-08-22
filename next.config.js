@@ -35,10 +35,13 @@ Object.entries(envFromDotEnv).forEach(([key, value]) => {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  basePath: '/stock-sense-frontend',
+  assetPrefix: '/stock-sense-frontend',
   typescript: {
     ignoreBuildErrors: false,
   },
   /* config options here */
+  trailingSlash: true,
   reactStrictMode: true,
   compiler: {
     styledComponents: true,
@@ -80,8 +83,8 @@ const nextConfig = {
     pagesBufferLength: 5,
   },
   transpilePackages: ['@radix-ui/react-accordion'],
-  // Configure for dynamic rendering with standalone output
-  output: 'standalone',
+  // Configure for static HTML export
+  output: 'export',
   // Pin tracing root to this project to avoid multi-lockfile root inference warnings.
   outputFileTracingRoot: path.join(__dirname),
   // Configure image handling
@@ -96,7 +99,7 @@ const nextConfig = {
         hostname: 'images.unsplash.com',
       },
     ],
-    unoptimized: false
+    unoptimized: true
   },
   // Environment variables
   env: {
