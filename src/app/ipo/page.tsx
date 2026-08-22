@@ -19,7 +19,7 @@ import {
   normalizeIpoCalendarSections,
   type IpoCalendarSections,
 } from '@/lib/ipo';
-import { IpoEmptyState, IpoEntryCard, IpoMetricCard, PremiumSection } from '@/components/ipo/IpoPanels';
+import { IpoEmptyState, IpoEntryCard, IpoMetricCard, PremiumSection } from '@/components/IPO/IpoPanels';
 import { cn } from '@/lib/utils';
 
 const IPO_NEWS = [

@@ -28,7 +28,7 @@ import {
   type IpoCalendarEntry,
   type IpoCalendarSections,
 } from '@/lib/ipo';
-import { IpoEmptyState, IpoMetricCard, PremiumSection } from '@/components/ipo/IpoPanels';
+import { IpoEmptyState, IpoMetricCard, PremiumSection } from '@/components/IPO/IpoPanels';
 
 type SubscriptionRow = {
   label: string;

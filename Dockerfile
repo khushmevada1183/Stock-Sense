@@ -6,7 +6,7 @@
 # STAGE 1: Dependencies
 # ------------------------------------------------------------------------------
 FROM node:20-alpine AS deps
-RUN apk add --no-libc-dev libc6-compat
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -24,6 +24,7 @@ COPY . .
 # Set environment variables for build time
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV DOCKER=1
 
 # Build Next.js application
 RUN npm run build
