@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { ContentPageLayout } from '@/components/content/ContentPageLayout';
+import { primaryButtonClass } from '@/styles/design-tokens';
 
 const checklist = [
   'Keyboard navigation support across primary actions',
@@ -10,34 +12,31 @@ const checklist = [
 
 export default function AccessibilityPage() {
   return (
-    <main className="container mx-auto px-4 py-10">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <header className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">Accessibility Statement</h1>
-          <p className="text-gray-300">
-            Stock Sense is actively maintained to improve usability and accessibility for all users.
-          </p>
-        </header>
-
-        <section className="bg-gray-900/80 border border-gray-700/50 rounded-xl p-5 space-y-3">
-          <h2 className="text-xl font-semibold text-white">Current Focus Areas</h2>
-          <ul className="list-disc list-inside space-y-2 text-gray-300">
+    <ContentPageLayout
+      eyebrow="Support"
+      title="Accessibility Statement"
+      description="Stock Sense is actively maintained to improve usability and accessibility for all users."
+    >
+      <div className="space-y-6">
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Current Focus Areas</h2>
+          <ul className="list-disc list-inside space-y-2 text-sm text-slate-600 dark:text-slate-400">
             {checklist.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
         </section>
 
-        <section className="bg-gray-900/80 border border-gray-700/50 rounded-xl p-5 space-y-3">
-          <h2 className="text-xl font-semibold text-white">Need Help?</h2>
-          <p className="text-gray-300">
+        <section className="space-y-3">
+          <h2 className="text-xl font-semibold text-slate-950 dark:text-white">Need Help?</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             If you find an accessibility issue, please contact us so we can prioritize a fix.
           </p>
-          <Link href="/contact" className="inline-flex px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm">
+          <Link href="/contact" className={`${primaryButtonClass} inline-flex min-h-[44px] items-center`}>
             Contact Support
           </Link>
         </section>
       </div>
-    </main>
+    </ContentPageLayout>
   );
 }

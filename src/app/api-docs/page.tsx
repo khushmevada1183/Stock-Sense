@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 const endpointGroups = [
   {
@@ -59,6 +60,8 @@ const endpointGroups = [
 ];
 
 export default function ApiDocsPage() {
+  if (process.env.NODE_ENV === 'production') notFound();
+
   const displayedApiBaseUrl =
     process.env.NEXT_PUBLIC_API_URL ||
     'https://stock-sense-backend-ocjo.onrender.com/api/v1';

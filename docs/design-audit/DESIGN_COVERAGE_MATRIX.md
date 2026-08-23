@@ -1,6 +1,6 @@
 # Design Coverage Matrix
 
-> Generated: 2026-08-23T10:32:06.509Z
+> Generated: 2026-08-23T10:32:40.543Z
 > Benchmark: `src/components/portfolio/PortfolioDashboard.tsx`
 > Brief: `docs/new_design.md`
 

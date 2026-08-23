@@ -1,5 +1,6 @@
 'use client';
 
+import { notFound } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import {
   getDatabaseHealthStatus,
@@ -22,6 +23,8 @@ const defaultTests: TestResult[] = [
 ];
 
 export default function ApiTestPage() {
+  if (process.env.NODE_ENV === 'production') notFound();
+
   const [tests, setTests] = useState<TestResult[]>(defaultTests);
   const [running, setRunning] = useState(false);
 
