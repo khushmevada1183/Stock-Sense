@@ -3,10 +3,10 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { Shield, FileText, AlertTriangle, CheckCircle2, Scale } from 'lucide-react';
-import PageBackground from '@/components/layout/PageBackground';
+import { ContentPageLayout } from '@/components/content/ContentPageLayout';
 
 export default function TermsPage() {
-  const mainRef = useRef<HTMLElement | null>(null);
+  const mainRef = useRef<HTMLDivElement | null>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
@@ -37,38 +37,31 @@ export default function TermsPage() {
   };
 
   return (
-    <PageBackground>
-    <main 
-      ref={mainRef}
-        className="container mx-auto px-4 py-12"
+    <ContentPageLayout
+      eyebrow="Legal"
+      title="Terms of Use"
+      description="Please read these terms carefully before using Indian Stock Analyzer services."
     >
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
-        Terms of Use
-      </h1>
-      
-        <p className="text-lg text-center text-gray-300 mb-12 max-w-3xl mx-auto">
-          Please read these terms carefully before using Indian Stock Analyzer services.
-      </p>
-
+    <div ref={mainRef}>
         <h2 className="sr-only">Terms Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {[
           { 
               title: "Legal Agreement", 
               description: "These terms constitute a binding legal agreement", 
-              icon: <FileText className="w-8 h-8 text-neon-400" />,
+              icon: <FileText className="w-8 h-8 text-emerald-600" />,
               color: "bg-gray-900/90"
           },
           { 
               title: "User Responsibilities", 
               description: "Guidelines for proper platform usage", 
-              icon: <Shield className="w-8 h-8 text-neon-400" />,
+              icon: <Shield className="w-8 h-8 text-emerald-600" />,
               color: "bg-gray-900/90"
           },
           { 
               title: "Compliance", 
               description: "Adherence to financial regulations and laws", 
-              icon: <Scale className="w-8 h-8 text-neon-400" />,
+              icon: <Scale className="w-8 h-8 text-emerald-600" />,
               color: "bg-gray-900/90"
           }
         ].map((item, index) => (
@@ -77,7 +70,7 @@ export default function TermsPage() {
             ref={addToSectionsRefs}
               className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium"
           >
-              <div className={`rounded-full w-16 h-16 flex items-center justify-center ${item.color} mb-4 mx-auto border border-neon-400/20`}>
+              <div className={`rounded-full w-16 h-16 flex items-center justify-center ${item.color} mb-4 mx-auto border border-emerald-500/20`}>
               {item.icon}
             </div>
               <h3 className="text-xl font-semibold text-center mb-2 text-white">{item.title}</h3>
@@ -210,7 +203,7 @@ export default function TermsPage() {
                 conflict of law provisions. Any disputes relating to these terms and conditions will be subject to the 
                 exclusive jurisdiction of the courts of Mumbai, India.
         </p>
-              <div className="bg-neon-400/10 border border-neon-400/30 rounded-lg p-4 text-neon-400 flex items-start mt-4">
+              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-4 text-emerald-600 flex items-start mt-4">
                 <CheckCircle2 className="w-5 h-5 mr-3 flex-shrink-0 mt-0.5" />
                 <p>
                   <strong>Last Updated:</strong> May 15, 2025. By continuing to use our platform after any changes to these 
@@ -220,7 +213,7 @@ export default function TermsPage() {
             </div>
           </section>
         </div>
-    </main>
-    </PageBackground>
+    </div>
+    </ContentPageLayout>
   );
 }

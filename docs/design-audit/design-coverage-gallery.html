@@ -69,11 +69,11 @@
 <body>
   <header class="page">
     <h1>Design Rollout Tracker</h1>
-    <p class="sub">Benchmark: PortfolioDashboard · Updated 2026-08-23T10:23:36.679Z · <code>npm run audit:design:refresh</code> to regenerate</p>
+    <p class="sub">Benchmark: PortfolioDashboard · Updated 2026-08-23T10:29:37.559Z · <code>npm run audit:design:refresh</code> to regenerate</p>
 
     <div class="stats">
       <div class="stat done">
-        <div class="num">25</div>
+        <div class="num">39</div>
         <div class="label">Completed</div>
       </div>
       <div class="stat partial">
@@ -81,15 +81,15 @@
         <div class="label">Partial</div>
       </div>
       <div class="stat remaining">
-        <div class="num">36</div>
+        <div class="num">22</div>
         <div class="label">Remaining work</div>
       </div>
       <div class="stat not-started">
-        <div class="num">13</div>
+        <div class="num">5</div>
         <div class="label">Not started</div>
       </div>
       <div class="stat">
-        <div class="num" style="color:#ef4444">17</div>
+        <div class="num" style="color:#ef4444">11</div>
         <div class="label">Legacy</div>
       </div>
     </div>
@@ -97,20 +97,20 @@
     <div class="progress-wrap">
       <div class="progress-label">
         <span>Rollout progress</span>
-        <span><strong>25</strong> / 61 routes complete (41%)</span>
+        <span><strong>39</strong> / 61 routes complete (64%)</span>
       </div>
-      <div class="progress-bar" role="progressbar" aria-valuenow="41" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-fill" style="width:41%"></div>
+      <div class="progress-bar" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill" style="width:64%"></div>
       </div>
     </div>
 
     <div class="filters">
       <button data-filter="all" class="active">All (61)</button>
-      <button data-filter="remaining">Remaining (36)</button>
-      <button data-filter="implemented">Completed (25)</button>
+      <button data-filter="remaining">Remaining (22)</button>
+      <button data-filter="implemented">Completed (39)</button>
       <button data-filter="partial">Partial (6)</button>
-      <button data-filter="legacy">Legacy (17)</button>
-      <button data-filter="not-started">Not started (13)</button>
+      <button data-filter="legacy">Legacy (11)</button>
+      <button data-filter="not-started">Not started (5)</button>
     </div>
   </header>
 
@@ -120,16 +120,10 @@
       
     <details class="checklist-group" open>
       <summary style="--accent:#ef4444">
-        <span class="pill" style="background:#ef4444">17</span>
+        <span class="pill" style="background:#ef4444">11</span>
         Legacy — redesign needed
       </summary>
-      <ul><li><code>/blog</code><span class="file">src/app/blog/page.tsx</span></li>
-<li><code>/contact</code><span class="file">src/app/contact/page.tsx</span></li>
-<li><code>/faq</code><span class="file">src/app/faq/page.tsx</span></li>
-<li><code>/learn</code><span class="file">src/app/learn/page.tsx</span></li>
-<li><code>/privacy</code><span class="file">src/app/privacy/page.tsx</span></li>
-<li><code>/terms</code><span class="file">src/app/terms/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=overview</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+      <ul><li><code>/stocks/RELIANCE?tab=overview</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
 <li><code>/stocks/RELIANCE?tab=fundamental</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
 <li><code>/stocks/RELIANCE?tab=technical</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
 <li><code>/stocks/RELIANCE?tab=management</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
@@ -144,21 +138,13 @@
       
     <details class="checklist-group" open>
       <summary style="--accent:#64748b">
-        <span class="pill" style="background:#64748b">13</span>
+        <span class="pill" style="background:#64748b">5</span>
         Not started
       </summary>
       <ul><li><code>/_not-found</code><span class="file">src/app/not-found.tsx</span></li>
-<li><code>/about</code><span class="file">src/app/about/page.tsx</span></li>
 <li><code>/accessibility</code><span class="file">src/app/accessibility/page.tsx</span></li>
 <li><code>/api-docs</code><span class="file">src/app/api-docs/page.tsx</span></li>
 <li><code>/api-test</code><span class="file">src/app/api-test/page.tsx</span></li>
-<li><code>/auth/forgot-password</code><span class="file">src/app/auth/forgot-password/page.tsx</span></li>
-<li><code>/auth/reset-password</code><span class="file">src/app/auth/reset-password/page.tsx</span></li>
-<li><code>/auth/sessions</code><span class="file">src/app/auth/sessions/page.tsx</span></li>
-<li><code>/auth/verify-email</code><span class="file">src/app/auth/verify-email/page.tsx</span></li>
-<li><code>/auth/verify-reset-code</code><span class="file">src/app/auth/verify-reset-code/page.tsx</span></li>
-<li><code>/login</code><span class="file">src/app/login/page.tsx</span></li>
-<li><code>/signup</code><span class="file">src/app/signup/page.tsx</span></li>
 <li><code>/sitemap</code><span class="file">src/app/sitemap/page.tsx</span></li></ul>
     </details>
       
@@ -177,21 +163,35 @@
       
     <details class="checklist-group">
       <summary style="--accent:#10b981">
-        <span class="pill" style="background:#10b981">25</span>
+        <span class="pill" style="background:#10b981">39</span>
         Completed
       </summary>
       <ul><li><code>/</code><span class="file">src/app/page.tsx</span></li>
+<li><code>/about</code><span class="file">src/app/about/page.tsx</span></li>
 <li><code>/alerts</code><span class="file">src/app/alerts/page.tsx</span></li>
+<li><code>/auth/forgot-password</code><span class="file">src/app/auth/forgot-password/page.tsx</span></li>
+<li><code>/auth/reset-password</code><span class="file">src/app/auth/reset-password/page.tsx</span></li>
+<li><code>/auth/sessions</code><span class="file">src/app/auth/sessions/page.tsx</span></li>
+<li><code>/auth/verify-email</code><span class="file">src/app/auth/verify-email/page.tsx</span></li>
+<li><code>/auth/verify-reset-code</code><span class="file">src/app/auth/verify-reset-code/page.tsx</span></li>
+<li><code>/blog</code><span class="file">src/app/blog/page.tsx</span></li>
+<li><code>/contact</code><span class="file">src/app/contact/page.tsx</span></li>
+<li><code>/faq</code><span class="file">src/app/faq/page.tsx</span></li>
 <li><code>/ipo</code><span class="file">src/app/ipo/page.tsx</span></li>
 <li><code>/ipo/[ipoId]</code><span class="file">src/app/ipo/[ipoId]/page.tsx</span></li>
+<li><code>/learn</code><span class="file">src/app/learn/page.tsx</span></li>
+<li><code>/login</code><span class="file">src/app/login/page.tsx</span></li>
 <li><code>/market</code><span class="file">src/app/market/page.tsx</span></li>
 <li><code>/market/institutional</code><span class="file">src/app/market/institutional/page.tsx</span></li>
 <li><code>/news</code><span class="file">src/app/news/page.tsx</span></li>
 <li><code>/notifications</code><span class="file">src/app/notifications/page.tsx</span></li>
 <li><code>/portfolio</code><span class="file">src/app/portfolio/page.tsx</span></li>
+<li><code>/privacy</code><span class="file">src/app/privacy/page.tsx</span></li>
 <li><code>/settings</code><span class="file">src/app/settings/page.tsx</span></li>
+<li><code>/signup</code><span class="file">src/app/signup/page.tsx</span></li>
 <li><code>/stock-search</code><span class="file">src/app/stock-search/page.tsx</span></li>
 <li><code>/stocks</code><span class="file">src/app/stocks/page.tsx</span></li>
+<li><code>/terms</code><span class="file">src/app/terms/page.tsx</span></li>
 <li><code>/watchlists</code><span class="file">src/app/watchlists/page.tsx</span></li>
 <li><code>/settings?tab=basic</code><span class="file">src/components/settings/SettingsPageShell.tsx</span></li>
 <li><code>/settings?tab=reports</code><span class="file">src/components/settings/SettingsPageShell.tsx</span></li>
@@ -208,111 +208,6 @@
     </details>
     </aside>
     <main class="cards">
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/blog</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/blog/page.tsx · score 20 · PageBackground</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/blog.png" alt="light /blog" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/blog.png" alt="dark /blog" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/contact</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/contact/page.tsx · score 5 · PageBackground, neon-accent</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/contact.png" alt="light /contact" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/contact.png" alt="dark /contact" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/faq</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/faq/page.tsx · score 5 · PageBackground, neon-accent</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/faq.png" alt="light /faq" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/faq.png" alt="dark /faq" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/learn</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/learn/page.tsx · score 5 · PageBackground, neon-accent</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/learn.png" alt="light /learn" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/learn.png" alt="dark /learn" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/privacy</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/privacy/page.tsx · score 20 · PageBackground</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/privacy.png" alt="light /privacy" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/privacy.png" alt="dark /privacy" />
-        </figure>
-      </div>
-    </article>
-
     <article class="card card-remaining" data-status="legacy" data-remaining="true">
       <header>
         <div class="title-wrap">
@@ -544,27 +439,6 @@
       </div>
     </article>
 
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/terms</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/terms/page.tsx · score 5 · PageBackground, neon-accent</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/terms.png" alt="light /terms" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/terms.png" alt="dark /terms" />
-        </figure>
-      </div>
-    </article>
-
     <article class="card card-remaining" data-status="not-started" data-remaining="true">
       <header>
         <div class="title-wrap">
@@ -582,27 +456,6 @@
         <figure>
           <figcaption>Dark</figcaption>
           <img loading="lazy" src="screenshots/dark/_not-found.png" alt="dark /_not-found" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/about</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/about/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/about.png" alt="light /about" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/about.png" alt="dark /about" />
         </figure>
       </div>
     </article>
@@ -666,153 +519,6 @@
         <figure>
           <figcaption>Dark</figcaption>
           <img loading="lazy" src="screenshots/dark/api-test.png" alt="dark /api-test" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/auth/forgot-password</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/auth/forgot-password/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/auth-forgot-password.png" alt="light /auth/forgot-password" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/auth-forgot-password.png" alt="dark /auth/forgot-password" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/auth/reset-password</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/auth/reset-password/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/auth-reset-password.png" alt="light /auth/reset-password" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/auth-reset-password.png" alt="dark /auth/reset-password" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/auth/sessions</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/auth/sessions/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/auth-sessions.png" alt="light /auth/sessions" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/auth-sessions.png" alt="dark /auth/sessions" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/auth/verify-email</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/auth/verify-email/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/auth-verify-email.png" alt="light /auth/verify-email" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/auth-verify-email.png" alt="dark /auth/verify-email" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/auth/verify-reset-code</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/auth/verify-reset-code/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/auth-verify-reset-code.png" alt="light /auth/verify-reset-code" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/auth-verify-reset-code.png" alt="dark /auth/verify-reset-code" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/login</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/login/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/login.png" alt="light /login" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/login.png" alt="dark /login" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/signup</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/signup/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/signup.png" alt="light /signup" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/signup.png" alt="dark /signup" />
         </figure>
       </div>
     </article>
@@ -989,6 +695,27 @@
       <header>
         <div class="title-wrap">
           <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/about</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/about/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/about.png" alt="light /about" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/about.png" alt="dark /about" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
           <h2>/alerts</h2>
         </div>
         <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
@@ -1002,6 +729,174 @@
         <figure>
           <figcaption>Dark</figcaption>
           <img loading="lazy" src="screenshots/dark/alerts.png" alt="dark /alerts" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/auth/forgot-password</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/auth/forgot-password/page.tsx · score 90 · auth-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-forgot-password.png" alt="light /auth/forgot-password" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-forgot-password.png" alt="dark /auth/forgot-password" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/auth/reset-password</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/auth/reset-password/page.tsx · score 90 · auth-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-reset-password.png" alt="light /auth/reset-password" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-reset-password.png" alt="dark /auth/reset-password" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/auth/sessions</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/auth/sessions/page.tsx · score 90 · auth-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-sessions.png" alt="light /auth/sessions" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-sessions.png" alt="dark /auth/sessions" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/auth/verify-email</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/auth/verify-email/page.tsx · score 90 · auth-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-verify-email.png" alt="light /auth/verify-email" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-verify-email.png" alt="dark /auth/verify-email" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/auth/verify-reset-code</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/auth/verify-reset-code/page.tsx · score 90 · auth-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-verify-reset-code.png" alt="light /auth/verify-reset-code" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-verify-reset-code.png" alt="dark /auth/verify-reset-code" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/blog</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/blog/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/blog.png" alt="light /blog" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/blog.png" alt="dark /blog" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/contact</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/contact/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/contact.png" alt="light /contact" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/contact.png" alt="dark /contact" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/faq</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/faq/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/faq.png" alt="light /faq" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/faq.png" alt="dark /faq" />
         </figure>
       </div>
     </article>
@@ -1044,6 +939,48 @@
         <figure>
           <figcaption>Dark</figcaption>
           <img loading="lazy" src="screenshots/dark/ipo-sample-ipo.png" alt="dark /ipo/[ipoId]" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/learn</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/learn/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/learn.png" alt="light /learn" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/learn.png" alt="dark /learn" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/login</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/login/page.tsx · score 90 · auth-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/login.png" alt="light /login" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/login.png" alt="dark /login" />
         </figure>
       </div>
     </article>
@@ -1283,6 +1220,27 @@
       <header>
         <div class="title-wrap">
           <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/privacy</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/privacy/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/privacy.png" alt="light /privacy" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/privacy.png" alt="dark /privacy" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
           <h2>/settings</h2>
         </div>
         <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
@@ -1430,6 +1388,27 @@
       <header>
         <div class="title-wrap">
           <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/signup</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/signup/page.tsx · score 90 · auth-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/signup.png" alt="light /signup" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/signup.png" alt="dark /signup" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
           <h2>/stock-search</h2>
         </div>
         <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
@@ -1464,6 +1443,27 @@
         <figure>
           <figcaption>Dark</figcaption>
           <img loading="lazy" src="screenshots/dark/stocks.png" alt="dark /stocks" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/terms</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/terms/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/terms.png" alt="light /terms" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/terms.png" alt="dark /terms" />
         </figure>
       </div>
     </article>
@@ -1515,7 +1515,7 @@
 
     // Default: show remaining work first
     const remainingBtn = document.querySelector('[data-filter="remaining"]');
-    if (remainingBtn && 36 > 0) {
+    if (remainingBtn && 22 > 0) {
       buttons.forEach((b) => b.classList.remove('active'));
       remainingBtn.classList.add('active');
       applyFilter('remaining');

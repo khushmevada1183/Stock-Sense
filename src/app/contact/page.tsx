@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useState, FormEvent, ChangeEvent } from 'react';
 import { gsap } from 'gsap';
 import { Mail, Phone, MapPin, MessageSquare, Send, Clock, CheckCircle } from 'lucide-react';
-import PageBackground from '@/components/layout/PageBackground';
+import { ContentPageLayout } from '@/components/content/ContentPageLayout';
+import { fieldClass, primaryButtonClass } from '@/styles/design-tokens';
 import { logger } from '@/lib/logger';
 
 export default function ContactPage() {
@@ -92,39 +93,32 @@ export default function ContactPage() {
   };
 
   return (
-    <PageBackground>
-    <main 
-      ref={mainRef}
-        className="container mx-auto px-4 py-12"
+    <ContentPageLayout
+      eyebrow="Support"
+      title="Contact Us"
+      description="Have questions or need assistance? Our team is here to help you with any inquiries about our platform."
     >
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
-        Contact Us
-      </h1>
-      
-        <p className="text-lg text-center text-gray-300 mb-12 max-w-3xl mx-auto">
-          Have questions or need assistance? Our team is here to help you with any inquiries about our platform.
-        </p>
-
+    <div ref={mainRef}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <div 
             ref={addToSectionsRefs}
             className="lg:col-span-2 bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium"
           >
             <h2 className="text-2xl font-bold mb-6 text-white flex items-center">
-              <MessageSquare className="mr-2 h-6 w-6 text-neon-400" />
+              <MessageSquare className="mr-2 h-6 w-6 text-emerald-600" />
               Send Us a Message
             </h2>
             
             {formSubmitted ? (
-              <div className="success-message bg-neon-400/10 border border-neon-400 rounded-lg p-6 text-center">
-                <CheckCircle className="h-12 w-12 text-neon-400 mx-auto mb-4" />
+              <div className="success-message bg-emerald-500/10 border border-emerald-500 rounded-lg p-6 text-center">
+                <CheckCircle className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-white mb-2">Thank You!</h3>
                 <p className="text-gray-300">
                   Your message has been sent successfully. We&apos;ll get back to you as soon as possible.
             </p>
                 <button 
                   onClick={() => setFormSubmitted(false)} 
-                  className="mt-4 px-4 py-2 min-h-[44px] bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon"
+                  className={`${primaryButtonClass} mt-4 inline-flex min-h-[44px] items-center`}
                 >
                   Send Another Message
                 </button>
@@ -143,7 +137,7 @@ export default function ContactPage() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                      className="w-full px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                      className={`${fieldClass} w-full min-h-[44px]`}
                       placeholder="John Doe"
               />
             </div>
@@ -158,7 +152,7 @@ export default function ContactPage() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                      className="w-full px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                      className={`${fieldClass} w-full min-h-[44px]`}
                       placeholder="john@example.com"
               />
                   </div>
@@ -175,7 +169,7 @@ export default function ContactPage() {
                 value={formData.subject}
                 onChange={handleChange}
                 required
-                    className="w-full px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                    className={`${fieldClass} w-full min-h-[44px]`}
                     placeholder="How can we help you?"
               />
             </div>
@@ -191,7 +185,7 @@ export default function ContactPage() {
                 onChange={handleChange}
                 required
                     rows={6}
-                    className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
+                    className={`${fieldClass} w-full`}
                     placeholder="Please provide details about your inquiry..."
               ></textarea>
             </div>
@@ -199,7 +193,7 @@ export default function ContactPage() {
                 <div>
             <button
               type="submit"
-                  className="px-6 py-3 min-h-[44px] bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors shadow-neon-sm hover:shadow-neon flex items-center justify-center"
+                  className={`${primaryButtonClass} inline-flex min-h-[44px] items-center justify-center`}
             >
                     <Send className="h-4 w-4 mr-2" />
               Send Message
@@ -216,27 +210,27 @@ export default function ContactPage() {
               <div className="space-y-4">
                 <div className="flex items-start">
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
-                    <Mail className="h-5 w-5 text-neon-400" />
+                    <Mail className="h-5 w-5 text-emerald-600" />
             </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-300">Email</p>
-                    <p className="text-sm text-neon-400">support@indianstockanalyzer.com</p>
+                    <p className="text-sm text-emerald-600">support@indianstockanalyzer.com</p>
         </div>
       </div>
 
                 <div className="flex items-start">
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
-                    <Phone className="h-5 w-5 text-neon-400" />
+                    <Phone className="h-5 w-5 text-emerald-600" />
               </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-300">Phone</p>
-                    <p className="text-sm text-neon-400">+91 22-6789-0123</p>
+                    <p className="text-sm text-emerald-600">+91 22-6789-0123</p>
             </div>
               </div>
               
               <div className="flex items-start">
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-neon-400" />
+                    <MapPin className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-300">Address</p>
@@ -249,7 +243,7 @@ export default function ContactPage() {
               
               <div className="flex items-start">
                   <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-700 flex items-center justify-center">
-                    <Clock className="h-5 w-5 text-neon-400" />
+                    <Clock className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="ml-3">
                     <p className="text-sm font-medium text-gray-300">Business Hours</p>
@@ -270,9 +264,9 @@ export default function ContactPage() {
                   <a 
                     key={social}
                     href="#" 
-                    className="h-11 w-11 rounded-full bg-gray-700 flex items-center justify-center hover:bg-neon-400/20 transition-colors"
+                    className="h-11 w-11 rounded-full bg-gray-700 flex items-center justify-center hover:bg-emerald-500/20 transition-colors"
                   >
-                    <span className="text-neon-400 text-lg font-bold uppercase">{social.charAt(0)}</span>
+                    <span className="text-emerald-600 text-lg font-bold uppercase">{social.charAt(0)}</span>
                   </a>
                 ))}
               </div>
@@ -312,7 +306,7 @@ export default function ContactPage() {
         ))}
         </div>
       </div>
-    </main>
-    </PageBackground>
+    </div>
+    </ContentPageLayout>
   );
 }

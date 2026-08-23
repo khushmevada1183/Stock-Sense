@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-08-23T10:23:36.229Z",
+  "generatedAt": "2026-08-23T10:29:36.993Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 25,
+    "implemented": 39,
     "partial": 6,
-    "legacy": 17,
-    "notStarted": 13,
+    "legacy": 11,
+    "notStarted": 5,
     "skipVisual": 3,
     "total": 64,
-    "remaining": 36
+    "remaining": 22
   },
   "routes": [
     {
@@ -37,9 +37,11 @@
     {
       "route": "/about",
       "capturePath": "/about",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "content-shell"
+      ],
       "file": "src/app/about/page.tsx",
       "lineCount": 394
     },
@@ -84,9 +86,11 @@
     {
       "route": "/auth/forgot-password",
       "capturePath": "/auth/forgot-password",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "auth-shell"
+      ],
       "file": "src/app/auth/forgot-password/page.tsx",
       "lineCount": 151
     },
@@ -123,46 +127,54 @@
     {
       "route": "/auth/reset-password",
       "capturePath": "/auth/reset-password",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "auth-shell"
+      ],
       "file": "src/app/auth/reset-password/page.tsx",
       "lineCount": 249
     },
     {
       "route": "/auth/sessions",
       "capturePath": "/auth/sessions",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "auth-shell"
+      ],
       "file": "src/app/auth/sessions/page.tsx",
       "lineCount": 186
     },
     {
       "route": "/auth/verify-email",
       "capturePath": "/auth/verify-email",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "auth-shell"
+      ],
       "file": "src/app/auth/verify-email/page.tsx",
       "lineCount": 156
     },
     {
       "route": "/auth/verify-reset-code",
       "capturePath": "/auth/verify-reset-code",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "auth-shell"
+      ],
       "file": "src/app/auth/verify-reset-code/page.tsx",
       "lineCount": 175
     },
     {
       "route": "/blog",
       "capturePath": "/blog",
-      "status": "legacy",
-      "score": 20,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "PageBackground"
+        "content-shell"
       ],
       "file": "src/app/blog/page.tsx",
       "lineCount": 494
@@ -170,11 +182,10 @@
     {
       "route": "/contact",
       "capturePath": "/contact",
-      "status": "legacy",
-      "score": 5,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "PageBackground",
-        "neon-accent"
+        "content-shell"
       ],
       "file": "src/app/contact/page.tsx",
       "lineCount": 319
@@ -182,11 +193,10 @@
     {
       "route": "/faq",
       "capturePath": "/faq",
-      "status": "legacy",
-      "score": 5,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "PageBackground",
-        "neon-accent"
+        "content-shell"
       ],
       "file": "src/app/faq/page.tsx",
       "lineCount": 415
@@ -216,11 +226,10 @@
     {
       "route": "/learn",
       "capturePath": "/learn",
-      "status": "legacy",
-      "score": 5,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "PageBackground",
-        "neon-accent"
+        "content-shell"
       ],
       "file": "src/app/learn/page.tsx",
       "lineCount": 373
@@ -228,9 +237,11 @@
     {
       "route": "/login",
       "capturePath": "/login",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "auth-shell"
+      ],
       "file": "src/app/login/page.tsx",
       "lineCount": 256
     },
@@ -349,10 +360,10 @@
     {
       "route": "/privacy",
       "capturePath": "/privacy",
-      "status": "legacy",
-      "score": 20,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "PageBackground"
+        "content-shell"
       ],
       "file": "src/app/privacy/page.tsx",
       "lineCount": 429
@@ -371,9 +382,11 @@
     {
       "route": "/signup",
       "capturePath": "/signup",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "auth-shell"
+      ],
       "file": "src/app/signup/page.tsx",
       "lineCount": 333
     },
@@ -423,11 +436,10 @@
     {
       "route": "/terms",
       "capturePath": "/terms",
-      "status": "legacy",
-      "score": 5,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "PageBackground",
-        "neon-accent"
+        "content-shell"
       ],
       "file": "src/app/terms/page.tsx",
       "lineCount": 227

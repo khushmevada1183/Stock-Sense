@@ -9,7 +9,7 @@ import {
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { BookOpen, Bookmark, TrendingUp, Clock, ChevronRight, Search, Filter, Calendar, Tag, User } from 'lucide-react';
-import PageBackground from '@/components/layout/PageBackground';
+import { ContentPageLayout } from '@/components/content/ContentPageLayout';
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -166,17 +166,12 @@ export default function BlogPage() {
   }, []);
 
   return (
-    <PageBackground>
-      <div ref={mainRef} className="min-h-screen py-10 px-4 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
-          Stock Sense Blog
-        </h1>
-          <p className="text-lg text-gray-300 max-w-3xl mb-8">
-          Expert analysis, market insights, and trading strategies to help you make informed investment decisions in the Indian stock market.
-        </p>
-
+    <ContentPageLayout
+      eyebrow="Insights"
+      title="Stock Sense Blog"
+      description="Expert analysis, market insights, and trading strategies to help you make informed investment decisions in the Indian stock market."
+    >
+      <div ref={mainRef}>
         {/* Search and Filter Section */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-grow">
@@ -187,7 +182,7 @@ export default function BlogPage() {
             <input
               id="blog-search"
               type="text"
-                className="block w-full min-h-[44px] pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-neon-400 focus:border-neon-400"
+                className="block w-full min-h-[44px] pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-emerald-500 focus:border-emerald-500"
               placeholder="Search articles..."
               aria-label="Search blog articles"
             />
@@ -197,7 +192,7 @@ export default function BlogPage() {
               <label htmlFor="blog-category" className="sr-only">Filter blog articles by category</label>
               <select 
                   id="blog-category"
-                  className="appearance-none block w-full min-h-[44px] px-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 pr-8 focus:ring-neon-400 focus:border-neon-400"
+                  className="appearance-none block w-full min-h-[44px] px-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 pr-8 focus:ring-emerald-500 focus:border-emerald-500"
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 aria-label="Filter blog articles by category"
@@ -217,10 +212,10 @@ export default function BlogPage() {
         <div ref={cardsRef} className="mb-16">
           <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <BookOpen size={24} className="text-neon-400" />
+                <BookOpen size={24} className="text-emerald-600" />
               Featured Articles
             </h2>
-              <button type="button" className="text-neon-400 hover:underline inline-flex min-h-[44px] items-center px-2">
+              <button type="button" className="text-emerald-600 hover:underline inline-flex min-h-[44px] items-center px-2">
               View All <ChevronRight size={18} />
             </button>
           </div>
@@ -458,11 +453,11 @@ export default function BlogPage() {
         </div>
 
         {/* Newsletter Subscription */}
-        <Card className="rounded-xl border border-gray-700/50 shadow-lg bg-gradient-to-r from-blue-600 to-purple-600 p-8 text-white">
+        <Card className="rounded-xl border border-slate-200/80 bg-white/80 p-8 dark:border-white/10 dark:bg-slate-950/60">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-6 md:mb-0 md:mr-8">
-              <h2 className="text-2xl font-bold mb-2">Stay Updated</h2>
-              <p className="text-blue-100">
+              <h2 className="text-2xl font-bold mb-2 text-slate-950 dark:text-white">Stay Updated</h2>
+              <p className="text-slate-600 dark:text-slate-400">
                 Subscribe to our weekly newsletter for market insights, analysis, and investment ideas delivered straight to your inbox.
               </p>
             </div>
@@ -472,22 +467,21 @@ export default function BlogPage() {
                 <input
                   id="blog-newsletter-email"
                   type="email"
-                  className="px-4 py-2 min-h-[44px] rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 placeholder-white/70 text-white focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 min-h-[44px] rounded-lg border border-slate-200/70 bg-white/75 text-slate-950 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 dark:border-white/10 dark:bg-white/5 dark:text-white"
                   placeholder="Your email address"
                   aria-label="Email address"
                 />
-                <button className="px-4 py-2 min-h-[44px] bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors">
+                <button className="px-4 py-2 min-h-[44px] bg-emerald-500 text-slate-950 font-medium rounded-lg hover:bg-emerald-400 transition-colors">
                   Subscribe
                 </button>
               </div>
-              <p className="text-xs text-blue-100 mt-2">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
                 We respect your privacy. Unsubscribe at any time.
               </p>
             </div>
           </div>
         </Card>
       </div>
-    </div>
-    </PageBackground>
+    </ContentPageLayout>
   );
 }

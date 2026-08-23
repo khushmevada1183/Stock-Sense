@@ -10,7 +10,7 @@ import {
 import { 
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip
 } from 'recharts';
-import PageBackground from '@/components/layout/PageBackground';
+import { ContentPageLayout } from '@/components/content/ContentPageLayout';
 
 // Import GSAP ScrollTrigger
 if (typeof window !== "undefined") {
@@ -173,19 +173,12 @@ export default function FAQ() {
   });
 
   return (
-    <PageBackground>
-    <main 
-      ref={mainRef}
-        className="container mx-auto px-4 py-12"
+    <ContentPageLayout
+      eyebrow="Support"
+      title="Frequently asked questions"
+      description="Find answers to common questions about Indian Stock Analyzer, its features, and how to make the most of our platform."
     >
-        <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 text-white">
-        Frequently Asked Questions
-      </h1>
-      
-        <p className="text-lg text-center text-gray-300 mb-12 max-w-3xl mx-auto">
-        Find answers to common questions about Indian Stock Analyzer, its features, and how to make the most of our platform.
-      </p>
-
+    <div ref={mainRef}>
         {/* Search and Categories */}
         <div className="mb-12">
           <div className="max-w-2xl mx-auto mb-8">
@@ -195,7 +188,7 @@ export default function FAQ() {
                 placeholder="Search for questions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full py-3 pl-12 pr-4 bg-gray-900/90 backdrop-blur-lg border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-neon-400 focus:border-transparent text-gray-900 dark:text-white"
+                className="w-full py-3 pl-12 pr-4 bg-gray-900/90 backdrop-blur-lg border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 dark:text-white"
         />
               <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
                 <SearchIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
@@ -209,7 +202,7 @@ export default function FAQ() {
               onClick={() => setActiveCategory('all')}
               className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium transition-colors ${
               activeCategory === 'all' 
-                  ? 'bg-neon-400 text-black shadow-neon-sm' 
+                  ? 'bg-emerald-500 text-black' 
                   : 'bg-gray-900/90 backdrop-blur-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
             }`}
           >
@@ -222,7 +215,7 @@ export default function FAQ() {
                 onClick={() => setActiveCategory(category.id)}
                 className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium flex items-center transition-colors ${
                 activeCategory === category.id 
-                    ? 'bg-neon-400 text-black shadow-neon-sm' 
+                    ? 'bg-emerald-500 text-black' 
                     : 'bg-gray-900/90 backdrop-blur-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
             >
@@ -408,7 +401,7 @@ export default function FAQ() {
           </section>
         </div>
       </div>
-    </main>
-    </PageBackground>
+    </div>
+    </ContentPageLayout>
   );
 }
