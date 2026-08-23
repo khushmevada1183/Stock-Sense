@@ -9,6 +9,7 @@ import { StockData as Stock } from '@/types/stocks';
 import { gsap } from 'gsap';
 import { BarChart2, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
+import { insetPanelClass, panelShellClass } from '@/styles/design-tokens';
 
 interface StockLike {
   id?: string;
@@ -191,7 +192,7 @@ export default function FeaturedStocks() {
     return (
       <div ref={sectionRef} className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="rounded-[24px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+          <div key={i} className={`${insetPanelClass} p-6`}>
             <div className="flex justify-between mb-4">
               <div>
                 <div className="mb-2 h-4 w-20 rounded-full bg-slate-200 shimmer dark:bg-slate-700" />
@@ -261,7 +262,7 @@ export default function FeaturedStocks() {
               key={stock.id || stock.symbol || index} 
               className="stock-card"
             >
-              <div className="w-full rounded-[28px] border border-slate-200/70 bg-white/75 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.34)]">
+              <div className={`${panelShellClass} w-full p-5 transition-transform duration-300 hover:-translate-y-0.5`}>
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-4">
                     <div>

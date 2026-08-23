@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import * as stockApi from '@/api/api';
 import { IndexData } from '@/types/market';
 import { logger } from '@/lib/logger';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 type MarketOverviewIndexItem = {
   index?: string;
@@ -110,7 +111,7 @@ export default function MarketOverview() {
     return (
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="animate-pulse rounded-[24px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+          <div key={i} className={`${insetPanelClass} animate-pulse p-6`}>
             <div className="mb-3 h-3.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-700" />
             <div className="mb-3 h-7 w-1/2 rounded-full bg-slate-200 dark:bg-slate-700" />
             <div className="h-4 w-1/3 rounded-full bg-slate-200 dark:bg-slate-700" />
@@ -168,7 +169,7 @@ export default function MarketOverview() {
             key={i} 
             className="h-full"
           >
-            <div className="w-full min-h-[170px] rounded-[24px] border border-slate-200/70 bg-white/75 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.35)]">
+            <div className={`${insetPanelClass} w-full min-h-[170px] p-6 shadow-[0_24px_80px_rgba(15,23,42,0.06)] transition-transform duration-300 hover:-translate-y-0.5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.35)]`}>
               {/* Header row */}
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500">{index.name}</h3>

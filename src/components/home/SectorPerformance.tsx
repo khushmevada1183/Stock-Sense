@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import * as stockApi from '@/api/api';
 import { logger } from '@/lib/logger';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 interface SectorData {
   name: string;
@@ -71,7 +72,7 @@ export default function SectorPerformance() {
       <div ref={sectionRef}>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="animate-pulse rounded-[24px] border border-slate-200/70 bg-white/75 p-4 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+            <div key={i} className={`${insetPanelClass} animate-pulse p-4`}>
               <div className="mb-3 h-3.5 w-3/4 rounded-full bg-slate-200 dark:bg-slate-700" />
               <div className="h-5 w-1/2 rounded-full bg-slate-200 dark:bg-slate-700" />
             </div>
@@ -103,7 +104,7 @@ export default function SectorPerformance() {
             key={sector.name || index}
             className="relative overflow-hidden"
           >
-            <div className="w-full min-h-[122px] rounded-[24px] border border-slate-200/70 bg-white/75 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_22px_60px_rgba(0,0,0,0.32)]">
+            <div className={`${insetPanelClass} w-full min-h-[122px] p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] transition-transform duration-300 hover:-translate-y-0.5 dark:shadow-[0_22px_60px_rgba(0,0,0,0.32)]`}>
               <h3 className="mb-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500 leading-tight">
                 {sector.name}
               </h3>

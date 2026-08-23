@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import dynamic from 'next/dynamic';
 import { SectionReveal } from '../components/ui/SectionReveal';
+import { sectionEyebrowClass, sectionTitleClass } from '@/styles/design-tokens';
 
 import HeroSection from '../components/home/HeroSection';
 import AnalysisFeatures from '../components/home/AnalysisFeatures';
@@ -34,10 +35,10 @@ function SectionHeader({ eyebrow, title, description, ctaHref, ctaLabel }: Secti
   return (
     <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-2xl">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">
+        <p className={sectionEyebrowClass}>
           {eyebrow}
         </p>
-        <h2 className="mt-2 text-[clamp(1.75rem,2.8vw,2.6rem)] font-semibold tracking-[-0.04em] text-slate-950 dark:text-white">
+        <h2 className={`mt-2 ${sectionTitleClass}`}>
           {title}
         </h2>
         {description ? (
@@ -62,10 +63,10 @@ function SectionHeader({ eyebrow, title, description, ctaHref, ctaLabel }: Secti
 export default function Home() {
 
   return (
-    <div className="relative overflow-hidden pb-12 md:pb-14">
+    <div className="relative overflow-hidden pb-12 text-slate-950 dark:text-white md:pb-14">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[32rem] w-[min(88vw,72rem)] rounded-full bg-[radial-gradient(circle,_rgba(16,185,129,0.11)_0%,_transparent_68%)] blur-3xl dark:bg-[radial-gradient(circle,_rgba(57,255,20,0.14)_0%,_transparent_70%)]"
+        className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-[32rem] w-[min(88vw,72rem)] rounded-full bg-[radial-gradient(circle,_rgba(16,185,129,0.11)_0%,_transparent_68%)] blur-3xl dark:bg-[radial-gradient(circle,_rgba(16,185,129,0.14)_0%,_transparent_70%)]"
       />
 
       <div
@@ -79,7 +80,7 @@ export default function Home() {
 
       <SectionReveal>
         <section className="relative z-10 py-12 md:py-14">
-          <div className="container mx-auto max-w-[1440px] overflow-x-visible px-4">
+          <div className="mx-auto max-w-[1400px] overflow-x-visible px-4 sm:px-6">
             <SectionHeader
               eyebrow="Live snapshot"
               title="Market overview"
@@ -94,7 +95,7 @@ export default function Home() {
       
       <SectionReveal delay={0.05}>
         <section className="relative z-10 py-12 md:py-14">
-          <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
             <SectionHeader
               eyebrow="Relative strength"
               title="Sector performance"
@@ -109,7 +110,7 @@ export default function Home() {
 
       <SectionReveal delay={0.05}>
         <section className="relative z-10 py-12 md:py-14">
-          <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
             <SectionHeader
               eyebrow="Curated watchlist"
               title="Featured stocks"
@@ -124,7 +125,7 @@ export default function Home() {
 
       <SectionReveal delay={0.05}>
         <section className="relative z-10 py-12 md:py-14">
-          <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
             <SectionHeader
               eyebrow="Primary market"
               title="Upcoming IPOs"
@@ -139,7 +140,7 @@ export default function Home() {
 
       <SectionReveal delay={0.05}>
         <section className="relative z-10 py-12 md:py-14">
-          <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
             <AnalysisFeatures />
           </div>
         </section>
@@ -147,7 +148,7 @@ export default function Home() {
 
       <SectionReveal delay={0.05}>
         <section className="relative z-10 pt-0 pb-12 md:pt-2 md:pb-14">
-          <div className="container mx-auto px-4">
+          <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
             <CtaSection />
           </div>
         </section>

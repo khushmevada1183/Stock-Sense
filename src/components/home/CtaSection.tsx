@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
+import { insetPanelClass, panelShellClass } from '@/styles/design-tokens';
 
 // Animated counter component
 function AnimatedCounter({ target, suffix = '' }: { target: string; suffix?: string }) {
@@ -69,12 +70,12 @@ export default function CtaSection() {
   return (
     <section className="relative overflow-hidden pt-0 pb-10 md:pt-1 md:pb-12">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-6 flex justify-center">
-        <div className="h-36 w-[min(88vw,860px)] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.1),transparent_72%)] blur-3xl dark:bg-[radial-gradient(ellipse_at_center,rgba(57,255,20,0.18),transparent_76%)]" />
+        <div className="h-36 w-[min(88vw,860px)] rounded-[999px] bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.1),transparent_72%)] blur-3xl dark:bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.18),transparent_76%)]" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10 text-center">
         <motion.div
-          className="mx-auto max-w-5xl overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/75 p-6 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60 dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)] sm:p-8 md:p-10"
+          className={`${panelShellClass} mx-auto max-w-5xl overflow-hidden p-6 sm:p-8 md:p-10`}
           initial={{ y: 20 }}
           whileInView={{ y: 0 }}
           viewport={{ once: true, amount: 0.1 }}
@@ -128,7 +129,7 @@ export default function CtaSection() {
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
               className="h-full"
             >
-              <div className="relative h-full min-h-[142px] overflow-hidden rounded-[24px] border border-slate-200/70 bg-white/75 p-6 shadow-[0_20px_36px_-32px_rgba(15,23,42,0.9)] ring-1 ring-white/70 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_46px_-30px_rgba(15,23,42,0.6)] dark:border-white/10 dark:bg-white/5 dark:ring-white/5">
+              <div className={`${insetPanelClass} relative h-full min-h-[142px] overflow-hidden p-6 shadow-[0_20px_36px_-32px_rgba(15,23,42,0.9)] ring-1 ring-white/70 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_24px_46px_-30px_rgba(15,23,42,0.6)] dark:ring-white/5`}>
                 <div className="mx-auto mb-4 h-px w-16 bg-gradient-to-r from-transparent via-slate-400/80 to-transparent dark:via-slate-500/90" />
                 <div className="text-center">
                   <div className="mb-2 font-[var(--font-sans)] text-[2.25rem] font-semibold leading-none tracking-[-0.03em] text-slate-950 dark:text-white">

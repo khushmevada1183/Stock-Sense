@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-23T09:50:19.349Z",
+  "generatedAt": "2026-08-23T09:54:21.749Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
@@ -14,10 +14,10 @@
       "route": "/",
       "capturePath": "/",
       "status": "implemented",
-      "score": 85,
+      "score": 100,
       "signals": [
+        "panel-shell",
         "premium-type",
-        "settings-shell",
         "home-section"
       ],
       "file": "src/app/page.tsx",

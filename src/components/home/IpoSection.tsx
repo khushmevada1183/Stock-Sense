@@ -9,6 +9,7 @@ import * as stockApi from '@/api/api';
 import { IpoItem } from '@/types/ipo';
 import { gsap } from 'gsap';
 import { Button } from '../ui/button';
+import { insetPanelClass, panelShellClass } from '@/styles/design-tokens';
 
 // Define extended IPO item type with our custom animation properties
 type ExtendedIpoItem = IpoItem & {
@@ -115,10 +116,10 @@ export default function IpoSection() {
 
   if (loading) {
     return (
-      <div className="rounded-[28px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+      <div className={`${panelShellClass} p-6`}>
         <div className="flex gap-5 overflow-hidden">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="min-w-[300px] animate-pulse rounded-[24px] border border-slate-200/70 bg-white/75 p-5 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+            <div key={i} className={`${insetPanelClass} min-w-[300px] animate-pulse p-5`}>
               <div className="flex items-center mb-4">
                 <div className="h-12 w-12 rounded-2xl bg-slate-200 dark:bg-slate-700" />
                 <div className="ml-3">
@@ -148,7 +149,7 @@ export default function IpoSection() {
 
   if (ipoData.length === 0) {
     return (
-      <div className="rounded-[28px] border border-slate-200/70 bg-white/75 p-6 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+      <div className={`${panelShellClass} p-6`}>
         <p className="py-8 text-center text-slate-600 dark:text-slate-400">
           No upcoming IPO data available at this time.
         </p>
@@ -159,7 +160,7 @@ export default function IpoSection() {
   const displayedIpos = ipoData.slice(0, 5);
 
   return (
-    <div ref={sectionRef} className="overflow-hidden rounded-[28px] border border-slate-200/70 bg-white/75 backdrop-blur-xl shadow-[0_24px_80px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.34)]">
+    <div ref={sectionRef} className={`${panelShellClass} overflow-hidden`}>
       <div className="p-6">
         <div className="mb-6 text-sm text-slate-600 dark:text-slate-400">
           Companies that have filed for an IPO with SEBI. Details might be disclosed later.
@@ -183,7 +184,7 @@ export default function IpoSection() {
                     const isPositiveStatus = /(oversubscribed|subscribed|open|strong|bullish)/.test(statusText);
 
                     return (
-                      <div className="relative flex min-h-[330px] w-full flex-col rounded-[28px] border border-slate-200/70 bg-white/75 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-transform duration-300 hover:-translate-y-0.5 dark:border-white/10 dark:bg-white/5 dark:shadow-[0_28px_90px_rgba(0,0,0,0.34)]">
+                      <div className={`${panelShellClass} relative flex min-h-[330px] w-full flex-col p-5 transition-transform duration-300 hover:-translate-y-0.5`}>
                         <div className="flex items-center mb-4">
                           {ipo.logo ? (
                             <div className="mr-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-slate-100/80 dark:bg-white/10">
@@ -318,7 +319,7 @@ export default function IpoSection() {
         </div>
 
         {/* Demat Account CTA */}
-          <div className="mt-6 rounded-[28px] border border-slate-200/70 bg-white/75 p-5 text-center backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+          <div className={`${insetPanelClass} mt-6 p-5 text-center`}>
             <div className="mb-2 font-semibold tracking-tight text-slate-950 dark:text-white">Applying for IPOs?</div>
             <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
             To apply for IPOs, you need a Demat account. Open your account now to start investing.

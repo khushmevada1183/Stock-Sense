@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Activity, ArrowRight, BarChart3, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/button';
+import { insetPanelClass, panelShellClass } from '@/styles/design-tokens';
 
 const marketPulse = [
   { label: 'NIFTY 50', value: '22,654.50', change: '+0.57%', positive: true },
@@ -36,7 +37,7 @@ export default function HeroSection() {
   return (
     <section className="relative overflow-hidden pb-8 pt-8 md:pb-12 md:pt-12">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 top-8 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.16)_0%,rgba(16,185,129,0)_68%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(57,255,20,0.18)_0%,rgba(57,255,20,0)_68%)]" />
+        <div className="absolute -left-24 top-8 h-80 w-80 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.16)_0%,rgba(16,185,129,0)_68%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(16,185,129,0.18)_0%,rgba(16,185,129,0)_68%)]" />
         <div className="absolute right-[-5rem] top-20 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(15,23,42,0.08)_0%,rgba(15,23,42,0)_72%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(148,163,184,0.14)_0%,rgba(148,163,184,0)_72%)]" />
       </div>
 
@@ -87,7 +88,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: 0.12 + index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-                className="rounded-[24px] border border-slate-200/70 bg-white/75 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.06)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-[0_22px_60px_rgba(0,0,0,0.34)]"
+                className={`${insetPanelClass} p-4 shadow-[0_18px_50px_rgba(15,23,42,0.06)] dark:shadow-[0_22px_60px_rgba(0,0,0,0.34)]`}
               >
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
                   {stat.label}
@@ -106,7 +107,7 @@ export default function HeroSection() {
           transition={{ duration: 0.75, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="relative"
         >
-          <div className="overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/80 p-5 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60 dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)] sm:p-6">
+          <div className={`${panelShellClass} overflow-hidden p-5 sm:p-6`}>
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-slate-400 dark:text-slate-500">
@@ -122,7 +123,7 @@ export default function HeroSection() {
               </div>
             </div>
 
-            <div className="mt-5 rounded-[28px] border border-slate-200/70 bg-slate-50/90 p-4 dark:border-white/10 dark:bg-white/5">
+            <div className={`${insetPanelClass} mt-5 bg-slate-50/90 p-4 dark:bg-white/5`}>
               <svg viewBox="0 0 260 180" className="h-[18rem] w-full">
                 <defs>
                   <linearGradient id="hero-line" x1="0" x2="1" y1="0" y2="0">
@@ -150,7 +151,7 @@ export default function HeroSection() {
               {marketPulse.map((metric) => (
                 <div
                   key={metric.label}
-                  className="rounded-[22px] border border-slate-200/70 bg-white/75 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5"
+                  className={`${insetPanelClass} p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)]`}
                 >
                   <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
                     {metric.label}
@@ -170,7 +171,7 @@ export default function HeroSection() {
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-[22px] border border-slate-200/70 bg-white/75 p-4 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <div className={`${insetPanelClass} p-4`}>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
                   Coverage
                 </p>
@@ -178,7 +179,7 @@ export default function HeroSection() {
                   Live indices, stocks, IPOs, alerts, and research signals in one calm interface.
                 </p>
               </div>
-              <div className="rounded-[22px] border border-slate-200/70 bg-white/75 p-4 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <div className={`${insetPanelClass} p-4`}>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
                   Focus
                 </p>

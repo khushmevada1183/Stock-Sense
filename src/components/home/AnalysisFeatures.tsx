@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FiBarChart2, FiBriefcase, FiFileText, FiGlobe, FiLayers, FiShield, FiSmile, FiTrendingUp, FiUserCheck, FiZap } from 'react-icons/fi';
+import { insetPanelClass, panelShellClass } from '@/styles/design-tokens';
 
 interface FeatureItem {
   title: string;
@@ -276,11 +277,11 @@ export default function AnalysisFeatures() {
   return (
     <div className="relative px-4 py-12 text-slate-950 md:py-16 dark:text-slate-100">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-24 top-12 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.12)_0%,rgba(16,185,129,0)_70%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(57,255,20,0.12)_0%,rgba(57,255,20,0)_70%)]" />
+        <div className="absolute -left-24 top-12 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(16,185,129,0.12)_0%,rgba(16,185,129,0)_70%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(16,185,129,0.12)_0%,rgba(16,185,129,0)_70%)]" />
         <div className="absolute right-0 top-28 h-96 w-96 rounded-full bg-[radial-gradient(circle,rgba(15,23,42,0.08)_0%,rgba(15,23,42,0)_72%)] blur-3xl dark:bg-[radial-gradient(circle,rgba(148,163,184,0.12)_0%,rgba(148,163,184,0)_72%)]" />
       </div>
 
-      <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] border border-slate-200/70 bg-white/75 px-6 py-8 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60 dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)] md:px-8 md:py-10 lg:px-10 lg:py-12">
+      <div className={`${panelShellClass} relative mx-auto max-w-7xl overflow-hidden px-6 py-8 md:px-8 md:py-10 lg:px-10 lg:py-12`}>
         <div className="relative mx-auto max-w-3xl text-center">
           <div className="mb-5 flex items-center justify-center gap-2 font-[var(--font-roboto-mono)] text-[0.66rem] font-semibold uppercase tracking-[0.28em] text-slate-500 dark:text-zinc-300">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
@@ -526,7 +527,7 @@ export default function AnalysisFeatures() {
             whileInView={{ y: 0 }}
             viewport={{ once: true, amount: 0.1 }}
             transition={{ duration: 0.35, delay: index * 0.03 }}
-            className="rounded-[22px] border border-slate-200/70 bg-white/75 p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-[0_22px_60px_rgba(0,0,0,0.32)]"
+            className={`${insetPanelClass} p-4 shadow-[0_18px_50px_rgba(15,23,42,0.05)] dark:shadow-[0_22px_60px_rgba(0,0,0,0.32)]`}
           >
             <div className="flex items-start justify-between gap-4">
               <h3 className="text-sm font-semibold leading-snug tracking-tight text-slate-950 dark:text-white">
