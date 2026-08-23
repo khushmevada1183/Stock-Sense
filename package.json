@@ -16,7 +16,10 @@
     "deploy": "gh-pages -d out",
     "deploy:vercel": "vercel --prod",
     "predeploy": "npm run build:gh-pages && npm run export",
-    "export": "next export || echo 'Export included in build with Next.js 13+'"
+    "export": "next export || echo 'Export included in build with Next.js 13+'",
+    "audit:routes": "node scripts/generate-route-ui-audit.mjs",
+    "audit:design:classify": "node scripts/design-audit/classify-routes-design.mjs",
+    "audit:design": "npm run audit:routes && npm run audit:design:classify"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
