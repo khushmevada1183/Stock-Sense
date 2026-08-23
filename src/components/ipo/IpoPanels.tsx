@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import { insetPanelClass, panelShellClass, sectionEyebrowClass, sectionTitleClass } from '@/styles/design-tokens';
 import {
   daysUntil,
   formatCurrency,
@@ -87,11 +88,11 @@ export function PremiumSection({ id, eyebrow, title, description, action, childr
     <section id={id} className={cn('scroll-mt-28 space-y-5', className)}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-2">
-          {eyebrow ? <p className="premium-kicker">{eyebrow}</p> : null}
-          <h2 className="text-2xl font-semibold tracking-[-0.03em] text-[color:var(--app-text-1)] sm:text-[1.75rem]">
+          {eyebrow ? <p className={sectionEyebrowClass}>{eyebrow}</p> : null}
+          <h2 className={sectionTitleClass}>
             {title}
           </h2>
-          {description ? <p className="max-w-3xl premium-subtitle">{description}</p> : null}
+          {description ? <p className="max-w-3xl text-base leading-relaxed text-slate-600 dark:text-slate-400">{description}</p> : null}
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
@@ -111,7 +112,7 @@ export function IpoMetricCard({ label, value, hint, icon, tone = 'emerald', clas
           {icon}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="premium-label">{label}</p>
+          <p className={sectionEyebrowClass}>{label}</p>
           <p className="mt-2 text-[1.45rem] font-semibold tracking-[-0.03em] text-[color:var(--app-text-1)]">{value}</p>
           {hint ? <p className="mt-2 text-sm text-[color:var(--app-text-3)]">{hint}</p> : null}
         </div>
@@ -141,8 +142,8 @@ export function IpoEmptyState({ title, description, action, icon, className }: I
 
 function FactTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-3">
-      <p className="premium-label">{label}</p>
+    <div className={`${insetPanelClass} p-3`}>
+      <p className={sectionEyebrowClass}>{label}</p>
       <p className="mt-2 text-sm font-medium text-[color:var(--app-text-1)]">{value}</p>
     </div>
   );
@@ -205,7 +206,7 @@ export function IpoEntryCard({ ipo, variant = ipo.status, className }: IpoEntryC
             ];
 
   return (
-    <Card className={cn('group relative flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.12)]', className)}>
+    <Card className={cn(panelShellClass, 'group relative flex h-full flex-col overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(15,23,42,0.12)]', className)}>
       <div className={cn('absolute inset-x-0 top-0 h-1 bg-gradient-to-r', toneClass.gradient)} aria-hidden="true" />
 
       <CardHeader className="space-y-0 border-b border-[color:var(--app-border)]/60 p-5">

@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-23T09:41:50.772Z",
+  "generatedAt": "2026-08-23T09:50:19.349Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 4,
+    "implemented": 8,
     "partial": 19,
     "legacy": 17,
     "skipVisual": 3,
@@ -190,18 +190,22 @@
     {
       "route": "/ipo",
       "capturePath": "/ipo",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/ipo/page.tsx",
       "lineCount": 458
     },
     {
       "route": "/ipo/[ipoId]",
       "capturePath": "/ipo/sample-ipo",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/ipo/[ipoId]/page.tsx",
       "lineCount": 819
     },
@@ -229,18 +233,22 @@
     {
       "route": "/market",
       "capturePath": "/market",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/market/page.tsx",
       "lineCount": 1535
     },
     {
       "route": "/market/institutional",
       "capturePath": "/market/institutional",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/market/institutional/page.tsx",
       "lineCount": 203
     },

@@ -21,6 +21,7 @@ import {
 } from '@/lib/ipo';
 import { IpoEmptyState, IpoEntryCard, IpoMetricCard, PremiumSection } from '@/components/IPO/IpoPanels';
 import { cn } from '@/lib/utils';
+import { insetPanelClass, panelShellClass, sectionEyebrowClass, sectionTitleClass } from '@/styles/design-tokens';
 
 const IPO_NEWS = [
   { title: 'Mouri Tech refiles DRHP with SEBI', date: '8 May, 2:56 PM' },
@@ -130,29 +131,31 @@ export default function IpoPage() {
 
   if (loading) {
     return (
-      <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-          <div className="premium-shell h-[24rem] animate-pulse p-6 sm:p-8 lg:p-10" />
-          <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
-            <div className="premium-card h-28 animate-pulse" />
-            <div className="premium-card h-28 animate-pulse" />
-            <div className="premium-card h-28 animate-pulse" />
+      <main className="relative min-h-screen text-slate-950 dark:text-white">
+        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
+            <div className={`${panelShellClass} h-[24rem] animate-pulse p-6 sm:p-8 lg:p-10`} />
+            <div className="grid gap-4 sm:grid-cols-3 xl:grid-cols-1">
+              <div className={`${insetPanelClass} h-28 animate-pulse`} />
+              <div className={`${insetPanelClass} h-28 animate-pulse`} />
+              <div className={`${insetPanelClass} h-28 animate-pulse`} />
+            </div>
           </div>
-        </div>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <div className="premium-card h-80 animate-pulse lg:col-span-2" />
-          <div className="premium-card h-80 animate-pulse" />
+          <div className="grid gap-4 lg:grid-cols-3">
+            <div className={`${insetPanelClass} h-80 animate-pulse lg:col-span-2`} />
+            <div className={`${insetPanelClass} h-80 animate-pulse`} />
+          </div>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="relative min-h-screen text-slate-950 dark:text-white">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-        <div className="premium-shell relative overflow-hidden p-6 sm:p-8 lg:p-10">
+        <div className={`${panelShellClass} relative overflow-hidden p-6 sm:p-8 lg:p-10`}>
           <div className="absolute right-0 top-0 h-40 w-40 -translate-y-8 translate-x-12 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden="true" />
-          <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-8 translate-y-8 rounded-full bg-sky-500/10 blur-3xl" aria-hidden="true" />
 
           <div className="relative z-10 space-y-6">
             <div className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--app-text-3)]">
@@ -164,9 +167,9 @@ export default function IpoPage() {
             </div>
 
             <div className="max-w-3xl space-y-4">
-              <p className="premium-kicker">IPO Calendar</p>
-              <h1 className="premium-title">Initial Public Offerings</h1>
-              <p className="premium-subtitle">
+              <p className={sectionEyebrowClass}>IPO Calendar</p>
+              <h1 className={sectionTitleClass}>Initial Public Offerings</h1>
+              <p className="text-base leading-relaxed text-slate-600 dark:text-slate-400">
                 Track upcoming, live, and recently listed issues through the live market API. The calendar keeps the IPO flow restrained, technical, and easy to scan.
               </p>
             </div>
@@ -391,7 +394,7 @@ export default function IpoPage() {
       <section className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardDescription className="premium-kicker">Research</CardDescription>
+            <CardDescription className={sectionEyebrowClass}>Research</CardDescription>
             <CardTitle className="text-xl tracking-[-0.03em] text-[color:var(--app-text-1)]">IPO checklist</CardTitle>
           </CardHeader>
           <CardContent>
@@ -410,7 +413,7 @@ export default function IpoPage() {
 
         <Card>
           <CardHeader>
-            <CardDescription className="premium-kicker">Latest news</CardDescription>
+            <CardDescription className={sectionEyebrowClass}>Latest news</CardDescription>
             <CardTitle className="text-xl tracking-[-0.03em] text-[color:var(--app-text-1)]">IPO headlines</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -453,6 +456,7 @@ export default function IpoPage() {
           <ArrowRight className="h-4 w-4" />
         </Link>
       </section>
+      </div>
     </main>
   );
 }

@@ -29,6 +29,7 @@ import {
   type IpoCalendarSections,
 } from '@/lib/ipo';
 import { IpoEmptyState, IpoMetricCard, PremiumSection } from '@/components/IPO/IpoPanels';
+import { insetPanelClass, panelShellClass, sectionEyebrowClass, sectionTitleClass } from '@/styles/design-tokens';
 
 type SubscriptionRow = {
   label: string;
@@ -383,19 +384,21 @@ export default function IpoDetailPage() {
 
   if (loading) {
     return (
-      <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-          <div className="premium-shell h-[24rem] animate-pulse p-6 sm:p-8 lg:p-10" />
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
-            <div className="premium-card h-28 animate-pulse" />
-            <div className="premium-card h-28 animate-pulse" />
-            <div className="premium-card h-28 animate-pulse sm:col-span-2 xl:col-span-1" />
-            <div className="premium-card h-28 animate-pulse sm:col-span-2 xl:col-span-1" />
+      <main className="relative min-h-screen text-slate-950 dark:text-white">
+        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
+            <div className={`${panelShellClass} h-[24rem] animate-pulse p-6 sm:p-8 lg:p-10`} />
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-1">
+              <div className={`${insetPanelClass} h-28 animate-pulse`} />
+              <div className={`${insetPanelClass} h-28 animate-pulse`} />
+              <div className={`${insetPanelClass} h-28 animate-pulse sm:col-span-2 xl:col-span-1`} />
+              <div className={`${insetPanelClass} h-28 animate-pulse sm:col-span-2 xl:col-span-1`} />
+            </div>
           </div>
-        </div>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <div className="premium-card h-72 animate-pulse" />
-          <div className="premium-card h-72 animate-pulse" />
+          <div className="grid gap-4 lg:grid-cols-2">
+            <div className={`${insetPanelClass} h-72 animate-pulse`} />
+            <div className={`${insetPanelClass} h-72 animate-pulse`} />
+          </div>
         </div>
       </main>
     );
@@ -403,7 +406,8 @@ export default function IpoDetailPage() {
 
   if (!entry && error) {
     return (
-      <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+      <main className="relative min-h-screen text-slate-950 dark:text-white">
+        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
         <Card className="border-red-500/20 bg-red-500/[0.04]">
           <CardHeader>
             <CardTitle className="text-red-700 dark:text-red-200">IPO detail unavailable</CardTitle>
@@ -418,16 +422,17 @@ export default function IpoDetailPage() {
             </Button>
           </CardContent>
         </Card>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
+    <main className="relative min-h-screen text-slate-950 dark:text-white">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
-        <div className="premium-shell relative overflow-hidden p-6 sm:p-8 lg:p-10">
+        <div className={`${panelShellClass} relative overflow-hidden p-6 sm:p-8 lg:p-10`}>
           <div className="absolute right-0 top-0 h-40 w-40 -translate-y-8 translate-x-12 rounded-full bg-emerald-500/10 blur-3xl" aria-hidden="true" />
-          <div className="absolute bottom-0 left-0 h-32 w-32 -translate-x-8 translate-y-8 rounded-full bg-sky-500/10 blur-3xl" aria-hidden="true" />
 
           <div className="relative z-10 space-y-6">
             <div className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--app-text-3)]">
@@ -448,9 +453,9 @@ export default function IpoDetailPage() {
             </div>
 
             <div className="max-w-3xl space-y-4">
-              <p className="premium-kicker">IPO Detail</p>
-              <h1 className="premium-title">{entry?.companyName || ipoId}</h1>
-              <p className="premium-subtitle">
+              <p className={sectionEyebrowClass}>IPO Detail</p>
+              <h1 className={sectionTitleClass}>{entry?.companyName || ipoId}</h1>
+              <p className="text-base leading-relaxed text-slate-600 dark:text-slate-400">
                 {entry
                   ? `The live API resolves this issue into a compact detail view with offer timing, subscription snapshots, and GMP history.`
                   : 'The live API could not resolve this issue yet, but the page still retains the calendar context and retry controls.'}
@@ -515,9 +520,9 @@ export default function IpoDetailPage() {
       ) : null}
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-        <Card id="offer-details" className="premium-card">
+        <Card id="offer-details" className={insetPanelClass}>
           <CardHeader>
-            <CardDescription className="premium-kicker">Offer</CardDescription>
+            <CardDescription className={sectionEyebrowClass}>Offer</CardDescription>
             <CardTitle className="text-2xl tracking-[-0.03em] text-[color:var(--app-text-1)]">Issue overview</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 sm:grid-cols-2">
@@ -530,7 +535,7 @@ export default function IpoDetailPage() {
               ['Listing date', formatDateLabel(entry?.listingDate)],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4">
-                <p className="premium-label">{label}</p>
+                <p className={sectionEyebrowClass}>{label}</p>
                 <p className="mt-2 text-sm font-medium text-[color:var(--app-text-1)]">{value}</p>
               </div>
             ))}
@@ -545,18 +550,18 @@ export default function IpoDetailPage() {
 
         <Card>
           <CardHeader>
-            <CardDescription className="premium-kicker">Context</CardDescription>
+            <CardDescription className={sectionEyebrowClass}>Context</CardDescription>
             <CardTitle className="text-2xl tracking-[-0.03em] text-[color:var(--app-text-1)]">Calendar and documents</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4">
-                <p className="premium-label">Calendar buckets</p>
+                <p className={sectionEyebrowClass}>Calendar buckets</p>
                 <p className="mt-2 text-lg font-semibold tracking-[-0.03em] text-[color:var(--app-text-1)]">{overview.total}</p>
                 <p className="mt-1 text-xs text-[color:var(--app-text-3)]">Loaded from the live API</p>
               </div>
               <div className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-4">
-                <p className="premium-label">Days away</p>
+                <p className={sectionEyebrowClass}>Days away</p>
                 <p className="mt-2 text-lg font-semibold tracking-[-0.03em] text-[color:var(--app-text-1)]">
                   {daysUntil(entry?.listingDate) ?? daysUntil(entry?.biddingStartDate) ?? 'N/A'}
                 </p>
@@ -565,7 +570,7 @@ export default function IpoDetailPage() {
             </div>
 
             <div className="space-y-3">
-              <p className="premium-label">Documents</p>
+              <p className={sectionEyebrowClass}>Documents</p>
               <div className="flex flex-wrap gap-3">
                 {primaryDocumentUrl ? (
                   <Button asChild variant="outline">
@@ -603,7 +608,7 @@ export default function IpoDetailPage() {
           <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
             <Card>
               <CardHeader>
-                <CardDescription className="premium-kicker">Latest snapshot</CardDescription>
+                <CardDescription className={sectionEyebrowClass}>Latest snapshot</CardDescription>
                 <CardTitle className="text-xl tracking-[-0.03em] text-[color:var(--app-text-1)]">
                   {subscriptionHighlight?.label || 'Subscription summary'}
                 </CardTitle>
@@ -619,7 +624,7 @@ export default function IpoDetailPage() {
                         ['Total', formatRatio(subscriptionHighlight.total)],
                       ].map(([label, value]) => (
                         <div key={label} className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-3">
-                          <p className="premium-label">{label}</p>
+                          <p className={sectionEyebrowClass}>{label}</p>
                           <p className="mt-2 text-sm font-medium text-[color:var(--app-text-1)]">{value}</p>
                         </div>
                       ))}
@@ -687,7 +692,7 @@ export default function IpoDetailPage() {
           <div className="grid gap-4 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
             <Card>
               <CardHeader>
-                <CardDescription className="premium-kicker">Latest GMP</CardDescription>
+                <CardDescription className={sectionEyebrowClass}>Latest GMP</CardDescription>
                 <CardTitle className="text-xl tracking-[-0.03em] text-[color:var(--app-text-1)]">{gmpHighlight?.label || 'GMP summary'}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -706,7 +711,7 @@ export default function IpoDetailPage() {
                         ],
                       ].map(([label, value]) => (
                         <div key={label} className="rounded-2xl border border-[color:var(--app-border)] bg-[color:var(--app-surface-2)]/55 p-3">
-                          <p className="premium-label">{label}</p>
+                          <p className={sectionEyebrowClass}>{label}</p>
                           <p className="mt-2 text-sm font-medium text-[color:var(--app-text-1)]">{value}</p>
                         </div>
                       ))}
@@ -814,6 +819,7 @@ export default function IpoDetailPage() {
           </Link>
         </Button>
       </section>
+      </div>
     </main>
   );
 }
