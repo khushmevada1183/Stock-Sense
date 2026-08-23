@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect } from 'react';
 import { gsap } from 'gsap';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 interface MetricCardProps {
   title: string;
@@ -41,7 +42,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   }, [isAnimated, delay]);
 
   return (
-    <div ref={cardRef} className="group overflow-hidden rounded-[24px] border border-white/10 bg-slate-950/70 shadow-[0_20px_60px_rgba(2,6,23,0.35)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-400/20 hover:shadow-[0_28px_80px_rgba(2,6,23,0.5)]">
+    <div ref={cardRef} className={`group ${insetPanelClass} transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-400/20 hover:shadow-[0_28px_80px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_28px_80px_rgba(0,0,0,0.45)]`}>
       <div className="p-5">
         <div className="mb-4 flex items-start justify-between">
           <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-400">{title}</h3>
@@ -56,7 +57,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           </div>
         </div>
         <div className="flex flex-col">
-          <p className="text-2xl font-semibold tracking-tight text-white">{value}</p>
+          <p className="text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{value}</p>
           {change && (
             <div className={`flex items-center mt-1.5 text-sm font-medium ${
               isPositive ? 'text-emerald-400' : 'text-rose-400'

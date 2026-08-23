@@ -17,6 +17,7 @@ import {
   Scale
 } from 'lucide-react';
 import { getCorporateActionsLatest, getShareholdingLatest } from '@/api/api';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 interface ESGScore {
   category: 'Environmental' | 'Social' | 'Governance';
@@ -374,7 +375,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
         <CardContent>
           <div className="space-y-4">
             {initiatives.map((initiative, index) => (
-              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
                     {getCategoryIcon(initiative.category)}
@@ -417,7 +418,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
         <CardContent>
           <div className="space-y-4">
             {risks.map((risk, index) => (
-              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="font-semibold text-white">{risk.factor}</h3>
                   <div className="flex items-center gap-2">
@@ -457,8 +458,8 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
             {industryComparison.map((company, index) => (
               <div 
                 key={index} 
-                className={`glass-card rounded-xl p-4 border ${
-                  company.isCurrentCompany ? 'border-indigo-500' : 'border-gray-800/30'
+                className={`${insetPanelClass} p-4 border ${
+                  company.isCurrentCompany ? 'border-emerald-500/40' : 'border-transparent'
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">

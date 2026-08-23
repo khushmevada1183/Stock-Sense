@@ -43,6 +43,7 @@ import FutureGrowthPotential from '@/components/stocks/FutureGrowthPotential';
 import Overview from '@/components/stocks/Overview';
 import FundamentalAnalysis from '@/components/stocks/FundamentalAnalysis';
 import MetricCard from '@/components/stocks/MetricCard';
+import { panelShellClass, sectionTitleClass } from '@/styles/design-tokens';
 // Define types needed for financial data
 interface FinancialRatiosData {
   [key: string]: unknown;
@@ -631,8 +632,8 @@ export default function Page() {
   if (error) {
     return (
       <div className="min-h-screen p-8">
-        <div className="glass-card rounded-xl p-6 border-red-500/20 max-w-2xl mx-auto">
-          <div className="flex items-center text-red-400">
+        <div className={`${panelShellClass} p-6 border border-red-500/20 max-w-2xl mx-auto`}>
+          <div className="flex items-center text-red-500 dark:text-red-400">
             <Info className="h-5 w-5 mr-3 flex-shrink-0" />
             <p>{error}</p>
           </div>
@@ -813,22 +814,21 @@ export default function Page() {
   ];
   
   return (
-    <div className="min-h-screen relative">
-
-      <div className="stock-details-page min-h-screen text-white p-4 md:p-8 relative z-10">
+    <div className="relative min-h-screen text-slate-950 dark:text-white">
+      <div className="relative mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8">
         {/* Header Section */}
         <div ref={headerRef} className="mb-8">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-3xl md:text-4xl font-bold text-white">{companyName}</h1>
-                <span className="px-3 py-1 bg-neon-400/10 text-neon-400 border border-neon-400/20 rounded-full text-sm font-medium">
+                <h1 className={sectionTitleClass}>{companyName}</h1>
+                <span className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-full text-sm font-medium">
                   {displaySymbol}
                 </span>
               </div>
               {sectorLabel && sectorLabel !== 'N/A' && (
-                <p className="text-gray-500 mt-2 flex items-center">
-                  <Building className="h-4 w-4 mr-1.5 text-gray-600" />
+                <p className="text-slate-500 dark:text-slate-400 mt-2 flex items-center">
+                  <Building className="h-4 w-4 mr-1.5 text-slate-400" />
                   {sectorLabel}{peersIndustry && peersIndustry !== sectorLabel ? ` · ${peersIndustry}` : ''}
                 </p>
               )}
@@ -840,8 +840,8 @@ export default function Page() {
                 { label: 'BSE', value: bseCode },
                 { label: 'NSE', value: nseCode }
               ].map((id) => (
-                <span key={id.label} className="text-xs text-gray-600">
-                  <span className="text-gray-500">{id.label}:</span> {id.value || 'N/A'}
+                <span key={id.label} className="text-xs text-slate-500 dark:text-slate-400">
+                  <span className="text-slate-400">{id.label}:</span> {id.value || 'N/A'}
                 </span>
               ))}
             </div>
@@ -889,23 +889,23 @@ export default function Page() {
         
         {/* 52-Week Range + Trading Info */}
         {(yearHigh || yearLow) && (
-          <div ref={rangeRef} className="glass-card rounded-xl p-6 mb-8">
+          <div ref={rangeRef} className={`${panelShellClass} p-6 mb-8`}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-base font-semibold text-gray-300">52-Week Range</h2>
-              <div className="flex gap-4 text-xs text-gray-500">
-                {prevClose && <span>Prev Close: <span className="text-gray-300 font-mono">₹{typeof prevClose === 'number' ? prevClose.toLocaleString('en-IN', {minimumFractionDigits:2}) : prevClose}</span></span>}
-                {openPrice && <span>Open: <span className="text-gray-300 font-mono">₹{typeof openPrice === 'number' ? openPrice.toLocaleString('en-IN', {minimumFractionDigits:2}) : openPrice}</span></span>}
-                {stock?.priceBand && stock.priceBand !== 'N/A' && <span>Band: <span className="text-gray-300">{stock.priceBand}</span></span>}
+              <h2 className="text-base font-semibold text-slate-700 dark:text-slate-300">52-Week Range</h2>
+              <div className="flex gap-4 text-xs text-slate-500">
+                {prevClose && <span>Prev Close: <span className="text-slate-700 dark:text-slate-300 font-mono">₹{typeof prevClose === 'number' ? prevClose.toLocaleString('en-IN', {minimumFractionDigits:2}) : prevClose}</span></span>}
+                {openPrice && <span>Open: <span className="text-slate-700 dark:text-slate-300 font-mono">₹{typeof openPrice === 'number' ? openPrice.toLocaleString('en-IN', {minimumFractionDigits:2}) : openPrice}</span></span>}
+                {stock?.priceBand && stock.priceBand !== 'N/A' && <span>Band: <span className="text-slate-700 dark:text-slate-300">{stock.priceBand}</span></span>}
               </div>
             </div>
             <div className="flex items-center justify-between">
               <div className="text-left">
-                <div className="text-gray-400 font-mono text-sm">₹{yearLow?.toLocaleString('en-IN') || 'N/A'}</div>
-                <div className="text-[10px] text-gray-600">{stock?.yearLowDate}</div>
+                <div className="text-slate-500 dark:text-slate-400 font-mono text-sm">₹{yearLow?.toLocaleString('en-IN') || 'N/A'}</div>
+                <div className="text-[10px] text-slate-400">{stock?.yearLowDate}</div>
               </div>
-              <div className="h-2 bg-gray-800/60 rounded-full flex-grow mx-4 relative range-slider">
+              <div className="h-2 bg-slate-200/80 dark:bg-slate-800/60 rounded-full flex-grow mx-4 relative range-slider">
                 <div 
-                  className="h-full bg-gradient-to-r from-neon-400/70 to-cyan-400/50 rounded-full" 
+                  className="h-full bg-gradient-to-r from-emerald-500/70 to-emerald-400/50 rounded-full" 
                   style={{ 
                     width: `${Math.min(100, Math.max(0, 
                       (((stock?.lastPrice || 0) - (yearLow || 0)) / 
@@ -914,7 +914,7 @@ export default function Page() {
                   }}
                 />
                 <div 
-                  className="absolute h-5 w-5 bg-neon-400 -top-1.5 rounded-full transform -translate-x-1/2 shadow-neon-sm range-dot"
+                  className="absolute h-5 w-5 bg-emerald-500 -top-1.5 rounded-full transform -translate-x-1/2 shadow-sm range-dot"
                   style={{ 
                     left: `${Math.min(100, Math.max(0, 
                       (((stock?.lastPrice || 0) - (yearLow || 0)) / 
@@ -924,30 +924,30 @@ export default function Page() {
                 />
               </div>
               <div className="text-right">
-                <div className="text-gray-400 font-mono text-sm">₹{yearHigh?.toLocaleString('en-IN') || 'N/A'}</div>
-                <div className="text-[10px] text-gray-600">{stock?.yearHighDate}</div>
+                <div className="text-slate-500 dark:text-slate-400 font-mono text-sm">₹{yearHigh?.toLocaleString('en-IN') || 'N/A'}</div>
+                <div className="text-[10px] text-slate-400">{stock?.yearHighDate}</div>
               </div>
             </div>
             {(return3m != null || return12m != null || avgVolume20d != null) && (
-              <div className="mt-4 pt-3 border-t border-gray-800/30 flex flex-wrap gap-6 text-xs text-gray-500">
+              <div className="mt-4 pt-3 border-t border-slate-200/70 dark:border-white/10 flex flex-wrap gap-6 text-xs text-slate-500">
                 {return3m != null && (
-                  <span>3M Return: <span className={return3m >= 0 ? 'text-green-400' : 'text-red-400'}>{return3m.toFixed(2)}%</span></span>
+                  <span>3M Return: <span className={return3m >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>{return3m.toFixed(2)}%</span></span>
                 )}
                 {return12m != null && (
-                  <span>12M Return: <span className={return12m >= 0 ? 'text-green-400' : 'text-red-400'}>{return12m.toFixed(2)}%</span></span>
+                  <span>12M Return: <span className={return12m >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}>{return12m.toFixed(2)}%</span></span>
                 )}
                 {avgVolume20d != null && (
-                  <span>Avg Volume (20d): <span className="text-gray-300">{avgVolume20d.toLocaleString('en-IN')}</span></span>
+                  <span>Avg Volume (20d): <span className="text-slate-700 dark:text-slate-300">{avgVolume20d.toLocaleString('en-IN')}</span></span>
                 )}
               </div>
             )}
             {/* Circuit Limits */}
             {(upperCircuit !== 'N/A' || lowerCircuit !== 'N/A') && (
-              <div className="mt-4 pt-3 border-t border-gray-800/30 flex gap-6 text-xs">
-                <span className="text-gray-500">Upper Circuit: <span className="text-green-400 font-mono">₹{upperCircuit}</span></span>
-                <span className="text-gray-500">Lower Circuit: <span className="text-red-400 font-mono">₹{lowerCircuit}</span></span>
+              <div className="mt-4 pt-3 border-t border-slate-200/70 dark:border-white/10 flex gap-6 text-xs">
+                <span className="text-slate-500">Upper Circuit: <span className="text-emerald-600 dark:text-emerald-400 font-mono">₹{upperCircuit}</span></span>
+                <span className="text-slate-500">Lower Circuit: <span className="text-rose-600 dark:text-rose-400 font-mono">₹{lowerCircuit}</span></span>
                 {stock?.listingDate && stock.listingDate !== 'N/A' && (
-                  <span className="text-gray-500 ml-auto">Listed: <span className="text-gray-300">{stock.listingDate}</span></span>
+                  <span className="text-slate-500 ml-auto">Listed: <span className="text-slate-700 dark:text-slate-300">{stock.listingDate}</span></span>
                 )}
               </div>
             )}
@@ -960,7 +960,7 @@ export default function Page() {
           <div className="space-y-3" role="tablist" aria-label="Stock detail analysis tabs">
             {/* Primary Tabs Row */}
             <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1">
-              <span className="text-[10px] uppercase tracking-widest text-gray-600 font-semibold mr-1 flex-shrink-0 hidden lg:block">Core</span>
+              <span className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mr-1 flex-shrink-0 hidden lg:block">Core</span>
               {tabs.slice(0, 3).map((tab) => (
                 <button
                   key={tab.id}
@@ -973,26 +973,26 @@ export default function Page() {
                   tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
-                      : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/30 border border-transparent'
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 border border-transparent'
                   }`}
                 >
                   <span className={`transition-all duration-300 ${
                     activeTab === tab.id 
-                      ? 'text-neon-400 drop-shadow-[0_0_6px_rgba(57,255,20,0.5)]' 
-                      : 'text-gray-600 group-hover:text-gray-400'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
                   }`}>
                     {tab.icon}
                   </span>
                   <span>{tab.label}</span>
                   {activeTab === tab.id && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-neon-400 animate-pulse shadow-[0_0_6px_rgba(57,255,20,0.6)]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   )}
                 </button>
               ))}
 
-              <div className="w-px h-6 bg-gray-800/40 mx-1 flex-shrink-0 hidden lg:block" />
-              <span className="text-[10px] uppercase tracking-widest text-gray-600 font-semibold mr-1 flex-shrink-0 hidden lg:block">Analysis</span>
+              <div className="w-px h-6 bg-slate-200/80 dark:bg-white/10 mx-1 flex-shrink-0 hidden lg:block" />
+              <span className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mr-1 flex-shrink-0 hidden lg:block">Analysis</span>
               {tabs.slice(3, 6).map((tab) => (
                 <button
                   key={tab.id}
@@ -1005,20 +1005,20 @@ export default function Page() {
                   tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
-                      : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/30 border border-transparent'
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 border border-transparent'
                   }`}
                 >
                   <span className={`transition-all duration-300 ${
                     activeTab === tab.id 
-                      ? 'text-neon-400 drop-shadow-[0_0_6px_rgba(57,255,20,0.5)]' 
-                      : 'text-gray-600 group-hover:text-gray-400'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
                   }`}>
                     {tab.icon}
                   </span>
                   <span>{tab.label}</span>
                   {activeTab === tab.id && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-neon-400 animate-pulse shadow-[0_0_6px_rgba(57,255,20,0.6)]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   )}
                 </button>
               ))}
@@ -1026,7 +1026,7 @@ export default function Page() {
 
             {/* Secondary Tabs Row */}
             <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1">
-              <span className="text-[10px] uppercase tracking-widest text-gray-600 font-semibold mr-1 flex-shrink-0 hidden lg:block">Research</span>
+              <span className="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mr-1 flex-shrink-0 hidden lg:block">Research</span>
               {tabs.slice(6).map((tab) => (
                 <button
                   key={tab.id}
@@ -1039,20 +1039,20 @@ export default function Page() {
                   tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-neon-400/10 text-neon-400 shadow-[0_0_20px_rgba(57,255,20,0.08)] border border-neon-400/20'
-                      : 'text-gray-500 hover:text-gray-300 hover:bg-gray-800/30 border border-transparent'
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm'
+                      : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 border border-transparent'
                   }`}
                 >
                   <span className={`transition-all duration-300 ${
                     activeTab === tab.id 
-                      ? 'text-neon-400 drop-shadow-[0_0_6px_rgba(57,255,20,0.5)]' 
-                      : 'text-gray-600 group-hover:text-gray-400'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
                   }`}>
                     {tab.icon}
                   </span>
                   <span>{tab.label}</span>
                   {activeTab === tab.id && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-neon-400 animate-pulse shadow-[0_0_6px_rgba(57,255,20,0.6)]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   )}
                 </button>
               ))}
@@ -1061,15 +1061,15 @@ export default function Page() {
         </div>
 
         {/* Tab Content Panel */}
-        <div className="glass-card rounded-2xl overflow-hidden">
+        <div className={`${panelShellClass} overflow-hidden`}>
           {/* Active tab header bar */}
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-800/20">
-            <span className="text-neon-400">
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200/70 dark:border-white/10">
+            <span className="text-emerald-600 dark:text-emerald-400">
               {tabs.find(t => t.id === activeTab)?.icon}
             </span>
             <div>
-              <h2 className="text-white font-semibold text-base">{tabs.find(t => t.id === activeTab)?.label}</h2>
-              <p className="text-gray-600 text-xs">{tabs.find(t => t.id === activeTab)?.description}</p>
+              <h2 className="text-slate-950 dark:text-white font-semibold text-base">{tabs.find(t => t.id === activeTab)?.label}</h2>
+              <p className="text-slate-500 dark:text-slate-400 text-xs">{tabs.find(t => t.id === activeTab)?.description}</p>
             </div>
           </div>
 

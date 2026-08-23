@@ -16,6 +16,7 @@ import {
   Brain
 } from 'lucide-react';
 import { getStockFundamental, getStockSentiment } from '@/api/api';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 interface GrowthDriver {
   category: 'Revenue' | 'Market Expansion' | 'Innovation' | 'Efficiency' | 'Strategic';
@@ -392,10 +393,10 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
         <CardContent>
           <div className="space-y-4">
             {growthDrivers.map((driver, index) => (
-              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 glass-card rounded-xl">
+                    <div className={`p-2 ${insetPanelClass}`}>
                       {getCategoryIcon(driver.category)}
                     </div>
                     <div>
@@ -513,7 +514,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
           <CardContent>
             <div className="space-y-4">
               {marketOpportunities.map((opportunity, index) => (
-                <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
+                <div key={index} className={`${insetPanelClass} p-4`}>
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-semibold text-white">{opportunity.market}</h3>
                     <span className="text-lg font-bold text-purple-400">
@@ -576,7 +577,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
           <CardContent>
             <div className="space-y-4">
               {innovations.map((innovation, index) => (
-                <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
+                <div key={index} className={`${insetPanelClass} p-4`}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
                       {getCategoryIcon(innovation.category)}
@@ -621,7 +622,7 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {competitiveAdvantages.map((advantage, index) => (
-              <div key={index} className="glass-card rounded-xl p-4 border border-gray-800/30">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="mb-3">
                   <h3 className="font-semibold text-white mb-1">{advantage.factor}</h3>
                   <div className="flex items-center gap-2">

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { getStockSentiment } from '@/api/api';
+import { insetPanelClass } from '@/styles/design-tokens';
 import { 
   Heart,
   ThumbsUp, 
@@ -249,35 +250,35 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
             {/* Sentiment Breakdown */}
                         {/* Sentiment Breakdown */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
+              <div className={`${insetPanelClass} p-4 text-center`}>
                 <div className="flex items-center justify-center mb-2">
                   <MessageSquare className="w-5 h-5 text-cyan-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.social}</div>
                 <div className="text-sm text-gray-400">Social Media</div>
               </div>
-              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
+              <div className={`${insetPanelClass} p-4 text-center`}>
                 <div className="flex items-center justify-center mb-2">
                   <Newspaper className="w-5 h-5 text-green-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.news}</div>
                 <div className="text-sm text-gray-400">News Articles</div>
               </div>
-              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
+              <div className={`${insetPanelClass} p-4 text-center`}>
                 <div className="flex items-center justify-center mb-2">
                   <Users className="w-5 h-5 text-purple-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.analyst}</div>
                 <div className="text-sm text-gray-400">Analyst Reports</div>
               </div>
-              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
+              <div className={`${insetPanelClass} p-4 text-center`}>
                 <div className="flex items-center justify-center mb-2">
                   <MessageCircle className="w-5 h-5 text-orange-400" />
                 </div>
                 <div className="text-xl font-bold text-white">{sentimentData.forum}</div>
                 <div className="text-sm text-gray-400">Forums</div>
               </div>
-              <div className="glass-card rounded-xl p-4 text-center border border-gray-800/30">
+              <div className={`${insetPanelClass} p-4 text-center`}>
                 <div className="flex items-center justify-center mb-2">
                   <Star className="w-5 h-5 text-yellow-400" />
                 </div>
@@ -300,7 +301,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
         <CardContent>
           <div className="space-y-4">
             {sources.map((source, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-2">
                     <h4 className="text-white font-medium">{source.source}</h4>
@@ -352,7 +353,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {marketMood.map((indicator, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium">{indicator.name}</h4>
                   {getTrendIcon(indicator.trend)}

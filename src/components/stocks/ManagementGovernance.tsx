@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { getStockDetails } from '@/api/api';
+import { insetPanelClass } from '@/styles/design-tokens';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Users, 
@@ -260,7 +261,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {governanceMetrics.map((metric, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium text-sm">{metric.category}</h4>
                   <div className={`px-2 py-1 rounded text-xs flex items-center gap-1 ${getStatusColor(metric.status)}`}>
@@ -309,7 +310,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
         <CardContent>
           <div className="space-y-3">
             {compliance.map((item, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium">{item.area}</h4>
                   <div className="flex items-center gap-2">
@@ -348,7 +349,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
         <CardContent>
           <div className="space-y-3">
             {corporateActions.map((action, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <h4 className="text-white font-medium">{action.type}</h4>
@@ -379,19 +380,19 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="glass-card rounded-xl p-4 text-center">
+            <div className={`${insetPanelClass} p-4 text-center`}>
               <div className="text-green-400 text-2xl font-bold mb-1">18.5%</div>
               <div className="text-gray-400 text-sm">ROE (Return on Equity)</div>
               <div className="text-xs text-gray-500 mt-1">Above peer average</div>
             </div>
             
-            <div className="glass-card rounded-xl p-4 text-center">
+            <div className={`${insetPanelClass} p-4 text-center`}>
               <div className="text-cyan-400 text-2xl font-bold mb-1">24.2%</div>
               <div className="text-gray-400 text-sm">ROIC (Return on Capital)</div>
               <div className="text-xs text-gray-500 mt-1">Efficient capital use</div>
             </div>
             
-            <div className="glass-card rounded-xl p-4 text-center">
+            <div className={`${insetPanelClass} p-4 text-center`}>
               <div className="text-yellow-400 text-2xl font-bold mb-1">1.8%</div>
               <div className="text-gray-400 text-sm">Employee Turnover</div>
               <div className="text-xs text-gray-500 mt-1">Below industry avg</div>

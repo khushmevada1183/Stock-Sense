@@ -17,6 +17,7 @@ import {
   getMutualFundsTopHolders,
   getShareholdingLatest,
 } from '@/api/api';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 interface InstitutionalHolding {
   institution: string;
@@ -261,7 +262,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {holdings.map((holding, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium text-sm">{holding.institution}</h4>
                   <div className={`px-2 py-1 rounded text-xs ${getTypeColor(holding.type)}`}>
@@ -304,7 +305,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
         <CardContent>
           <div className="space-y-4">
             {flows.map((flow, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-3">
                   <div className="text-white font-medium">
                     {new Date(flow.date).toLocaleDateString('en-US', { 
@@ -418,7 +419,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* FII vs DII Comparison */}
-            <div className="glass-card rounded-xl p-4">
+            <div className={`${insetPanelClass} p-4`}>
               <h4 className="text-white font-medium mb-4">FII vs DII Holding Pattern</h4>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
@@ -443,7 +444,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
             </div>
 
             {/* Recent Trends */}
-            <div className="glass-card rounded-xl p-4">
+            <div className={`${insetPanelClass} p-4`}>
               <h4 className="text-white font-medium mb-4">Recent Trends</h4>
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-sm">

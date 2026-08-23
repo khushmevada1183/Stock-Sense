@@ -13,6 +13,7 @@ import {
   Minus
 } from 'lucide-react';
 import { getFiiDiiLatest, getFiiDiiCumulative } from '@/api/api';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 interface MacroIndicator {
   name: string;
@@ -305,7 +306,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
           ) : (
           <div className="space-y-4">
             {policyUpdates.map((update, index) => (
-              <div key={index} className="glass-card rounded-xl p-4">
+              <div key={index} className={`${insetPanelClass} p-4`}>
                 <div className="flex justify-between items-start mb-2">
                   <h4 className="text-white font-medium">{update.title}</h4>
                   <div className="flex items-center gap-2">

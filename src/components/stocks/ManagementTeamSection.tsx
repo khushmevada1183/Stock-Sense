@@ -7,6 +7,7 @@ import {
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
+import { insetPanelClass } from '@/styles/design-tokens';
 
 interface Officer {
   firstName: string;
@@ -52,7 +53,7 @@ const OfficerCard = ({ officer }: { officer: Officer }) => {
   };
   
   return (
-    <div className="bg-gray-900/90 backdrop-blur-lg dark:glass-card rounded-xl shadow-sm p-4 hover:shadow-md transition-shadow">
+    <div className={`${insetPanelClass} p-4 transition-shadow hover:shadow-md`}>
       <div className="flex items-center mb-3">
         <div className="bg-gray-200 dark:bg-gray-800/60 rounded shimmer-full h-12 w-12 flex items-center justify-center mr-3">
           <span className="font-medium text-lg">
