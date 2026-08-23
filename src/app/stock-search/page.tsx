@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Clock } from 'lucide-react';
 import EnhancedStockCard from '@/components/stocks/EnhancedStockCard';
 import SearchBar from '@/app/components/SearchBar';
 import { useRouter } from 'next/navigation';
 import { getTrendingStocks } from '@/api/api';
+import { panelShellClass, sectionTitleClass, sectionEyebrowClass } from '@/styles/design-tokens';
 
 interface PopularStock {
   ticker_id?: string;
@@ -74,7 +74,6 @@ const StockSearchPage: React.FC = () => {
     void loadPopular();
   }, []);
 
-  // This function will be passed to the SearchBar component
   const handleSearchComplete = (stockSymbol: string) => {
     if (stockSymbol) {
       router.push(`/stocks/${stockSymbol}`);
@@ -87,73 +86,65 @@ const StockSearchPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            🔍 Stock Search
+    <div className="relative min-h-screen text-slate-950 dark:text-white">
+      <div className="relative mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8">
+        <div className="mb-8 text-center">
+          <p className={sectionEyebrowClass}>Discover</p>
+          <h1 className={`${sectionTitleClass} mb-4`}>
+            Stock Search
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-lg text-slate-600 dark:text-slate-400">
             Search for stocks by company name, ticker symbol, or NSE code
           </p>
         </div>
 
-        {/* Search Form - Using the unified SearchBar component */}
-        <Card className="mb-8 bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
-          <CardContent className="p-6">
-            <SearchBar showDetailsInline={false} compact={false} onSearchComplete={handleSearchComplete} />
-          </CardContent>
-        </Card>
+        <div className={`${panelShellClass} mb-8 p-6`}>
+          <SearchBar showDetailsInline={false} compact={false} onSearchComplete={handleSearchComplete} />
+        </div>
 
-        {/* Search History */}
         {searchHistory.length > 0 && (
-          <Card className="mb-8 bg-gray-900/90 backdrop-blur-lg border border-gray-700/50">
-            <CardHeader>
-              <div className="flex justify-between items-center">
-                <CardTitle className="text-white flex items-center gap-2">
-                  <Clock className="w-5 h-5" />
-                  Recent Searches
-                </CardTitle>
-                <button
-                  onClick={clearHistory}
-                  className="inline-flex min-h-[44px] items-center px-2 text-sm text-gray-400 hover:text-gray-300"
-                >
-                  Clear History
-                </button>
-              </div>
-            </CardHeader>
-            <CardContent>
+          <div className={`${panelShellClass} mb-8`}>
+            <div className="flex items-center justify-between border-b border-slate-200/70 px-6 py-4 dark:border-white/10">
+              <h2 className="flex items-center gap-2 text-lg font-semibold text-slate-950 dark:text-white">
+                <Clock className="h-5 w-5" />
+                Recent Searches
+              </h2>
+              <button
+                onClick={clearHistory}
+                className="inline-flex min-h-[44px] items-center px-2 text-sm text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200"
+              >
+                Clear History
+              </button>
+            </div>
+            <div className="p-6">
               <div className="flex flex-wrap gap-2">
                 {searchHistory.map((query, index) => (
                   <button
                     key={index}
                     onClick={() => {
-                      // Navigate to stock details or trigger new search
                       router.push(`/stocks/${query}`);
                     }}
-                    className="px-3 py-2 min-h-[44px] bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 rounded-full text-sm transition-colors"
+                    className="min-h-[44px] rounded-full border border-slate-200/70 bg-white/75 px-3 py-2 text-sm text-slate-700 transition-colors hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:bg-white/10"
                   >
                     {query}
                   </button>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
-        {/* Popular/Trending Stocks */}
         {popularStocks.length > 0 && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-              <TrendingUp className="w-6 h-6 text-green-400" />
+            <h2 className="mb-6 flex items-center gap-2 text-2xl font-semibold text-slate-950 dark:text-white">
+              <TrendingUp className="h-6 w-6 text-emerald-600 dark:text-green-400" />
               Popular Stocks
             </h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
               {popularStocks.map((stock, index) => (
-                <EnhancedStockCard 
-                  key={`popular-${stock.ticker_id || index}`} 
-                  stock={stock} 
+                <EnhancedStockCard
+                  key={`popular-${stock.ticker_id || index}`}
+                  stock={stock}
                   showAllData={true}
                   price_change_percentage={toNumber(stock.percent_change ?? stock.changePercent)}
                 />

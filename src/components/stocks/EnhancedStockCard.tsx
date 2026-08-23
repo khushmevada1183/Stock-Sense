@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { Volume, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { panelShellClass, insetPanelClass } from '@/styles/design-tokens';
 
 type NumericInput = number | string | undefined;
 
@@ -98,21 +99,21 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
   };
 
   return (
-    <div className="group h-fit overflow-hidden rounded-[28px] border border-white/10 bg-slate-950/70 p-5 shadow-[0_24px_70px_rgba(2,6,23,0.38)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:border-emerald-400/20 hover:shadow-[0_30px_90px_rgba(2,6,23,0.52)]">
+    <div className={`group h-fit overflow-hidden ${panelShellClass} p-5 transition-all duration-300 hover:-translate-y-0.5`}>
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 min-w-0">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 font-[var(--font-roboto-mono)] text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-slate-300">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/75 px-2.5 py-1 font-[var(--font-roboto-mono)] text-[0.62rem] font-semibold uppercase tracking-[0.22em] text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300">
             Live stock
           </div>
-          <h3 className="truncate text-base font-semibold tracking-tight text-white">
+          <h3 className="truncate text-base font-semibold tracking-tight text-slate-950 dark:text-white">
             {stock.company_name || stock.displayName || stock.name || 'Unknown Company'}
           </h3>
           <div className="mt-1 flex items-center gap-2">
-            <span className="text-sm text-slate-400">
+            <span className="text-sm text-slate-600 dark:text-slate-400">
               {stock.nseCode || stock.ric?.split('.')[0] || stock.symbol || stock.ticker_id}
             </span>
             {(stock.exchange_type || stock.exchangeType) && (
-              <span className="rounded-full border border-emerald-400/15 bg-emerald-400/10 px-2 py-0.5 text-xs font-medium text-emerald-300">
+              <span className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:text-emerald-300">
                 {stock.exchange_type || stock.exchangeType}
               </span>
             )}
@@ -120,7 +121,7 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
         </div>
         
         <div className="text-right">
-          <div className="text-lg font-semibold tracking-tight text-white">
+          <div className="text-lg font-semibold tracking-tight text-slate-950 dark:text-white">
             {formatCurrency(stock.price || stock.current_price)}
           </div>
           <div className={`flex items-center justify-end gap-1 text-sm font-medium ${
@@ -132,17 +133,17 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
         </div>
       </div>
 
-      <div className="mt-5 space-y-4 border-t border-white/10 pt-5">
+      <div className="mt-5 space-y-4 border-t border-slate-200/70 pt-5 dark:border-white/10">
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Day Range</div>
-            <div className="truncate text-slate-100">
+            <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-600 dark:text-slate-400">Day Range</div>
+            <div className="truncate text-slate-700 dark:text-slate-100">
               {formatCurrency(stock.low)} - {formatCurrency(stock.high)}
             </div>
           </div>
           <div>
-            <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Volume</div>
-            <div className="flex items-center gap-1 text-slate-100">
+            <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-600 dark:text-slate-400">Volume</div>
+            <div className="flex items-center gap-1 text-slate-700 dark:text-slate-100">
               <Volume className="h-3 w-3 text-emerald-400" />
               {formatVolume(stock.volume)}
             </div>
@@ -159,14 +160,14 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
 
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-2 text-sm text-slate-300 transition-colors hover:border-white/15 hover:bg-white/10 hover:text-white"
+          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl border border-slate-200/70 bg-white/75 py-2 text-sm text-slate-600 transition-colors hover:border-slate-300 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-300 dark:hover:border-white/15 dark:hover:bg-white/10 dark:hover:text-white"
         >
           {isExpanded ? 'Show Less' : 'Show More'}
           {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
 
         {isExpanded && (
-          <div className="space-y-4 border-t border-white/10 pt-4">
+          <div className="space-y-4 border-t border-slate-200/70 pt-4 dark:border-white/10">
             {(stock.low_circuit_limit || stock.up_circuit_limit) && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -214,13 +215,13 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Open</div>
-                  <div className="text-sm text-slate-100">
+                  <div className="text-sm text-slate-700 dark:text-slate-100">
                     {formatCurrency(stock.open)}
                   </div>
                 </div>
                 <div>
                   <div className="mb-1 text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Previous Close</div>
-                  <div className="text-sm text-slate-100">
+                  <div className="text-sm text-slate-700 dark:text-slate-100">
                     {formatCurrency(stock.close)}
                   </div>
                 </div>
@@ -259,7 +260,7 @@ const EnhancedStockCard: React.FC<EnhancedStockCardProps> = ({ stock, price_chan
             )}
 
             {stock.description && (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-3 text-xs leading-relaxed text-slate-300">
+              <div className={`${insetPanelClass} p-3 text-xs leading-relaxed text-slate-600 dark:text-slate-300`}>
                 <Info className="mr-1 inline h-3 w-3 text-emerald-400" />
                 {stock.description}
               </div>

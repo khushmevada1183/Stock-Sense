@@ -12,6 +12,7 @@ import { logger } from '@/lib/logger';
 import { animateStocksDashboard } from '@/animations/pages/stocksAnimations';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import CursiveLoader from '@/components/ui/CursiveLoader';
+import { panelShellClass, insetPanelClass, sectionTitleClass, sectionEyebrowClass } from '@/styles/design-tokens';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -149,22 +150,8 @@ interface StocksSurfaceCardProps {
   className?: string;
 }
 
-const STOCKS_SURFACE_CARD_CLASS = [
-  'rounded-[28px]',
-  'border',
-  'border-white/10',
-  'bg-slate-950/70',
-  'shadow-[0_24px_80px_rgba(2,6,23,0.42)]',
-  'backdrop-blur-xl',
-  'transition-all',
-  'duration-300',
-  'hover:-translate-y-0.5',
-  'hover:border-emerald-400/20',
-  'hover:shadow-[0_30px_90px_rgba(2,6,23,0.58)]',
-].join(' ');
-
 const StocksSurfaceCard = ({ children, className = '' }: StocksSurfaceCardProps) => (
-  <div className={`${STOCKS_SURFACE_CARD_CLASS} ${className}`}>
+  <div className={`${panelShellClass} ${className}`}>
     {children}
   </div>
 );
@@ -1168,33 +1155,35 @@ export default function StocksIndexPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Stock Market Dashboard</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl p-6 animate-pulse">
-              <div className="h-6 bg-gray-700 rounded w-24 mb-4"></div>
-              <div className="h-10 bg-gray-700 rounded w-32 mb-2"></div>
-              <div className="h-4 bg-gray-700 rounded w-20"></div>
+      <div className="relative min-h-screen text-slate-950 dark:text-white">
+        <div className="relative mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8">
+          <h1 className={`${sectionTitleClass} mb-6`}>Stock Market Dashboard</h1>
+
+          <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className={`${panelShellClass} animate-pulse p-6`}>
+                <div className={`${insetPanelClass} mb-4 h-6 w-24`}></div>
+                <div className={`${insetPanelClass} mb-2 h-10 w-32`}></div>
+                <div className={`${insetPanelClass} h-4 w-20`}></div>
               </div>
             ))}
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-          <div className="lg:col-span-2 bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl p-6 h-72 animate-pulse">
-            <div className="h-6 bg-gray-700 rounded w-32 mb-4"></div>
-            <div className="h-48 bg-gray-700 rounded"></div>
           </div>
-          
-          <div className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl p-6 h-72 animate-pulse">
-            <div className="h-6 bg-gray-700 rounded w-32 mb-4"></div>
-            <div className="h-48 bg-gray-700 rounded"></div>
-          </div>
-        </div>
 
-        <div className="flex items-center justify-center py-6">
-          <CursiveLoader />
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
+            <div className={`${panelShellClass} h-72 animate-pulse p-6 lg:col-span-2`}>
+              <div className={`${insetPanelClass} mb-4 h-6 w-32`}></div>
+              <div className={`${insetPanelClass} h-48`}></div>
+            </div>
+
+            <div className={`${panelShellClass} h-72 animate-pulse p-6`}>
+              <div className={`${insetPanelClass} mb-4 h-6 w-32`}></div>
+              <div className={`${insetPanelClass} h-48`}></div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center py-6">
+            <CursiveLoader />
+          </div>
         </div>
       </div>
     );
@@ -1202,13 +1191,15 @@ export default function StocksIndexPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Stock Market Dashboard</h1>
-        
-        <div className="bg-red-900/30 border border-red-800 rounded-lg p-4 text-red-400">
-          <div className="flex items-center">
-            <AlertTriangle className="h-5 w-5 mr-2" />
-          {error}
+      <div className="relative min-h-screen text-slate-950 dark:text-white">
+        <div className="relative mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8">
+          <h1 className={`${sectionTitleClass} mb-6`}>Stock Market Dashboard</h1>
+
+          <div className={`${panelShellClass} border-red-500/20 p-4 text-red-600 dark:text-red-400`}>
+            <div className="flex items-center">
+              <AlertTriangle className="mr-2 h-5 w-5" />
+              {error}
+            </div>
           </div>
         </div>
       </div>
@@ -1216,34 +1207,33 @@ export default function StocksIndexPage() {
   }
 
   return (
-    <div ref={dashboardRef} className="min-h-screen">
-      {/* Grid overlay for entire page */}
-      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
-      
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative z-10">
-      <div ref={headerRef} className="mb-10 overflow-hidden rounded-[32px] border border-white/10 bg-white/5 p-6 shadow-[0_24px_80px_rgba(2,6,23,0.35)] backdrop-blur-xl lg:p-8">
+    <div ref={dashboardRef} className="relative min-h-screen text-slate-950 dark:text-white">
+      <div className="pointer-events-none fixed inset-0 z-0 hidden bg-grid-white/[0.02] bg-[length:50px_50px] dark:block"></div>
+
+      <div className="relative z-10 mx-auto w-full max-w-[1400px] px-4 py-6 sm:px-6 sm:py-8">
+      <div ref={headerRef} className={`${panelShellClass} mb-10 overflow-hidden p-6 lg:p-8`}>
         <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           <div className="max-w-3xl text-start">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 font-[var(--font-roboto-mono)] text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-emerald-300">
+            <p className={`${sectionEyebrowClass} mb-4`}>
               Live market intelligence
-            </div>
-            <h1 className="text-4xl font-semibold tracking-[-0.04em] text-white sm:text-5xl">
+            </p>
+            <h1 className={sectionTitleClass}>
               Stock Market Dashboard
             </h1>
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-300 sm:text-lg">
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 dark:text-slate-300 sm:text-lg">
               Real-time insights and analytics for the Indian stock market.
             </p>
 
             <div className="actions mt-6 flex flex-wrap gap-3">
               <Link
                 href="/market"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white transition-colors hover:border-emerald-400/30 hover:bg-emerald-400/10 hover:text-emerald-200"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-slate-200/80 bg-white/80 px-4 py-2 text-sm font-medium text-slate-950 transition-colors hover:border-emerald-400/30 hover:bg-emerald-400/10 hover:text-emerald-700 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:text-emerald-200"
               >
                 Open market
               </Link>
               <Link
                 href="/portfolio"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-white/20 hover:bg-white/10 hover:text-white"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-slate-200/70 bg-white/75 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:border-slate-300 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-white"
               >
                 View portfolio
               </Link>
@@ -1251,24 +1241,24 @@ export default function StocksIndexPage() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[34rem]">
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_16px_40px_rgba(2,6,23,0.2)]">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-400">Live universe</p>
-              <p className="mt-3 text-2xl font-semibold tracking-tight text-white">{stocks.length}</p>
-              <p className="mt-1 text-xs text-slate-400">Stocks tracked now</p>
+            <div className={`${insetPanelClass} p-4`}>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-600 dark:text-slate-400">Live universe</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{stocks.length}</p>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">Stocks tracked now</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_16px_40px_rgba(2,6,23,0.2)]">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-400">Market balance</p>
-              <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
+            <div className={`${insetPanelClass} p-4`}>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-600 dark:text-slate-400">Market balance</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">
                 {marketMetrics.gainers}/{marketMetrics.losers}
               </p>
-              <p className="mt-1 text-xs text-slate-400">Gainers vs losers</p>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">Gainers vs losers</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-[0_16px_40px_rgba(2,6,23,0.2)]">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-400">Active feeds</p>
-              <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
+            <div className={`${insetPanelClass} p-4`}>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-slate-600 dark:text-slate-400">Active feeds</p>
+              <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">
                 {bseActive.length + nseActive.length}
               </p>
-              <p className="mt-1 text-xs text-slate-400">BSE and NSE watchlists</p>
+              <p className="mt-1 text-xs text-slate-600 dark:text-slate-400">BSE and NSE watchlists</p>
             </div>
           </div>
         </div>
@@ -1277,14 +1267,14 @@ export default function StocksIndexPage() {
       {/* Market Metrics Cards */}
       <h2 className="sr-only">Market Summary Metrics</h2>
       <div ref={metricsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
+        <StocksSurfaceCard className="metric-card transition-colors">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium text-gray-300">Total Volume</CardTitle>
+            <CardTitle className="text-lg font-medium text-slate-600 dark:text-slate-400">Total Volume</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-3xl font-bold text-white">₹{marketMetrics.totalVolume}K</p>
+                <p className="text-3xl font-bold text-slate-950 dark:text-white">₹{marketMetrics.totalVolume}K</p>
                 <p className="text-sm text-green-400 mt-1 flex items-center">
                   <span className="mr-1 font-semibold">+</span>
                   <span>From {stocks.length} stocks</span>
@@ -1297,14 +1287,14 @@ export default function StocksIndexPage() {
           </CardContent>
         </StocksSurfaceCard>
         
-        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
+        <StocksSurfaceCard className="metric-card transition-colors">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium text-gray-300">Avg Price</CardTitle>
+            <CardTitle className="text-lg font-medium text-slate-600 dark:text-slate-400">Avg Price</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-3xl font-bold text-white">₹{marketMetrics.avgPrice}</p>
+                <p className="text-3xl font-bold text-slate-950 dark:text-white">₹{marketMetrics.avgPrice}</p>
                 <p className="text-sm text-blue-400 mt-1 flex items-center">
                   <BarChart2 className="w-4 h-4 mr-1" />
                   <span>Average stock price</span>
@@ -1317,14 +1307,14 @@ export default function StocksIndexPage() {
           </CardContent>
         </StocksSurfaceCard>
         
-        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
+        <StocksSurfaceCard className="metric-card transition-colors">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium text-gray-300">Gainers</CardTitle>
+            <CardTitle className="text-lg font-medium text-slate-600 dark:text-slate-400">Gainers</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-3xl font-bold text-white">{marketMetrics.gainers}</p>
+                <p className="text-3xl font-bold text-slate-950 dark:text-white">{marketMetrics.gainers}</p>
                 <p className="text-sm text-green-400 mt-1 flex items-center">
                   <span className="mr-1 font-semibold">+</span>
                   <span>Positive change</span>
@@ -1337,14 +1327,14 @@ export default function StocksIndexPage() {
           </CardContent>
         </StocksSurfaceCard>
         
-        <StocksSurfaceCard className="metric-card text-white hover:bg-gray-700/50 transition-colors">
+        <StocksSurfaceCard className="metric-card transition-colors">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg font-medium text-gray-300">Losers</CardTitle>
+            <CardTitle className="text-lg font-medium text-slate-600 dark:text-slate-400">Losers</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-3xl font-bold text-white">{marketMetrics.losers}</p>
+                <p className="text-3xl font-bold text-slate-950 dark:text-white">{marketMetrics.losers}</p>
                 <p className="text-sm text-red-400 mt-1 flex items-center">
                   <span className="mr-1 font-semibold">-</span>
                   <span>Negative change</span>
@@ -1360,12 +1350,12 @@ export default function StocksIndexPage() {
       
       {/* Data Sources Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12 items-start">
-        <StocksSurfaceCard className="metric-card hover:bg-gray-700/50 transition-all duration-300">
+        <StocksSurfaceCard className="metric-card transition-all duration-300">
           <CardContent className="pt-8 pb-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-gray-200 font-semibold text-lg">Trending Stocks</h3>
-                <p className="text-3xl font-bold text-white mt-2">{trendingStocks.length}</p>
+                <p className="text-3xl font-bold text-slate-950 dark:text-white mt-2">{trendingStocks.length}</p>
               </div>
               <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gray-700/50 text-gray-200 border border-gray-600/40">
                 Live Data
@@ -1374,12 +1364,12 @@ export default function StocksIndexPage() {
           </CardContent>
         </StocksSurfaceCard>
         
-        <StocksSurfaceCard className="metric-card hover:bg-gray-700/50 transition-all duration-300">
+        <StocksSurfaceCard className="metric-card transition-all duration-300">
           <CardContent className="pt-8 pb-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-gray-200 font-semibold text-lg">BSE Most Active</h3>
-                <p className="text-3xl font-bold text-white mt-2">{bseActive.length}</p>
+                <p className="text-3xl font-bold text-slate-950 dark:text-white mt-2">{bseActive.length}</p>
               </div>
               <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gray-700/50 text-gray-200 border border-gray-600/40">
                 BSE Live
@@ -1388,12 +1378,12 @@ export default function StocksIndexPage() {
           </CardContent>
         </StocksSurfaceCard>
         
-        <StocksSurfaceCard className="metric-card hover:bg-gray-700/50 transition-all duration-300">
+        <StocksSurfaceCard className="metric-card transition-all duration-300">
           <CardContent className="pt-8 pb-6">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-gray-200 font-semibold text-lg">NSE Most Active</h3>
-                <p className="text-3xl font-bold text-white mt-2">{nseActive.length}</p>
+                <p className="text-3xl font-bold text-slate-950 dark:text-white mt-2">{nseActive.length}</p>
               </div>
               <div className="px-4 py-2 rounded-xl text-sm font-semibold bg-gray-700/50 text-gray-200 border border-gray-600/40">
                 NSE Live
@@ -1409,7 +1399,7 @@ export default function StocksIndexPage() {
         <div ref={stocksRef} className="xl:col-span-2 space-y-6 lg:space-y-8">
           <StocksSurfaceCard>
             <CardHeader className="border-b border-gray-700 pb-3">
-              <CardTitle className="text-white">Trending Stocks</CardTitle>
+              <CardTitle className="text-slate-950 dark:text-white">Trending Stocks</CardTitle>
             </CardHeader>
             <CardContent className="px-0 py-0">
               <div className="overflow-x-auto">
@@ -1449,7 +1439,7 @@ export default function StocksIndexPage() {
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex flex-col gap-1">
-                            <div className="text-white font-medium">{stock.company_name}</div>
+                            <div className="text-slate-950 dark:text-white font-medium">{stock.company_name}</div>
                             <div className="flex flex-wrap items-center gap-2">
                               <div className="text-xs text-gray-400">{stock.sector_name}</div>
                               <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium ${
@@ -1475,7 +1465,7 @@ export default function StocksIndexPage() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right">
                           <div className="flex flex-col">
-                            <div className="text-white font-medium">₹{stock.current_price.toLocaleString()}</div>
+                            <div className="text-slate-950 dark:text-white font-medium">₹{stock.current_price.toLocaleString()}</div>
                             <div className="text-xs text-gray-400">
                               O: ₹{stock.open.toFixed(2)} | C: ₹{stock.close.toFixed(2)}
                             </div>
@@ -1502,7 +1492,7 @@ export default function StocksIndexPage() {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-right">
                           <div className="flex flex-col text-xs">
-                            <div className="text-white font-medium">
+                            <div className="text-slate-950 dark:text-white font-medium">
                               {(stock.volume / 1000000).toFixed(1)}M
                             </div>
                             <div className="text-gray-400">
@@ -1519,9 +1509,9 @@ export default function StocksIndexPage() {
               {stocks.length > 0 && (
                 <div className="flex flex-col gap-3 border-t border-gray-700 px-4 py-3 md:flex-row md:items-center md:justify-between">
                   <p className="text-sm text-gray-400">
-                    Showing <span className="text-white">{tableStartIndex + 1}</span> to{' '}
-                    <span className="text-white">{Math.min(tableStartIndex + STOCKS_TABLE_PAGE_SIZE, stocks.length)}</span> of{' '}
-                    <span className="text-white">{stocks.length}</span> stocks
+                    Showing <span className="text-slate-950 dark:text-white">{tableStartIndex + 1}</span> to{' '}
+                    <span className="text-slate-950 dark:text-white">{Math.min(tableStartIndex + STOCKS_TABLE_PAGE_SIZE, stocks.length)}</span> of{' '}
+                    <span className="text-slate-950 dark:text-white">{stocks.length}</span> stocks
                   </p>
 
                   <div className="flex items-center gap-2">
@@ -1557,7 +1547,7 @@ export default function StocksIndexPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-white">{stock.company_name}</CardTitle>
+                      <CardTitle className="text-slate-950 dark:text-white">{stock.company_name}</CardTitle>
                       <CardDescription className="text-gray-400">
                         {stock.symbol}
                       </CardDescription>
@@ -1578,7 +1568,7 @@ export default function StocksIndexPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-2">Current Price</h4>
-                      <p className="text-2xl font-bold text-white">₹{stock.current_price.toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-slate-950 dark:text-white">₹{stock.current_price.toLocaleString()}</p>
                       <p className={`text-sm ${(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                         {(stock.price_change_percentage || stock.percent_change || 0) >= 0 ? '+' : ''}
                         {(stock.price_change_percentage || stock.percent_change || 0).toFixed(2)}% (₹{stock.net_change.toFixed(2)})
@@ -1586,7 +1576,7 @@ export default function StocksIndexPage() {
                     </div>
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-2">Day Range</h4>
-                      <p className="text-white">₹{stock.low.toFixed(2)} - ₹{stock.high.toFixed(2)}</p>
+                      <p className="text-slate-950 dark:text-white">₹{stock.low.toFixed(2)} - ₹{stock.high.toFixed(2)}</p>
                       <p className="text-sm text-gray-400">Open: ₹{stock.open.toFixed(2)}</p>
                     </div>
                   </div>
@@ -1595,12 +1585,12 @@ export default function StocksIndexPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-2">Volume</h4>
-                      <p className="text-white font-medium">{stock.volume.toLocaleString()}</p>
+                      <p className="text-slate-950 dark:text-white font-medium">{stock.volume.toLocaleString()}</p>
                       <p className="text-sm text-gray-400">Lot Size: {stock.lot_size}</p>
                     </div>
                     <div>
                       <h4 className="text-sm font-medium text-gray-400 mb-2">Bid/Ask</h4>
-                      <p className="text-white">₹{stock.bid.toFixed(2)} / ₹{stock.ask.toFixed(2)}</p>
+                      <p className="text-slate-950 dark:text-white">₹{stock.bid.toFixed(2)} / ₹{stock.ask.toFixed(2)}</p>
                       <p className="text-sm text-gray-400">Size: {stock.bid_size} / {stock.ask_size}</p>
                     </div>
                   </div>
@@ -1611,7 +1601,7 @@ export default function StocksIndexPage() {
                     <div className="flex items-center space-x-4">
                       <div className="flex items-center">
                         <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                        <span className="text-sm text-white">₹{stock.low_circuit_limit.toFixed(2)}</span>
+                        <span className="text-sm text-slate-950 dark:text-white">₹{stock.low_circuit_limit.toFixed(2)}</span>
                       </div>
                       <div className="flex-1 h-2 bg-gray-700 rounded-full relative">
                         <div 
@@ -1623,7 +1613,7 @@ export default function StocksIndexPage() {
                       </div>
                       <div className="flex items-center">
                         <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                        <span className="text-sm text-white">₹{stock.up_circuit_limit.toFixed(2)}</span>
+                        <span className="text-sm text-slate-950 dark:text-white">₹{stock.up_circuit_limit.toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
@@ -1660,7 +1650,7 @@ export default function StocksIndexPage() {
                   <div>
                     <h4 className="text-sm font-medium text-gray-400 mb-2">52-Week Range</h4>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-white">₹{stock.year_low.toFixed(2)}</span>
+                      <span className="text-sm text-slate-950 dark:text-white">₹{stock.year_low.toFixed(2)}</span>
                       <div className="flex-1 mx-4 h-2 bg-gray-700 rounded-full relative">
                         <div 
                           className="h-2 bg-blue-500 rounded-full" 
@@ -1669,7 +1659,7 @@ export default function StocksIndexPage() {
                           }}
                         ></div>
                       </div>
-                      <span className="text-sm text-white">₹{stock.year_high.toFixed(2)}</span>
+                      <span className="text-sm text-slate-950 dark:text-white">₹{stock.year_high.toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -1688,7 +1678,7 @@ export default function StocksIndexPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
             <StocksSurfaceCard>
               <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center text-lg font-semibold">
+                <CardTitle className="text-slate-950 dark:text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-red-400 rounded-full mr-3"></div>
                   Gainers vs Losers
                 </CardTitle>
@@ -1703,7 +1693,7 @@ export default function StocksIndexPage() {
             
             <StocksSurfaceCard>
               <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center text-lg font-semibold">
+                <CardTitle className="text-slate-950 dark:text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mr-3"></div>
                   Price Trend
                 </CardTitle>
@@ -1722,7 +1712,7 @@ export default function StocksIndexPage() {
         <div ref={sectorsRef} className="space-y-6 lg:space-y-8">
           <StocksSurfaceCard>
             <CardHeader className="pb-4">
-              <CardTitle className="text-white flex items-center text-lg font-semibold">
+              <CardTitle className="text-slate-950 dark:text-white flex items-center text-lg font-semibold">
                 <div className="w-2 h-2 bg-gradient-to-r from-indigo-400 to-pink-400 rounded-full mr-3"></div>
                 Sector Distribution
               </CardTitle>
@@ -1755,7 +1745,7 @@ export default function StocksIndexPage() {
                       <span className="text-gray-200 font-medium">{sector}</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <span className="text-white font-semibold">{count}</span>
+                      <span className="text-slate-950 dark:text-white font-semibold">{count}</span>
                       <span className="text-gray-400 text-sm">stocks</span>
                     </div>
                   </div>
@@ -1795,7 +1785,7 @@ export default function StocksIndexPage() {
           
           <StocksSurfaceCard>
             <CardHeader className="pb-2">
-              <CardTitle className="text-white">Stock Performance</CardTitle>
+              <CardTitle className="text-slate-950 dark:text-white">Stock Performance</CardTitle>
               <CardDescription className="text-gray-400">Price Change % by Stock</CardDescription>
             </CardHeader>
             <CardContent className="px-0 py-0">
@@ -1859,7 +1849,7 @@ export default function StocksIndexPage() {
           
           <StocksSurfaceCard>
             <CardHeader className="pb-2">
-              <CardTitle className="text-white">52-Week High/Low Range</CardTitle>
+              <CardTitle className="text-slate-950 dark:text-white">52-Week High/Low Range</CardTitle>
               <CardDescription className="text-gray-400">Top performers with position indicators</CardDescription>
             </CardHeader>
             <CardContent className="px-0 py-0">
@@ -1870,7 +1860,7 @@ export default function StocksIndexPage() {
                 >
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-gray-300 font-medium">{stock.symbol}</span>
-                    <span className="text-white text-sm font-bold">₹{stock.current_price?.toFixed(2) || 'N/A'}</span>
+                    <span className="text-slate-950 dark:text-white text-sm font-bold">₹{stock.current_price?.toFixed(2) || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between text-xs text-gray-400 mb-2">
                     <span className="text-green-400">High: ₹{stock.high_52_week?.toFixed(2) || 'N/A'}</span>
@@ -1941,7 +1931,7 @@ export default function StocksIndexPage() {
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
         <StocksSurfaceCard>
           <CardHeader>
-            <CardTitle className="text-white">📈 Detailed Stock Analysis</CardTitle>
+            <CardTitle className="text-slate-950 dark:text-white">📈 Detailed Stock Analysis</CardTitle>
             <CardDescription className="text-gray-400">
               Comprehensive stock data with technical analysis and market insights
             </CardDescription>
@@ -1976,8 +1966,8 @@ export default function StocksIndexPage() {
       {/* BSE Most Active Section */}
       {bseActive.length > 0 && (
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="bg-gray-900/90 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50 shadow-2xl">
-          <h2 className="text-3xl font-bold mb-8 text-white flex items-center">
+        <div className={`${panelShellClass} p-8`}>
+          <h2 className={`${sectionTitleClass} mb-8 flex items-center`}>
             <div className="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full mr-4"></div>
             <BarChart2 className="w-7 h-7 mr-3 text-blue-400" />
             BSE Most Active Stocks
@@ -1987,7 +1977,7 @@ export default function StocksIndexPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <StocksSurfaceCard>
               <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center text-lg font-semibold">
+                <CardTitle className="text-slate-950 dark:text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mr-3"></div>
                   BSE Volume Leaders
                 </CardTitle>
@@ -2002,7 +1992,7 @@ export default function StocksIndexPage() {
             
             <StocksSurfaceCard>
               <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center text-lg font-semibold">
+                <CardTitle className="text-slate-950 dark:text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-red-400 to-pink-400 rounded-full mr-3"></div>
                   BSE Performance
                 </CardTitle>
@@ -2023,13 +2013,13 @@ export default function StocksIndexPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-white text-lg">{stock.company}</CardTitle>
+                      <CardTitle className="text-slate-950 dark:text-white text-lg">{stock.company}</CardTitle>
                       <CardDescription className="text-gray-400">
                         {stock.ticker} • Volume: {stock.volume?.toLocaleString()}
                       </CardDescription>
                     </div>
                     <div className="text-right">
-                      <div className="text-xl font-bold text-white">₹{stock.price?.toFixed(2)}</div>
+                      <div className="text-xl font-bold text-slate-950 dark:text-white">₹{stock.price?.toFixed(2)}</div>
                       <div className={`text-sm font-medium flex items-center ${
                         (stock.percent_change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'
                       }`}>
@@ -2044,7 +2034,7 @@ export default function StocksIndexPage() {
                     {(hasMeaningfulNumeric(stock.high) || hasMeaningfulNumeric(stock.low)) && (
                       <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
                         <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">High / Low</div>
-                        <div className="mt-1 text-white">
+                        <div className="mt-1 text-slate-950 dark:text-white">
                           ₹{stock.high?.toFixed(2)} / ₹{stock.low?.toFixed(2)}
                         </div>
                       </div>
@@ -2053,7 +2043,7 @@ export default function StocksIndexPage() {
                     {(hasMeaningfulNumeric(stock.open) || hasMeaningfulNumeric(stock.close)) && (
                       <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
                         <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Open / Close</div>
-                        <div className="mt-1 text-white">
+                        <div className="mt-1 text-slate-950 dark:text-white">
                           ₹{stock.open?.toFixed(2)} / ₹{stock.close?.toFixed(2)}
                         </div>
                       </div>
@@ -2062,7 +2052,7 @@ export default function StocksIndexPage() {
                     {(hasMeaningfulNumeric(stock['52_week_low']) || hasMeaningfulNumeric(stock['52_week_high'])) && (
                       <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
                         <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">52W Range</div>
-                        <div className="mt-1 text-white">
+                        <div className="mt-1 text-slate-950 dark:text-white">
                           ₹{stock['52_week_low']?.toFixed(2)} - ₹{stock['52_week_high']?.toFixed(2)}
                         </div>
                       </div>
@@ -2101,8 +2091,8 @@ export default function StocksIndexPage() {
 
       {/* NSE Most Active Section */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="bg-gray-900/90 backdrop-blur-lg rounded-2xl p-8 border border-gray-700/50 shadow-2xl">
-          <h2 className="text-3xl font-bold mb-8 text-white flex items-center">
+        <div className={`${panelShellClass} p-8`}>
+          <h2 className={`${sectionTitleClass} mb-8 flex items-center`}>
             <div className="w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full mr-4"></div>
             <Activity className="w-7 h-7 mr-3 text-green-400" />
             NSE Most Active Stocks
@@ -2112,7 +2102,7 @@ export default function StocksIndexPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <StocksSurfaceCard>
               <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center text-lg font-semibold">
+                <CardTitle className="text-slate-950 dark:text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-teal-400 rounded-full mr-3"></div>
                   NSE Volume Leaders
                 </CardTitle>
@@ -2127,7 +2117,7 @@ export default function StocksIndexPage() {
             
             <StocksSurfaceCard>
               <CardHeader className="pb-4">
-                <CardTitle className="text-white flex items-center text-lg font-semibold">
+                <CardTitle className="text-slate-950 dark:text-white flex items-center text-lg font-semibold">
                   <div className="w-2 h-2 bg-gradient-to-r from-red-400 to-pink-400 rounded-full mr-3"></div>
                   NSE Performance
                 </CardTitle>
@@ -2148,13 +2138,13 @@ export default function StocksIndexPage() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-white text-lg">{stock.company}</CardTitle>
+                      <CardTitle className="text-slate-950 dark:text-white text-lg">{stock.company}</CardTitle>
                       <CardDescription className="text-gray-400">
                         {stock.ticker} • Volume: {stock.volume?.toLocaleString()}
                       </CardDescription>
                     </div>
                     <div className="text-right">
-                      <div className="text-xl font-bold text-white">₹{stock.price?.toFixed(2)}</div>
+                      <div className="text-xl font-bold text-slate-950 dark:text-white">₹{stock.price?.toFixed(2)}</div>
                       <div className={`text-sm font-medium flex items-center ${
                         (stock.percent_change ?? 0) >= 0 ? 'text-green-400' : 'text-red-400'
                       }`}>
@@ -2169,7 +2159,7 @@ export default function StocksIndexPage() {
                     {(hasMeaningfulNumeric(stock.high) || hasMeaningfulNumeric(stock.low)) && (
                       <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
                         <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">High / Low</div>
-                        <div className="mt-1 text-white">
+                        <div className="mt-1 text-slate-950 dark:text-white">
                           ₹{stock.high?.toFixed(2)} / ₹{stock.low?.toFixed(2)}
                         </div>
                       </div>
@@ -2178,7 +2168,7 @@ export default function StocksIndexPage() {
                     {(hasMeaningfulNumeric(stock.open) || hasMeaningfulNumeric(stock.close)) && (
                       <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
                         <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">Open / Close</div>
-                        <div className="mt-1 text-white">
+                        <div className="mt-1 text-slate-950 dark:text-white">
                           ₹{stock.open?.toFixed(2)} / ₹{stock.close?.toFixed(2)}
                         </div>
                       </div>
@@ -2187,7 +2177,7 @@ export default function StocksIndexPage() {
                     {(hasMeaningfulNumeric(stock['52_week_low']) || hasMeaningfulNumeric(stock['52_week_high'])) && (
                       <div className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
                         <div className="text-[0.65rem] uppercase tracking-[0.2em] text-slate-400">52W Range</div>
-                        <div className="mt-1 text-white">
+                        <div className="mt-1 text-slate-950 dark:text-white">
                           ₹{stock['52_week_low']?.toFixed(2)} - ₹{stock['52_week_high']?.toFixed(2)}
                         </div>
                       </div>
@@ -2226,8 +2216,8 @@ export default function StocksIndexPage() {
       {/* BSE vs NSE Comparison Section */}
       {bseActive.length > 0 && nseActive.length > 0 && (
         <section className="mb-8">
-          <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-6 border border-gray-700/50">
-            <h2 className="text-2xl font-semibold mb-6 text-white flex items-center">
+          <div className={`${panelShellClass} p-6`}>
+            <h2 className="mb-6 flex items-center text-2xl font-semibold text-slate-950 dark:text-white">
               <PieChart className="w-6 h-6 mr-2 text-purple-400" />
               BSE vs NSE Market Comparison
             </h2>
@@ -2237,17 +2227,17 @@ export default function StocksIndexPage() {
               <div className="grid grid-cols-1 gap-4">
                 <StocksSurfaceCard>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-white text-lg">BSE Summary</CardTitle>
+                    <CardTitle className="text-slate-950 dark:text-white text-lg">BSE Summary</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-gray-400">Active Stocks:</span>
-                        <span className="text-white font-medium">{bseActive.length}</span>
+                        <span className="text-slate-950 dark:text-white font-medium">{bseActive.length}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Avg Volume:</span>
-                        <span className="text-white font-medium">
+                        <span className="text-slate-950 dark:text-white font-medium">
                           {(bseActive.reduce((sum, stock) => sum + (stock.volume || 0), 0) / bseActive.length / 1000000).toFixed(1)}M
                         </span>
                       </div>
@@ -2269,17 +2259,17 @@ export default function StocksIndexPage() {
                 
                 <StocksSurfaceCard>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-white text-lg">NSE Summary</CardTitle>  
+                    <CardTitle className="text-slate-950 dark:text-white text-lg">NSE Summary</CardTitle>  
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-gray-400">Active Stocks:</span>
-                        <span className="text-white font-medium">{nseActive.length}</span>
+                        <span className="text-slate-950 dark:text-white font-medium">{nseActive.length}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Avg Volume:</span>
-                        <span className="text-white font-medium">
+                        <span className="text-slate-950 dark:text-white font-medium">
                           {(nseActive.reduce((sum, stock) => sum + (stock.volume || 0), 0) / nseActive.length / 1000000).toFixed(1)}M
                         </span>
                       </div>
@@ -2304,7 +2294,7 @@ export default function StocksIndexPage() {
               <div className="lg:col-span-2">
                 <StocksSurfaceCard>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-white">Top Performers by Exchange</CardTitle>
+                    <CardTitle className="text-slate-950 dark:text-white">Top Performers by Exchange</CardTitle>
                     <CardDescription className="text-gray-400">Best and worst performing stocks</CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -2317,7 +2307,7 @@ export default function StocksIndexPage() {
                           return topBseGainer ? (
                             <div className="bg-gray-700/50 rounded-lg p-3">
                               <div className="flex justify-between items-center mb-2">
-                                <span className="font-medium text-white">{topBseGainer.company}</span>
+                                <span className="font-medium text-slate-950 dark:text-white">{topBseGainer.company}</span>
                                 <span className="text-green-400 font-bold">+{topBseGainer.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">
@@ -2333,7 +2323,7 @@ export default function StocksIndexPage() {
                           return topBseLoser ? (
                             <div className="bg-gray-700/50 rounded-lg p-3">
                               <div className="flex justify-between items-center mb-2">
-                                <span className="font-medium text-white">{topBseLoser.company}</span>
+                                <span className="font-medium text-slate-950 dark:text-white">{topBseLoser.company}</span>
                                 <span className="text-red-400 font-bold">{topBseLoser.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">
@@ -2352,7 +2342,7 @@ export default function StocksIndexPage() {
                           return topNseGainer ? (
                             <div className="bg-gray-700/50 rounded-lg p-3">
                               <div className="flex justify-between items-center mb-2">
-                                <span className="font-medium text-white">{topNseGainer.company}</span>
+                                <span className="font-medium text-slate-950 dark:text-white">{topNseGainer.company}</span>
                                 <span className="text-green-400 font-bold">+{topNseGainer.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">
@@ -2368,7 +2358,7 @@ export default function StocksIndexPage() {
                           return topNseLoser ? (
                             <div className="bg-gray-700/50 rounded-lg p-3">
                               <div className="flex justify-between items-center mb-2">
-                                <span className="font-medium text-white">{topNseLoser.company}</span>
+                                <span className="font-medium text-slate-950 dark:text-white">{topNseLoser.company}</span>
                                 <span className="text-red-400 font-bold">{topNseLoser.percent_change?.toFixed(2)}%</span>
                               </div>
                               <div className="text-sm text-gray-400">

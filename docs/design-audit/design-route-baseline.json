@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-08-23T08:38:55.761Z",
+  "generatedAt": "2026-08-23T09:41:50.772Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 2,
+    "implemented": 4,
     "partial": 19,
-    "legacy": 18,
+    "legacy": 17,
     "skipVisual": 3,
     "total": 64
   },
@@ -374,19 +374,21 @@
     {
       "route": "/stock-search",
       "capturePath": "/stock-search",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/stock-search/page.tsx",
       "lineCount": 170
     },
     {
       "route": "/stocks",
       "capturePath": "/stocks",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "premium-type"
+        "panel-shell"
       ],
       "file": "src/app/stocks/page.tsx",
       "lineCount": 2392
@@ -394,11 +396,10 @@
     {
       "route": "/stocks/[symbol]",
       "capturePath": "/stocks/RELIANCE",
-      "status": "legacy",
-      "score": 0,
+      "status": "partial",
+      "score": 75,
       "signals": [
-        "glass-card",
-        "stock-details-page",
+        "panel-shell",
         "neon-accent"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
