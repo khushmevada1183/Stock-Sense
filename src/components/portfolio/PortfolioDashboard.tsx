@@ -164,8 +164,14 @@ const PortfolioDashboard = () => {
   const [submittingTransaction, setSubmittingTransaction] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const dashboardRef = useRef<HTMLDivElement>(null);
+  const fetchInFlightRef = useRef<Promise<void> | null>(null);
 
   const fetchPortfolioData = useCallback(async () => {
+    if (fetchInFlightRef.current) {
+      return fetchInFlightRef.current;
+    }
+
+    const run = (async () => {
     if (authLoading) {
       return;
     }
@@ -231,10 +237,27 @@ const PortfolioDashboard = () => {
         statusCode === 401 ||
         /unauthorized|authorization bearer token is required|token/i.test(message);
 
+      const rateLimited = statusCode === 429 || /too many requests/i.test(message);
+
       setAuthRequired(unauthorized);
-      setApiMessage(message);
+      setApiMessage(
+        rateLimited
+          ? 'Portfolio data is temporarily rate-limited. Wait a moment and refresh.'
+          : message
+      );
     } finally {
       setIsLoading(false);
+    }
+    })();
+
+    fetchInFlightRef.current = run;
+
+    try {
+      await run;
+    } finally {
+      if (fetchInFlightRef.current === run) {
+        fetchInFlightRef.current = null;
+      }
     }
   }, [authLoading, isAuthenticated]);
 
