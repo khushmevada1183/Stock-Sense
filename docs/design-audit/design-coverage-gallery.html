@@ -1,0 +1,1145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stock Sense — Design Coverage Gallery</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; }
+    header.page { padding: 24px 32px; border-bottom: 1px solid #334155; }
+    .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+    .filters button { background: #1e293b; color: #e2e8f0; border: 1px solid #475569; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+    .filters button.active { background: #10b981; border-color: #10b981; color: #052e16; }
+    main { display: grid; gap: 24px; padding: 24px 32px 80px; }
+    .card { background: #111827; border: 1px solid #334155; border-radius: 20px; padding: 16px; }
+    .card header { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .card h2 { margin: 0; font-size: 1rem; word-break: break-all; }
+    .badge { color: white; font-size: 12px; padding: 4px 10px; border-radius: 999px; text-transform: uppercase; }
+    .meta { color: #94a3b8; font-size: 13px; }
+    .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    figure { margin: 0; }
+    figcaption { font-size: 12px; color: #94a3b8; margin-bottom: 6px; }
+    img { width: 100%; border-radius: 12px; border: 1px solid #334155; background: #0b1220; min-height: 120px; object-fit: cover; object-position: top; }
+    .card.hidden { display: none; }
+  </style>
+</head>
+<body>
+  <header class="page">
+    <h1>Design Coverage Gallery</h1>
+    <p>Benchmark: PortfolioDashboard · 2 implemented · 19 partial · 18 legacy</p>
+    <div class="filters">
+      <button data-filter="all" class="active">All</button>
+      <button data-filter="legacy">Legacy</button>
+      <button data-filter="partial">Partial</button>
+      <button data-filter="implemented">Implemented</button>
+    </div>
+  </header>
+  <main>
+    <article class="card" data-status="implemented">
+      <header>
+        <h2>/</h2>
+        <span class="badge" style="background:#10b981">implemented</span>
+      </header>
+      <p class="meta">src/app/page.tsx · score 85 · premium-type, settings-shell, home-section</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/home.png" alt="light /" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/home.png" alt="dark /" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/_not-found</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/not-found.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/_not-found.png" alt="light /_not-found" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/_not-found.png" alt="dark /_not-found" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/about</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/about/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/about.png" alt="light /about" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/about.png" alt="dark /about" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/accessibility</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/accessibility/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/accessibility.png" alt="light /accessibility" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/accessibility.png" alt="dark /accessibility" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/alerts</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/alerts/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/alerts.png" alt="light /alerts" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/alerts.png" alt="dark /alerts" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/api-docs</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/api-docs/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/api-docs.png" alt="light /api-docs" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/api-docs.png" alt="dark /api-docs" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/api-test</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/api-test/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/api-test.png" alt="light /api-test" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/api-test.png" alt="dark /api-test" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/auth/forgot-password</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/auth/forgot-password/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-forgot-password.png" alt="light /auth/forgot-password" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-forgot-password.png" alt="dark /auth/forgot-password" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/auth/reset-password</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/auth/reset-password/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-reset-password.png" alt="light /auth/reset-password" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-reset-password.png" alt="dark /auth/reset-password" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/auth/sessions</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/auth/sessions/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-sessions.png" alt="light /auth/sessions" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-sessions.png" alt="dark /auth/sessions" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/auth/verify-email</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/auth/verify-email/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-verify-email.png" alt="light /auth/verify-email" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-verify-email.png" alt="dark /auth/verify-email" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/auth/verify-reset-code</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/auth/verify-reset-code/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/auth-verify-reset-code.png" alt="light /auth/verify-reset-code" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/auth-verify-reset-code.png" alt="dark /auth/verify-reset-code" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/blog</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/blog/page.tsx · score 20 · PageBackground</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/blog.png" alt="light /blog" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/blog.png" alt="dark /blog" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/contact</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/contact/page.tsx · score 5 · PageBackground, neon-accent</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/contact.png" alt="light /contact" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/contact.png" alt="dark /contact" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/faq</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/faq/page.tsx · score 5 · PageBackground, neon-accent</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/faq.png" alt="light /faq" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/faq.png" alt="dark /faq" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/ipo</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/ipo/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/ipo.png" alt="light /ipo" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/ipo.png" alt="dark /ipo" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/ipo/[ipoId]</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/ipo/[ipoId]/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/ipo-sample-ipo.png" alt="light /ipo/[ipoId]" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/ipo-sample-ipo.png" alt="dark /ipo/[ipoId]" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/learn</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/learn/page.tsx · score 5 · PageBackground, neon-accent</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/learn.png" alt="light /learn" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/learn.png" alt="dark /learn" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/login</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/login/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/login.png" alt="light /login" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/login.png" alt="dark /login" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/market</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/market/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/market.png" alt="light /market" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/market.png" alt="dark /market" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/market/institutional</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/market/institutional/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/market-institutional.png" alt="light /market/institutional" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/market-institutional.png" alt="dark /market/institutional" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/news</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/news/page.tsx · score 45 · news-shell, neon-accent</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news.png" alt="light /news" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news.png" alt="dark /news" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/alerts</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/app/news/alerts/page.tsx · score 60 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-alerts.png" alt="light /news/alerts" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-alerts.png" alt="dark /news/alerts" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/companies</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/app/news/companies/page.tsx · score 60 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-companies.png" alt="light /news/companies" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-companies.png" alt="dark /news/companies" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/economy</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/app/news/economy/page.tsx · score 60 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-economy.png" alt="light /news/economy" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-economy.png" alt="dark /news/economy" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/markets</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/app/news/markets/page.tsx · score 60 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-markets.png" alt="light /news/markets" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-markets.png" alt="dark /news/markets" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/trending</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/app/news/trending/page.tsx · score 60 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-trending.png" alt="light /news/trending" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-trending.png" alt="dark /news/trending" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/notifications</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/notifications/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/notifications.png" alt="light /notifications" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/notifications.png" alt="dark /notifications" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="implemented">
+      <header>
+        <h2>/portfolio</h2>
+        <span class="badge" style="background:#10b981">implemented</span>
+      </header>
+      <p class="meta">src/app/portfolio/page.tsx · score 100 · portfolio-benchmark</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/portfolio.png" alt="light /portfolio" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/portfolio.png" alt="dark /portfolio" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/privacy</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/privacy/page.tsx · score 20 · PageBackground</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/privacy.png" alt="light /privacy" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/privacy.png" alt="dark /privacy" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/settings</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/app/settings/page.tsx · score 65 · settings-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/settings.png" alt="light /settings" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/settings.png" alt="dark /settings" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/signup</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/signup/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/signup.png" alt="light /signup" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/signup.png" alt="dark /signup" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/sitemap</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/sitemap/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/sitemap.png" alt="light /sitemap" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/sitemap.png" alt="dark /sitemap" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/stock-search</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/stock-search/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stock-search.png" alt="light /stock-search" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stock-search.png" alt="dark /stock-search" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/stocks</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/app/stocks/page.tsx · score 60 · premium-type</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks.png" alt="light /stocks" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks.png" alt="dark /stocks" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/[symbol]</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 0 · glass-card, stock-details-page, neon-accent</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE.png" alt="light /stocks/[symbol]" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE.png" alt="dark /stocks/[symbol]" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/terms</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/terms/page.tsx · score 5 · PageBackground, neon-accent</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/terms.png" alt="light /terms" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/terms.png" alt="dark /terms" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="not-started">
+      <header>
+        <h2>/watchlists</h2>
+        <span class="badge" style="background:#64748b">not-started</span>
+      </header>
+      <p class="meta">src/app/watchlists/page.tsx · score 50 · </p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/watchlists.png" alt="light /watchlists" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/watchlists.png" alt="dark /watchlists" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/settings?tab=basic</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/settings/SettingsPageShell.tsx · score 60 · settings-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/settings-tab-basic.png" alt="light /settings?tab=basic" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/settings-tab-basic.png" alt="dark /settings?tab=basic" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/settings?tab=reports</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/settings/SettingsPageShell.tsx · score 60 · settings-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/settings-tab-reports.png" alt="light /settings?tab=reports" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/settings-tab-reports.png" alt="dark /settings?tab=reports" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/settings?tab=devices</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/settings/SettingsPageShell.tsx · score 60 · settings-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/settings-tab-devices.png" alt="light /settings?tab=devices" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/settings-tab-devices.png" alt="dark /settings?tab=devices" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/settings?tab=password</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/settings/SettingsPageShell.tsx · score 60 · settings-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/settings-tab-password.png" alt="light /settings?tab=password" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/settings-tab-password.png" alt="dark /settings?tab=password" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/settings?tab=trading</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/settings/SettingsPageShell.tsx · score 60 · settings-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/settings-tab-trading.png" alt="light /settings?tab=trading" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/settings-tab-trading.png" alt="dark /settings?tab=trading" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/settings?tab=suspicious</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/settings/SettingsPageShell.tsx · score 60 · settings-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/settings-tab-suspicious.png" alt="light /settings?tab=suspicious" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/settings-tab-suspicious.png" alt="dark /settings?tab=suspicious" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/News/NewsCategoryTabs.tsx · score 58 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news.png" alt="light /news" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news.png" alt="dark /news" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/markets</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/News/NewsCategoryTabs.tsx · score 58 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-markets.png" alt="light /news/markets" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-markets.png" alt="dark /news/markets" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/economy</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/News/NewsCategoryTabs.tsx · score 58 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-economy.png" alt="light /news/economy" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-economy.png" alt="dark /news/economy" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/companies</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/News/NewsCategoryTabs.tsx · score 58 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-companies.png" alt="light /news/companies" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-companies.png" alt="dark /news/companies" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/trending</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/News/NewsCategoryTabs.tsx · score 58 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-trending.png" alt="light /news/trending" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-trending.png" alt="dark /news/trending" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="partial">
+      <header>
+        <h2>/news/alerts</h2>
+        <span class="badge" style="background:#f59e0b">partial</span>
+      </header>
+      <p class="meta">src/components/News/NewsCategoryTabs.tsx · score 58 · news-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/news-alerts.png" alt="light /news/alerts" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/news-alerts.png" alt="dark /news/alerts" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=overview</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-overview.png" alt="light /stocks/RELIANCE?tab=overview" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-overview.png" alt="dark /stocks/RELIANCE?tab=overview" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=fundamental</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-fundamental.png" alt="light /stocks/RELIANCE?tab=fundamental" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-fundamental.png" alt="dark /stocks/RELIANCE?tab=fundamental" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=technical</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-technical.png" alt="light /stocks/RELIANCE?tab=technical" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-technical.png" alt="dark /stocks/RELIANCE?tab=technical" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=management</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-management.png" alt="light /stocks/RELIANCE?tab=management" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-management.png" alt="dark /stocks/RELIANCE?tab=management" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=industry</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-industry.png" alt="light /stocks/RELIANCE?tab=industry" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-industry.png" alt="dark /stocks/RELIANCE?tab=industry" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=sentiment</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-sentiment.png" alt="light /stocks/RELIANCE?tab=sentiment" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-sentiment.png" alt="dark /stocks/RELIANCE?tab=sentiment" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=institutional</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-institutional.png" alt="light /stocks/RELIANCE?tab=institutional" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-institutional.png" alt="dark /stocks/RELIANCE?tab=institutional" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=macroeconomic</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-macroeconomic.png" alt="light /stocks/RELIANCE?tab=macroeconomic" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-macroeconomic.png" alt="dark /stocks/RELIANCE?tab=macroeconomic" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=esg</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-esg.png" alt="light /stocks/RELIANCE?tab=esg" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-esg.png" alt="dark /stocks/RELIANCE?tab=esg" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=risk</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-risk.png" alt="light /stocks/RELIANCE?tab=risk" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-risk.png" alt="dark /stocks/RELIANCE?tab=risk" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card" data-status="legacy">
+      <header>
+        <h2>/stocks/RELIANCE?tab=growth</h2>
+        <span class="badge" style="background:#ef4444">legacy</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-growth.png" alt="light /stocks/RELIANCE?tab=growth" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-growth.png" alt="dark /stocks/RELIANCE?tab=growth" />
+        </figure>
+      </div>
+    </article></main>
+  <script>
+    const buttons = document.querySelectorAll('.filters button');
+    const cards = document.querySelectorAll('.card');
+    buttons.forEach((btn) => btn.addEventListener('click', () => {
+      buttons.forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      cards.forEach((c) => c.classList.toggle('hidden', f !== 'all' && c.dataset.status !== f));
+    }));
+  </script>
+</body>
+</html>
