@@ -20,7 +20,8 @@
     "audit:routes": "node scripts/generate-route-ui-audit.mjs",
     "audit:design:classify": "node scripts/design-audit/classify-routes-design.mjs",
     "audit:design": "npm run audit:routes && npm run audit:design:classify",
-    "audit:design:capture": "node scripts/design-audit/capture-route-screenshots.mjs"
+    "audit:design:capture": "node scripts/design-audit/capture-route-screenshots.mjs",
+    "audit:design:matrix": "node scripts/design-audit/generate-design-matrix.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",

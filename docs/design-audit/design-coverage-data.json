@@ -1,0 +1,947 @@
+{
+  "generatedAt": "2026-08-23T08:54:14.616Z",
+  "summary": {
+    "implemented": 2,
+    "partial": 19,
+    "legacy": 18,
+    "skipVisual": 3,
+    "total": 64
+  },
+  "routes": [
+    {
+      "route": "/",
+      "capturePath": "/",
+      "status": "implemented",
+      "score": 85,
+      "signals": [
+        "premium-type",
+        "settings-shell",
+        "home-section"
+      ],
+      "file": "src/app/page.tsx",
+      "lineCount": 218,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\home.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\home.png"
+      }
+    },
+    {
+      "route": "/_not-found",
+      "capturePath": "/_not-found",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/not-found.tsx",
+      "lineCount": 8,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\_not-found.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\_not-found.png"
+      }
+    },
+    {
+      "route": "/about",
+      "capturePath": "/about",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/about/page.tsx",
+      "lineCount": 394,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\about.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\about.png"
+      }
+    },
+    {
+      "route": "/accessibility",
+      "capturePath": "/accessibility",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/accessibility/page.tsx",
+      "lineCount": 44,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\accessibility.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\accessibility.png"
+      }
+    },
+    {
+      "route": "/alerts",
+      "capturePath": "/alerts",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/alerts/page.tsx",
+      "lineCount": 273,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\alerts.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\alerts.png"
+      }
+    },
+    {
+      "route": "/api-docs",
+      "capturePath": "/api-docs",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/api-docs/page.tsx",
+      "lineCount": 111,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\api-docs.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\api-docs.png"
+      }
+    },
+    {
+      "route": "/api-test",
+      "capturePath": "/api-test",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/api-test/page.tsx",
+      "lineCount": 144,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\api-test.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\api-test.png"
+      }
+    },
+    {
+      "route": "/auth/forgot-password",
+      "capturePath": "/auth/forgot-password",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/auth/forgot-password/page.tsx",
+      "lineCount": 151,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\auth-forgot-password.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\auth-forgot-password.png"
+      }
+    },
+    {
+      "route": "/auth/login",
+      "capturePath": "/auth/login",
+      "status": "skip-visual",
+      "score": null,
+      "signals": [
+        "redirect-or-non-ui"
+      ],
+      "file": "src/app/auth/login/page.tsx",
+      "screenshots": {
+        "light": null,
+        "dark": null
+      }
+    },
+    {
+      "route": "/auth/profile",
+      "capturePath": "/auth/profile",
+      "status": "skip-visual",
+      "score": null,
+      "signals": [
+        "redirect-or-non-ui"
+      ],
+      "file": "src/app/auth/profile/page.tsx",
+      "screenshots": {
+        "light": null,
+        "dark": null
+      }
+    },
+    {
+      "route": "/auth/register",
+      "capturePath": "/auth/register",
+      "status": "skip-visual",
+      "score": null,
+      "signals": [
+        "redirect-or-non-ui"
+      ],
+      "file": "src/app/auth/register/page.tsx",
+      "screenshots": {
+        "light": null,
+        "dark": null
+      }
+    },
+    {
+      "route": "/auth/reset-password",
+      "capturePath": "/auth/reset-password",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/auth/reset-password/page.tsx",
+      "lineCount": 249,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\auth-reset-password.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\auth-reset-password.png"
+      }
+    },
+    {
+      "route": "/auth/sessions",
+      "capturePath": "/auth/sessions",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/auth/sessions/page.tsx",
+      "lineCount": 186,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\auth-sessions.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\auth-sessions.png"
+      }
+    },
+    {
+      "route": "/auth/verify-email",
+      "capturePath": "/auth/verify-email",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/auth/verify-email/page.tsx",
+      "lineCount": 156,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\auth-verify-email.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\auth-verify-email.png"
+      }
+    },
+    {
+      "route": "/auth/verify-reset-code",
+      "capturePath": "/auth/verify-reset-code",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/auth/verify-reset-code/page.tsx",
+      "lineCount": 175,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\auth-verify-reset-code.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\auth-verify-reset-code.png"
+      }
+    },
+    {
+      "route": "/blog",
+      "capturePath": "/blog",
+      "status": "legacy",
+      "score": 20,
+      "signals": [
+        "PageBackground"
+      ],
+      "file": "src/app/blog/page.tsx",
+      "lineCount": 494,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\blog.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\blog.png"
+      }
+    },
+    {
+      "route": "/contact",
+      "capturePath": "/contact",
+      "status": "legacy",
+      "score": 5,
+      "signals": [
+        "PageBackground",
+        "neon-accent"
+      ],
+      "file": "src/app/contact/page.tsx",
+      "lineCount": 319,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\contact.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\contact.png"
+      }
+    },
+    {
+      "route": "/faq",
+      "capturePath": "/faq",
+      "status": "legacy",
+      "score": 5,
+      "signals": [
+        "PageBackground",
+        "neon-accent"
+      ],
+      "file": "src/app/faq/page.tsx",
+      "lineCount": 415,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\faq.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\faq.png"
+      }
+    },
+    {
+      "route": "/ipo",
+      "capturePath": "/ipo",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/ipo/page.tsx",
+      "lineCount": 458,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\ipo.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\ipo.png"
+      }
+    },
+    {
+      "route": "/ipo/[ipoId]",
+      "capturePath": "/ipo/sample-ipo",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/ipo/[ipoId]/page.tsx",
+      "lineCount": 819,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\ipo-sample-ipo.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\ipo-sample-ipo.png"
+      }
+    },
+    {
+      "route": "/learn",
+      "capturePath": "/learn",
+      "status": "legacy",
+      "score": 5,
+      "signals": [
+        "PageBackground",
+        "neon-accent"
+      ],
+      "file": "src/app/learn/page.tsx",
+      "lineCount": 373,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\learn.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\learn.png"
+      }
+    },
+    {
+      "route": "/login",
+      "capturePath": "/login",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/login/page.tsx",
+      "lineCount": 256,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\login.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\login.png"
+      }
+    },
+    {
+      "route": "/market",
+      "capturePath": "/market",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/market/page.tsx",
+      "lineCount": 1535,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\market.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\market.png"
+      }
+    },
+    {
+      "route": "/market/institutional",
+      "capturePath": "/market/institutional",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/market/institutional/page.tsx",
+      "lineCount": 203,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\market-institutional.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\market-institutional.png"
+      }
+    },
+    {
+      "route": "/news",
+      "capturePath": "/news",
+      "status": "not-started",
+      "score": 45,
+      "signals": [
+        "news-shell",
+        "neon-accent"
+      ],
+      "file": "src/app/news/page.tsx",
+      "lineCount": 11,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news.png"
+      }
+    },
+    {
+      "route": "/news/alerts",
+      "capturePath": "/news/alerts",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/app/news/alerts/page.tsx",
+      "lineCount": 11,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-alerts.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-alerts.png"
+      }
+    },
+    {
+      "route": "/news/companies",
+      "capturePath": "/news/companies",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/app/news/companies/page.tsx",
+      "lineCount": 11,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-companies.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-companies.png"
+      }
+    },
+    {
+      "route": "/news/economy",
+      "capturePath": "/news/economy",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/app/news/economy/page.tsx",
+      "lineCount": 11,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-economy.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-economy.png"
+      }
+    },
+    {
+      "route": "/news/markets",
+      "capturePath": "/news/markets",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/app/news/markets/page.tsx",
+      "lineCount": 11,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-markets.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-markets.png"
+      }
+    },
+    {
+      "route": "/news/trending",
+      "capturePath": "/news/trending",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/app/news/trending/page.tsx",
+      "lineCount": 11,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-trending.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-trending.png"
+      }
+    },
+    {
+      "route": "/notifications",
+      "capturePath": "/notifications",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/notifications/page.tsx",
+      "lineCount": 239,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\notifications.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\notifications.png"
+      }
+    },
+    {
+      "route": "/portfolio",
+      "capturePath": "/portfolio",
+      "status": "implemented",
+      "score": 100,
+      "signals": [
+        "portfolio-benchmark"
+      ],
+      "file": "src/app/portfolio/page.tsx",
+      "lineCount": 8,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\portfolio.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\portfolio.png"
+      }
+    },
+    {
+      "route": "/privacy",
+      "capturePath": "/privacy",
+      "status": "legacy",
+      "score": 20,
+      "signals": [
+        "PageBackground"
+      ],
+      "file": "src/app/privacy/page.tsx",
+      "lineCount": 429,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\privacy.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\privacy.png"
+      }
+    },
+    {
+      "route": "/settings",
+      "capturePath": "/settings",
+      "status": "partial",
+      "score": 65,
+      "signals": [
+        "settings-shell"
+      ],
+      "file": "src/app/settings/page.tsx",
+      "lineCount": 20,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\settings.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\settings.png"
+      }
+    },
+    {
+      "route": "/signup",
+      "capturePath": "/signup",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/signup/page.tsx",
+      "lineCount": 333,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\signup.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\signup.png"
+      }
+    },
+    {
+      "route": "/sitemap",
+      "capturePath": "/sitemap",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/sitemap/page.tsx",
+      "lineCount": 38,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\sitemap.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\sitemap.png"
+      }
+    },
+    {
+      "route": "/stock-search",
+      "capturePath": "/stock-search",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/stock-search/page.tsx",
+      "lineCount": 170,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stock-search.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stock-search.png"
+      }
+    },
+    {
+      "route": "/stocks",
+      "capturePath": "/stocks",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "premium-type"
+      ],
+      "file": "src/app/stocks/page.tsx",
+      "lineCount": 2392,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks.png"
+      }
+    },
+    {
+      "route": "/stocks/[symbol]",
+      "capturePath": "/stocks/RELIANCE",
+      "status": "legacy",
+      "score": 0,
+      "signals": [
+        "glass-card",
+        "stock-details-page",
+        "neon-accent"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "lineCount": 1195,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE.png"
+      }
+    },
+    {
+      "route": "/terms",
+      "capturePath": "/terms",
+      "status": "legacy",
+      "score": 5,
+      "signals": [
+        "PageBackground",
+        "neon-accent"
+      ],
+      "file": "src/app/terms/page.tsx",
+      "lineCount": 227,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\terms.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\terms.png"
+      }
+    },
+    {
+      "route": "/watchlists",
+      "capturePath": "/watchlists",
+      "status": "not-started",
+      "score": 50,
+      "signals": [],
+      "file": "src/app/watchlists/page.tsx",
+      "lineCount": 351,
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\watchlists.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\watchlists.png"
+      }
+    },
+    {
+      "route": "/settings?tab=basic",
+      "capturePath": "/settings?tab=basic",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "settings-shell"
+      ],
+      "file": "src/components/settings/SettingsPageShell.tsx",
+      "parentRoute": "/settings",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\settings-tab-basic.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\settings-tab-basic.png"
+      }
+    },
+    {
+      "route": "/settings?tab=reports",
+      "capturePath": "/settings?tab=reports",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "settings-shell"
+      ],
+      "file": "src/components/settings/SettingsPageShell.tsx",
+      "parentRoute": "/settings",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\settings-tab-reports.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\settings-tab-reports.png"
+      }
+    },
+    {
+      "route": "/settings?tab=devices",
+      "capturePath": "/settings?tab=devices",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "settings-shell"
+      ],
+      "file": "src/components/settings/SettingsPageShell.tsx",
+      "parentRoute": "/settings",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\settings-tab-devices.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\settings-tab-devices.png"
+      }
+    },
+    {
+      "route": "/settings?tab=password",
+      "capturePath": "/settings?tab=password",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "settings-shell"
+      ],
+      "file": "src/components/settings/SettingsPageShell.tsx",
+      "parentRoute": "/settings",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\settings-tab-password.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\settings-tab-password.png"
+      }
+    },
+    {
+      "route": "/settings?tab=trading",
+      "capturePath": "/settings?tab=trading",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "settings-shell"
+      ],
+      "file": "src/components/settings/SettingsPageShell.tsx",
+      "parentRoute": "/settings",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\settings-tab-trading.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\settings-tab-trading.png"
+      }
+    },
+    {
+      "route": "/settings?tab=suspicious",
+      "capturePath": "/settings?tab=suspicious",
+      "status": "partial",
+      "score": 60,
+      "signals": [
+        "settings-shell"
+      ],
+      "file": "src/components/settings/SettingsPageShell.tsx",
+      "parentRoute": "/settings",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\settings-tab-suspicious.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\settings-tab-suspicious.png"
+      }
+    },
+    {
+      "route": "/news",
+      "capturePath": "/news",
+      "status": "partial",
+      "score": 58,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/components/News/NewsCategoryTabs.tsx",
+      "parentRoute": "/news",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news.png"
+      }
+    },
+    {
+      "route": "/news/markets",
+      "capturePath": "/news/markets",
+      "status": "partial",
+      "score": 58,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/components/News/NewsCategoryTabs.tsx",
+      "parentRoute": "/news",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-markets.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-markets.png"
+      }
+    },
+    {
+      "route": "/news/economy",
+      "capturePath": "/news/economy",
+      "status": "partial",
+      "score": 58,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/components/News/NewsCategoryTabs.tsx",
+      "parentRoute": "/news",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-economy.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-economy.png"
+      }
+    },
+    {
+      "route": "/news/companies",
+      "capturePath": "/news/companies",
+      "status": "partial",
+      "score": 58,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/components/News/NewsCategoryTabs.tsx",
+      "parentRoute": "/news",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-companies.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-companies.png"
+      }
+    },
+    {
+      "route": "/news/trending",
+      "capturePath": "/news/trending",
+      "status": "partial",
+      "score": 58,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/components/News/NewsCategoryTabs.tsx",
+      "parentRoute": "/news",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-trending.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-trending.png"
+      }
+    },
+    {
+      "route": "/news/alerts",
+      "capturePath": "/news/alerts",
+      "status": "partial",
+      "score": 58,
+      "signals": [
+        "news-shell"
+      ],
+      "file": "src/components/News/NewsCategoryTabs.tsx",
+      "parentRoute": "/news",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\news-alerts.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\news-alerts.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=overview",
+      "capturePath": "/stocks/RELIANCE?tab=overview",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-overview.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-overview.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=fundamental",
+      "capturePath": "/stocks/RELIANCE?tab=fundamental",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-fundamental.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-fundamental.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=technical",
+      "capturePath": "/stocks/RELIANCE?tab=technical",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-technical.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-technical.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=management",
+      "capturePath": "/stocks/RELIANCE?tab=management",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-management.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-management.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=industry",
+      "capturePath": "/stocks/RELIANCE?tab=industry",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-industry.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-industry.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=sentiment",
+      "capturePath": "/stocks/RELIANCE?tab=sentiment",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-sentiment.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-sentiment.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=institutional",
+      "capturePath": "/stocks/RELIANCE?tab=institutional",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-institutional.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-institutional.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=macroeconomic",
+      "capturePath": "/stocks/RELIANCE?tab=macroeconomic",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-macroeconomic.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-macroeconomic.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=esg",
+      "capturePath": "/stocks/RELIANCE?tab=esg",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-esg.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-esg.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=risk",
+      "capturePath": "/stocks/RELIANCE?tab=risk",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-risk.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-risk.png"
+      }
+    },
+    {
+      "route": "/stocks/RELIANCE?tab=growth",
+      "capturePath": "/stocks/RELIANCE?tab=growth",
+      "status": "legacy",
+      "score": 30,
+      "signals": [
+        "glass-card",
+        "stock-details-page"
+      ],
+      "file": "src/app/stocks/[symbol]/page.tsx",
+      "parentRoute": "/stocks/[symbol]",
+      "screenshots": {
+        "light": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-growth.png",
+        "dark": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-growth.png"
+      }
+    }
+  ]
+}
