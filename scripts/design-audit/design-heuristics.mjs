@@ -10,6 +10,8 @@ export const DESIGN_STATUS = {
 const IMPLEMENTED_SIGNALS = [
   { pattern: /panelShellClass|dashboard-card/, weight: 40, label: 'panel-shell' },
   { pattern: /ToolPageLayout|ToolPanel/, weight: 40, label: 'tool-shell' },
+  { pattern: /AuthPageLayout/, weight: 40, label: 'auth-shell' },
+  { pattern: /ContentPageLayout/, weight: 40, label: 'content-shell' },
   { pattern: /rounded-\[28px\].*border-slate-200\/80/, weight: 20, label: 'premium-radius' },
   { pattern: /tracking-\[-0\.04em\]/, weight: 10, label: 'premium-type' },
 ];

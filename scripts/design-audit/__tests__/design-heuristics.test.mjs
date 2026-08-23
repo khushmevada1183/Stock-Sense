@@ -33,3 +33,17 @@ test('ToolPageLayout route scores as implemented', () => {
   assert.equal(result.status, DESIGN_STATUS.IMPLEMENTED);
   assert.ok(result.signals.includes('tool-shell'));
 });
+
+test('AuthPageLayout route scores as implemented', () => {
+  const sample = `import { AuthPageLayout } from '@/components/auth/AuthPageLayout';`;
+  const result = classifyRouteDesign(sample, 'src/app/login/page.tsx');
+  assert.equal(result.status, DESIGN_STATUS.IMPLEMENTED);
+  assert.ok(result.signals.includes('auth-shell'));
+});
+
+test('ContentPageLayout route scores as implemented', () => {
+  const sample = `import { ContentPageLayout } from '@/components/content/ContentPageLayout';`;
+  const result = classifyRouteDesign(sample, 'src/app/faq/page.tsx');
+  assert.equal(result.status, DESIGN_STATUS.IMPLEMENTED);
+  assert.ok(result.signals.includes('content-shell'));
+});
