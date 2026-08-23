@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import {
   deletePushDevice,
@@ -10,6 +9,16 @@ import {
   getPushDevices,
   registerPushDevice,
 } from '@/api/api';
+import {
+  ToolAuthGate,
+  ToolError,
+  ToolLoading,
+  ToolPageLayout,
+  ToolPanel,
+  fieldClass,
+  primaryButtonClass,
+} from '@/components/tools/ToolPageLayout';
+import { dangerButtonClass, insetPanelClass } from '@/styles/design-tokens';
 
 type NotificationItem = {
   id: string;
@@ -51,13 +60,9 @@ export default function NotificationsPage() {
       ]);
 
       setNotifications(
-        Array.isArray(notifResponse?.data?.notifications)
-          ? notifResponse.data.notifications
-          : []
+        Array.isArray(notifResponse?.data?.notifications) ? notifResponse.data.notifications : [],
       );
-      const deviceList = Array.isArray(deviceResponse?.data?.devices)
-        ? deviceResponse.data.devices
-        : [];
+      const deviceList = Array.isArray(deviceResponse?.data?.devices) ? deviceResponse.data.devices : [];
 
       setDevices(deviceList.filter((device: PushDevice) => device.isActive !== false));
       setScheduler(statusResponse?.data?.scheduler || null);
@@ -113,60 +118,42 @@ export default function NotificationsPage() {
   };
 
   if (authLoading) {
-    return <div className="container mx-auto px-4 py-10 text-gray-300">Loading authentication...</div>;
+    return <ToolLoading message="Loading authentication…" />;
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-10">
-        <div className="max-w-2xl mx-auto bg-gray-900/90 border border-gray-700/50 rounded-xl p-6">
-          <h1 className="text-2xl font-bold text-white mb-2">Notifications</h1>
-          <p className="text-gray-300 mb-4">Please log in to view and manage notifications.</p>
-          <Link href="/login" className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm inline-block">
-            Go to Login
-          </Link>
-        </div>
-      </div>
+      <ToolAuthGate
+        title="Notifications"
+        description="Sign in to view and manage your notification center."
+      />
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Notifications</h1>
-        <p className="text-gray-400 mt-1">Manage your notification center and push device settings.</p>
-      </div>
+    <ToolPageLayout
+      eyebrow="User tools"
+      title="Notifications"
+      description="Manage your notification center and push device settings."
+    >
+      {error ? <ToolError message={error} /> : null}
 
-      {error ? (
-        <div className="bg-red-900/20 border border-red-700/50 rounded-lg p-3 text-red-300 text-sm">{error}</div>
-      ) : null}
-
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-2">Delivery Scheduler</h2>
-        <pre className="text-xs text-gray-300 bg-gray-800 border border-gray-700 rounded-md p-3 overflow-x-auto">
+      <ToolPanel title="Delivery scheduler">
+        <pre className={`${insetPanelClass} overflow-x-auto p-3 text-xs text-slate-600 dark:text-slate-300`}>
           {JSON.stringify(scheduler, null, 2)}
         </pre>
-      </div>
+      </ToolPanel>
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Register Push Device</h2>
-        <form onSubmit={handleRegisterDevice} className="grid grid-cols-1 md:grid-cols-4 gap-3">
-          <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
-          >
+      <ToolPanel title="Register push device">
+        <form onSubmit={handleRegisterDevice} className="grid grid-cols-1 gap-3 md:grid-cols-4">
+          <select value={provider} onChange={(e) => setProvider(e.target.value)} className={fieldClass}>
             <option value="webpush">webpush</option>
             <option value="fcm">fcm</option>
             <option value="expo">expo</option>
             <option value="apns">apns</option>
             <option value="mock">mock</option>
           </select>
-          <select
-            value={platform}
-            onChange={(e) => setPlatform(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
-          >
+          <select value={platform} onChange={(e) => setPlatform(e.target.value)} className={fieldClass}>
             <option value="web">web</option>
             <option value="ios">ios</option>
             <option value="android">android</option>
@@ -176,63 +163,59 @@ export default function NotificationsPage() {
             value={deviceToken}
             onChange={(e) => setDeviceToken(e.target.value)}
             placeholder="Device token"
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+            className={fieldClass}
           />
-          <button
-            type="submit"
-            disabled={registering}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white text-sm rounded-md px-3 py-2"
-          >
-            {registering ? 'Registering...' : 'Register Device'}
+          <button type="submit" disabled={registering} className={primaryButtonClass}>
+            {registering ? 'Registering…' : 'Register device'}
           </button>
         </form>
-      </div>
+      </ToolPanel>
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Registered Devices</h2>
+      <ToolPanel title="Registered devices">
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading devices...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading devices…</p>
         ) : devices.length === 0 ? (
-          <p className="text-gray-400 text-sm">No push devices registered.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No push devices registered.</p>
         ) : (
           <div className="space-y-2">
             {devices.map((device) => (
-              <div key={device.id} className="border border-gray-700 rounded-lg p-3 bg-gray-800/60 flex items-center justify-between">
+              <div key={device.id} className={`${insetPanelClass} flex items-center justify-between p-3`}>
                 <div>
-                  <p className="text-white text-sm font-medium">{device.provider} • {device.platform}</p>
-                  <p className="text-xs text-gray-400">{device.id}</p>
+                  <p className="text-sm font-medium text-slate-950 dark:text-white">
+                    {device.provider} • {device.platform}
+                  </p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{device.id}</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => void handleDeleteDevice(device.id)}
-                  className="text-xs px-2 py-1 rounded border border-red-700 bg-red-900/30 text-red-300"
-                >
+                <button type="button" onClick={() => void handleDeleteDevice(device.id)} className={dangerButtonClass}>
                   Remove
                 </button>
               </div>
             ))}
           </div>
         )}
-      </div>
+      </ToolPanel>
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Notification Center</h2>
+      <ToolPanel title="Notification center">
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading notifications...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading notifications…</p>
         ) : notifications.length === 0 ? (
-          <p className="text-gray-400 text-sm">No notifications yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No notifications yet.</p>
         ) : (
           <div className="space-y-2">
             {notifications.map((notification) => (
-              <div key={notification.id} className="border border-gray-700 rounded-lg p-3 bg-gray-800/60">
-                <p className="text-white text-sm font-medium">{notification.title || 'Notification'}</p>
-                <p className="text-gray-300 text-sm mt-1">{notification.message || 'No message body available.'}</p>
-                <p className="text-xs text-gray-500 mt-2">{notification.createdAt || ''}</p>
+              <div key={notification.id} className={`${insetPanelClass} p-3`}>
+                <p className="text-sm font-medium text-slate-950 dark:text-white">
+                  {notification.title || 'Notification'}
+                </p>
+                <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
+                  {notification.message || 'No message body available.'}
+                </p>
+                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{notification.createdAt || ''}</p>
               </div>
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </ToolPanel>
+    </ToolPageLayout>
   );
 }

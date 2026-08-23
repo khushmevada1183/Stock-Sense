@@ -23,6 +23,7 @@
     "audit:design:capture": "node scripts/design-audit/capture-route-screenshots.mjs",
     "audit:design:matrix": "node scripts/design-audit/generate-design-matrix.mjs",
     "audit:design:gallery": "node scripts/design-audit/generate-design-gallery.mjs",
+    "audit:design:refresh": "npm run audit:design:classify && npm run audit:design:matrix && npm run audit:design:gallery",
     "audit:design:full": "npm run audit:design && npm run audit:design:capture && npm run audit:design:matrix && npm run audit:design:gallery"
   },
   "dependencies": {

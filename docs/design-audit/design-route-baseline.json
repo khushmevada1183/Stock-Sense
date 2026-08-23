@@ -1,13 +1,15 @@
 {
-  "generatedAt": "2026-08-23T09:54:21.749Z",
+  "generatedAt": "2026-08-23T09:59:41.057Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 8,
+    "implemented": 11,
     "partial": 19,
     "legacy": 17,
+    "notStarted": 14,
     "skipVisual": 3,
-    "total": 64
+    "total": 64,
+    "remaining": 50
   },
   "routes": [
     {
@@ -53,9 +55,11 @@
     {
       "route": "/alerts",
       "capturePath": "/alerts",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "tool-shell"
+      ],
       "file": "src/app/alerts/page.tsx",
       "lineCount": 273
     },
@@ -322,9 +326,11 @@
     {
       "route": "/notifications",
       "capturePath": "/notifications",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "tool-shell"
+      ],
       "file": "src/app/notifications/page.tsx",
       "lineCount": 239
     },
@@ -428,9 +434,11 @@
     {
       "route": "/watchlists",
       "capturePath": "/watchlists",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "tool-shell"
+      ],
       "file": "src/app/watchlists/page.tsx",
       "lineCount": 351
     },

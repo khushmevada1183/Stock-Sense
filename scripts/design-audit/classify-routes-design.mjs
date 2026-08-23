@@ -112,8 +112,10 @@ const artifact = {
     implemented: routes.filter((r) => r.status === 'implemented').length,
     partial: routes.filter((r) => r.status === 'partial').length,
     legacy: routes.filter((r) => r.status === 'legacy').length,
+    notStarted: routes.filter((r) => r.status === 'not-started').length,
     skipVisual: routes.filter((r) => r.status === 'skip-visual').length,
     total: routes.length,
+    remaining: routes.filter((r) => r.status === 'legacy' || r.status === 'not-started' || r.status === 'partial').length,
   },
   routes,
 };

@@ -1,21 +1,25 @@
 {
-  "generatedAt": "2026-08-23T08:56:32.084Z",
+  "generatedAt": "2026-08-23T09:59:41.644Z",
   "summary": {
-    "implemented": 2,
+    "implemented": 11,
     "partial": 19,
-    "legacy": 18,
+    "legacy": 17,
+    "notStarted": 14,
     "skipVisual": 3,
-    "total": 64
+    "total": 64,
+    "remaining": 50,
+    "progressPct": 18,
+    "audited": 61
   },
   "routes": [
     {
       "route": "/",
       "capturePath": "/",
       "status": "implemented",
-      "score": 85,
+      "score": 100,
       "signals": [
+        "panel-shell",
         "premium-type",
-        "settings-shell",
         "home-section"
       ],
       "file": "src/app/page.tsx",
@@ -67,9 +71,11 @@
     {
       "route": "/alerts",
       "capturePath": "/alerts",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "tool-shell"
+      ],
       "file": "src/app/alerts/page.tsx",
       "lineCount": 273,
       "screenshots": {
@@ -260,9 +266,11 @@
     {
       "route": "/ipo",
       "capturePath": "/ipo",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/ipo/page.tsx",
       "lineCount": 458,
       "screenshots": {
@@ -273,9 +281,11 @@
     {
       "route": "/ipo/[ipoId]",
       "capturePath": "/ipo/sample-ipo",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/ipo/[ipoId]/page.tsx",
       "lineCount": 819,
       "screenshots": {
@@ -315,9 +325,11 @@
     {
       "route": "/market",
       "capturePath": "/market",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/market/page.tsx",
       "lineCount": 1535,
       "screenshots": {
@@ -328,9 +340,11 @@
     {
       "route": "/market/institutional",
       "capturePath": "/market/institutional",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/market/institutional/page.tsx",
       "lineCount": 203,
       "screenshots": {
@@ -432,9 +446,11 @@
     {
       "route": "/notifications",
       "capturePath": "/notifications",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "tool-shell"
+      ],
       "file": "src/app/notifications/page.tsx",
       "lineCount": 239,
       "screenshots": {
@@ -516,9 +532,11 @@
     {
       "route": "/stock-search",
       "capturePath": "/stock-search",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/stock-search/page.tsx",
       "lineCount": 170,
       "screenshots": {
@@ -529,10 +547,10 @@
     {
       "route": "/stocks",
       "capturePath": "/stocks",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "premium-type"
+        "panel-shell"
       ],
       "file": "src/app/stocks/page.tsx",
       "lineCount": 2392,
@@ -544,11 +562,10 @@
     {
       "route": "/stocks/[symbol]",
       "capturePath": "/stocks/RELIANCE",
-      "status": "legacy",
-      "score": 0,
+      "status": "partial",
+      "score": 75,
       "signals": [
-        "glass-card",
-        "stock-details-page",
+        "panel-shell",
         "neon-accent"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
@@ -577,9 +594,11 @@
     {
       "route": "/watchlists",
       "capturePath": "/watchlists",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "tool-shell"
+      ],
       "file": "src/app/watchlists/page.tsx",
       "lineCount": 351,
       "screenshots": {

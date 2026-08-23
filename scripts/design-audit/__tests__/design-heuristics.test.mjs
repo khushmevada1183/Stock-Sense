@@ -26,3 +26,10 @@ test('PageBackground route scores as legacy', () => {
   assert.equal(result.status, DESIGN_STATUS.LEGACY);
   assert.ok(result.signals.includes('PageBackground'));
 });
+
+test('ToolPageLayout route scores as implemented', () => {
+  const sample = `import { ToolPageLayout, ToolPanel } from '@/components/tools/ToolPageLayout';`;
+  const result = classifyRouteDesign(sample, 'src/app/watchlists/page.tsx');
+  assert.equal(result.status, DESIGN_STATUS.IMPLEMENTED);
+  assert.ok(result.signals.includes('tool-shell'));
+});

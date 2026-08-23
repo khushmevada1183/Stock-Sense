@@ -32,9 +32,11 @@ md.push('## Summary');
 md.push('');
 md.push('| Status | Count | Meaning |');
 md.push('| --- | ---: | --- |');
-md.push(`| implemented | ${byStatus('implemented').length} | Matches portfolio \`panelShellClass\` language |`);
-md.push(`| partial | ${byStatus('partial').length} | Some new patterns, inconsistent surfaces |`);
+md.push(`| implemented (completed) | ${byStatus('implemented').length} | Matches portfolio \`panelShellClass\` language |`);
+md.push(`| partial (in progress) | ${byStatus('partial').length} | Some new patterns, inconsistent surfaces |`);
 md.push(`| legacy | ${byStatus('legacy').length} | \`glass-card\`, \`PageBackground\`, or monolithic old UI |`);
+md.push(`| not-started | ${byStatus('not-started').length} | No design tokens detected yet |`);
+md.push(`| **remaining** | **${byStatus('legacy').length + byStatus('partial').length + byStatus('not-started').length}** | legacy + partial + not-started |`);
 md.push(`| skip-visual | ${byStatus('skip-visual').length} | Redirects or non-UI routes |`);
 md.push('');
 md.push('## Route Status (sorted by priority)');
@@ -69,15 +71,30 @@ md.push('  partial --> P3["/news categories"]');
 md.push('```');
 
 md.push('');
-md.push('## Not implemented with new design (action list)');
+md.push('## Remaining work (action list)');
 md.push('');
-for (const r of sorted.filter((x) => x.status === 'legacy' || x.status === 'partial')) {
-  md.push(`- [ ] \`${r.route}\` — ${r.status}; file: \`${r.file}\``);
+for (const r of sorted.filter((x) => x.status !== 'implemented' && x.status !== 'skip-visual')) {
+  const tag = r.status === 'partial' ? 'partial' : r.status === 'legacy' ? 'legacy' : 'not-started';
+  md.push(`- [ ] \`${r.route}\` — **${tag}**; file: \`${r.file}\``);
 }
+
+const notStarted = byStatus('not-started').length;
+const legacy = byStatus('legacy').length;
+const partial = byStatus('partial').length;
+const implemented = byStatus('implemented').length;
+const remaining = legacy + partial + notStarted;
+const audited = merged.filter((r) => r.status !== 'skip-visual').length;
+const progressPct = audited ? Math.round((implemented / audited) * 100) : 0;
 
 const outJson = {
   generatedAt: new Date().toISOString(),
-  summary: baseline.summary,
+  summary: {
+    ...baseline.summary,
+    notStarted,
+    remaining,
+    progressPct,
+    audited,
+  },
   routes: merged,
 };
 fs.writeFileSync('docs/design-audit/design-coverage-data.json', JSON.stringify(outJson, null, 2));

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import {
   addWatchlistItem,
@@ -13,6 +12,16 @@ import {
   reorderWatchlistItems,
   updateWatchlist,
 } from '@/api/api';
+import {
+  ToolAuthGate,
+  ToolError,
+  ToolLoading,
+  ToolPageLayout,
+  ToolPanel,
+  fieldClass,
+  primaryButtonClass,
+} from '@/components/tools/ToolPageLayout';
+import { dangerButtonClass, insetPanelClass, secondaryButtonClass } from '@/styles/design-tokens';
 
 type WatchlistItem = {
   id: string;
@@ -41,7 +50,7 @@ export default function WatchlistsPage() {
 
   const selectedWatchlist = useMemo(
     () => watchlists.find((watchlist) => watchlist.id === selectedWatchlistId) || null,
-    [watchlists, selectedWatchlistId]
+    [watchlists, selectedWatchlistId],
   );
 
   const loadWatchlists = async () => {
@@ -194,157 +203,140 @@ export default function WatchlistsPage() {
   }, [selectedWatchlist]);
 
   if (authLoading) {
-    return <div className="container mx-auto px-4 py-10 text-gray-300">Loading authentication...</div>;
+    return <ToolLoading message="Loading authentication…" />;
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-10">
-        <div className="max-w-2xl mx-auto bg-gray-900/90 border border-gray-700/50 rounded-xl p-6">
-          <h1 className="text-2xl font-bold text-white mb-2">Watchlists</h1>
-          <p className="text-gray-300 mb-4">Please log in to create and manage watchlists.</p>
-          <Link href="/auth/login" className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm inline-block">
-            Go to Login
-          </Link>
-        </div>
-      </div>
+      <ToolAuthGate
+        title="Watchlists"
+        description="Sign in to create and manage focused symbol lists."
+      />
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Watchlists</h1>
-        <p className="text-gray-400 mt-1">Build focused lists and monitor symbols in one place.</p>
-      </div>
+    <ToolPageLayout
+      eyebrow="User tools"
+      title="Watchlists"
+      description="Build focused lists and monitor symbols in one place."
+    >
+      {error ? <ToolError message={error} /> : null}
 
-      {error ? (
-        <div className="bg-red-900/20 border border-red-700/50 rounded-lg p-3 text-red-300 text-sm">{error}</div>
-      ) : null}
-
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Create Watchlist</h2>
-        <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <ToolPanel title="Create watchlist">
+        <form onSubmit={handleCreate} className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Watchlist name"
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+            className={fieldClass}
           />
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Description (optional)"
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+            className={fieldClass}
           />
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md px-3 py-2">
+          <button type="submit" className={primaryButtonClass}>
             Create
           </button>
         </form>
-      </div>
+      </ToolPanel>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5 lg:col-span-1">
-          <h2 className="text-lg font-semibold text-white mb-3">All Watchlists</h2>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <ToolPanel title="All watchlists" className="lg:col-span-1">
           {loading ? (
-            <p className="text-gray-400 text-sm">Loading watchlists...</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Loading watchlists…</p>
           ) : watchlists.length === 0 ? (
-            <p className="text-gray-400 text-sm">No watchlists yet.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No watchlists yet.</p>
           ) : (
             <div className="space-y-2">
               {watchlists.map((watchlist) => (
                 <button
                   key={watchlist.id}
+                  type="button"
                   onClick={() => setSelectedWatchlistId(watchlist.id)}
-                  className={`w-full text-left border rounded-lg p-3 ${
+                  className={`w-full rounded-2xl border p-3 text-left transition ${
                     selectedWatchlistId === watchlist.id
-                      ? 'border-blue-500 bg-blue-900/20'
-                      : 'border-gray-700 bg-gray-800/60'
+                      ? 'border-emerald-500/40 bg-emerald-500/10'
+                      : `${insetPanelClass} hover:border-emerald-400/20`
                   }`}
                 >
-                  <p className="text-white font-medium text-sm">{watchlist.name}</p>
-                  <p className="text-xs text-gray-400 mt-1">{watchlist.description || 'No description'}</p>
+                  <p className="text-sm font-medium text-slate-950 dark:text-white">{watchlist.name}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {watchlist.description || 'No description'}
+                  </p>
                 </button>
               ))}
             </div>
           )}
-        </div>
+        </ToolPanel>
 
-        <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-white mb-3">Watchlist Details</h2>
-
+        <ToolPanel title="Watchlist details" className="lg:col-span-2">
           {!selectedWatchlist ? (
-            <p className="text-gray-400 text-sm">Select a watchlist to manage items.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Select a watchlist to manage items.</p>
           ) : (
             <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
-                />
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
                 <input
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+                  className={fieldClass}
                 />
                 <div className="flex gap-2">
-                  <button onClick={() => void handleRename()} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md px-3 py-2">
+                  <button type="button" onClick={() => void handleRename()} className={`${primaryButtonClass} flex-1`}>
                     Save
                   </button>
                   <button
+                    type="button"
                     onClick={() => void handleDeleteWatchlist(selectedWatchlist.id)}
-                    className="flex-1 bg-red-900/30 border border-red-700 text-red-300 text-sm rounded-md px-3 py-2"
+                    className={`${dangerButtonClass} flex-1 px-4 py-2 text-sm`}
                   >
                     Delete
                   </button>
                 </div>
               </div>
 
-              <form onSubmit={handleAddItem} className="flex gap-2">
+              <form onSubmit={handleAddItem} className="flex flex-wrap gap-2">
                 <input
                   value={symbolToAdd}
                   onChange={(e) => setSymbolToAdd(e.target.value)}
                   placeholder="Add symbol (e.g., INFY)"
-                  className="flex-1 bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+                  className={`${fieldClass} min-w-[200px] flex-1`}
                 />
-                <button type="submit" className="bg-green-600 hover:bg-green-700 text-white text-sm rounded-md px-3 py-2">
+                <button type="submit" className={primaryButtonClass}>
                   Add
                 </button>
-                <button
-                  type="button"
-                  onClick={() => void handleReverseOrder()}
-                  className="bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-md px-3 py-2"
-                >
-                  Reverse Order
+                <button type="button" onClick={() => void handleReverseOrder()} className={secondaryButtonClass}>
+                  Reverse order
                 </button>
               </form>
 
               <div className="space-y-2">
                 {Array.isArray(selectedWatchlist.items) && selectedWatchlist.items.length > 0 ? (
                   selectedWatchlist.items.map((item) => (
-                    <div key={item.id} className="border border-gray-700 bg-gray-800/60 rounded-lg p-3 flex items-center justify-between">
+                    <div
+                      key={item.id}
+                      className={`${insetPanelClass} flex items-center justify-between p-3`}
+                    >
                       <div>
-                        <p className="text-white text-sm font-medium">{item.symbol}</p>
-                        <p className="text-xs text-gray-400">{item.id}</p>
+                        <p className="text-sm font-medium text-slate-950 dark:text-white">{item.symbol}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{item.id}</p>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => void handleDeleteItem(item.id)}
-                        className="text-xs px-2 py-1 rounded border border-red-700 bg-red-900/30 text-red-300"
-                      >
+                      <button type="button" onClick={() => void handleDeleteItem(item.id)} className={dangerButtonClass}>
                         Remove
                       </button>
                     </div>
                   ))
                 ) : (
-                  <p className="text-gray-400 text-sm">No items in this watchlist yet.</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No items in this watchlist yet.</p>
                 )}
               </div>
             </div>
           )}
-        </div>
+        </ToolPanel>
       </div>
-    </div>
+    </ToolPageLayout>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import {
   createAlert,
@@ -11,6 +10,16 @@ import {
   getAlerts,
   updateAlert,
 } from '@/api/api';
+import {
+  ToolAuthGate,
+  ToolError,
+  ToolLoading,
+  ToolPageLayout,
+  ToolPanel,
+  fieldClass,
+  primaryButtonClass,
+} from '@/components/tools/ToolPageLayout';
+import { dangerButtonClass, insetPanelClass, secondaryButtonClass } from '@/styles/design-tokens';
 
 type AlertRecord = {
   id: string;
@@ -51,10 +60,7 @@ export default function AlertsPage() {
   const loadAlerts = async () => {
     try {
       setLoading(true);
-      const [alertsResponse, statusResponse] = await Promise.all([
-        getAlerts(),
-        getAlertEvaluatorStatus(),
-      ]);
+      const [alertsResponse, statusResponse] = await Promise.all([getAlerts(), getAlertEvaluatorStatus()]);
 
       const alertsPayload = alertsResponse?.data?.alerts || alertsResponse?.alerts || [];
       const schedulerPayload = statusResponse?.data?.scheduler || statusResponse?.scheduler || null;
@@ -67,11 +73,12 @@ export default function AlertsPage() {
       if (normalizedAlerts.length > 0 && normalizedAlerts[0]?.id) {
         try {
           const detailResponse = await getAlertById(String(normalizedAlerts[0].id));
-          const detailPayload = detailResponse?.data?.alert || detailResponse?.alert || detailResponse?.data || detailResponse;
+          const detailPayload =
+            detailResponse?.data?.alert || detailResponse?.alert || detailResponse?.data || detailResponse;
           setSelectedAlertDetails(
             detailPayload && typeof detailPayload === 'object'
               ? (detailPayload as Record<string, unknown>)
-              : null
+              : null,
           );
         } catch {
           setSelectedAlertDetails(null);
@@ -144,50 +151,39 @@ export default function AlertsPage() {
   };
 
   if (authLoading) {
-    return <div className="container mx-auto px-4 py-10 text-gray-300">Loading authentication...</div>;
+    return <ToolLoading message="Loading authentication…" />;
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="container mx-auto px-4 py-10">
-        <div className="max-w-2xl mx-auto bg-gray-900/90 border border-gray-700/50 rounded-xl p-6">
-          <h1 className="text-2xl font-bold text-white mb-2">Price Alerts</h1>
-          <p className="text-gray-300 mb-4">Please log in to create and manage stock alerts.</p>
-          <Link href="/login" className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm inline-block">
-            Go to Login
-          </Link>
-        </div>
-      </div>
+      <ToolAuthGate
+        title="Price alerts"
+        description="Sign in to create and manage stock movement alerts."
+      />
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Alerts</h1>
-        <p className="text-gray-400 mt-1">Create and track price movement alerts in real-time.</p>
-      </div>
+    <ToolPageLayout
+      eyebrow="User tools"
+      title="Alerts"
+      description="Create and track price movement alerts in real time."
+    >
+      {error ? <ToolError message={error} /> : null}
 
-      {error ? (
-        <div className="bg-red-900/20 border border-red-700/50 rounded-lg p-3 text-red-300 text-sm">{error}</div>
-      ) : null}
-
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Create Alert</h2>
-        <form onSubmit={handleCreateAlert} className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <ToolPanel title="Create alert">
+        <form onSubmit={handleCreateAlert} className="grid grid-cols-1 gap-3 md:grid-cols-4">
           <input
             value={symbol}
             onChange={(e) => setSymbol(e.target.value)}
             placeholder="Symbol (e.g., RELIANCE)"
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+            className={fieldClass}
           />
-          <select
-            value={alertType}
-            onChange={(e) => setAlertType(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
-          >
+          <select value={alertType} onChange={(e) => setAlertType(e.target.value)} className={fieldClass}>
             {ALERT_TYPES.map((type) => (
-              <option key={type} value={type}>{type}</option>
+              <option key={type} value={type}>
+                {type}
+              </option>
             ))}
           </select>
           <input
@@ -196,68 +192,62 @@ export default function AlertsPage() {
             value={targetValue}
             onChange={(e) => setTargetValue(e.target.value)}
             placeholder="Target value"
-            className="bg-gray-800 border border-gray-700 rounded-md px-3 py-2 text-sm text-white"
+            className={fieldClass}
           />
-          <button
-            type="submit"
-            disabled={saving}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white text-sm rounded-md px-3 py-2"
-          >
-            {saving ? 'Creating...' : 'Create Alert'}
+          <button type="submit" disabled={saving} className={primaryButtonClass}>
+            {saving ? 'Creating…' : 'Create alert'}
           </button>
         </form>
-      </div>
+      </ToolPanel>
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-2">Evaluator Status</h2>
-        <pre className="text-xs text-gray-300 bg-gray-800 border border-gray-700 rounded-md p-3 overflow-x-auto">
+      <ToolPanel title="Evaluator status">
+        <pre className={`${insetPanelClass} overflow-x-auto p-3 text-xs text-slate-600 dark:text-slate-300`}>
           {JSON.stringify(schedulerStatus, null, 2)}
         </pre>
-      </div>
+      </ToolPanel>
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-2">Alert Detail Preview</h2>
-        <p className="text-xs text-gray-400 mb-3">Loads the first alert via GET /alerts/:alertId to validate detail endpoint mapping.</p>
-        <pre className="text-xs text-gray-300 bg-gray-800 border border-gray-700 rounded-md p-3 overflow-x-auto">
+      <ToolPanel title="Alert detail preview">
+        <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
+          Loads the first alert via GET /alerts/:alertId to validate detail endpoint mapping.
+        </p>
+        <pre className={`${insetPanelClass} overflow-x-auto p-3 text-xs text-slate-600 dark:text-slate-300`}>
           {JSON.stringify(selectedAlertDetails, null, 2)}
         </pre>
-      </div>
+      </ToolPanel>
 
-      <div className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-5">
-        <h2 className="text-lg font-semibold text-white mb-4">Your Alerts</h2>
-
+      <ToolPanel title="Your alerts">
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading alerts...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading alerts…</p>
         ) : sortedAlerts.length === 0 ? (
-          <p className="text-gray-400 text-sm">No alerts created yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No alerts created yet.</p>
         ) : (
           <div className="space-y-3">
             {sortedAlerts.map((alert) => (
-              <div key={alert.id} className="border border-gray-700 rounded-lg p-3 bg-gray-800/60">
+              <div key={alert.id} className={`${insetPanelClass} p-3`}>
                 <div className="flex items-center justify-between gap-2">
                   <div>
-                    <p className="text-white font-medium">{alert.symbol}</p>
-                    <p className="text-xs text-gray-400">
-                      {alert.alertType} @ ₹{Number(alert.targetValue).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    <p className="font-medium text-slate-950 dark:text-white">{alert.symbol}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {alert.alertType} @ ₹
+                      {Number(alert.targetValue).toLocaleString('en-IN', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => void handleToggleActive(alert)}
-                      className={`text-xs px-2 py-1 rounded border ${
+                      className={
                         alert.isActive
-                          ? 'bg-green-900/30 text-green-300 border-green-700'
-                          : 'bg-gray-700 text-gray-300 border-gray-600'
-                      }`}
+                          ? 'rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300'
+                          : secondaryButtonClass + ' px-3 py-1 text-xs'
+                      }
                     >
                       {alert.isActive ? 'Active' : 'Paused'}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => void handleDelete(alert.id)}
-                      className="text-xs px-2 py-1 rounded border border-red-700 bg-red-900/30 text-red-300"
-                    >
+                    <button type="button" onClick={() => void handleDelete(alert.id)} className={dangerButtonClass}>
                       Delete
                     </button>
                   </div>
@@ -266,7 +256,7 @@ export default function AlertsPage() {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </ToolPanel>
+    </ToolPageLayout>
   );
 }
