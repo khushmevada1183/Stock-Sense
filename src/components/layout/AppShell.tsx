@@ -29,13 +29,19 @@ export default function AppShell({ children }: AppShellProps) {
   const hideChrome = isAuthRoute(pathname);
 
   if (hideChrome) {
-    return <main className="flex-grow">{children}</main>;
+    return (
+      <main className="min-h-screen flex-grow bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+        {children}
+      </main>
+    );
   }
 
   return (
     <>
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main className="min-h-screen flex-grow bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+        {children}
+      </main>
       <Footer />
     </>
   );
