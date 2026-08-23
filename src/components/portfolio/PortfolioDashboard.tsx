@@ -18,6 +18,7 @@ import {
 import * as stockApi from '@/api/api';
 import { useAuth } from '@/context/AuthContext';
 import { useWebSocket } from '@/hooks/useWebSocket';
+import { insetPanelClass, panelShellClass } from '@/styles/design-tokens';
 
 interface PortfolioHolding {
   symbol: string;
@@ -84,12 +85,6 @@ const formatLargeNumber = (value: number): string => {
 
   return value < 0 ? `-${formattedValue}` : formattedValue;
 };
-
-const panelShellClass =
-  'dashboard-card rounded-[28px] border border-slate-200/80 bg-white/80 shadow-[0_24px_80px_rgba(15,23,42,0.08)] backdrop-blur-xl dark:border-white/10 dark:bg-slate-950/60 dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)]';
-
-const insetPanelClass =
-  'rounded-[24px] border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5';
 
 const extractPerformanceValue = (point: PortfolioPerformancePoint, index: number): number => {
   const record = point as Record<string, unknown>;
