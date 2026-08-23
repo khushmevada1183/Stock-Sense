@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-08-23T10:32:40.553Z",
+  "generatedAt": "2026-08-23T10:35:54.891Z",
   "summary": {
-    "implemented": 54,
-    "partial": 5,
+    "implemented": 53,
+    "partial": 0,
     "legacy": 0,
     "notStarted": 0,
     "skipVisual": 5,
-    "total": 64,
-    "remaining": 5,
-    "progressPct": 92,
-    "audited": 59
+    "total": 58,
+    "remaining": 0,
+    "progressPct": 100,
+    "audited": 53
   },
   "routes": [
     {
@@ -389,9 +389,10 @@
     {
       "route": "/news/alerts",
       "capturePath": "/news/alerts",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/alerts/page.tsx",
@@ -404,9 +405,10 @@
     {
       "route": "/news/companies",
       "capturePath": "/news/companies",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/companies/page.tsx",
@@ -419,9 +421,10 @@
     {
       "route": "/news/economy",
       "capturePath": "/news/economy",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/economy/page.tsx",
@@ -434,9 +437,10 @@
     {
       "route": "/news/markets",
       "capturePath": "/news/markets",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/markets/page.tsx",
@@ -449,9 +453,10 @@
     {
       "route": "/news/trending",
       "capturePath": "/news/trending",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/trending/page.tsx",
@@ -714,102 +719,6 @@
       "screenshots": {
         "light": "docs\\design-audit\\screenshots\\light\\settings-tab-suspicious.png",
         "dark": "docs\\design-audit\\screenshots\\dark\\settings-tab-suspicious.png"
-      }
-    },
-    {
-      "route": "/news",
-      "capturePath": "/news",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news",
-      "screenshots": {
-        "light": "docs\\design-audit\\screenshots\\light\\news.png",
-        "dark": "docs\\design-audit\\screenshots\\dark\\news.png"
-      }
-    },
-    {
-      "route": "/news/markets",
-      "capturePath": "/news/markets",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news",
-      "screenshots": {
-        "light": "docs\\design-audit\\screenshots\\light\\news-markets.png",
-        "dark": "docs\\design-audit\\screenshots\\dark\\news-markets.png"
-      }
-    },
-    {
-      "route": "/news/economy",
-      "capturePath": "/news/economy",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news",
-      "screenshots": {
-        "light": "docs\\design-audit\\screenshots\\light\\news-economy.png",
-        "dark": "docs\\design-audit\\screenshots\\dark\\news-economy.png"
-      }
-    },
-    {
-      "route": "/news/companies",
-      "capturePath": "/news/companies",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news",
-      "screenshots": {
-        "light": "docs\\design-audit\\screenshots\\light\\news-companies.png",
-        "dark": "docs\\design-audit\\screenshots\\dark\\news-companies.png"
-      }
-    },
-    {
-      "route": "/news/trending",
-      "capturePath": "/news/trending",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news",
-      "screenshots": {
-        "light": "docs\\design-audit\\screenshots\\light\\news-trending.png",
-        "dark": "docs\\design-audit\\screenshots\\dark\\news-trending.png"
-      }
-    },
-    {
-      "route": "/news/alerts",
-      "capturePath": "/news/alerts",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news",
-      "screenshots": {
-        "light": "docs\\design-audit\\screenshots\\light\\news-alerts.png",
-        "dark": "docs\\design-audit\\screenshots\\dark\\news-alerts.png"
       }
     },
     {

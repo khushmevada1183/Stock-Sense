@@ -2,14 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { getNewsByCategory } from '@/api/api';
+import { NewsCategoryPageLayout } from '@/components/News/NewsCategoryPageLayout';
+import { insetPanelClass } from '@/styles/design-tokens';
 
-type NewsItem = {
-  id?: string | number;
-  title?: string;
-  summary?: string;
-  source?: string;
-  publishedAt?: string;
-};
+type NewsItem = { id?: string | number; title?: string; summary?: string; source?: string; publishedAt?: string };
 
 const toNews = (payload: unknown): NewsItem[] => {
   if (Array.isArray(payload)) return payload as NewsItem[];
@@ -22,13 +18,29 @@ const toNews = (payload: unknown): NewsItem[] => {
   return [];
 };
 
+function NewsFeedList({ items, loading, emptyLabel }: { items: NewsItem[]; loading: boolean; emptyLabel: string }) {
+  if (loading) return <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>;
+  if (items.length === 0) return <p className="text-sm text-slate-500 dark:text-slate-400">{emptyLabel}</p>;
+  return (
+    <div className="space-y-3">
+      {items.map((item, index) => (
+        <article key={String(item.id || index)} className={`${insetPanelClass} p-4`}>
+          <h2 className="font-semibold text-slate-950 dark:text-white">{item.title || 'Untitled story'}</h2>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{item.summary || 'No summary available.'}</p>
+          <p className="mt-3 text-xs text-slate-500">{item.source || 'Unknown source'} • {item.publishedAt || ''}</p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 export default function EconomyNewsPageClient() {
   const [items, setItems] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const load = async () => {
+    void (async () => {
       try {
         setLoading(true);
         const response = await getNewsByCategory('economy', { limit: 30 });
@@ -38,35 +50,13 @@ export default function EconomyNewsPageClient() {
       } finally {
         setLoading(false);
       }
-    };
-
-    void load();
+    })();
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white">Economy News</h1>
-        <p className="text-gray-400 mt-1">Category feed from /news/category/economy.</p>
-      </div>
-
-      {error ? <div className="text-red-300 bg-red-900/20 border border-red-700/50 rounded-lg p-3 text-sm">{error}</div> : null}
-
-      <div className="space-y-3">
-        {loading ? (
-          <p className="text-gray-400 text-sm">Loading economy news...</p>
-        ) : items.length === 0 ? (
-          <p className="text-gray-400 text-sm">No economy news found.</p>
-        ) : (
-          items.map((item, index) => (
-            <article key={String(item.id || index)} className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-4">
-              <h2 className="text-white font-semibold">{item.title || 'Untitled story'}</h2>
-              <p className="text-gray-300 text-sm mt-2">{item.summary || 'No summary available.'}</p>
-              <p className="text-xs text-gray-500 mt-3">{item.source || 'Unknown source'} • {item.publishedAt || ''}</p>
-            </article>
-          ))
-        )}
-      </div>
-    </div>
+    <NewsCategoryPageLayout title="Economy News" description="Macro and policy stories from the economy feed.">
+      {error ? <div className="mb-4 rounded-2xl border border-rose-200/80 bg-rose-50/90 px-4 py-3 text-sm text-rose-800 dark:border-rose-900/40 dark:bg-rose-950/30 dark:text-rose-200">{error}</div> : null}
+      <NewsFeedList items={items} loading={loading} emptyLabel="No economy news found." />
+    </NewsCategoryPageLayout>
   );
 }

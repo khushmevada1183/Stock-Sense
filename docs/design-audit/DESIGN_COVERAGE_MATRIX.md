@@ -1,6 +1,6 @@
 # Design Coverage Matrix
 
-> Generated: 2026-08-23T10:32:40.543Z
+> Generated: 2026-08-23T10:35:54.846Z
 > Benchmark: `src/components/portfolio/PortfolioDashboard.tsx`
 > Brief: `docs/new_design.md`
 
@@ -8,22 +8,17 @@
 
 | Status | Count | Meaning |
 | --- | ---: | --- |
-| implemented (completed) | 54 | Matches portfolio `panelShellClass` language |
-| partial (in progress) | 5 | Some new patterns, inconsistent surfaces |
+| implemented (completed) | 53 | Matches portfolio `panelShellClass` language |
+| partial (in progress) | 0 | Some new patterns, inconsistent surfaces |
 | legacy | 0 | `glass-card`, `PageBackground`, or monolithic old UI |
 | not-started | 0 | No design tokens detected yet |
-| **remaining** | **5** | legacy + partial + not-started |
+| **remaining** | **0** | legacy + partial + not-started |
 | skip-visual | 5 | Redirects or non-UI routes |
 
 ## Route Status (sorted by priority)
 
 | Route | Status | Score | Signals | Screenshot (light) |
 | --- | --- | ---: | --- | --- |
-| `/news/alerts` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-alerts.png |
-| `/news/companies` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-companies.png |
-| `/news/economy` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-economy.png |
-| `/news/markets` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-markets.png |
-| `/news/trending` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-trending.png |
 | `/` | implemented | 100 | panel-shell, premium-type, home-section | docs\design-audit\screenshots\light\home.png |
 | `/_not-found` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\_not-found.png |
 | `/about` | implemented | 90 | content-shell | docs\design-audit\screenshots\light\about.png |
@@ -44,12 +39,11 @@
 | `/market` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\market.png |
 | `/market/institutional` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\market-institutional.png |
 | `/news` | implemented | 85 | panel-shell, news-shell, neon-accent | docs\design-audit\screenshots\light\news.png |
-| `/news` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news.png |
-| `/news/alerts` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-alerts.png |
-| `/news/companies` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-companies.png |
-| `/news/economy` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-economy.png |
-| `/news/markets` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-markets.png |
-| `/news/trending` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-trending.png |
+| `/news/alerts` | implemented | 100 | news-implemented, news-shell | docs\design-audit\screenshots\light\news-alerts.png |
+| `/news/companies` | implemented | 100 | news-implemented, news-shell | docs\design-audit\screenshots\light\news-companies.png |
+| `/news/economy` | implemented | 100 | news-implemented, news-shell | docs\design-audit\screenshots\light\news-economy.png |
+| `/news/markets` | implemented | 100 | news-implemented, news-shell | docs\design-audit\screenshots\light\news-markets.png |
+| `/news/trending` | implemented | 100 | news-implemented, news-shell | docs\design-audit\screenshots\light\news-trending.png |
 | `/notifications` | implemented | 90 | tool-shell | docs\design-audit\screenshots\light\notifications.png |
 | `/portfolio` | implemented | 100 | portfolio-benchmark | docs\design-audit\screenshots\light\portfolio.png |
 | `/privacy` | implemented | 90 | content-shell | docs\design-audit\screenshots\light\privacy.png |
@@ -103,9 +97,3 @@ flowchart LR
 ```
 
 ## Remaining work (action list)
-
-- [ ] `/news/alerts` — **partial**; file: `src/app/news/alerts/page.tsx`
-- [ ] `/news/companies` — **partial**; file: `src/app/news/companies/page.tsx`
-- [ ] `/news/economy` — **partial**; file: `src/app/news/economy/page.tsx`
-- [ ] `/news/markets` — **partial**; file: `src/app/news/markets/page.tsx`
-- [ ] `/news/trending` — **partial**; file: `src/app/news/trending/page.tsx`

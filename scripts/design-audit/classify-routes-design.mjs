@@ -77,23 +77,7 @@ for (const tab of audit.matrices.settingsTabs) {
   });
 }
 
-// News category tabs — inherit shell classification from news page client + tabs
-const newsSource = [
-  readSource('src/app/news/page-client.tsx'),
-  readSource('src/components/News/NewsCategoryTabs.tsx'),
-].join('\n');
-const newsClassified = classifyRouteDesign(newsSource, 'src/app/news/page.tsx');
-for (const tab of audit.matrices.newsCategoryTabs) {
-  routes.push({
-    route: tab.route,
-    capturePath: tab.route,
-    status: newsClassified.status,
-    score: newsClassified.score,
-    signals: newsClassified.signals,
-    file: 'src/components/News/NewsCategoryTabs.tsx',
-    parentRoute: '/news',
-  });
-}
+// News category routes are covered by audit.routes (page.tsx + page-client tree); no duplicate rows.
 
 // Stock detail subtabs — inherit shell classification from page + tab components
 const STOCK_TABS = [

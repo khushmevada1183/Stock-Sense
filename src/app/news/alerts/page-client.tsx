@@ -3,14 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getNewsAlerts } from '@/api/api';
+import { NewsCategoryPageLayout } from '@/components/News/NewsCategoryPageLayout';
+import { insetPanelClass, secondaryButtonClass } from '@/styles/design-tokens';
 
-type NewsItem = {
-  id?: string | number;
-  title?: string;
-  summary?: string;
-  source?: string;
-  publishedAt?: string;
-};
+type NewsItem = { id?: string | number; title?: string; summary?: string; source?: string; publishedAt?: string };
 
 const toNews = (payload: unknown): NewsItem[] => {
   if (Array.isArray(payload)) return payload as NewsItem[];
@@ -29,7 +25,7 @@ export default function AlertsNewsPageClient() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const load = async () => {
+    void (async () => {
       try {
         setLoading(true);
         const response = await getNewsAlerts({ limit: 30 });
@@ -39,40 +35,35 @@ export default function AlertsNewsPageClient() {
       } finally {
         setLoading(false);
       }
-    };
-
-    void load();
+    })();
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-6 space-y-6">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold text-white">News Alerts</h1>
-          <p className="text-gray-400 mt-1">Critical feed from /news/alerts.</p>
-        </div>
-        <Link href="/alerts" className="px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm">
-          Manage Price Alerts
+    <NewsCategoryPageLayout
+      title="News Alerts"
+      description="Critical headlines tied to your alert configuration."
+      actions={
+        <Link href="/alerts" className={`${secondaryButtonClass} inline-flex text-sm`}>
+          Manage price alerts
         </Link>
-      </div>
-
-      {error ? <div className="text-red-300 bg-red-900/20 border border-red-700/50 rounded-lg p-3 text-sm">{error}</div> : null}
-
+      }
+    >
+      {error ? <div className="mb-4 rounded-2xl border border-rose-200/80 bg-rose-50/90 px-4 py-3 text-sm text-rose-800 dark:border-rose-900/40 dark:bg-rose-950/30 dark:text-rose-200">{error}</div> : null}
       <div className="space-y-3">
         {loading ? (
-          <p className="text-gray-400 text-sm">Loading news alerts...</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Loading…</p>
         ) : items.length === 0 ? (
-          <p className="text-gray-400 text-sm">No alert stories found.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No alert stories found.</p>
         ) : (
           items.map((item, index) => (
-            <article key={String(item.id || index)} className="bg-gray-900/90 border border-gray-700/50 rounded-xl p-4">
-              <h2 className="text-white font-semibold">{item.title || 'Untitled story'}</h2>
-              <p className="text-gray-300 text-sm mt-2">{item.summary || 'No summary available.'}</p>
-              <p className="text-xs text-gray-500 mt-3">{item.source || 'Unknown source'} • {item.publishedAt || ''}</p>
+            <article key={String(item.id || index)} className={`${insetPanelClass} p-4`}>
+              <h2 className="font-semibold text-slate-950 dark:text-white">{item.title || 'Untitled story'}</h2>
+              <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{item.summary || 'No summary available.'}</p>
+              <p className="mt-3 text-xs text-slate-500">{item.source || 'Unknown source'} • {item.publishedAt || ''}</p>
             </article>
           ))
         )}
       </div>
-    </div>
+    </NewsCategoryPageLayout>
   );
 }

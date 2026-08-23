@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-08-23T10:32:39.986Z",
+  "generatedAt": "2026-08-23T10:35:54.013Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 54,
-    "partial": 5,
+    "implemented": 53,
+    "partial": 0,
     "legacy": 0,
     "notStarted": 0,
     "skipVisual": 5,
-    "total": 64,
-    "remaining": 5
+    "total": 58,
+    "remaining": 0
   },
   "routes": [
     {
@@ -289,9 +289,10 @@
     {
       "route": "/news/alerts",
       "capturePath": "/news/alerts",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/alerts/page.tsx",
@@ -300,9 +301,10 @@
     {
       "route": "/news/companies",
       "capturePath": "/news/companies",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/companies/page.tsx",
@@ -311,9 +313,10 @@
     {
       "route": "/news/economy",
       "capturePath": "/news/economy",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/economy/page.tsx",
@@ -322,9 +325,10 @@
     {
       "route": "/news/markets",
       "capturePath": "/news/markets",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/markets/page.tsx",
@@ -333,9 +337,10 @@
     {
       "route": "/news/trending",
       "capturePath": "/news/trending",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "news-implemented",
         "news-shell"
       ],
       "file": "src/app/news/trending/page.tsx",
@@ -527,78 +532,6 @@
       ],
       "file": "src/components/settings/SettingsPageShell.tsx",
       "parentRoute": "/settings"
-    },
-    {
-      "route": "/news",
-      "capturePath": "/news",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news"
-    },
-    {
-      "route": "/news/markets",
-      "capturePath": "/news/markets",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news"
-    },
-    {
-      "route": "/news/economy",
-      "capturePath": "/news/economy",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news"
-    },
-    {
-      "route": "/news/companies",
-      "capturePath": "/news/companies",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news"
-    },
-    {
-      "route": "/news/trending",
-      "capturePath": "/news/trending",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news"
-    },
-    {
-      "route": "/news/alerts",
-      "capturePath": "/news/alerts",
-      "status": "implemented",
-      "score": 100,
-      "signals": [
-        "panel-shell",
-        "news-shell"
-      ],
-      "file": "src/components/News/NewsCategoryTabs.tsx",
-      "parentRoute": "/news"
     },
     {
       "route": "/stocks/RELIANCE?tab=overview",

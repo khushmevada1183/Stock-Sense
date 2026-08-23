@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-21T13:08:39.706Z",
+  "timestamp": "2026-08-23T08:38:55.013Z",
   "scope": {
     "appDir": "src/app",
     "componentDirs": [
@@ -10,14 +10,14 @@
   "metrics": {
     "routeCount": 41,
     "routeHandlerCount": 1,
-    "moduleCount": 115,
-    "componentFileCount": 115,
-    "reachableComponentFiles": 65,
-    "orphanComponentFiles": 50
+    "moduleCount": 117,
+    "componentFileCount": 117,
+    "reachableComponentFiles": 66,
+    "orphanComponentFiles": 51
   },
   "globalLayoutChain": {
     "file": "src/app/layout.tsx",
-    "lineCount": 66,
+    "lineCount": 65,
     "intrinsicTags": [
       "body",
       "div",
@@ -48,7 +48,7 @@
             "name": "Footer",
             "origin": "imported-file",
             "file": "src/components/layout/Footer.tsx",
-            "lineCount": 159,
+            "lineCount": 123,
             "intrinsicTags": [
               "a",
               "div",
@@ -98,7 +98,7 @@
                     "name": "StockLogo",
                     "origin": "imported-file",
                     "file": "src/app/components/StockLogo.tsx",
-                    "lineCount": 67,
+                    "lineCount": 52,
                     "intrinsicTags": [
                       "div"
                     ],
@@ -111,7 +111,7 @@
                 "name": "ThemeToggle",
                 "origin": "imported-file",
                 "file": "src/components/ui/ThemeToggle.tsx",
-                "lineCount": 40,
+                "lineCount": 38,
                 "intrinsicTags": [
                   "button",
                   "div"
@@ -243,17 +243,17 @@
       "route": "/",
       "file": "src/app/page.tsx",
       "redirects": [],
-      "lineCount": 209,
+      "lineCount": 218,
       "importMap": {
-        "SectionReveal": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\SectionReveal.tsx",
-        "HeroSection": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\home\\HeroSection.tsx",
-        "AnalysisFeatures": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\home\\AnalysisFeatures.tsx",
-        "CtaSection": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\home\\CtaSection.tsx",
-        "MarketNetworkSection": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\market-network-section.tsx",
-        "MarketOverview": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\home\\MarketOverview.tsx",
-        "SectorPerformance": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\home\\SectorPerformance.tsx",
-        "FeaturedStocks": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\home\\FeaturedStocks.tsx",
-        "IpoSection": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\home\\IpoSection.tsx"
+        "SectionReveal": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\SectionReveal.tsx",
+        "HeroSection": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\home\\HeroSection.tsx",
+        "AnalysisFeatures": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\home\\AnalysisFeatures.tsx",
+        "CtaSection": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\home\\CtaSection.tsx",
+        "MarketNetworkSection": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\market-network-section.tsx",
+        "MarketOverview": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\home\\MarketOverview.tsx",
+        "SectorPerformance": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\home\\SectorPerformance.tsx",
+        "FeaturedStocks": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\home\\FeaturedStocks.tsx",
+        "IpoSection": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\home\\IpoSection.tsx"
       },
       "jsxComponents": [
         "AnalysisFeatures",
@@ -271,8 +271,8 @@
       "intrinsicTags": [
         "div",
         "h2",
-        "section",
-        "span"
+        "p",
+        "section"
       ],
       "declaredTopLevel": [
         "FeaturedStocks",
@@ -339,12 +339,12 @@
       ],
       "tree": {
         "file": "src/app/page.tsx",
-        "lineCount": 209,
+        "lineCount": 218,
         "intrinsicTags": [
           "div",
           "h2",
-          "section",
-          "span"
+          "p",
+          "section"
         ],
         "tabSignals": [],
         "children": [
@@ -352,7 +352,7 @@
             "name": "AnalysisFeatures",
             "origin": "imported-file",
             "file": "src/components/home/AnalysisFeatures.tsx",
-            "lineCount": 700,
+            "lineCount": 706,
             "intrinsicTags": [
               "div",
               "g",
@@ -372,7 +372,7 @@
             "name": "CtaSection",
             "origin": "imported-file",
             "file": "src/components/home/CtaSection.tsx",
-            "lineCount": 151,
+            "lineCount": 148,
             "intrinsicTags": [
               "div",
               "h2",
@@ -395,7 +395,7 @@
                 "name": "AnimatedCounter",
                 "origin": "internal-component",
                 "file": "src/components/home/CtaSection.tsx",
-                "lineCount": 151,
+                "lineCount": 148,
                 "intrinsicTags": [
                   "div",
                   "h2",
@@ -412,7 +412,7 @@
             "name": "FeaturedStocks",
             "origin": "imported-file",
             "file": "src/components/home/FeaturedStocks.tsx",
-            "lineCount": 334,
+            "lineCount": 333,
             "intrinsicTags": [
               "div",
               "h3",
@@ -436,14 +436,14 @@
             "name": "HeroSection",
             "origin": "imported-file",
             "file": "src/components/home/HeroSection.tsx",
-            "lineCount": 236,
+            "lineCount": 196,
             "intrinsicTags": [
               "circle",
               "defs",
               "div",
               "g",
               "h1",
-              "h2",
+              "line",
               "linearGradient",
               "p",
               "path",
@@ -469,7 +469,7 @@
             "name": "IpoSection",
             "origin": "imported-file",
             "file": "src/components/home/IpoSection.tsx",
-            "lineCount": 349,
+            "lineCount": 337,
             "intrinsicTags": [
               "a",
               "button",
@@ -494,11 +494,11 @@
             "name": "MarketNetworkSection",
             "origin": "imported-file",
             "file": "src/components/ui/market-network-section.tsx",
-            "lineCount": 110,
+            "lineCount": 112,
             "intrinsicTags": [
               "div",
               "h2",
-              "span"
+              "p"
             ],
             "tabSignals": [],
             "children": [
@@ -545,7 +545,7 @@
             "name": "MarketOverview",
             "origin": "imported-file",
             "file": "src/components/home/MarketOverview.tsx",
-            "lineCount": 221,
+            "lineCount": 216,
             "intrinsicTags": [
               "div",
               "h3",
@@ -571,10 +571,11 @@
             "name": "SectorPerformance",
             "origin": "imported-file",
             "file": "src/components/home/SectorPerformance.tsx",
-            "lineCount": 140,
+            "lineCount": 135,
             "intrinsicTags": [
               "div",
-              "h3"
+              "h3",
+              "span"
             ],
             "tabSignals": [],
             "children": []
@@ -583,12 +584,12 @@
             "name": "SectionHeader",
             "origin": "internal-component",
             "file": "src/app/page.tsx",
-            "lineCount": 209,
+            "lineCount": 218,
             "intrinsicTags": [
               "div",
               "h2",
-              "section",
-              "span"
+              "p",
+              "section"
             ],
             "tabSignals": [],
             "children": []
@@ -740,13 +741,13 @@
       "redirects": [],
       "lineCount": 273,
       "importMap": {
-        "useAuth": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\context\\AuthContext.tsx",
-        "createAlert": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "deleteAlert": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getAlertById": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getAlertEvaluatorStatus": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getAlerts": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "updateAlert": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "useAuth": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\context\\AuthContext.tsx",
+        "createAlert": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "deleteAlert": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getAlertById": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getAlertEvaluatorStatus": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getAlerts": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "updateAlert": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [
         "Link"
@@ -842,12 +843,12 @@
       "route": "/api-test",
       "file": "src/app/api-test/page.tsx",
       "redirects": [],
-      "lineCount": 140,
+      "lineCount": 144,
       "importMap": {
-        "getDatabaseHealthStatus": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getHealthStatus": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getLatestNews": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getMarketOverview": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "getDatabaseHealthStatus": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getHealthStatus": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getLatestNews": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getMarketOverview": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [],
       "intrinsicTags": [
@@ -867,7 +868,7 @@
       "internalChildren": [],
       "tree": {
         "file": "src/app/api-test/page.tsx",
-        "lineCount": 140,
+        "lineCount": 144,
         "intrinsicTags": [
           "button",
           "div",
@@ -886,7 +887,7 @@
       "redirects": [],
       "lineCount": 151,
       "importMap": {
-        "forgotPassword": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "forgotPassword": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [
         "Link"
@@ -955,28 +956,53 @@
     {
       "route": "/auth/profile",
       "file": "src/app/auth/profile/page.tsx",
-      "redirects": [
-        "/settings?tab=basic"
+      "redirects": [],
+      "lineCount": 228,
+      "importMap": {
+        "getProfile": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "oauthLogin": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "refreshAuthToken": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "updateProfile": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "useAuth": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\context\\AuthContext.tsx",
+        "getRefreshToken": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\auth.ts"
+      },
+      "jsxComponents": [
+        "Link"
       ],
-      "lineCount": 5,
-      "importMap": {},
-      "jsxComponents": [],
-      "intrinsicTags": [],
+      "intrinsicTags": [
+        "button",
+        "div",
+        "form",
+        "h1",
+        "h2",
+        "input",
+        "option",
+        "p",
+        "select",
+        "textarea"
+      ],
       "declaredTopLevel": [
         "ProfilePage"
       ],
-      "tabSignals": [
-        "query param tab="
-      ],
+      "tabSignals": [],
       "directImportedChildren": [],
       "internalChildren": [],
       "tree": {
         "file": "src/app/auth/profile/page.tsx",
-        "lineCount": 5,
-        "intrinsicTags": [],
-        "tabSignals": [
-          "query param tab="
+        "lineCount": 228,
+        "intrinsicTags": [
+          "button",
+          "div",
+          "form",
+          "h1",
+          "h2",
+          "input",
+          "option",
+          "p",
+          "select",
+          "textarea"
         ],
+        "tabSignals": [],
         "children": []
       }
     },
@@ -1010,9 +1036,9 @@
       "redirects": [],
       "lineCount": 249,
       "importMap": {
-        "resetPassword": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getPendingPasswordResetEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts",
-        "getPendingPasswordResetToken": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts"
+        "resetPassword": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getPendingPasswordResetEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts",
+        "getPendingPasswordResetToken": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts"
       },
       "jsxComponents": [
         "Eye",
@@ -1058,10 +1084,10 @@
       "redirects": [],
       "lineCount": 186,
       "importMap": {
-        "useAuth": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\context\\AuthContext.tsx",
-        "getAuthAuditLogs": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getAuthSessions": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "logoutAll": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "useAuth": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\context\\AuthContext.tsx",
+        "getAuthAuditLogs": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getAuthSessions": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "logoutAll": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [
         "Link"
@@ -1099,11 +1125,11 @@
       "redirects": [],
       "lineCount": 156,
       "importMap": {
-        "resendVerification": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "verifyEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "clearPendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts",
-        "getPendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts",
-        "savePendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts"
+        "resendVerification": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "verifyEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "clearPendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts",
+        "getPendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts",
+        "savePendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts"
       },
       "jsxComponents": [
         "Link",
@@ -1168,9 +1194,9 @@
       "redirects": [],
       "lineCount": 175,
       "importMap": {
-        "verifyResetCode": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getPendingPasswordResetEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts",
-        "savePendingPasswordResetEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts"
+        "verifyResetCode": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getPendingPasswordResetEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts",
+        "savePendingPasswordResetEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts"
       },
       "jsxComponents": [
         "Link",
@@ -1241,8 +1267,8 @@
       "redirects": [],
       "lineCount": 494,
       "importMap": {
-        "Card": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "PageBackground": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\layout\\PageBackground.tsx"
+        "Card": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "PageBackground": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\layout\\PageBackground.tsx"
       },
       "jsxComponents": [
         "Area",
@@ -1330,7 +1356,7 @@
             "name": "Card",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -1359,8 +1385,8 @@
       "redirects": [],
       "lineCount": 319,
       "importMap": {
-        "PageBackground": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\layout\\PageBackground.tsx",
-        "logger": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\logger.ts"
+        "PageBackground": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\layout\\PageBackground.tsx",
+        "logger": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\logger.ts"
       },
       "jsxComponents": [
         "CheckCircle",
@@ -1441,7 +1467,7 @@
       "redirects": [],
       "lineCount": 415,
       "importMap": {
-        "PageBackground": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\layout\\PageBackground.tsx"
+        "PageBackground": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\layout\\PageBackground.tsx"
       },
       "jsxComponents": [
         "AlertTriangle",
@@ -1531,63 +1557,87 @@
       "route": "/ipo",
       "file": "src/app/ipo/page.tsx",
       "redirects": [],
-      "lineCount": 1812,
+      "lineCount": 458,
       "importMap": {
-        "Accordion": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\accordion.tsx",
-        "AccordionContent": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\accordion.tsx",
-        "AccordionItem": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\accordion.tsx",
-        "AccordionTrigger": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\accordion.tsx",
-        "IpoItem": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\types\\ipo.ts",
-        "logger": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\logger.ts",
-        "useAnimation": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\shared\\AnimationContext.js",
-        "initIpoPageAnimations": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\pages\\ipoAnimations.js",
-        "createCardHoverEffect": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\shared\\AnimationUtils.js",
-        "createIPOItemHoverEffect": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\shared\\AnimationUtils.js",
-        "stockApi": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "FEATURES": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\services\\config.js",
-        "API_CONFIG": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\services\\config.js",
-        "CursiveLoader": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\CursiveLoader.tsx"
+        "stockApi": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "Accordion": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "AccordionContent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "AccordionItem": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "AccordionTrigger": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "Button": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\button.tsx",
+        "Card": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardContent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardDescription": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardHeader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardTitle": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "Table": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableBody": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableCell": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableHead": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableHeader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableRow": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "EMPTY_IPO_SECTIONS": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "buildIpoOverview": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatDateLabel": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatPercent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatPriceBand": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatTimestampLabel": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "getIpoDetailsHref": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "normalizeIpoCalendarSections": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "IpoEmptyState": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\IPO\\IpoPanels.tsx",
+        "IpoEntryCard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\IPO\\IpoPanels.tsx",
+        "IpoMetricCard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\IPO\\IpoPanels.tsx",
+        "PremiumSection": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\IPO\\IpoPanels.tsx",
+        "cn": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\utils.ts"
       },
       "jsxComponents": [
         "Accordion",
         "AccordionContent",
         "AccordionItem",
         "AccordionTrigger",
-        "ActiveIpoCard",
-        "ApiDetails",
-        "ChevronLeft",
-        "ChevronRight",
-        "CursiveLoader",
+        "ArrowRight",
+        "Button",
+        "CalendarDays",
+        "Card",
+        "CardContent",
+        "CardDescription",
+        "CardHeader",
+        "CardTitle",
+        "Clock3",
+        "FileText",
+        "IpoEmptyState",
+        "IpoEntryCard",
+        "IpoMetricCard",
         "Link",
-        "SimpleIpoCard",
-        "UpcomingIpoCard"
+        "PremiumSection",
+        "RefreshCw",
+        "Sparkles",
+        "Table",
+        "TableBody",
+        "TableCell",
+        "TableHead",
+        "TableHeader",
+        "TableRow",
+        "TrendingUp"
       ],
       "intrinsicTags": [
         "a",
-        "button",
         "div",
         "h1",
-        "h2",
-        "h3",
         "li",
+        "main",
         "p",
-        "path",
+        "section",
         "span",
-        "svg",
         "ul"
       ],
       "declaredTopLevel": [
-        "ActiveIpoCard",
         "FAQS",
-        "IPO_ANALYSIS",
         "IPO_NEWS",
+        "IPO_PREP",
         "IpoPage",
-        "MAX_IPOS_PER_SECTION",
-        "SimpleIpoCard",
-        "UpcomingIpoCard",
-        "limitIpoItems",
-        "mapToIpoItem",
-        "toIpoDetailsHref"
+        "extractApiData",
+        "withTimeout"
       ],
       "tabSignals": [],
       "directImportedChildren": [
@@ -1612,40 +1662,99 @@
           "origin": "imported-file"
         },
         {
-          "name": "CursiveLoader",
-          "file": "src/components/ui/CursiveLoader.tsx",
+          "name": "Button",
+          "file": "src/components/ui/button.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "Card",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardContent",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardDescription",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardHeader",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardTitle",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "IpoEmptyState",
+          "file": "src/components/IPO/IpoPanels.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "IpoEntryCard",
+          "file": "src/components/IPO/IpoPanels.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "IpoMetricCard",
+          "file": "src/components/IPO/IpoPanels.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "PremiumSection",
+          "file": "src/components/IPO/IpoPanels.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "Table",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableBody",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableCell",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableHead",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableHeader",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableRow",
+          "file": "src/components/ui/table.tsx",
           "origin": "imported-file"
         }
       ],
-      "internalChildren": [
-        {
-          "name": "ActiveIpoCard",
-          "origin": "internal-component"
-        },
-        {
-          "name": "SimpleIpoCard",
-          "origin": "internal-component"
-        },
-        {
-          "name": "UpcomingIpoCard",
-          "origin": "internal-component"
-        }
-      ],
+      "internalChildren": [],
       "tree": {
         "file": "src/app/ipo/page.tsx",
-        "lineCount": 1812,
+        "lineCount": 458,
         "intrinsicTags": [
           "a",
-          "button",
           "div",
           "h1",
-          "h2",
-          "h3",
           "li",
+          "main",
           "p",
-          "path",
+          "section",
           "span",
-          "svg",
           "ul"
         ],
         "tabSignals": [],
@@ -1695,79 +1804,669 @@
             "children": []
           },
           {
-            "name": "CursiveLoader",
+            "name": "Button",
             "origin": "imported-file",
-            "file": "src/components/ui/CursiveLoader.tsx",
-            "lineCount": 64,
+            "file": "src/components/ui/button.tsx",
+            "lineCount": 54,
+            "intrinsicTags": [],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "Card",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardContent",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardDescription",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardHeader",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardTitle",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "IpoEmptyState",
+            "origin": "imported-file",
+            "file": "src/components/IPO/IpoPanels.tsx",
+            "lineCount": 271,
+            "intrinsicTags": [
+              "a",
+              "div",
+              "h2",
+              "h3",
+              "p",
+              "section",
               "span"
             ],
             "tabSignals": [],
-            "children": []
+            "children": [
+              {
+                "name": "Badge",
+                "origin": "imported-file",
+                "file": "src/components/ui/badge.tsx",
+                "lineCount": 36,
+                "intrinsicTags": [
+                  "div"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Button",
+                "origin": "imported-file",
+                "file": "src/components/ui/button.tsx",
+                "lineCount": 54,
+                "intrinsicTags": [],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Card",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardContent",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardDescription",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardHeader",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardTitle",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "FactTile",
+                "origin": "internal-component",
+                "file": "src/components/IPO/IpoPanels.tsx",
+                "lineCount": 271,
+                "intrinsicTags": [
+                  "a",
+                  "div",
+                  "h2",
+                  "h3",
+                  "p",
+                  "section",
+                  "span"
+                ],
+                "tabSignals": [],
+                "children": []
+              }
+            ]
           },
           {
-            "name": "ActiveIpoCard",
-            "origin": "internal-component",
-            "file": "src/app/ipo/page.tsx",
-            "lineCount": 1812,
+            "name": "IpoEntryCard",
+            "origin": "imported-file",
+            "file": "src/components/IPO/IpoPanels.tsx",
+            "lineCount": 271,
             "intrinsicTags": [
               "a",
-              "button",
               "div",
-              "h1",
               "h2",
               "h3",
-              "li",
               "p",
-              "path",
-              "span",
-              "svg",
-              "ul"
+              "section",
+              "span"
+            ],
+            "tabSignals": [],
+            "children": [
+              {
+                "name": "Badge",
+                "origin": "imported-file",
+                "file": "src/components/ui/badge.tsx",
+                "lineCount": 36,
+                "intrinsicTags": [
+                  "div"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Button",
+                "origin": "imported-file",
+                "file": "src/components/ui/button.tsx",
+                "lineCount": 54,
+                "intrinsicTags": [],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Card",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardContent",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardDescription",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardHeader",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardTitle",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "FactTile",
+                "origin": "internal-component",
+                "file": "src/components/IPO/IpoPanels.tsx",
+                "lineCount": 271,
+                "intrinsicTags": [
+                  "a",
+                  "div",
+                  "h2",
+                  "h3",
+                  "p",
+                  "section",
+                  "span"
+                ],
+                "tabSignals": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "IpoMetricCard",
+            "origin": "imported-file",
+            "file": "src/components/IPO/IpoPanels.tsx",
+            "lineCount": 271,
+            "intrinsicTags": [
+              "a",
+              "div",
+              "h2",
+              "h3",
+              "p",
+              "section",
+              "span"
+            ],
+            "tabSignals": [],
+            "children": [
+              {
+                "name": "Badge",
+                "origin": "imported-file",
+                "file": "src/components/ui/badge.tsx",
+                "lineCount": 36,
+                "intrinsicTags": [
+                  "div"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Button",
+                "origin": "imported-file",
+                "file": "src/components/ui/button.tsx",
+                "lineCount": 54,
+                "intrinsicTags": [],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Card",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardContent",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardDescription",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardHeader",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardTitle",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "FactTile",
+                "origin": "internal-component",
+                "file": "src/components/IPO/IpoPanels.tsx",
+                "lineCount": 271,
+                "intrinsicTags": [
+                  "a",
+                  "div",
+                  "h2",
+                  "h3",
+                  "p",
+                  "section",
+                  "span"
+                ],
+                "tabSignals": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "PremiumSection",
+            "origin": "imported-file",
+            "file": "src/components/IPO/IpoPanels.tsx",
+            "lineCount": 271,
+            "intrinsicTags": [
+              "a",
+              "div",
+              "h2",
+              "h3",
+              "p",
+              "section",
+              "span"
+            ],
+            "tabSignals": [],
+            "children": [
+              {
+                "name": "Badge",
+                "origin": "imported-file",
+                "file": "src/components/ui/badge.tsx",
+                "lineCount": 36,
+                "intrinsicTags": [
+                  "div"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Button",
+                "origin": "imported-file",
+                "file": "src/components/ui/button.tsx",
+                "lineCount": 54,
+                "intrinsicTags": [],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Card",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardContent",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardDescription",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardHeader",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardTitle",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "FactTile",
+                "origin": "internal-component",
+                "file": "src/components/IPO/IpoPanels.tsx",
+                "lineCount": 271,
+                "intrinsicTags": [
+                  "a",
+                  "div",
+                  "h2",
+                  "h3",
+                  "p",
+                  "section",
+                  "span"
+                ],
+                "tabSignals": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "Table",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
             ],
             "tabSignals": [],
             "children": []
           },
           {
-            "name": "SimpleIpoCard",
-            "origin": "internal-component",
-            "file": "src/app/ipo/page.tsx",
-            "lineCount": 1812,
+            "name": "TableBody",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
             "intrinsicTags": [
-              "a",
-              "button",
+              "caption",
               "div",
-              "h1",
-              "h2",
-              "h3",
-              "li",
-              "p",
-              "path",
-              "span",
-              "svg",
-              "ul"
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
             ],
             "tabSignals": [],
             "children": []
           },
           {
-            "name": "UpcomingIpoCard",
-            "origin": "internal-component",
-            "file": "src/app/ipo/page.tsx",
-            "lineCount": 1812,
+            "name": "TableCell",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
             "intrinsicTags": [
-              "a",
-              "button",
+              "caption",
               "div",
-              "h1",
-              "h2",
-              "h3",
-              "li",
-              "p",
-              "path",
-              "span",
-              "svg",
-              "ul"
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableHead",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableHeader",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableRow",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
             ],
             "tabSignals": [],
             "children": []
@@ -1779,87 +2478,815 @@
       "route": "/ipo/[ipoId]",
       "file": "src/app/ipo/[ipoId]/page.tsx",
       "redirects": [],
-      "lineCount": 660,
+      "lineCount": 819,
       "importMap": {
-        "stockApi": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "CursiveLoader": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\CursiveLoader.tsx"
+        "stockApi": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "Accordion": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "AccordionContent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "AccordionItem": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "AccordionTrigger": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\accordion.tsx",
+        "Badge": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\badge.tsx",
+        "Button": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\button.tsx",
+        "Card": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardContent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardDescription": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardHeader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardTitle": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "Table": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableBody": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableCell": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableHead": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableHeader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "TableRow": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\table.tsx",
+        "EMPTY_IPO_SECTIONS": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "buildIpoOverview": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "daysUntil": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatCurrency": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatDateLabel": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatLotSize": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatPercent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatPriceBand": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatRatio": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "formatTimestampLabel": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "getIpoStatusLabel": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "getIpoStatusTone": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "normalizeIpoCalendarSections": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "normalizeIpoEntry": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\ipo.ts",
+        "IpoEmptyState": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\IPO\\IpoPanels.tsx",
+        "IpoMetricCard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\IPO\\IpoPanels.tsx",
+        "PremiumSection": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\IPO\\IpoPanels.tsx"
       },
       "jsxComponents": [
+        "Accordion",
+        "AccordionContent",
+        "AccordionItem",
+        "AccordionTrigger",
         "ArrowLeft",
-        "CursiveLoader",
+        "Badge",
+        "Button",
+        "CalendarDays",
+        "Card",
+        "CardContent",
+        "CardDescription",
+        "CardHeader",
+        "CardTitle",
+        "Clock3",
+        "FileText",
+        "IpoEmptyState",
+        "IpoMetricCard",
         "Link",
-        "RefreshCw"
+        "PremiumSection",
+        "RefreshCw",
+        "Sparkles",
+        "Table",
+        "TableBody",
+        "TableCell",
+        "TableHead",
+        "TableHeader",
+        "TableRow",
+        "TrendingUp"
       ],
       "intrinsicTags": [
-        "button",
+        "a",
         "div",
         "h1",
-        "h2",
+        "main",
         "p",
         "section",
-        "span",
-        "table",
-        "tbody",
-        "td",
-        "th",
-        "thead",
-        "tr"
+        "span"
       ],
       "declaredTopLevel": [
         "IpoDetailPage",
-        "UUID_REGEX",
-        "asArray",
-        "formatSubscriptionRatio",
-        "mergeCalendarEntries",
-        "normalizeGmp",
-        "normalizeIpo",
-        "normalizeSubscription",
-        "sentimentClassMap",
-        "statusClassMap",
-        "toCurrency",
-        "toDateLabel",
+        "collectRecords",
+        "extractApiData",
+        "findCalendarEntry",
+        "formatWindowLabel",
+        "isRecord",
+        "mergeEntries",
+        "normalizeGmpRows",
+        "normalizeIpoDetail",
+        "normalizeSubscriptionRows",
         "toNumber",
-        "toPercent",
         "toText",
-        "toTitleCase"
+        "withTimeout"
       ],
       "tabSignals": [],
       "directImportedChildren": [
         {
-          "name": "CursiveLoader",
-          "file": "src/components/ui/CursiveLoader.tsx",
+          "name": "Accordion",
+          "file": "src/components/ui/accordion.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "AccordionContent",
+          "file": "src/components/ui/accordion.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "AccordionItem",
+          "file": "src/components/ui/accordion.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "AccordionTrigger",
+          "file": "src/components/ui/accordion.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "Badge",
+          "file": "src/components/ui/badge.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "Button",
+          "file": "src/components/ui/button.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "Card",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardContent",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardDescription",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardHeader",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "CardTitle",
+          "file": "src/components/ui/card.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "IpoEmptyState",
+          "file": "src/components/IPO/IpoPanels.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "IpoMetricCard",
+          "file": "src/components/IPO/IpoPanels.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "PremiumSection",
+          "file": "src/components/IPO/IpoPanels.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "Table",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableBody",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableCell",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableHead",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableHeader",
+          "file": "src/components/ui/table.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TableRow",
+          "file": "src/components/ui/table.tsx",
           "origin": "imported-file"
         }
       ],
       "internalChildren": [],
       "tree": {
         "file": "src/app/ipo/[ipoId]/page.tsx",
-        "lineCount": 660,
+        "lineCount": 819,
         "intrinsicTags": [
-          "button",
+          "a",
           "div",
           "h1",
-          "h2",
+          "main",
           "p",
           "section",
-          "span",
-          "table",
-          "tbody",
-          "td",
-          "th",
-          "thead",
-          "tr"
+          "span"
         ],
         "tabSignals": [],
         "children": [
           {
-            "name": "CursiveLoader",
+            "name": "Accordion",
             "origin": "imported-file",
-            "file": "src/components/ui/CursiveLoader.tsx",
-            "lineCount": 64,
+            "file": "src/components/ui/accordion.tsx",
+            "lineCount": 59,
+            "intrinsicTags": [
+              "div"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "AccordionContent",
+            "origin": "imported-file",
+            "file": "src/components/ui/accordion.tsx",
+            "lineCount": 59,
+            "intrinsicTags": [
+              "div"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "AccordionItem",
+            "origin": "imported-file",
+            "file": "src/components/ui/accordion.tsx",
+            "lineCount": 59,
+            "intrinsicTags": [
+              "div"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "AccordionTrigger",
+            "origin": "imported-file",
+            "file": "src/components/ui/accordion.tsx",
+            "lineCount": 59,
+            "intrinsicTags": [
+              "div"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "Badge",
+            "origin": "imported-file",
+            "file": "src/components/ui/badge.tsx",
+            "lineCount": 36,
+            "intrinsicTags": [
+              "div"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "Button",
+            "origin": "imported-file",
+            "file": "src/components/ui/button.tsx",
+            "lineCount": 54,
+            "intrinsicTags": [],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "Card",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardContent",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardDescription",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardHeader",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "CardTitle",
+            "origin": "imported-file",
+            "file": "src/components/ui/card.tsx",
+            "lineCount": 80,
+            "intrinsicTags": [
+              "div",
+              "h3",
+              "p"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "IpoEmptyState",
+            "origin": "imported-file",
+            "file": "src/components/IPO/IpoPanels.tsx",
+            "lineCount": 271,
+            "intrinsicTags": [
+              "a",
+              "div",
+              "h2",
+              "h3",
+              "p",
+              "section",
               "span"
+            ],
+            "tabSignals": [],
+            "children": [
+              {
+                "name": "Badge",
+                "origin": "imported-file",
+                "file": "src/components/ui/badge.tsx",
+                "lineCount": 36,
+                "intrinsicTags": [
+                  "div"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Button",
+                "origin": "imported-file",
+                "file": "src/components/ui/button.tsx",
+                "lineCount": 54,
+                "intrinsicTags": [],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Card",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardContent",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardDescription",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardHeader",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardTitle",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "FactTile",
+                "origin": "internal-component",
+                "file": "src/components/IPO/IpoPanels.tsx",
+                "lineCount": 271,
+                "intrinsicTags": [
+                  "a",
+                  "div",
+                  "h2",
+                  "h3",
+                  "p",
+                  "section",
+                  "span"
+                ],
+                "tabSignals": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "IpoMetricCard",
+            "origin": "imported-file",
+            "file": "src/components/IPO/IpoPanels.tsx",
+            "lineCount": 271,
+            "intrinsicTags": [
+              "a",
+              "div",
+              "h2",
+              "h3",
+              "p",
+              "section",
+              "span"
+            ],
+            "tabSignals": [],
+            "children": [
+              {
+                "name": "Badge",
+                "origin": "imported-file",
+                "file": "src/components/ui/badge.tsx",
+                "lineCount": 36,
+                "intrinsicTags": [
+                  "div"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Button",
+                "origin": "imported-file",
+                "file": "src/components/ui/button.tsx",
+                "lineCount": 54,
+                "intrinsicTags": [],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Card",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardContent",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardDescription",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardHeader",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardTitle",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "FactTile",
+                "origin": "internal-component",
+                "file": "src/components/IPO/IpoPanels.tsx",
+                "lineCount": 271,
+                "intrinsicTags": [
+                  "a",
+                  "div",
+                  "h2",
+                  "h3",
+                  "p",
+                  "section",
+                  "span"
+                ],
+                "tabSignals": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "PremiumSection",
+            "origin": "imported-file",
+            "file": "src/components/IPO/IpoPanels.tsx",
+            "lineCount": 271,
+            "intrinsicTags": [
+              "a",
+              "div",
+              "h2",
+              "h3",
+              "p",
+              "section",
+              "span"
+            ],
+            "tabSignals": [],
+            "children": [
+              {
+                "name": "Badge",
+                "origin": "imported-file",
+                "file": "src/components/ui/badge.tsx",
+                "lineCount": 36,
+                "intrinsicTags": [
+                  "div"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Button",
+                "origin": "imported-file",
+                "file": "src/components/ui/button.tsx",
+                "lineCount": 54,
+                "intrinsicTags": [],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "Card",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardContent",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardDescription",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardHeader",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CardTitle",
+                "origin": "imported-file",
+                "file": "src/components/ui/card.tsx",
+                "lineCount": 80,
+                "intrinsicTags": [
+                  "div",
+                  "h3",
+                  "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "FactTile",
+                "origin": "internal-component",
+                "file": "src/components/IPO/IpoPanels.tsx",
+                "lineCount": 271,
+                "intrinsicTags": [
+                  "a",
+                  "div",
+                  "h2",
+                  "h3",
+                  "p",
+                  "section",
+                  "span"
+                ],
+                "tabSignals": [],
+                "children": []
+              }
+            ]
+          },
+          {
+            "name": "Table",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableBody",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableCell",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableHead",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableHeader",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
+            ],
+            "tabSignals": [],
+            "children": []
+          },
+          {
+            "name": "TableRow",
+            "origin": "imported-file",
+            "file": "src/components/ui/table.tsx",
+            "lineCount": 117,
+            "intrinsicTags": [
+              "caption",
+              "div",
+              "table",
+              "tbody",
+              "td",
+              "tfoot",
+              "th",
+              "thead",
+              "tr"
             ],
             "tabSignals": [],
             "children": []
@@ -1873,7 +3300,7 @@
       "redirects": [],
       "lineCount": 373,
       "importMap": {
-        "PageBackground": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\layout\\PageBackground.tsx"
+        "PageBackground": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\layout\\PageBackground.tsx"
       },
       "jsxComponents": [
         "Award",
@@ -1964,7 +3391,7 @@
       "redirects": [],
       "lineCount": 256,
       "importMap": {
-        "useAuth": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\context\\AuthContext.tsx"
+        "useAuth": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\context\\AuthContext.tsx"
       },
       "jsxComponents": [
         "Eye",
@@ -2047,14 +3474,18 @@
       "route": "/market",
       "file": "src/app/market/page.tsx",
       "redirects": [],
-      "lineCount": 1253,
+      "lineCount": 1535,
       "importMap": {
-        "stockApi": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "logger": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\logger.ts",
-        "useWebSocket": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\hooks\\useWebSocket.ts",
-        "useAnimation": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\shared\\AnimationContext.js",
-        "marketAnimations": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\pages\\marketAnimations.js",
-        "CursiveLoader": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\CursiveLoader.tsx"
+        "Tabs": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\tabs.tsx",
+        "TabsContent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\tabs.tsx",
+        "TabsList": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\tabs.tsx",
+        "TabsTrigger": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\tabs.tsx",
+        "stockApi": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "logger": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\logger.ts",
+        "useWebSocket": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\hooks\\useWebSocket.ts",
+        "useAnimation": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\animations\\shared\\AnimationContext.js",
+        "marketAnimations": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\animations\\pages\\marketAnimations.js",
+        "CursiveLoader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\CursiveLoader.tsx"
       },
       "jsxComponents": [
         "Bar",
@@ -2071,18 +3502,23 @@
         "ResponsiveContainer",
         "SectorPerformance",
         "SectorTooltip",
+        "Tabs",
+        "TabsContent",
+        "TabsList",
+        "TabsTrigger",
         "Tooltip",
         "TopMovers",
         "XAxis",
         "YAxis"
       ],
       "intrinsicTags": [
-        "button",
+        "article",
         "div",
         "h1",
         "h3",
         "h4",
         "p",
+        "section",
         "span",
         "table",
         "tbody",
@@ -2093,19 +3529,49 @@
       ],
       "declaredTopLevel": [
         "HeatMap",
+        "MARKET_INSET_CLASS",
+        "MARKET_LABEL_CLASS",
+        "MARKET_PANEL_CLASS",
         "MarketBreadth",
         "MarketIndices",
         "MarketPage",
         "MostActive",
         "SectorPerformance",
         "SectorTooltip",
-        "TopMovers"
+        "TopMovers",
+        "formatCompactNumber",
+        "formatMarketVolume"
       ],
-      "tabSignals": [],
+      "tabSignals": [
+        "Tabs",
+        "TabsList",
+        "TabsTrigger",
+        "TabsContent"
+      ],
       "directImportedChildren": [
         {
           "name": "CursiveLoader",
           "file": "src/components/ui/CursiveLoader.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "Tabs",
+          "file": "src/components/ui/tabs.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TabsContent",
+          "file": "src/components/ui/tabs.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TabsList",
+          "file": "src/components/ui/tabs.tsx",
+          "origin": "imported-file"
+        },
+        {
+          "name": "TabsTrigger",
+          "file": "src/components/ui/tabs.tsx",
           "origin": "imported-file"
         }
       ],
@@ -2141,14 +3607,15 @@
       ],
       "tree": {
         "file": "src/app/market/page.tsx",
-        "lineCount": 1253,
+        "lineCount": 1535,
         "intrinsicTags": [
-          "button",
+          "article",
           "div",
           "h1",
           "h3",
           "h4",
           "p",
+          "section",
           "span",
           "table",
           "tbody",
@@ -2157,13 +3624,18 @@
           "thead",
           "tr"
         ],
-        "tabSignals": [],
+        "tabSignals": [
+          "Tabs",
+          "TabsList",
+          "TabsTrigger",
+          "TabsContent"
+        ],
         "children": [
           {
             "name": "CursiveLoader",
             "origin": "imported-file",
             "file": "src/components/ui/CursiveLoader.tsx",
-            "lineCount": 64,
+            "lineCount": 67,
             "intrinsicTags": [
               "div",
               "span"
@@ -2172,17 +3644,74 @@
             "children": []
           },
           {
+            "name": "Tabs",
+            "origin": "imported-file",
+            "file": "src/components/ui/tabs.tsx",
+            "lineCount": 53,
+            "intrinsicTags": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
+            "children": []
+          },
+          {
+            "name": "TabsContent",
+            "origin": "imported-file",
+            "file": "src/components/ui/tabs.tsx",
+            "lineCount": 53,
+            "intrinsicTags": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
+            "children": []
+          },
+          {
+            "name": "TabsList",
+            "origin": "imported-file",
+            "file": "src/components/ui/tabs.tsx",
+            "lineCount": 53,
+            "intrinsicTags": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
+            "children": []
+          },
+          {
+            "name": "TabsTrigger",
+            "origin": "imported-file",
+            "file": "src/components/ui/tabs.tsx",
+            "lineCount": 53,
+            "intrinsicTags": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
+            "children": []
+          },
+          {
             "name": "HeatMap",
             "origin": "internal-component",
             "file": "src/app/market/page.tsx",
-            "lineCount": 1253,
+            "lineCount": 1535,
             "intrinsicTags": [
-              "button",
+              "article",
               "div",
               "h1",
               "h3",
               "h4",
               "p",
+              "section",
               "span",
               "table",
               "tbody",
@@ -2191,21 +3720,27 @@
               "thead",
               "tr"
             ],
-            "tabSignals": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
             "children": []
           },
           {
             "name": "MarketBreadth",
             "origin": "internal-component",
             "file": "src/app/market/page.tsx",
-            "lineCount": 1253,
+            "lineCount": 1535,
             "intrinsicTags": [
-              "button",
+              "article",
               "div",
               "h1",
               "h3",
               "h4",
               "p",
+              "section",
               "span",
               "table",
               "tbody",
@@ -2214,21 +3749,27 @@
               "thead",
               "tr"
             ],
-            "tabSignals": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
             "children": []
           },
           {
             "name": "MarketIndices",
             "origin": "internal-component",
             "file": "src/app/market/page.tsx",
-            "lineCount": 1253,
+            "lineCount": 1535,
             "intrinsicTags": [
-              "button",
+              "article",
               "div",
               "h1",
               "h3",
               "h4",
               "p",
+              "section",
               "span",
               "table",
               "tbody",
@@ -2237,21 +3778,27 @@
               "thead",
               "tr"
             ],
-            "tabSignals": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
             "children": []
           },
           {
             "name": "MostActive",
             "origin": "internal-component",
             "file": "src/app/market/page.tsx",
-            "lineCount": 1253,
+            "lineCount": 1535,
             "intrinsicTags": [
-              "button",
+              "article",
               "div",
               "h1",
               "h3",
               "h4",
               "p",
+              "section",
               "span",
               "table",
               "tbody",
@@ -2260,21 +3807,27 @@
               "thead",
               "tr"
             ],
-            "tabSignals": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
             "children": []
           },
           {
             "name": "SectorPerformance",
             "origin": "internal-component",
             "file": "src/app/market/page.tsx",
-            "lineCount": 1253,
+            "lineCount": 1535,
             "intrinsicTags": [
-              "button",
+              "article",
               "div",
               "h1",
               "h3",
               "h4",
               "p",
+              "section",
               "span",
               "table",
               "tbody",
@@ -2283,21 +3836,27 @@
               "thead",
               "tr"
             ],
-            "tabSignals": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
             "children": []
           },
           {
             "name": "SectorTooltip",
             "origin": "internal-component",
             "file": "src/app/market/page.tsx",
-            "lineCount": 1253,
+            "lineCount": 1535,
             "intrinsicTags": [
-              "button",
+              "article",
               "div",
               "h1",
               "h3",
               "h4",
               "p",
+              "section",
               "span",
               "table",
               "tbody",
@@ -2306,21 +3865,27 @@
               "thead",
               "tr"
             ],
-            "tabSignals": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
             "children": []
           },
           {
             "name": "TopMovers",
             "origin": "internal-component",
             "file": "src/app/market/page.tsx",
-            "lineCount": 1253,
+            "lineCount": 1535,
             "intrinsicTags": [
-              "button",
+              "article",
               "div",
               "h1",
               "h3",
               "h4",
               "p",
+              "section",
               "span",
               "table",
               "tbody",
@@ -2329,7 +3894,12 @@
               "thead",
               "tr"
             ],
-            "tabSignals": [],
+            "tabSignals": [
+              "Tabs",
+              "TabsList",
+              "TabsTrigger",
+              "TabsContent"
+            ],
             "children": []
           }
         ]
@@ -2341,26 +3911,26 @@
       "redirects": [],
       "lineCount": 203,
       "importMap": {
-        "getBlockDealsHistory": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getBlockDealsLatest": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getCorporateActionsHistory": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getCorporateActionsLatest": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getCorporateActionsSummary": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getEarningsCalendarHistory": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getEarningsCalendarLatest": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getEarningsCalendarSummary": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getFiiDiiCumulative": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getFiiDiiHistory": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getFiiDiiLatest": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getInsiderTradesHistory": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getInsiderTradesLatest": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getInsiderTradesSummary": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getMutualFundsHistory": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getMutualFundsLatest": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getMutualFundsTopHolders": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getShareholdingHistory": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getShareholdingLatest": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getShareholdingTrends": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "getBlockDealsHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getBlockDealsLatest": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getCorporateActionsHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getCorporateActionsLatest": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getCorporateActionsSummary": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getEarningsCalendarHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getEarningsCalendarLatest": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getEarningsCalendarSummary": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getFiiDiiCumulative": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getFiiDiiHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getFiiDiiLatest": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getInsiderTradesHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getInsiderTradesLatest": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getInsiderTradesSummary": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getMutualFundsHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getMutualFundsLatest": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getMutualFundsTopHolders": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getShareholdingHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getShareholdingLatest": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getShareholdingTrends": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [],
       "intrinsicTags": [
@@ -2401,7 +3971,7 @@
       "redirects": [],
       "lineCount": 11,
       "importMap": {
-        "NewsPageClient": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\app\\news\\page-client.tsx"
+        "NewsPageClient": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\app\\news\\page-client.tsx"
       },
       "jsxComponents": [
         "NewsPageClient"
@@ -2484,7 +4054,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -2497,7 +4067,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -2510,7 +4080,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -2523,7 +4093,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -2571,7 +4141,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -2584,7 +4154,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -2621,7 +4191,7 @@
       "redirects": [],
       "lineCount": 11,
       "importMap": {
-        "AlertsNewsPageClient": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\app\\news\\alerts\\page-client.tsx"
+        "AlertsNewsPageClient": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\app\\news\\alerts\\page-client.tsx"
       },
       "jsxComponents": [
         "AlertsNewsPageClient"
@@ -2670,7 +4240,7 @@
       "redirects": [],
       "lineCount": 11,
       "importMap": {
-        "CompaniesNewsPageClient": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\app\\news\\companies\\page-client.tsx"
+        "CompaniesNewsPageClient": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\app\\news\\companies\\page-client.tsx"
       },
       "jsxComponents": [
         "CompaniesNewsPageClient"
@@ -2719,7 +4289,7 @@
       "redirects": [],
       "lineCount": 11,
       "importMap": {
-        "EconomyNewsPageClient": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\app\\news\\economy\\page-client.tsx"
+        "EconomyNewsPageClient": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\app\\news\\economy\\page-client.tsx"
       },
       "jsxComponents": [
         "EconomyNewsPageClient"
@@ -2768,7 +4338,7 @@
       "redirects": [],
       "lineCount": 11,
       "importMap": {
-        "MarketsNewsPageClient": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\app\\news\\markets\\page-client.tsx"
+        "MarketsNewsPageClient": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\app\\news\\markets\\page-client.tsx"
       },
       "jsxComponents": [
         "MarketsNewsPageClient"
@@ -2817,7 +4387,7 @@
       "redirects": [],
       "lineCount": 11,
       "importMap": {
-        "TrendingNewsPageClient": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\app\\news\\trending\\page-client.tsx"
+        "TrendingNewsPageClient": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\app\\news\\trending\\page-client.tsx"
       },
       "jsxComponents": [
         "TrendingNewsPageClient"
@@ -2866,12 +4436,12 @@
       "redirects": [],
       "lineCount": 239,
       "importMap": {
-        "useAuth": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\context\\AuthContext.tsx",
-        "deletePushDevice": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getNotificationDeliveryStatus": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getNotifications": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getPushDevices": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "registerPushDevice": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "useAuth": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\context\\AuthContext.tsx",
+        "deletePushDevice": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getNotificationDeliveryStatus": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getNotifications": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getPushDevices": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "registerPushDevice": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [
         "Link"
@@ -2919,7 +4489,7 @@
       "redirects": [],
       "lineCount": 8,
       "importMap": {
-        "PortfolioDashboard": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\portfolio\\PortfolioDashboard.tsx"
+        "PortfolioDashboard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\portfolio\\PortfolioDashboard.tsx"
       },
       "jsxComponents": [
         "PortfolioDashboard"
@@ -2947,22 +4517,25 @@
             "name": "PortfolioDashboard",
             "origin": "imported-file",
             "file": "src/components/portfolio/PortfolioDashboard.tsx",
-            "lineCount": 774,
+            "lineCount": 874,
             "intrinsicTags": [
               "button",
               "circle",
-              "details",
+              "defs",
               "div",
               "form",
-              "h1",
+              "h2",
               "h3",
               "input",
+              "line",
+              "linearGradient",
               "option",
               "p",
-              "pre",
+              "path",
+              "section",
               "select",
               "span",
-              "summary",
+              "stop",
               "svg",
               "table",
               "tbody",
@@ -2983,7 +4556,7 @@
       "redirects": [],
       "lineCount": 429,
       "importMap": {
-        "PageBackground": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\layout\\PageBackground.tsx"
+        "PageBackground": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\layout\\PageBackground.tsx"
       },
       "jsxComponents": [
         "Bar",
@@ -3077,7 +4650,7 @@
       "redirects": [],
       "lineCount": 20,
       "importMap": {
-        "SettingsPageShell": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\settings\\SettingsPageShell.tsx"
+        "SettingsPageShell": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\settings\\SettingsPageShell.tsx"
       },
       "jsxComponents": [
         "SettingsPageFallback",
@@ -3136,25 +4709,12 @@
                 "name": "LoadingSkeleton",
                 "origin": "imported-file",
                 "file": "src/components/ui/LoadingSkeleton.tsx",
-                "lineCount": 19,
+                "lineCount": 20,
                 "intrinsicTags": [
                   "div"
                 ],
                 "tabSignals": [],
-                "children": [
-                  {
-                    "name": "CursiveLoader",
-                    "origin": "imported-file",
-                    "file": "src/components/ui/CursiveLoader.tsx",
-                    "lineCount": 64,
-                    "intrinsicTags": [
-                      "div",
-                      "span"
-                    ],
-                    "tabSignals": [],
-                    "children": []
-                  }
-                ]
+                "children": []
               },
               {
                 "name": "SettingsSidebar",
@@ -3222,7 +4782,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3235,7 +4795,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3248,7 +4808,7 @@
                     "name": "CardDescription",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3261,7 +4821,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3274,7 +4834,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3298,25 +4858,12 @@
                     "name": "LoadingSkeleton",
                     "origin": "imported-file",
                     "file": "src/components/ui/LoadingSkeleton.tsx",
-                    "lineCount": 19,
+                    "lineCount": 20,
                     "intrinsicTags": [
                       "div"
                     ],
                     "tabSignals": [],
-                    "children": [
-                      {
-                        "name": "CursiveLoader",
-                        "origin": "imported-file",
-                        "file": "src/components/ui/CursiveLoader.tsx",
-                        "lineCount": 64,
-                        "intrinsicTags": [
-                          "div",
-                          "span"
-                        ],
-                        "tabSignals": [],
-                        "children": []
-                      }
-                    ]
+                    "children": []
                   },
                   {
                     "name": "EditableRow",
@@ -3344,7 +4891,7 @@
                 "name": "Reports",
                 "origin": "imported-file",
                 "file": "src/components/settings/Reports.tsx",
-                "lineCount": 168,
+                "lineCount": 162,
                 "intrinsicTags": [
                   "a",
                   "button",
@@ -3359,7 +4906,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3372,7 +4919,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3385,7 +4932,7 @@
                     "name": "CardDescription",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3398,7 +4945,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3411,7 +4958,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3424,25 +4971,12 @@
                     "name": "LoadingSkeleton",
                     "origin": "imported-file",
                     "file": "src/components/ui/LoadingSkeleton.tsx",
-                    "lineCount": 19,
+                    "lineCount": 20,
                     "intrinsicTags": [
                       "div"
                     ],
                     "tabSignals": [],
-                    "children": [
-                      {
-                        "name": "CursiveLoader",
-                        "origin": "imported-file",
-                        "file": "src/components/ui/CursiveLoader.tsx",
-                        "lineCount": 64,
-                        "intrinsicTags": [
-                          "div",
-                          "span"
-                        ],
-                        "tabSignals": [],
-                        "children": []
-                      }
-                    ]
+                    "children": []
                   }
                 ]
               },
@@ -3463,7 +4997,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3476,7 +5010,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3489,7 +5023,7 @@
                     "name": "CardDescription",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3502,7 +5036,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3515,7 +5049,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3528,25 +5062,12 @@
                     "name": "LoadingSkeleton",
                     "origin": "imported-file",
                     "file": "src/components/ui/LoadingSkeleton.tsx",
-                    "lineCount": 19,
+                    "lineCount": 20,
                     "intrinsicTags": [
                       "div"
                     ],
                     "tabSignals": [],
-                    "children": [
-                      {
-                        "name": "CursiveLoader",
-                        "origin": "imported-file",
-                        "file": "src/components/ui/CursiveLoader.tsx",
-                        "lineCount": 64,
-                        "intrinsicTags": [
-                          "div",
-                          "span"
-                        ],
-                        "tabSignals": [],
-                        "children": []
-                      }
-                    ]
+                    "children": []
                   }
                 ]
               },
@@ -3571,7 +5092,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3584,7 +5105,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3597,7 +5118,7 @@
                     "name": "CardDescription",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3610,7 +5131,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3623,7 +5144,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3647,25 +5168,12 @@
                     "name": "LoadingSkeleton",
                     "origin": "imported-file",
                     "file": "src/components/ui/LoadingSkeleton.tsx",
-                    "lineCount": 19,
+                    "lineCount": 20,
                     "intrinsicTags": [
                       "div"
                     ],
                     "tabSignals": [],
-                    "children": [
-                      {
-                        "name": "CursiveLoader",
-                        "origin": "imported-file",
-                        "file": "src/components/ui/CursiveLoader.tsx",
-                        "lineCount": 64,
-                        "intrinsicTags": [
-                          "div",
-                          "span"
-                        ],
-                        "tabSignals": [],
-                        "children": []
-                      }
-                    ]
+                    "children": []
                   },
                   {
                     "name": "PasswordInput",
@@ -3712,7 +5220,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3725,7 +5233,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3738,7 +5246,7 @@
                     "name": "CardDescription",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3751,7 +5259,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3764,7 +5272,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3788,25 +5296,12 @@
                     "name": "LoadingSkeleton",
                     "origin": "imported-file",
                     "file": "src/components/ui/LoadingSkeleton.tsx",
-                    "lineCount": 19,
+                    "lineCount": 20,
                     "intrinsicTags": [
                       "div"
                     ],
                     "tabSignals": [],
-                    "children": [
-                      {
-                        "name": "CursiveLoader",
-                        "origin": "imported-file",
-                        "file": "src/components/ui/CursiveLoader.tsx",
-                        "lineCount": 64,
-                        "intrinsicTags": [
-                          "div",
-                          "span"
-                        ],
-                        "tabSignals": [],
-                        "children": []
-                      }
-                    ]
+                    "children": []
                   },
                   {
                     "name": "Field",
@@ -3858,7 +5353,7 @@
                 "name": "SuspiciousActivity",
                 "origin": "imported-file",
                 "file": "src/components/settings/SuspiciousActivity.tsx",
-                "lineCount": 192,
+                "lineCount": 186,
                 "intrinsicTags": [
                   "button",
                   "div",
@@ -3872,7 +5367,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3885,7 +5380,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3898,7 +5393,7 @@
                     "name": "CardDescription",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3911,7 +5406,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3924,7 +5419,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -3937,31 +5432,18 @@
                     "name": "LoadingSkeleton",
                     "origin": "imported-file",
                     "file": "src/components/ui/LoadingSkeleton.tsx",
-                    "lineCount": 19,
+                    "lineCount": 20,
                     "intrinsicTags": [
                       "div"
                     ],
                     "tabSignals": [],
-                    "children": [
-                      {
-                        "name": "CursiveLoader",
-                        "origin": "imported-file",
-                        "file": "src/components/ui/CursiveLoader.tsx",
-                        "lineCount": 64,
-                        "intrinsicTags": [
-                          "div",
-                          "span"
-                        ],
-                        "tabSignals": [],
-                        "children": []
-                      }
-                    ]
+                    "children": []
                   },
                   {
                     "name": "SummaryTile",
                     "origin": "internal-component",
                     "file": "src/components/settings/SuspiciousActivity.tsx",
-                    "lineCount": 192,
+                    "lineCount": 186,
                     "intrinsicTags": [
                       "button",
                       "div",
@@ -4015,8 +5497,8 @@
       "redirects": [],
       "lineCount": 333,
       "importMap": {
-        "useAuth": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\context\\AuthContext.tsx",
-        "savePendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\authFlow.ts"
+        "useAuth": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\context\\AuthContext.tsx",
+        "savePendingEmailVerificationEmail": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\authFlow.ts"
       },
       "jsxComponents": [
         "Eye",
@@ -4115,15 +5597,15 @@
       "route": "/stock-search",
       "file": "src/app/stock-search/page.tsx",
       "redirects": [],
-      "lineCount": 166,
+      "lineCount": 170,
       "importMap": {
-        "Card": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "CardContent": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "CardHeader": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "CardTitle": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "EnhancedStockCard": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\EnhancedStockCard.tsx",
-        "SearchBar": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\app\\components\\SearchBar.tsx",
-        "getTrendingStocks": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "Card": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardContent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardHeader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardTitle": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "EnhancedStockCard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\EnhancedStockCard.tsx",
+        "SearchBar": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\app\\components\\SearchBar.tsx",
+        "getTrendingStocks": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [
         "Card",
@@ -4143,7 +5625,8 @@
         "p"
       ],
       "declaredTopLevel": [
-        "StockSearchPage"
+        "StockSearchPage",
+        "loadSearchHistory"
       ],
       "tabSignals": [],
       "directImportedChildren": [
@@ -4181,7 +5664,7 @@
       "internalChildren": [],
       "tree": {
         "file": "src/app/stock-search/page.tsx",
-        "lineCount": 166,
+        "lineCount": 170,
         "intrinsicTags": [
           "button",
           "div",
@@ -4195,7 +5678,7 @@
             "name": "Card",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4208,7 +5691,7 @@
             "name": "CardContent",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4221,7 +5704,7 @@
             "name": "CardHeader",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4234,7 +5717,7 @@
             "name": "CardTitle",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4247,7 +5730,7 @@
             "name": "EnhancedStockCard",
             "origin": "imported-file",
             "file": "src/components/stocks/EnhancedStockCard.tsx",
-            "lineCount": 284,
+            "lineCount": 275,
             "intrinsicTags": [
               "button",
               "div",
@@ -4278,7 +5761,7 @@
                 "name": "StockLogo",
                 "origin": "imported-file",
                 "file": "src/app/components/StockLogo.tsx",
-                "lineCount": 67,
+                "lineCount": 52,
                 "intrinsicTags": [
                   "div"
                 ],
@@ -4294,29 +5777,24 @@
       "route": "/stocks",
       "file": "src/app/stocks/page.tsx",
       "redirects": [],
-      "lineCount": 2322,
+      "lineCount": 2392,
       "importMap": {
-        "stockApi": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "useAnimation": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\shared\\AnimationContext.js",
-        "Card": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "CardContent": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "CardHeader": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "CardTitle": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "CardDescription": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\card.tsx",
-        "EnhancedStockCard": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\EnhancedStockCard.tsx",
-        "logger": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\logger.ts",
-        "animateStocksDashboard": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\animations\\pages\\stocksAnimations.js",
-        "GlowCard": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\spotlight-card.tsx",
-        "useWebSocket": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\hooks\\useWebSocket.ts",
-        "CursiveLoader": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\CursiveLoader.tsx"
+        "stockApi": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "useAnimation": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\animations\\shared\\AnimationContext.js",
+        "CardContent": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardHeader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardTitle": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "CardDescription": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\card.tsx",
+        "EnhancedStockCard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\EnhancedStockCard.tsx",
+        "logger": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\logger.ts",
+        "animateStocksDashboard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\animations\\pages\\stocksAnimations.js",
+        "useWebSocket": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\hooks\\useWebSocket.ts",
+        "CursiveLoader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\CursiveLoader.tsx"
       },
       "jsxComponents": [
         "Activity",
         "AlertTriangle",
-        "ArrowDown",
-        "ArrowUp",
         "BarChart2",
-        "Card",
         "CardContent",
         "CardDescription",
         "CardHeader",
@@ -4325,12 +5803,10 @@
         "ChevronRight",
         "CursiveLoader",
         "EnhancedStockCard",
-        "GlowCard",
         "IndianRupee",
         "Link",
         "PieChart",
-        "StocksSurfaceCard",
-        "TrendingUp"
+        "StocksSurfaceCard"
       ],
       "intrinsicTags": [
         "button",
@@ -4354,17 +5830,13 @@
         "HIGH_LOW_CARD_PAGE_SIZE",
         "PERFORMANCE_CARD_PAGE_SIZE",
         "SECTOR_CARD_PAGE_SIZE",
+        "STOCKS_SURFACE_CARD_CLASS",
         "STOCKS_TABLE_PAGE_SIZE",
         "StocksIndexPage",
         "StocksSurfaceCard"
       ],
       "tabSignals": [],
       "directImportedChildren": [
-        {
-          "name": "Card",
-          "file": "src/components/ui/card.tsx",
-          "origin": "imported-file"
-        },
         {
           "name": "CardContent",
           "file": "src/components/ui/card.tsx",
@@ -4394,11 +5866,6 @@
           "name": "EnhancedStockCard",
           "file": "src/components/stocks/EnhancedStockCard.tsx",
           "origin": "imported-file"
-        },
-        {
-          "name": "GlowCard",
-          "file": "src/components/spotlight-card.tsx",
-          "origin": "imported-file"
         }
       ],
       "internalChildren": [
@@ -4409,7 +5876,7 @@
       ],
       "tree": {
         "file": "src/app/stocks/page.tsx",
-        "lineCount": 2322,
+        "lineCount": 2392,
         "intrinsicTags": [
           "button",
           "canvas",
@@ -4431,23 +5898,10 @@
         "tabSignals": [],
         "children": [
           {
-            "name": "Card",
-            "origin": "imported-file",
-            "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
-            "intrinsicTags": [
-              "div",
-              "h3",
-              "p"
-            ],
-            "tabSignals": [],
-            "children": []
-          },
-          {
             "name": "CardContent",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4460,7 +5914,7 @@
             "name": "CardDescription",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4473,7 +5927,7 @@
             "name": "CardHeader",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4486,7 +5940,7 @@
             "name": "CardTitle",
             "origin": "imported-file",
             "file": "src/components/ui/card.tsx",
-            "lineCount": 82,
+            "lineCount": 80,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4499,7 +5953,7 @@
             "name": "CursiveLoader",
             "origin": "imported-file",
             "file": "src/components/ui/CursiveLoader.tsx",
-            "lineCount": 64,
+            "lineCount": 67,
             "intrinsicTags": [
               "div",
               "span"
@@ -4511,7 +5965,7 @@
             "name": "EnhancedStockCard",
             "origin": "imported-file",
             "file": "src/components/stocks/EnhancedStockCard.tsx",
-            "lineCount": 284,
+            "lineCount": 275,
             "intrinsicTags": [
               "button",
               "div",
@@ -4522,21 +5976,10 @@
             "children": []
           },
           {
-            "name": "GlowCard",
-            "origin": "imported-file",
-            "file": "src/components/spotlight-card.tsx",
-            "lineCount": 83,
-            "intrinsicTags": [
-              "div"
-            ],
-            "tabSignals": [],
-            "children": []
-          },
-          {
             "name": "StocksSurfaceCard",
             "origin": "internal-component",
             "file": "src/app/stocks/page.tsx",
-            "lineCount": 2322,
+            "lineCount": 2392,
             "intrinsicTags": [
               "button",
               "canvas",
@@ -4565,27 +6008,31 @@
       "route": "/stocks/[symbol]",
       "file": "src/app/stocks/[symbol]/page.tsx",
       "redirects": [],
-      "lineCount": 1150,
+      "lineCount": 1195,
       "importMap": {
-        "logger": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\logger.ts",
-        "apiHelpers": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "useWebSocket": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\hooks\\useWebSocket.ts",
-        "normalizeStockData": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\lib\\normalizeStock.ts",
-        "CursiveLoader": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\ui\\CursiveLoader.tsx",
-        "TechnicalAnalysis": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\TechnicalAnalysis.tsx",
-        "MacroeconomicIndicators": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\MacroeconomicIndicators.tsx",
-        "SentimentAnalysis": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\SentimentAnalysis.tsx",
-        "IndustryAnalysis": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\IndustryAnalysis.tsx",
-        "ManagementGovernance": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\ManagementGovernance.tsx",
-        "InstitutionalInvestment": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\InstitutionalInvestment.tsx",
-        "ESGMetrics": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\ESGMetrics.tsx",
-        "RiskAssessment": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\RiskAssessment.tsx",
-        "FutureGrowthPotential": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\FutureGrowthPotential.tsx",
-        "Overview": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\Overview.tsx",
-        "FundamentalAnalysis": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\FundamentalAnalysis.tsx",
-        "MetricCard": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\MetricCard.tsx",
-        "FinancialItem": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\FinancialStatements.tsx",
-        "FinancialPeriod": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\stocks\\FinancialStatements.tsx"
+        "logger": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\logger.ts",
+        "apiHelpers": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getStockFundamental": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getStockFinancials": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getStockHistory": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getStockPeers": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "useWebSocket": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\hooks\\useWebSocket.ts",
+        "normalizeStockData": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\lib\\normalizeStock.ts",
+        "CursiveLoader": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\ui\\CursiveLoader.tsx",
+        "TechnicalAnalysis": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\TechnicalAnalysis.tsx",
+        "MacroeconomicIndicators": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\MacroeconomicIndicators.tsx",
+        "SentimentAnalysis": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\SentimentAnalysis.tsx",
+        "IndustryAnalysis": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\IndustryAnalysis.tsx",
+        "ManagementGovernance": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\ManagementGovernance.tsx",
+        "InstitutionalInvestment": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\InstitutionalInvestment.tsx",
+        "ESGMetrics": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\ESGMetrics.tsx",
+        "RiskAssessment": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\RiskAssessment.tsx",
+        "FutureGrowthPotential": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\FutureGrowthPotential.tsx",
+        "Overview": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\Overview.tsx",
+        "FundamentalAnalysis": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\FundamentalAnalysis.tsx",
+        "MetricCard": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\MetricCard.tsx",
+        "FinancialItem": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\FinancialStatements.tsx",
+        "FinancialPeriod": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\stocks\\FinancialStatements.tsx"
       },
       "jsxComponents": [
         "BarChart4",
@@ -4620,7 +6067,6 @@
         "div",
         "h1",
         "h2",
-        "h3",
         "p",
         "span"
       ],
@@ -4700,13 +6146,12 @@
       "internalChildren": [],
       "tree": {
         "file": "src/app/stocks/[symbol]/page.tsx",
-        "lineCount": 1150,
+        "lineCount": 1195,
         "intrinsicTags": [
           "button",
           "div",
           "h1",
           "h2",
-          "h3",
           "p",
           "span"
         ],
@@ -4718,7 +6163,7 @@
             "name": "CursiveLoader",
             "origin": "imported-file",
             "file": "src/components/ui/CursiveLoader.tsx",
-            "lineCount": 64,
+            "lineCount": 67,
             "intrinsicTags": [
               "div",
               "span"
@@ -4730,7 +6175,7 @@
             "name": "ESGMetrics",
             "origin": "imported-file",
             "file": "src/components/stocks/ESGMetrics.tsx",
-            "lineCount": 534,
+            "lineCount": 532,
             "intrinsicTags": [
               "div",
               "h3",
@@ -4743,7 +6188,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4756,7 +6201,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4769,7 +6214,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4782,7 +6227,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4797,7 +6242,7 @@
             "name": "FundamentalAnalysis",
             "origin": "imported-file",
             "file": "src/components/stocks/FundamentalAnalysis.tsx",
-            "lineCount": 128,
+            "lineCount": 135,
             "intrinsicTags": [
               "div",
               "p",
@@ -4809,7 +6254,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4822,7 +6267,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4835,7 +6280,7 @@
                 "name": "CardDescription",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4848,7 +6293,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4861,7 +6306,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -4874,7 +6319,7 @@
                 "name": "CursiveLoader",
                 "origin": "imported-file",
                 "file": "src/components/ui/CursiveLoader.tsx",
-                "lineCount": 64,
+                "lineCount": 67,
                 "intrinsicTags": [
                   "div",
                   "span"
@@ -4903,7 +6348,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -4916,7 +6361,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -4929,7 +6374,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -4942,7 +6387,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5129,7 +6574,7 @@
             "name": "FutureGrowthPotential",
             "origin": "imported-file",
             "file": "src/components/stocks/FutureGrowthPotential.tsx",
-            "lineCount": 664,
+            "lineCount": 662,
             "intrinsicTags": [
               "div",
               "h3",
@@ -5148,7 +6593,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5161,7 +6606,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5174,7 +6619,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5187,7 +6632,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5202,7 +6647,7 @@
             "name": "IndustryAnalysis",
             "origin": "imported-file",
             "file": "src/components/stocks/IndustryAnalysis.tsx",
-            "lineCount": 509,
+            "lineCount": 324,
             "intrinsicTags": [
               "div",
               "h4",
@@ -5221,7 +6666,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5234,7 +6679,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5247,7 +6692,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5260,7 +6705,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5275,7 +6720,7 @@
             "name": "InstitutionalInvestment",
             "origin": "imported-file",
             "file": "src/components/stocks/InstitutionalInvestment.tsx",
-            "lineCount": 510,
+            "lineCount": 507,
             "intrinsicTags": [
               "div",
               "h4",
@@ -5293,7 +6738,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5306,7 +6751,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5319,7 +6764,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5332,7 +6777,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5347,7 +6792,7 @@
             "name": "MacroeconomicIndicators",
             "origin": "imported-file",
             "file": "src/components/stocks/MacroeconomicIndicators.tsx",
-            "lineCount": 392,
+            "lineCount": 337,
             "intrinsicTags": [
               "div",
               "h4",
@@ -5360,7 +6805,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5373,7 +6818,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5386,7 +6831,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5399,7 +6844,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5414,7 +6859,7 @@
             "name": "ManagementGovernance",
             "origin": "imported-file",
             "file": "src/components/stocks/ManagementGovernance.tsx",
-            "lineCount": 564,
+            "lineCount": 429,
             "intrinsicTags": [
               "div",
               "h4",
@@ -5427,7 +6872,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5440,7 +6885,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5453,7 +6898,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5466,7 +6911,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5481,7 +6926,7 @@
             "name": "MetricCard",
             "origin": "imported-file",
             "file": "src/components/stocks/MetricCard.tsx",
-            "lineCount": 73,
+            "lineCount": 75,
             "intrinsicTags": [
               "div",
               "h3",
@@ -5507,7 +6952,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5520,7 +6965,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5533,7 +6978,7 @@
                 "name": "CardDescription",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5546,7 +6991,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5559,7 +7004,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5585,7 +7030,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5598,7 +7043,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5611,7 +7056,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5624,7 +7069,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5653,7 +7098,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5666,7 +7111,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5679,7 +7124,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5692,7 +7137,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5722,7 +7167,7 @@
                     "name": "Card",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5735,7 +7180,7 @@
                     "name": "CardContent",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5748,7 +7193,7 @@
                     "name": "CardHeader",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5761,7 +7206,7 @@
                     "name": "CardTitle",
                     "origin": "imported-file",
                     "file": "src/components/ui/card.tsx",
-                    "lineCount": 82,
+                    "lineCount": 80,
                     "intrinsicTags": [
                       "div",
                       "h3",
@@ -5789,7 +7234,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5802,7 +7247,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5815,7 +7260,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5828,7 +7273,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5843,7 +7288,7 @@
             "name": "SentimentAnalysis",
             "origin": "imported-file",
             "file": "src/components/stocks/SentimentAnalysis.tsx",
-            "lineCount": 431,
+            "lineCount": 432,
             "intrinsicTags": [
               "div",
               "h4",
@@ -5856,7 +7301,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5869,7 +7314,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5882,7 +7327,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5895,7 +7340,7 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5910,7 +7355,7 @@
             "name": "TechnicalAnalysis",
             "origin": "imported-file",
             "file": "src/components/stocks/TechnicalAnalysis.tsx",
-            "lineCount": 376,
+            "lineCount": 513,
             "intrinsicTags": [
               "div",
               "h4",
@@ -5923,7 +7368,7 @@
                 "name": "Card",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5936,7 +7381,7 @@
                 "name": "CardContent",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5949,7 +7394,7 @@
                 "name": "CardHeader",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
@@ -5962,11 +7407,23 @@
                 "name": "CardTitle",
                 "origin": "imported-file",
                 "file": "src/components/ui/card.tsx",
-                "lineCount": 82,
+                "lineCount": 80,
                 "intrinsicTags": [
                   "div",
                   "h3",
                   "p"
+                ],
+                "tabSignals": [],
+                "children": []
+              },
+              {
+                "name": "CursiveLoader",
+                "origin": "imported-file",
+                "file": "src/components/ui/CursiveLoader.tsx",
+                "lineCount": 67,
+                "intrinsicTags": [
+                  "div",
+                  "span"
                 ],
                 "tabSignals": [],
                 "children": []
@@ -5982,7 +7439,7 @@
       "redirects": [],
       "lineCount": 227,
       "importMap": {
-        "PageBackground": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\components\\layout\\PageBackground.tsx"
+        "PageBackground": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\components\\layout\\PageBackground.tsx"
       },
       "jsxComponents": [
         "AlertTriangle",
@@ -6055,15 +7512,15 @@
       "redirects": [],
       "lineCount": 351,
       "importMap": {
-        "useAuth": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\context\\AuthContext.tsx",
-        "addWatchlistItem": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "createWatchlist": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "deleteWatchlist": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getWatchlistById": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "getWatchlists": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "removeWatchlistItem": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "reorderWatchlistItems": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js",
-        "updateWatchlist": "C:\\Users\\khush\\Desktop\\$Projects\\Stock-Sense\\New folder\\src\\api\\api.js"
+        "useAuth": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\context\\AuthContext.tsx",
+        "addWatchlistItem": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "createWatchlist": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "deleteWatchlist": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getWatchlistById": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "getWatchlists": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "removeWatchlistItem": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "reorderWatchlistItems": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js",
+        "updateWatchlist": "C:\\Users\\khush\\Desktop\\Projects\\stock-sense\\Stock-Sense-main\\src\\api\\api.js"
       },
       "jsxComponents": [
         "Link"
@@ -6104,7 +7561,7 @@
     {
       "route": "/api/health",
       "file": "src/app/api/health/route.ts",
-      "lineCount": 10,
+      "lineCount": 11,
       "methods": [
         "GET"
       ]
@@ -6209,7 +7666,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 101,
+      "lineCount": 96,
       "reachableFromRoute": false
     },
     {
@@ -6276,7 +7733,7 @@
         "p"
       ],
       "tabSignals": [],
-      "lineCount": 129,
+      "lineCount": 128,
       "reachableFromRoute": false
     },
     {
@@ -6558,7 +8015,7 @@
         "div"
       ],
       "tabSignals": [],
-      "lineCount": 67,
+      "lineCount": 52,
       "reachableFromRoute": true
     },
     {
@@ -6688,7 +8145,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 112,
+      "lineCount": 105,
       "reachableFromRoute": false
     },
     {
@@ -6760,7 +8217,7 @@
         "ul"
       ],
       "tabSignals": [],
-      "lineCount": 700,
+      "lineCount": 706,
       "reachableFromRoute": true
     },
     {
@@ -6779,7 +8236,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 151,
+      "lineCount": 148,
       "reachableFromRoute": true
     },
     {
@@ -6797,7 +8254,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 334,
+      "lineCount": 333,
       "reachableFromRoute": true
     },
     {
@@ -6814,7 +8271,7 @@
         "div",
         "g",
         "h1",
-        "h2",
+        "line",
         "linearGradient",
         "p",
         "path",
@@ -6824,7 +8281,7 @@
         "svg"
       ],
       "tabSignals": [],
-      "lineCount": 236,
+      "lineCount": 196,
       "reachableFromRoute": true
     },
     {
@@ -6843,7 +8300,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 349,
+      "lineCount": 337,
       "reachableFromRoute": true
     },
     {
@@ -6865,7 +8322,7 @@
         "svg"
       ],
       "tabSignals": [],
-      "lineCount": 221,
+      "lineCount": 216,
       "reachableFromRoute": true
     },
     {
@@ -6873,10 +8330,56 @@
       "directChildComponents": [],
       "intrinsicTags": [
         "div",
-        "h3"
+        "h3",
+        "span"
       ],
       "tabSignals": [],
-      "lineCount": 140,
+      "lineCount": 135,
+      "reachableFromRoute": true
+    },
+    {
+      "file": "src/components/IPO/IpoPanels.tsx",
+      "directChildComponents": [
+        {
+          "name": "Badge",
+          "file": "src/components/ui/badge.tsx"
+        },
+        {
+          "name": "Button",
+          "file": "src/components/ui/button.tsx"
+        },
+        {
+          "name": "Card",
+          "file": "src/components/ui/card.tsx"
+        },
+        {
+          "name": "CardContent",
+          "file": "src/components/ui/card.tsx"
+        },
+        {
+          "name": "CardDescription",
+          "file": "src/components/ui/card.tsx"
+        },
+        {
+          "name": "CardHeader",
+          "file": "src/components/ui/card.tsx"
+        },
+        {
+          "name": "CardTitle",
+          "file": "src/components/ui/card.tsx"
+        }
+      ],
+      "intrinsicTags": [
+        "a",
+        "div",
+        "h2",
+        "h3",
+        "p",
+        "section",
+        "span"
+      ],
+      "tabSignals": [],
+      "lineCount": 271,
       "reachableFromRoute": true
     },
     {
@@ -6993,7 +8496,7 @@
         "ul"
       ],
       "tabSignals": [],
-      "lineCount": 159,
+      "lineCount": 123,
       "reachableFromRoute": true
     },
     {
@@ -7264,7 +8767,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 687,
+      "lineCount": 688,
       "reachableFromRoute": false
     },
     {
@@ -7355,18 +8858,21 @@
       "intrinsicTags": [
         "button",
         "circle",
-        "details",
+        "defs",
         "div",
         "form",
-        "h1",
+        "h2",
         "h3",
         "input",
+        "line",
+        "linearGradient",
         "option",
         "p",
-        "pre",
+        "path",
+        "section",
         "select",
         "span",
-        "summary",
+        "stop",
         "svg",
         "table",
         "tbody",
@@ -7376,7 +8882,7 @@
         "tr"
       ],
       "tabSignals": [],
-      "lineCount": 774,
+      "lineCount": 874,
       "reachableFromRoute": true
     },
     {
@@ -7403,7 +8909,7 @@
         "ul"
       ],
       "tabSignals": [],
-      "lineCount": 464,
+      "lineCount": 463,
       "reachableFromRoute": false
     },
     {
@@ -7605,7 +9111,7 @@
         "p"
       ],
       "tabSignals": [],
-      "lineCount": 168,
+      "lineCount": 162,
       "reachableFromRoute": true
     },
     {
@@ -7726,7 +9232,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 192,
+      "lineCount": 186,
       "reachableFromRoute": true
     },
     {
@@ -7787,7 +9293,7 @@
       ],
       "tabSignals": [],
       "lineCount": 83,
-      "reachableFromRoute": true
+      "reachableFromRoute": false
     },
     {
       "file": "src/components/stocks/AboutCompany.tsx",
@@ -7893,7 +9399,7 @@
         "p"
       ],
       "tabSignals": [],
-      "lineCount": 129,
+      "lineCount": 128,
       "reachableFromRoute": false
     },
     {
@@ -7906,7 +9412,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 284,
+      "lineCount": 275,
       "reachableFromRoute": true
     },
     {
@@ -7936,7 +9442,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 534,
+      "lineCount": 532,
       "reachableFromRoute": true
     },
     {
@@ -8110,7 +9616,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 128,
+      "lineCount": 135,
       "reachableFromRoute": true
     },
     {
@@ -8146,7 +9652,7 @@
         "tr"
       ],
       "tabSignals": [],
-      "lineCount": 664,
+      "lineCount": 662,
       "reachableFromRoute": true
     },
     {
@@ -8182,7 +9688,7 @@
         "tr"
       ],
       "tabSignals": [],
-      "lineCount": 509,
+      "lineCount": 324,
       "reachableFromRoute": true
     },
     {
@@ -8217,7 +9723,7 @@
         "tr"
       ],
       "tabSignals": [],
-      "lineCount": 510,
+      "lineCount": 507,
       "reachableFromRoute": true
     },
     {
@@ -8247,7 +9753,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 392,
+      "lineCount": 337,
       "reachableFromRoute": true
     },
     {
@@ -8277,7 +9783,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 564,
+      "lineCount": 429,
       "reachableFromRoute": true
     },
     {
@@ -8356,7 +9862,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 73,
+      "lineCount": 75,
       "reachableFromRoute": true
     },
     {
@@ -8508,7 +10014,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 431,
+      "lineCount": 432,
       "reachableFromRoute": true
     },
     {
@@ -8518,7 +10024,7 @@
         "div"
       ],
       "tabSignals": [],
-      "lineCount": 67,
+      "lineCount": 52,
       "reachableFromRoute": false
     },
     {
@@ -8611,6 +10117,10 @@
         {
           "name": "CardTitle",
           "file": "src/components/ui/card.tsx"
+        },
+        {
+          "name": "CursiveLoader",
+          "file": "src/components/ui/CursiveLoader.tsx"
         }
       ],
       "intrinsicTags": [
@@ -8620,7 +10130,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 376,
+      "lineCount": 513,
       "reachableFromRoute": true
     },
     {
@@ -8654,7 +10164,7 @@
       ],
       "tabSignals": [],
       "lineCount": 36,
-      "reachableFromRoute": false
+      "reachableFromRoute": true
     },
     {
       "file": "src/components/ui/button.tsx",
@@ -8687,7 +10197,7 @@
         "p"
       ],
       "tabSignals": [],
-      "lineCount": 82,
+      "lineCount": 80,
       "reachableFromRoute": true
     },
     {
@@ -8698,7 +10208,7 @@
         "span"
       ],
       "tabSignals": [],
-      "lineCount": 64,
+      "lineCount": 67,
       "reachableFromRoute": true
     },
     {
@@ -8723,17 +10233,12 @@
     },
     {
       "file": "src/components/ui/LoadingSkeleton.tsx",
-      "directChildComponents": [
-        {
-          "name": "CursiveLoader",
-          "file": "src/components/ui/CursiveLoader.tsx"
-        }
-      ],
+      "directChildComponents": [],
       "intrinsicTags": [
         "div"
       ],
       "tabSignals": [],
-      "lineCount": 19,
+      "lineCount": 20,
       "reachableFromRoute": true
     },
     {
@@ -8769,10 +10274,10 @@
       "intrinsicTags": [
         "div",
         "h2",
-        "span"
+        "p"
       ],
       "tabSignals": [],
-      "lineCount": 110,
+      "lineCount": 112,
       "reachableFromRoute": true
     },
     {
@@ -8885,7 +10390,7 @@
         "div"
       ],
       "tabSignals": [],
-      "lineCount": 40,
+      "lineCount": 38,
       "reachableFromRoute": true
     },
     {
@@ -8897,6 +10402,18 @@
       ],
       "tabSignals": [],
       "lineCount": 83,
+      "reachableFromRoute": false
+    },
+    {
+      "file": "src/components/ui/TypewriterBrandLoader.tsx",
+      "directChildComponents": [],
+      "intrinsicTags": [
+        "div",
+        "h1",
+        "span"
+      ],
+      "tabSignals": [],
+      "lineCount": 86,
       "reachableFromRoute": false
     }
   ],
@@ -8934,6 +10451,7 @@
     "src/components/portfolio/PortfolioForm.tsx",
     "src/components/portfolio/PortfolioList.tsx",
     "src/components/settings/settings-config.ts",
+    "src/components/spotlight-card.tsx",
     "src/components/stocks/AboutCompany.tsx",
     "src/components/stocks/CompanyInfo.tsx",
     "src/components/stocks/CompanyProfileCard.tsx",
@@ -8945,12 +10463,12 @@
     "src/components/stocks/StockLogo.tsx",
     "src/components/stocks/TargetPriceAnalysis.tsx",
     "src/components/ui/animated-underline-text-one.tsx",
-    "src/components/ui/badge.tsx",
     "src/components/ui/CacheStatus.tsx",
     "src/components/ui/neon-button.tsx",
     "src/components/ui/progress.tsx",
     "src/components/ui/text-rotate.tsx",
-    "src/components/ui/Toasts.tsx"
+    "src/components/ui/Toasts.tsx",
+    "src/components/ui/TypewriterBrandLoader.tsx"
   ],
   "matrices": {
     "newsRoutes": [
