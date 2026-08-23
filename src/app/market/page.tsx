@@ -12,6 +12,7 @@ import { useWebSocket } from '@/hooks/useWebSocket';
 import { useAnimation } from '@/animations/shared/AnimationContext';
 import marketAnimations from '@/animations/pages/marketAnimations';
 import CursiveLoader from '@/components/ui/CursiveLoader';
+import { panelShellClass, insetPanelClass, sectionEyebrowClass } from '@/styles/design-tokens';
 
 // Market data interfaces
 interface MarketIndex {
@@ -97,30 +98,6 @@ interface MarketData {
   rangeLows: Stock[];
 }
 
-const MARKET_PANEL_CLASS = [
-  'rounded-[28px]',
-  'border',
-  'border-slate-200/80',
-  'bg-white/80',
-  'shadow-[0_24px_80px_rgba(15,23,42,0.08)]',
-  'backdrop-blur-xl',
-  'dark:border-white/10',
-  'dark:bg-slate-950/60',
-  'dark:shadow-[0_28px_90px_rgba(0,0,0,0.45)]',
-].join(' ');
-
-const MARKET_INSET_CLASS = [
-  'rounded-[24px]',
-  'border',
-  'border-slate-200/70',
-  'bg-white/75',
-  'backdrop-blur-xl',
-  'dark:border-white/10',
-  'dark:bg-white/5',
-].join(' ');
-
-const MARKET_LABEL_CLASS = 'text-[0.68rem] uppercase tracking-[0.24em] text-slate-500 dark:text-slate-400';
-
 const formatMarketVolume = (value: number) => {
   const absoluteValue = Math.abs(value);
 
@@ -165,11 +142,11 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
     ];
 
     return (
-      <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
+      <div className={`${panelShellClass} overflow-hidden p-0`}>
         <div className="border-b border-slate-200/70 px-4 py-4 dark:border-white/10">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <div className={MARKET_LABEL_CLASS}>Benchmark indices</div>
+              <div className={sectionEyebrowClass}>Benchmark indices</div>
               <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">The live index feed is sparse, so the market benchmark stays visible with reference values.</p>
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400">Premium fallback values</div>
@@ -178,7 +155,7 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
         <div className="grid grid-cols-2 sm:grid-cols-4">
           {fallbackIndices.map((index, idx) => (
             <div key={index.name} className={`px-4 py-5 ${idx !== fallbackIndices.length - 1 ? 'border-b border-slate-200/70 sm:border-b-0 sm:border-r dark:border-white/10' : ''}`}>
-              <div className={MARKET_LABEL_CLASS}>{index.name}</div>
+              <div className={sectionEyebrowClass}>{index.name}</div>
               <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{index.value}</div>
               <div className={`mt-2 flex items-center text-sm font-medium ${index.tone === 'emerald' ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
                 <span>
@@ -196,7 +173,7 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
   }
 
   return (
-    <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
+    <div className={`${panelShellClass} overflow-hidden p-0`}>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
         {data.map((index, idx) => {
           // Ensure all required properties exist with fallbacks
@@ -209,7 +186,7 @@ const MarketIndices = ({ data }: MarketIndicesProps) => {
           
           return (
             <div key={idx} className={`px-4 py-5 ${idx !== data.length - 1 ? 'border-b border-slate-200/70 sm:border-b-0 sm:border-r dark:border-white/10' : ''}`}>
-              <div className={MARKET_LABEL_CLASS}>{indexData.name}</div>
+              <div className={sectionEyebrowClass}>{indexData.name}</div>
               <div className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 dark:text-white">{indexData.current.toLocaleString('en-IN')}</div>
               <div className={`mt-2 flex items-center text-sm font-medium ${indexData.change >= 0 ? 'text-emerald-600 dark:text-emerald-300' : 'text-rose-600 dark:text-rose-300'}`}>
                 <span>
@@ -259,7 +236,7 @@ const SectorPerformance = ({ data }: SectorPerformanceProps) => {
   // Handle empty data case
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+      <div className={`${panelShellClass} p-5 sm:p-6 h-full`}>
         <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Sector Performance</h3>
         <div className="h-72 flex items-center justify-center">
           <CursiveLoader />
@@ -271,7 +248,7 @@ const SectorPerformance = ({ data }: SectorPerformanceProps) => {
   const sortedData = [...data].sort((a, b) => b.change - a.change);
 
   return (
-    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+    <div className={`${panelShellClass} p-5 sm:p-6 h-full`}>
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Sector Performance</h3>
@@ -329,7 +306,7 @@ const MarketBreadth = ({ data }: MarketBreadthProps) => {
   ];
 
   return (
-    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+    <div className={`${panelShellClass} p-5 sm:p-6 h-full`}>
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Breadth</h3>
@@ -396,7 +373,7 @@ const TopMovers = ({ gainers, losers }: TopMoversProps) => {
   const hasMoverData = safeGainers.length > 0 || safeLosers.length > 0;
 
   return (
-    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
+    <div className={`${panelShellClass} p-5 sm:p-6`}>
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Movers</h3>
@@ -404,8 +381,8 @@ const TopMovers = ({ gainers, losers }: TopMoversProps) => {
             {hasMoverData ? 'Live gainers and losers from the active market feed.' : 'Direct mover feed is empty right now. The page keeps the section visible as the feed warms up.'}
           </p>
         </div>
-        <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
-          <div className={MARKET_LABEL_CLASS}>Coverage</div>
+        <div className={`${insetPanelClass} px-3 py-2 text-right`}>
+          <div className={sectionEyebrowClass}>Coverage</div>
           <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white">
             {safeGainers.length} gainers · {safeLosers.length} losers
           </div>
@@ -433,7 +410,7 @@ const TopMovers = ({ gainers, losers }: TopMoversProps) => {
           return (
             <TabsContent key={tabValue} value={tabValue} className="mt-0">
               {activeRows.length === 0 ? (
-                <div className={`${MARKET_INSET_CLASS} px-5 py-10 text-center`}>
+                <div className={`${insetPanelClass} px-5 py-10 text-center`}>
                   <div className={`mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full ${tabValue === 'gainers' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' : 'bg-rose-500/10 text-rose-600 dark:text-rose-300'}`}>
                     {tabValue === 'gainers' ? '+' : '-'}
                   </div>
@@ -509,7 +486,7 @@ const MostActive = ({ data }: MostActiveProps) => {
   const safeData = Array.isArray(data) ? data : [];
 
   return (
-    <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-full`}>
+    <div className={`${panelShellClass} p-5 sm:p-6 h-full`}>
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Most Active</h3>
@@ -517,15 +494,15 @@ const MostActive = ({ data }: MostActiveProps) => {
             Highest-turnover names from the live active feeds.
           </p>
         </div>
-        <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
-          <div className={MARKET_LABEL_CLASS}>Rows</div>
+        <div className={`${insetPanelClass} px-3 py-2 text-right`}>
+          <div className={sectionEyebrowClass}>Rows</div>
           <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white">{safeData.length}</div>
         </div>
       </div>
       
       <div className="overflow-hidden">
         {safeData.length === 0 ? (
-          <div className={`${MARKET_INSET_CLASS} px-5 py-10 text-center`}>
+          <div className={`${insetPanelClass} px-5 py-10 text-center`}>
             <p className="text-sm font-medium text-slate-950 dark:text-white">No active trading data available</p>
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">The BSE/NSE active feeds are currently empty, so this panel stays intentionally minimal.</p>
           </div>
@@ -593,7 +570,7 @@ const HeatMap = ({ data }: HeatMapProps) => {
   // Handle empty data case
   if (!data || !Array.isArray(data) || data.length === 0) {
     return (
-      <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
+      <div className={`${panelShellClass} p-5 sm:p-6`}>
         <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
         <div className="py-8 flex items-center justify-center">
           <CursiveLoader />
@@ -637,7 +614,7 @@ const HeatMap = ({ data }: HeatMapProps) => {
 
   if (normalizedSectors.length === 0) {
     return (
-      <div className={`${MARKET_PANEL_CLASS} p-5 sm:p-6`}>
+      <div className={`${panelShellClass} p-5 sm:p-6`}>
         <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
         <div className="py-8 flex items-center justify-center">
           <CursiveLoader />
@@ -676,7 +653,7 @@ const HeatMap = ({ data }: HeatMapProps) => {
   };
 
   return (
-    <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
+    <div className={`${panelShellClass} overflow-hidden p-0`}>
       <div className="border-b border-slate-200/70 px-4 py-4 sm:px-6 dark:border-white/10">
         <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">Market Heat Map</h3>
         <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Clean square tiles sized by relative market weight and colored by intraday strength.</p>
@@ -732,7 +709,7 @@ const HeatMap = ({ data }: HeatMapProps) => {
             { label: 'Green', tone: 'bg-emerald-400 text-emerald-950', hint: '0% to +4%' },
             { label: 'Strong green', tone: 'bg-emerald-600 text-white', hint: '> +4%' },
           ].map((legend) => (
-            <div key={legend.label} className={`${MARKET_INSET_CLASS} flex items-center gap-2 px-3 py-2`}>
+            <div key={legend.label} className={`${insetPanelClass} flex items-center gap-2 px-3 py-2`}>
               <span className={`inline-flex min-w-[3.5rem] items-center justify-center rounded-md px-2 py-1 text-[0.62rem] font-semibold uppercase tracking-[0.08em] ${legend.tone}`}>{legend.label}</span>
               <span className="text-[0.68rem] font-medium text-slate-500 dark:text-slate-400">{legend.hint}</span>
             </div>
@@ -1319,50 +1296,47 @@ export default function MarketPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen">
-        {/* Grid overlay for entire page */}
+      <div className="relative min-h-screen text-slate-950 dark:text-white">
         <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
         
         <div className="container mx-auto px-4 py-8 relative z-10">
           <h1 className="sr-only">Indian Market Dashboard</h1>
           <div className="mb-8">
-            <div className="h-8 bg-gray-600/50 rounded mb-2 w-1/3"></div>
-            <div className="h-4 bg-gray-600/50 rounded w-2/3"></div>
+            <div className="mb-2 h-8 w-1/3 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
+            <div className="h-4 w-2/3 animate-pulse rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
           </div>
           
           <div className="space-y-8">
-            {/* Loading skeleton for indices */}
-            <div className="bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-lg overflow-hidden border border-gray-700/50">
+            <div className={`${panelShellClass} overflow-hidden p-0`}>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="px-4 py-5 border-r border-gray-700/50">
+                  <div key={i} className="border-b border-slate-200/70 px-4 py-5 sm:border-b-0 sm:border-r dark:border-white/10">
                     <div className="animate-pulse">
-                      <div className="h-4 bg-gray-600/50 rounded mb-2"></div>
-                      <div className="h-6 bg-gray-600/50 rounded mb-1"></div>
-                      <div className="h-4 bg-gray-600/50 rounded"></div>
+                      <div className="mb-2 h-4 rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
+                      <div className="mb-1 h-6 rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
+                      <div className="h-4 rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
             
-            {/* Loading skeleton for other components */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[1, 2].map((i) => (
-                <div key={i} className="bg-gray-900/90 backdrop-blur-lg rounded-lg p-4 h-64 border border-gray-700/50">
+                <div key={i} className={`${panelShellClass} p-5 sm:p-6 h-64`}>
                   <div className="animate-pulse space-y-4">
-                    <div className="h-6 bg-gray-600/50 rounded w-1/3"></div>
+                    <div className="h-6 w-1/3 rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
                     <div className="space-y-2">
-                      <div className="h-4 bg-gray-600/50 rounded"></div>
-                      <div className="h-4 bg-gray-600/50 rounded w-5/6"></div>
-                      <div className="h-4 bg-gray-600/50 rounded w-4/6"></div>
+                      <div className="h-4 rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
+                      <div className="h-4 w-5/6 rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
+                      <div className="h-4 w-4/6 rounded-full bg-slate-200/80 dark:bg-slate-800"></div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
             
-            <div className="text-center text-gray-300 flex items-center justify-center">
+            <div className="flex items-center justify-center text-slate-500 dark:text-slate-400">
               <CursiveLoader />
             </div>
           </div>
@@ -1378,14 +1352,14 @@ export default function MarketPage() {
       <div ref={containerRef} className="relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Error Message */}
         {error && (
-          <div className={`${MARKET_INSET_CLASS} mb-8 px-4 py-3 text-amber-800 dark:text-amber-200`}>
+          <div className={`${insetPanelClass} mb-8 px-4 py-3 text-amber-800 dark:text-amber-200`}>
             <p className="text-sm">{error}</p>
           </div>
         )}
 
         {loading ? (
           <div className="space-y-8">
-            <div className={`${MARKET_PANEL_CLASS} overflow-hidden p-0`}>
+            <div className={`${panelShellClass} overflow-hidden p-0`}>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
                   <div key={i} className="border-b border-slate-200/70 px-4 py-5 sm:border-b-0 sm:border-r dark:border-white/10">
@@ -1401,7 +1375,7 @@ export default function MarketPage() {
 
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
               {[1, 2].map((i) => (
-                <div key={i} className={`${MARKET_PANEL_CLASS} p-5 sm:p-6 h-64`}>
+                <div key={i} className={`${panelShellClass} p-5 sm:p-6 h-64`}>
                   <div className="animate-pulse space-y-4">
                     <div className="h-6 w-1/3 rounded-full bg-slate-200/80 dark:bg-slate-800" />
                     <div className="space-y-2">
@@ -1438,23 +1412,23 @@ export default function MarketPage() {
               <HeatMap data={marketData.heatMapData} />
             </div>
 
-            <section className={`${MARKET_PANEL_CLASS} mb-8 p-5 sm:p-6`}>
+            <section className={`${panelShellClass} mb-8 p-5 sm:p-6`}>
               <div className="mb-4 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">52W Range Leaders</h3>
                   <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">The most reliable live data source on this page right now, derived directly from the 52-week high/low endpoints.</p>
                 </div>
-                <div className={`${MARKET_INSET_CLASS} px-3 py-2 text-right`}>
-                  <div className={MARKET_LABEL_CLASS}>Rows loaded</div>
+                <div className={`${insetPanelClass} px-3 py-2 text-right`}>
+                  <div className={sectionEyebrowClass}>Rows loaded</div>
                   <div className="mt-1 text-sm font-medium text-slate-950 dark:text-white">{marketData.rangeHighs.length + marketData.rangeLows.length}</div>
                 </div>
               </div>
 
               <div className="grid gap-6 lg:grid-cols-2">
-                <div className={`${MARKET_INSET_CLASS} p-4 sm:p-5`}>
+                <div className={`${insetPanelClass} p-4 sm:p-5`}>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <h4 className="text-sm font-semibold tracking-tight text-slate-950 dark:text-white">52W Highs</h4>
-                    <span className={MARKET_LABEL_CLASS}>{marketData.rangeHighs.length} rows</span>
+                    <span className={sectionEyebrowClass}>{marketData.rangeHighs.length} rows</span>
                   </div>
                   <div className="overflow-hidden rounded-[20px] border border-slate-200/70 dark:border-white/10">
                     <table className="min-w-full">
@@ -1488,10 +1462,10 @@ export default function MarketPage() {
                   </div>
                 </div>
 
-                <div className={`${MARKET_INSET_CLASS} p-4 sm:p-5`}>
+                <div className={`${insetPanelClass} p-4 sm:p-5`}>
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <h4 className="text-sm font-semibold tracking-tight text-slate-950 dark:text-white">52W Lows</h4>
-                    <span className={MARKET_LABEL_CLASS}>{marketData.rangeLows.length} rows</span>
+                    <span className={sectionEyebrowClass}>{marketData.rangeLows.length} rows</span>
                   </div>
                   <div className="overflow-hidden rounded-[20px] border border-slate-200/70 dark:border-white/10">
                     <table className="min-w-full">
