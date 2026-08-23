@@ -1,16 +1,13 @@
 'use client';
 
-import React, { useEffect, useRef, useState, FormEvent, ChangeEvent } from 'react';
-import { gsap } from 'gsap';
+import React, { useRef, useState, FormEvent, ChangeEvent } from 'react';
 import { Mail, Phone, MapPin, MessageSquare, Send, Clock, CheckCircle } from 'lucide-react';
 import { ContentPageLayout } from '@/components/content/ContentPageLayout';
 import { fieldClass, primaryButtonClass } from '@/styles/design-tokens';
 import { logger } from '@/lib/logger';
 
 export default function ContactPage() {
-  const mainRef = useRef(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const sectionsRef = useRef<HTMLElement[]>([]);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -18,46 +15,6 @@ export default function ContactPage() {
     subject: '',
     message: ''
   });
-
-  useEffect(() => {
-    // Main entrance animation
-    gsap.from(mainRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.8,
-      ease: "power3.out"
-    });
-
-    // Staggered sections animation
-    sectionsRef.current.forEach((section, index) => {
-      gsap.from(section, {
-      opacity: 0,
-      y: 30,
-      duration: 0.8,
-        delay: index * 0.2,
-        ease: "power2.out"
-      });
-    });
-
-    // Form fields animation
-    if (formRef.current) {
-      const elements = formRef.current.querySelectorAll('input, textarea, button');
-      gsap.from(elements, {
-      opacity: 0,
-      y: 20,
-        stagger: 0.1,
-      duration: 0.6,
-        ease: "power2.out"
-    });
-    }
-  }, []);
-
-  // Add sections to ref array for animations
-  const addToSectionsRefs = (el: HTMLElement | null) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current.push(el);
-    }
-  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -82,14 +39,6 @@ export default function ContactPage() {
       subject: '',
       message: ''
     });
-    
-    // Animate success message
-    gsap.from('.success-message', {
-          opacity: 0, 
-      y: -20,
-          duration: 0.5,
-      ease: "back.out(1.7)"
-    });
   };
 
   return (
@@ -98,13 +47,12 @@ export default function ContactPage() {
       title="Contact Us"
       description="Have questions or need assistance? Our team is here to help you with any inquiries about our platform."
     >
-    <div ref={mainRef}>
+    <div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <div 
-            ref={addToSectionsRefs}
-            className="lg:col-span-2 bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium"
+            className="lg:col-span-2 border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
           >
-            <h2 className="text-2xl font-bold mb-6 text-white flex items-center">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white flex items-center">
               <MessageSquare className="mr-2 h-6 w-6 text-emerald-600" />
               Send Us a Message
             </h2>
@@ -112,8 +60,8 @@ export default function ContactPage() {
             {formSubmitted ? (
               <div className="success-message bg-emerald-500/10 border border-emerald-500 rounded-lg p-6 text-center">
                 <CheckCircle className="h-12 w-12 text-emerald-600 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">Thank You!</h3>
-                <p className="text-gray-300">
+                <h3 className="text-xl font-bold text-slate-950 dark:text-white mb-2">Thank You!</h3>
+                <p className="text-slate-600 dark:text-slate-300">
                   Your message has been sent successfully. We&apos;ll get back to you as soon as possible.
             </p>
                 <button 
@@ -127,7 +75,7 @@ export default function ContactPage() {
               <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+                    <label htmlFor="name" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Your Name
               </label>
               <input
@@ -142,7 +90,7 @@ export default function ContactPage() {
               />
             </div>
             <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+                    <label htmlFor="email" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                       Email Address
               </label>
               <input
@@ -159,7 +107,7 @@ export default function ContactPage() {
             </div>
             
             <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-1">
+                  <label htmlFor="subject" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Subject
               </label>
               <input
@@ -175,7 +123,7 @@ export default function ContactPage() {
             </div>
             
             <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-1">
+                  <label htmlFor="message" className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">
                 Your Message
               </label>
               <textarea
@@ -203,9 +151,9 @@ export default function ContactPage() {
             )}
         </div>
         
-          <div ref={addToSectionsRefs}>
-            <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium mb-6">
-              <h2 className="text-xl font-bold mb-6 text-white">Contact Information</h2>
+          <div>
+            <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 mb-6">
+              <h2 className="text-xl font-bold mb-6 text-slate-950 dark:text-white">Contact Information</h2>
               
               <div className="space-y-4">
                 <div className="flex items-start">
@@ -213,7 +161,7 @@ export default function ContactPage() {
                     <Mail className="h-5 w-5 text-emerald-600" />
             </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-300">Email</p>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Email</p>
                     <p className="text-sm text-emerald-600">support@indianstockanalyzer.com</p>
         </div>
       </div>
@@ -223,7 +171,7 @@ export default function ContactPage() {
                     <Phone className="h-5 w-5 text-emerald-600" />
               </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-300">Phone</p>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Phone</p>
                     <p className="text-sm text-emerald-600">+91 22-6789-0123</p>
             </div>
               </div>
@@ -233,7 +181,7 @@ export default function ContactPage() {
                     <MapPin className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-300">Address</p>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Address</p>
                     <p className="text-sm text-gray-400">
                       123 Financial District<br />
                       Mumbai, India 400001
@@ -246,7 +194,7 @@ export default function ContactPage() {
                     <Clock className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-300">Business Hours</p>
+                    <p className="text-sm font-medium text-slate-600 dark:text-slate-300">Business Hours</p>
                     <p className="text-sm text-gray-400">
                       Monday - Friday: 9:00 AM - 6:00 PM<br />
                       Saturday: 10:00 AM - 2:00 PM<br />
@@ -257,8 +205,8 @@ export default function ContactPage() {
               </div>
               </div>
               
-            <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium">
-              <h2 className="text-xl font-bold mb-4 text-white">Connect With Us</h2>
+            <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6">
+              <h2 className="text-xl font-bold mb-4 text-slate-950 dark:text-white">Connect With Us</h2>
               <div className="flex space-x-4">
                 {['twitter', 'facebook', 'linkedin', 'instagram'].map((social) => (
                   <a 
@@ -275,10 +223,9 @@ export default function ContactPage() {
       </div>
       
         <div 
-          ref={addToSectionsRefs}
-          className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium mb-12"
+          className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 mb-12"
         >
-          <h2 className="text-2xl font-bold mb-6 text-white text-center">Frequently Asked Questions</h2>
+          <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white text-center">Frequently Asked Questions</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
@@ -300,8 +247,8 @@ export default function ContactPage() {
               }
             ].map((faq, index) => (
               <div key={index} className="bg-gray-750 p-4 rounded-lg">
-                <h3 className="font-medium text-white mb-2">{faq.question}</h3>
-                <p className="text-gray-300 text-sm">{faq.answer}</p>
+                <h3 className="font-medium text-slate-950 dark:text-white mb-2">{faq.question}</h3>
+                <p className="text-slate-600 dark:text-slate-300 text-sm">{faq.answer}</p>
           </div>
         ))}
         </div>

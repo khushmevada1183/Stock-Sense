@@ -42,7 +42,7 @@ const Footer = () => {
   ];
   
   return (
-    <footer className="relative mt-10 border-t border-[color:var(--app-border)] bg-[color:var(--app-surface)]/80 backdrop-blur-xl">
+    <footer className="relative mt-10 border-t border-[color:var(--app-border)] bg-transparent">
       <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--app-accent)]/45 to-transparent" />
 
       <div className="container mx-auto px-4 py-10 sm:py-12">

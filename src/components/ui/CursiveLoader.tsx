@@ -58,7 +58,7 @@ export default function CursiveLoader({ className = '', textClassName = '' }: Cu
   return (
     <div className={`inline-flex items-center justify-center ${className}`.trim()}>
       <span className={`stock-sense-loader-brand text-lg leading-none sm:text-xl ${textClassName}`.trim()}>
-        <span className="text-neon-400">{stockTyped}</span>
+        <span className="text-emerald-500">{stockTyped}</span>
         <span className="text-slate-300">{senseTyped}</span>
       </span>
     </div>

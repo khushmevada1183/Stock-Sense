@@ -9,18 +9,22 @@ interface AppShellProps {
   children: ReactNode;
 }
 
+const normalizePath = (pathname: string) => pathname.replace(/\/+$/, '') || '/';
+
 const isAuthRoute = (pathname: string | null) => {
   if (!pathname) {
     return false;
   }
 
+  const path = normalizePath(pathname);
+
   return (
-    pathname === '/login' ||
-    pathname === '/signup' ||
-    pathname === '/settings' ||
-    pathname.startsWith('/settings/') ||
-    pathname === '/auth' ||
-    pathname.startsWith('/auth/')
+    path === '/login' ||
+    path === '/signup' ||
+    path === '/settings' ||
+    path.startsWith('/settings/') ||
+    path === '/auth' ||
+    path.startsWith('/auth/')
   );
 };
 
@@ -30,7 +34,7 @@ export default function AppShell({ children }: AppShellProps) {
 
   if (hideChrome) {
     return (
-      <main className="min-h-screen flex-grow bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+      <main className="min-h-screen flex-grow bg-transparent text-[color:var(--app-text-1)]">
         {children}
       </main>
     );
@@ -39,7 +43,7 @@ export default function AppShell({ children }: AppShellProps) {
   return (
     <>
       <Header />
-      <main className="min-h-screen flex-grow bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-white">
+      <main className="min-h-screen flex-grow bg-transparent text-[color:var(--app-text-1)]">
         {children}
       </main>
       <Footer />

@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
+import React, { useState } from 'react';
 import { BookOpen, FileText, Award, Search, ChevronRight, Clock, BarChart2, TrendingUp, PieChart, Mail } from 'lucide-react';
 import { ContentPageLayout } from '@/components/content/ContentPageLayout';
+import { contentCardClass, fieldClass, secondaryButtonClass } from '@/styles/design-tokens';
 
 // Mock data for courses
 const courses = [
@@ -79,37 +79,8 @@ const resources = [
 ];
 
 export default function LearnPage() {
-  const mainRef = useRef<HTMLDivElement>(null);
-  const sectionsRef = useRef<HTMLElement[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-  
-  useEffect(() => {
-    // Main entrance animation
-    gsap.from(mainRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.8,
-      ease: "power3.out"
-    });
-
-    // Staggered sections animation
-    gsap.from(sectionsRef.current, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: "back.out(1.2)",
-      delay: 0.3
-    });
-  }, []);
-
-  // Add sections to ref array for animations
-  const addToSectionsRefs = (el: HTMLElement | null) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current.push(el);
-    }
-  };
 
   // Filter courses based on search query and active category
   const filteredCourses = courses.filter(course => {
@@ -128,9 +99,9 @@ export default function LearnPage() {
       title="Learning Center"
       description="Enhance your investment knowledge with our comprehensive courses, tutorials, and resources designed for all experience levels."
     >
-    <div ref={mainRef}>
+    <div>
         {/* Search and Filter */}
-        <section ref={addToSectionsRefs} className="mb-8">
+        <section className="mb-8">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-grow">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -138,7 +109,7 @@ export default function LearnPage() {
         </div>
               <input
                 type="text"
-                className="block w-full min-h-[44px] pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-emerald-500 focus:border-emerald-500"
+                className={`${fieldClass} block w-full min-h-[44px] pl-10 pr-3 py-2`}
                 placeholder="Search courses..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -151,8 +122,8 @@ export default function LearnPage() {
                   onClick={() => setActiveCategory(category)}
                   className={`px-4 py-2 min-h-[44px] rounded-lg text-sm font-medium transition-colors ${
                     activeCategory === category
-                      ? 'bg-emerald-500 text-black'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                      ? 'bg-emerald-500 text-slate-950'
+                      : `${secondaryButtonClass} border`
                   }`}
                 >
                   {category}
@@ -163,8 +134,8 @@ export default function LearnPage() {
         </section>
 
         {/* Courses Grid */}
-        <section ref={addToSectionsRefs} className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-white flex items-center">
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white flex items-center">
             <BookOpen className="mr-2 h-6 w-6 text-emerald-600" />
             Featured Courses
           </h2>
@@ -173,9 +144,9 @@ export default function LearnPage() {
             {filteredCourses.map((course) => (
               <div 
                 key={course.id} 
-                className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-md overflow-hidden border border-gray-700 hover:border-emerald-500/50 transition-colors glass-premium"
+                className={`${contentCardClass} overflow-hidden shadow-md transition-colors hover:border-emerald-500/50`}
               >
-                <div className="h-40 bg-gray-700 flex items-center justify-center">
+                <div className="flex h-40 items-center justify-center bg-slate-100 dark:bg-white/5">
                   {course.category === "Technical Analysis" && <BarChart2 className="h-16 w-16 text-emerald-600/70" />}
                   {course.category === "Fundamental Analysis" && <PieChart className="h-16 w-16 text-emerald-600/70" />}
                   {course.category === "Portfolio Management" && <TrendingUp className="h-16 w-16 text-emerald-600/70" />}
@@ -188,7 +159,7 @@ export default function LearnPage() {
                     <span className={`inline-block px-2 py-1 text-xs font-medium rounded ${
                       course.level === "Beginner" ? "bg-green-400/20 text-green-400" :
                       course.level === "Intermediate" ? "bg-blue-400/20 text-blue-400" :
-                      "bg-purple-400/20 text-purple-400"
+                      "bg-amber-400/20 text-amber-600 dark:text-amber-400"
                     }`}>
                       {course.level}
                     </span>
@@ -196,8 +167,8 @@ export default function LearnPage() {
                       <Clock size={12} className="mr-1" /> {course.duration}
                     </span>
                     </div>
-                  <h3 className="text-lg font-bold text-white mb-2">{course.title}</h3>
-                  <p className="text-gray-300 text-sm mb-4 line-clamp-2">{course.description}</p>
+                  <h3 className="text-lg font-bold text-slate-950 dark:text-white mb-2">{course.title}</h3>
+                  <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 line-clamp-2">{course.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400 text-xs">{course.modules} modules</span>
                     <button className="text-emerald-600 hover:text-emerald-500 inline-flex min-h-[44px] items-center px-2 text-sm">
@@ -211,8 +182,8 @@ export default function LearnPage() {
         </section>
 
         {/* Learning Paths */}
-        <section ref={addToSectionsRefs} className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-white flex items-center">
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white flex items-center">
             <Award className="mr-2 h-6 w-6 text-emerald-600" />
             Learning Paths
           </h2>
@@ -240,21 +211,21 @@ export default function LearnPage() {
                 description: "Learn to identify undervalued companies and build a long-term investment portfolio.",
                 courses: 6,
                 duration: "18 hours",
-                color: "from-purple-400/20 to-purple-600/20",
-                border: "border-purple-400/30"
+                color: "from-emerald-400/20 to-emerald-600/20",
+                border: "border-emerald-400/30"
               }
             ].map((path, index) => (
               <div 
                 key={index} 
                 className={`bg-gradient-to-br ${path.color} rounded-xl shadow-md p-6 border ${path.border} hover:shadow-lg transition-shadow`}
               >
-                <h3 className="text-xl font-bold text-white mb-2">{path.title}</h3>
-                <p className="text-gray-300 text-sm mb-4">{path.description}</p>
-                <div className="flex justify-between text-sm text-gray-300 mb-4">
+                <h3 className="text-xl font-bold text-slate-950 dark:text-white mb-2">{path.title}</h3>
+                <p className="text-slate-600 dark:text-slate-300 text-sm mb-4">{path.description}</p>
+                <div className="flex justify-between text-sm text-slate-600 dark:text-slate-300 mb-4">
                   <span>{path.courses} courses</span>
                   <span>{path.duration}</span>
                 </div>
-                <button className="w-full py-2 min-h-[44px] bg-gray-900/90 backdrop-blur-lg hover:bg-gray-900/90 backdrop-blur-lg text-white font-medium rounded-lg transition-colors border border-gray-700/50">
+                <button className={`${secondaryButtonClass} w-full min-h-[44px] border py-2 font-medium`}>
                   Start Path
                 </button>
                     </div>
@@ -263,13 +234,13 @@ export default function LearnPage() {
         </section>
 
         {/* Resources */}
-        <section ref={addToSectionsRefs} className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-white flex items-center">
+        <section className="mb-12">
+          <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white flex items-center">
             <FileText className="mr-2 h-6 w-6 text-emerald-600" />
             Free Resources
           </h2>
           
-          <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium">
+          <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6">
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
@@ -283,9 +254,9 @@ export default function LearnPage() {
                 <tbody className="divide-y divide-gray-700">
                   {resources.map((resource, index) => (
                     <tr key={index} className="hover:bg-gray-750">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{resource.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{resource.type}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{resource.downloads.toLocaleString()}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-950 dark:text-white">{resource.title}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">{resource.type}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">{resource.downloads.toLocaleString()}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
                         <button className="px-3 py-1 min-h-[44px] bg-emerald-500 hover:bg-emerald-400 text-black rounded text-xs font-medium transition-colors">
                           Download
@@ -300,19 +271,19 @@ export default function LearnPage() {
         </section>
 
         {/* Newsletter */}
-        <section ref={addToSectionsRefs}>
-          <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-8 border border-emerald-500/20 glass-premium">
+        <section>
+          <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-8 border border-emerald-500/20">
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-2/3 mb-6 md:mb-0">
-                <h2 className="text-2xl font-bold text-white mb-2">Stay Updated with Market Insights</h2>
-                <p className="text-gray-300 mb-4">
+                <h2 className="text-2xl font-bold text-slate-950 dark:text-white mb-2">Stay Updated with Market Insights</h2>
+                <p className="text-slate-600 dark:text-slate-300 mb-4">
                   Subscribe to our newsletter for weekly market analysis, investment tips, and new learning resources.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <input 
-                    type="email" 
-                    placeholder="Your email address" 
-                    className="flex-grow px-4 py-2 min-h-[44px] bg-gray-900/50 border border-gray-700 rounded-lg text-white focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500"
+                  <input
+                    type="email"
+                    placeholder="Your email address"
+                    className={`${fieldClass} min-h-[44px] flex-grow px-4 py-2`}
                   />
                   <button className="px-6 py-2 min-h-[44px] bg-emerald-500 hover:bg-emerald-400 text-black font-medium rounded-lg transition-colors">
                     Subscribe

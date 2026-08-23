@@ -99,9 +99,8 @@ export default function CtaSection() {
           {/* CTA Buttons */}
           <div className="mb-12 flex flex-col justify-center gap-3 sm:flex-row md:mb-14">
             <Button
-              variant="outline"
               size="lg"
-              className="group inline-flex min-w-[240px] items-center justify-center rounded-full border border-slate-950 bg-slate-950 px-8 py-4 font-[var(--font-sans)] text-base font-semibold tracking-[-0.015em] text-slate-50 shadow-[0_16px_34px_-20px_rgba(15,23,42,0.86)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_18px_42px_-22px_rgba(15,23,42,0.9)] dark:border-slate-100 dark:bg-slate-100 dark:text-slate-950 dark:hover:bg-slate-200"
+              className="group min-w-[240px]"
               onClick={() => router.push('/signup')}
             >
               Create Free Account
@@ -110,7 +109,7 @@ export default function CtaSection() {
             <Button
               variant="outline"
               size="lg"
-              className="inline-flex min-w-[170px] items-center justify-center rounded-full border border-slate-300/80 bg-white/80 px-8 py-4 font-[var(--font-sans)] text-base font-medium text-slate-700 backdrop-blur-sm transition-colors hover:bg-white hover:text-slate-900 dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
+              className="min-w-[170px]"
               onClick={() => router.push('/about')}
             >
               Learn More

@@ -23,6 +23,7 @@ import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../ui/ThemeToggle';
 import SearchBar from '../../app/components/SearchBar';
 import { getNotifications } from '@/api/api';
+import { chromeGlassClass } from '@/styles/design-tokens';
 
 type MenuActionItemProps = {
   href?: string;
@@ -238,9 +239,9 @@ const Header = () => {
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full">
+    <header className="sticky top-0 z-50 w-full bg-transparent">
       <div className="mx-auto w-[98%] px-1 pt-2 sm:w-[95%] sm:px-2 sm:pt-4">
-        <div className="header-pill relative rounded-full border transition-all duration-300">
+        <div className={`header-pill relative rounded-full transition-all duration-300 ${chromeGlassClass}`}>
           <div className="flex h-12 items-center justify-between px-3 sm:h-14 sm:px-6">
             <Link href="/" className="group flex min-h-[44px] items-center">
               <div className="flex items-baseline">
@@ -329,7 +330,7 @@ const Header = () => {
           </div>
 
           {isMobileMenuOpen ? (
-            <div className="header-pill absolute inset-x-2 top-[calc(100%+0.5rem)] z-[60] max-h-[calc(100dvh-5.5rem)] overflow-y-auto rounded-2xl border px-3 py-3 shadow-[0_20px_50px_rgba(0,0,0,0.35)] md:hidden">
+            <div className={`header-pill absolute inset-x-2 top-[calc(100%+0.5rem)] z-[60] max-h-[calc(100dvh-5.5rem)] overflow-y-auto rounded-2xl px-3 py-3 md:hidden ${chromeGlassClass}`}>
               <div className="space-y-3 pb-2">
                 <nav className="flex flex-col space-y-1 px-1">
                   {navItems.map((item) => {

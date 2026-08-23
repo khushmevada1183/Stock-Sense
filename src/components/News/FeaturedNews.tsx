@@ -5,6 +5,7 @@ import { NewsItem } from '@/types/news';
 import { Calendar, ExternalLink, Tag, ChevronRight, ChevronLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { gsap } from 'gsap';
+import { contentCardClass, primaryButtonClass } from '@/styles/design-tokens';
 
 interface FeaturedNewsItem extends NewsItem {
   category?: string;
@@ -29,49 +30,33 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
   const sectionRef = useRef<HTMLDivElement>(null);
   const slideRef = useRef<HTMLDivElement>(null);
 
-  // Take first 5 news items as featured
   const featuredNews = Array.isArray(newsData) ? newsData.slice(0, 5) : [];
 
-  // Initialize animations
   useEffect(() => {
     if (!loading && featuredNews.length > 0 && sectionRef.current) {
-      // Animate the section
       gsap.fromTo(
         sectionRef.current,
         { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+        { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
       );
 
-      // Animate the current slide
       if (slideRef.current) {
         const elements = slideRef.current.querySelectorAll('.animate-item');
         gsap.fromTo(
           elements,
           { opacity: 0, y: 15 },
-          { 
-            opacity: 1, 
-            y: 0, 
-            duration: 0.5, 
-            stagger: 0.1, 
-            ease: "power1.out" 
-          }
+          { opacity: 1, y: 0, duration: 0.5, stagger: 0.1, ease: 'power1.out' }
         );
       }
     }
   }, [loading, featuredNews, currentSlide]);
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % featuredNews.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + featuredNews.length) % featuredNews.length);
-  };
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % featuredNews.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + featuredNews.length) % featuredNews.length);
 
   const formatDate = (dateString: string) => {
     try {
-      const date = new Date(dateString);
-      return format(date, 'MMM dd, yyyy');
+      return format(new Date(dateString), 'MMM dd, yyyy');
     } catch {
       return 'Unknown date';
     }
@@ -79,11 +64,11 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
 
   if (loading) {
     return (
-      <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-6 glass">
+      <div className={`${contentCardClass} p-6`}>
         <div className="animate-pulse">
-          <div className="h-64 bg-gray-700 rounded-lg mb-4"></div>
-          <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
-          <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+          <div className="mb-4 h-64 rounded-lg bg-slate-200 dark:bg-white/10" />
+          <div className="mb-2 h-6 w-3/4 rounded bg-slate-200 dark:bg-white/10" />
+          <div className="h-4 w-1/2 rounded bg-slate-200 dark:bg-white/10" />
         </div>
       </div>
     );
@@ -91,8 +76,8 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
 
   if (error) {
     return (
-      <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-6 glass">
-        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
+      <div className={`${contentCardClass} p-6`}>
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
           <p>{error}</p>
         </div>
       </div>
@@ -101,8 +86,8 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
 
   if (featuredNews.length === 0) {
     return (
-      <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-6 glass">
-        <div className="text-center py-8 text-gray-300">
+      <div className={`${contentCardClass} p-6`}>
+        <div className="py-8 text-center text-slate-500 dark:text-slate-400">
           No featured news available at the moment.
         </div>
       </div>
@@ -112,65 +97,60 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
   const currentNews = featuredNews[currentSlide];
 
   return (
-    <div ref={sectionRef} className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 overflow-hidden glass">
+    <div ref={sectionRef} className={`${contentCardClass} overflow-hidden`}>
       <div className="relative h-96">
-        {/* Background Image */}
         <div className="absolute inset-0">
           <img
             src={currentNews.image_url || currentNews.imageUrl || FALLBACK_NEWS_IMAGE}
             alt={currentNews.title}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
-              target.onerror = null; // Prevent infinite loop if placeholder also fails
+              target.onerror = null;
               target.src = FALLBACK_NEWS_IMAGE;
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/70 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
         </div>
 
-        {/* Navigation Arrows */}
         {featuredNews.length > 1 && (
           <>
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white transition-all duration-200 backdrop-blur-sm"
+              className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white backdrop-blur-sm transition-all duration-200 hover:bg-black/50"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/30 hover:bg-black/50 text-white transition-all duration-200 backdrop-blur-sm"
+              className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/30 p-2 text-white backdrop-blur-sm transition-all duration-200 hover:bg-black/50"
             >
               <ChevronRight size={20} />
             </button>
           </>
         )}
 
-        {/* Content */}
         <div ref={slideRef} className="absolute bottom-0 left-0 right-0 p-6">
-          <div className="flex flex-wrap gap-2 mb-3">
+          <div className="mb-3 flex flex-wrap gap-2">
             {currentNews.category && (
-              <span className="animate-item px-3 py-1 bg-neon-400/20 text-neon-400 text-xs font-medium rounded-full border border-neon-400/30">
-                <Tag size={12} className="inline mr-1" />
+              <span className="animate-item rounded-full border border-emerald-500/30 bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-300">
+                <Tag size={12} className="mr-1 inline" />
                 {currentNews.category}
               </span>
             )}
-            <span className="animate-item px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-full border border-blue-500/30">
+            <span className="animate-item rounded-full border border-blue-500/30 bg-blue-500/20 px-3 py-1 text-xs font-medium text-blue-300">
               FEATURED
             </span>
           </div>
 
-          <h1 className="animate-item text-2xl font-bold text-white mb-3 leading-tight">
-            {currentNews.title}
-          </h1>
+          <h1 className="animate-item mb-3 text-2xl font-bold leading-tight text-white">{currentNews.title}</h1>
 
-          <p className="animate-item text-gray-300 text-sm mb-4 line-clamp-2">
+          <p className="animate-item mb-4 line-clamp-2 text-sm text-slate-300">
             {currentNews.summary || currentNews.description || 'No summary available.'}
           </p>
 
           <div className="animate-item flex items-center justify-between">
-            <div className="flex items-center gap-4 text-sm text-gray-400">
+            <div className="flex items-center gap-4 text-sm text-slate-400">
               <span className="flex items-center gap-1">
                 <Calendar size={14} />
                 {formatDate(currentNews.pub_date || currentNews.date)}
@@ -183,7 +163,7 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
               href={currentNews.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-neon-400 hover:bg-neon-300 text-black font-medium rounded-lg transition-colors hover:shadow-neon-sm"
+              className={`${primaryButtonClass} inline-flex items-center gap-2`}
             >
               Read More
               <ExternalLink size={14} />
@@ -191,7 +171,6 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
           </div>
         </div>
 
-        {/* Slide Indicators */}
         {featuredNews.length > 1 && (
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
             <div className="flex gap-2">
@@ -199,10 +178,8 @@ export default function FeaturedNews({ newsData = [], loading = false, error = '
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentSlide
-                      ? 'bg-neon-400 w-4'
-                      : 'bg-white/30 hover:bg-white/50'
+                  className={`h-2 rounded-full transition-all duration-200 ${
+                    index === currentSlide ? 'w-4 bg-emerald-400' : 'w-2 bg-white/30 hover:bg-white/50'
                   }`}
                 />
               ))}

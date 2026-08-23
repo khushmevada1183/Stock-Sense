@@ -61,7 +61,7 @@ const HighLowTable = () => {
           <button 
             onClick={fetchData} 
             disabled={isLoading}
-            className="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-900/90 backdrop-blur-lg"
+            className="rounded-full p-1 hover:bg-slate-100 dark:hover:bg-white/10"
             title="Refresh data"
           >
             <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />

@@ -44,7 +44,7 @@ export default function RootLayout({
                 <StockProvider>
                   <AnimationProvider>
                     <ErrorBoundary>
-                      <div className="flex flex-col min-h-screen relative z-20">
+                      <div className="relative flex min-h-screen flex-col">
                         <AppShell>{children}</AppShell>
 
                         {/* Global UI components */}

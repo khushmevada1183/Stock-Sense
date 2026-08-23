@@ -1,8 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useState } from 'react';
 import { 
   SearchIcon, ChevronDown, ChevronUp,
   HelpCircle, BarChart2, LineChart, Tag, AlertTriangle, Settings, Shield
@@ -11,11 +9,7 @@ import {
   PieChart, Pie, Cell, ResponsiveContainer, Tooltip
 } from 'recharts';
 import { ContentPageLayout } from '@/components/content/ContentPageLayout';
-
-// Import GSAP ScrollTrigger
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { fieldClass } from '@/styles/design-tokens';
 
 // Mock data for FAQ categories
 const faqCategories = [
@@ -114,50 +108,9 @@ const faqDistributionData = [
 const COLORS = ['#3b82f6', '#10b981', '#6366f1', '#f59e0b', '#ef4444', '#ec4899', '#8b5cf6'];
 
 export default function FAQ() {
-  const mainRef = useRef(null);
-  const sectionsRef = useRef([]);
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedFaqs, setExpandedFaqs] = useState<ExpandedFaqs>({});
-
-  useEffect(() => {
-    // Main entrance animation
-    gsap.from(mainRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.8,
-      ease: "power3.out"
-    });
-
-    // Staggered sections animation
-    gsap.from(sectionsRef.current, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.15,
-      duration: 0.8,
-      delay: 0.3,
-      ease: "back.out(1.2)"
-    });
-
-    // Set up scroll animations
-    sectionsRef.current.forEach((section, index) => {
-      if (index > 0) { // Skip first section since it's already visible
-        ScrollTrigger.create({
-          trigger: section,
-          start: "top 80%",
-          onEnter: () => {
-            gsap.to(section, {
-              opacity: 1,
-              y: 0,
-              duration: 0.8,
-              ease: "back.out(1.2)"
-            });
-          },
-          once: true
-        });
-      }
-    });
-  }, []);
 
   const toggleFaq = (id: string) => {
     setExpandedFaqs((prev: ExpandedFaqs) => ({
@@ -178,7 +131,7 @@ export default function FAQ() {
       title="Frequently asked questions"
       description="Find answers to common questions about Indian Stock Analyzer, its features, and how to make the most of our platform."
     >
-    <div ref={mainRef}>
+    <div>
         {/* Search and Categories */}
         <div className="mb-12">
           <div className="max-w-2xl mx-auto mb-8">
@@ -188,7 +141,7 @@ export default function FAQ() {
                 placeholder="Search for questions..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full py-3 pl-12 pr-4 bg-gray-900/90 backdrop-blur-lg border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-gray-900 dark:text-white"
+                className={`${fieldClass} w-full py-3 pl-12 pr-4 shadow-sm`}
         />
               <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
                 <SearchIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
@@ -203,7 +156,7 @@ export default function FAQ() {
               className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium transition-colors ${
               activeCategory === 'all' 
                   ? 'bg-emerald-500 text-black' 
-                  : 'bg-gray-900/90 backdrop-blur-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
+                  : 'border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 text-gray-700 dark:text-slate-600 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-gray-700'
             }`}
           >
               All Questions
@@ -216,7 +169,7 @@ export default function FAQ() {
                 className={`px-4 py-2 min-h-[44px] rounded-full text-sm font-medium flex items-center transition-colors ${
                 activeCategory === category.id 
                     ? 'bg-emerald-500 text-black' 
-                    : 'bg-gray-900/90 backdrop-blur-lg text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700'
+                    : 'border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 text-gray-700 dark:text-slate-600 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-gray-700'
               }`}
             >
                 <span className={`mr-2 ${activeCategory === category.id ? 'text-black' : 'text-gray-500 dark:text-gray-400'}`}>
@@ -236,7 +189,7 @@ export default function FAQ() {
           {filteredFaqs.map((faq) => (
             <div 
               key={faq.id} 
-              className="bg-gray-900/90 backdrop-blur-lg glass rounded-lg shadow-sm border border border-gray-700/50 shadow-lg overflow-hidden"
+              className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-lg shadow-sm border-gray-700/50 shadow-lg overflow-hidden"
             >
               <button
                 className="w-full px-6 py-4 flex justify-between items-center text-left"
@@ -244,7 +197,7 @@ export default function FAQ() {
                 aria-expanded={expandedFaqs[faq.id]}
                 aria-controls={`faq-answer-${faq.id}`}
               >
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white pr-8">
+                <h3 className="text-lg font-medium text-gray-900 dark:text-slate-950 dark:text-white pr-8">
                   {faq.question}
                 </h3>
                 {expandedFaqs[faq.id] ? 
@@ -259,7 +212,7 @@ export default function FAQ() {
                   className="px-6 pb-4"
                 >
                   <div className="prose dark:prose-invert max-w-none">
-                    <p className="text-gray-700 dark:text-gray-300">{faq.answer}</p>
+                    <p className="text-gray-700 dark:text-slate-600 dark:text-slate-300">{faq.answer}</p>
                   </div>
                 </div>
               )}
@@ -279,7 +232,7 @@ export default function FAQ() {
                 {filteredFaqs.map((faq) => (
                   <div 
                     key={faq.id} 
-                    className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-md border border-gray-200 dark:border-gray-700 overflow-hidden"
+                    className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-md dark:border-white/10 overflow-hidden"
                   >
                     <button
                       className="w-full px-6 py-4 flex justify-between items-center text-left"
@@ -295,7 +248,7 @@ export default function FAQ() {
                     
                     {expandedFaqs[faq.id] && (
                       <div className="px-6 pb-4">
-                        <div className="border-t border-gray-200 dark:border-gray-700 pt-4 text-gray-700 dark:text-gray-300">
+                        <div className="border-t border-gray-200 dark:border-gray-700 pt-4 text-gray-700 dark:text-slate-600 dark:text-slate-300">
                           <p>{faq.answer}</p>
                         </div>
                       </div>
@@ -304,14 +257,14 @@ export default function FAQ() {
                 ))}
               </div>
             ) : (
-              <div className="bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 shadow-lg rounded-xl p-8 text-center">
-                <HelpCircle className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
+              <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 shadow-lg rounded-xl p-8 text-center">
+                <HelpCircle className="w-16 h-16 text-slate-600 dark:text-slate-300 dark:text-gray-600 mx-auto mb-4" />
                 <h3 className="text-xl font-medium mb-2">No FAQs Found</h3>
                 <p className="text-gray-500 dark:text-gray-400 mb-4">
                   We couldn&apos;t find any FAQs matching your search criteria.
                 </p>
                 <button
-                  className="px-4 py-2 min-h-[44px] bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 min-h-[44px] bg-blue-600 text-slate-950 dark:text-white rounded-md hover:bg-blue-700 transition-colors"
                   onClick={() => {
                     setSearchQuery('');
                     setActiveCategory('all');
@@ -327,7 +280,7 @@ export default function FAQ() {
         <div className="space-y-8">
           {/* FAQ Distribution */}
           <section 
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
           >
             <h3 className="text-lg font-semibold mb-4">FAQ Distribution</h3>
             <div className="h-64">
@@ -363,7 +316,7 @@ export default function FAQ() {
 
           {/* Popular Questions */}
           <section 
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
           >
             <h3 className="text-lg font-semibold mb-4">Popular Questions</h3>
             <ul className="space-y-3">
@@ -377,7 +330,7 @@ export default function FAQ() {
                     }}
                   >
                     <HelpCircle className="w-5 h-5 text-blue-500 mr-3 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700 dark:text-gray-300">{question}</span>
+                    <span className="text-gray-700 dark:text-slate-600 dark:text-slate-300">{question}</span>
                   </button>
                 </li>
               ))}
@@ -389,12 +342,12 @@ export default function FAQ() {
             className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-100 dark:border-blue-800"
           >
             <h3 className="text-lg font-semibold mb-2">Still need help?</h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
+            <p className="text-gray-700 dark:text-slate-600 dark:text-slate-300 mb-4">
               Can&apos;t find what you&apos;re looking for? Our support team is here to help.
             </p>
             <a
               href="/contact"
-              className="inline-flex min-h-[44px] items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="inline-flex min-h-[44px] items-center px-4 py-2 bg-blue-600 text-slate-950 dark:text-white rounded-md hover:bg-blue-700 transition-colors"
             >
               Contact Support
             </a>

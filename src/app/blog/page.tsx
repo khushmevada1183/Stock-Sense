@@ -1,20 +1,14 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Card } from '../../components/ui/card';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { BookOpen, Bookmark, TrendingUp, Clock, ChevronRight, Search, Filter, Calendar, Tag, User } from 'lucide-react';
 import { ContentPageLayout } from '@/components/content/ContentPageLayout';
-
-// Register GSAP plugins
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { fieldClass } from '@/styles/design-tokens';
 
 // Mock data for blog posts
 const featuredPosts = [
@@ -96,74 +90,8 @@ const popularTopics = [
 ];
 
 export default function BlogPage() {
-  const mainRef = useRef(null);
-  const cardsRef = useRef(null);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const categoryOptions = ['All', 'Market Analysis', 'Stock Picks', 'Technical Analysis', 'IPOs', 'Global Markets'];
-
-  useEffect(() => {
-    // Animate page entry
-    gsap.from(mainRef.current, { 
-      opacity: 0, 
-      y: 20, 
-      duration: 0.8, 
-      ease: "power3.out" 
-    });
-
-    // Animate cards with stagger
-    const cards = gsap.utils.toArray('.blog-card');
-    gsap.from(cards, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.15,
-      duration: 0.8,
-      ease: "power3.out"
-    });
-
-    // Animate metrics with ScrollTrigger only if metric targets exist on the page
-    const metricItems = gsap.utils.toArray('.metric-item');
-    const metricSection = document.querySelector('.metrics-section');
-    if (metricItems.length > 0 && metricSection) {
-      gsap.from(metricItems, {
-        scrollTrigger: {
-          trigger: metricSection,
-          start: 'top 80%',
-        },
-        y: 30,
-        opacity: 0,
-        stagger: 0.1,
-        duration: 0.8,
-        ease: "power3.out"
-      });
-    }
-
-    // Animate charts
-    gsap.from('.chart-container', {
-      scrollTrigger: {
-        trigger: '.analytics-section',
-        start: 'top 75%',
-      },
-      opacity: 0,
-      y: 40,
-      stagger: 0.2,
-      duration: 1,
-      ease: "power3.out"
-    });
-
-    // Animate trending tags
-    gsap.from('.tag-item', {
-      scrollTrigger: {
-        trigger: '.trending-section',
-        start: 'top 85%',
-      },
-      scale: 0.8,
-      opacity: 0,
-      stagger: 0.05,
-      duration: 0.5,
-      ease: "back.out(1.7)"
-    });
-
-  }, []);
 
   return (
     <ContentPageLayout
@@ -171,7 +99,7 @@ export default function BlogPage() {
       title="Stock Sense Blog"
       description="Expert analysis, market insights, and trading strategies to help you make informed investment decisions in the Indian stock market."
     >
-      <div ref={mainRef}>
+      <div>
         {/* Search and Filter Section */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="relative flex-grow">
@@ -182,7 +110,7 @@ export default function BlogPage() {
             <input
               id="blog-search"
               type="text"
-                className="block w-full min-h-[44px] pl-10 pr-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 focus:ring-emerald-500 focus:border-emerald-500"
+                className={`${fieldClass} block w-full min-h-[44px] pl-10 pr-3 py-2`}
               placeholder="Search articles..."
               aria-label="Search blog articles"
             />
@@ -192,7 +120,7 @@ export default function BlogPage() {
               <label htmlFor="blog-category" className="sr-only">Filter blog articles by category</label>
               <select 
                   id="blog-category"
-                  className="appearance-none block w-full min-h-[44px] px-3 py-2 border border-gray-700 rounded-lg bg-gray-900/90 backdrop-blur-lg text-gray-100 pr-8 focus:ring-emerald-500 focus:border-emerald-500"
+                  className={`${fieldClass} appearance-none block w-full min-h-[44px] px-3 py-2 pr-8`}
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 aria-label="Filter blog articles by category"
@@ -209,9 +137,9 @@ export default function BlogPage() {
         </div>
 
         {/* Featured Articles */}
-        <div ref={cardsRef} className="mb-16">
+        <div className="mb-16">
           <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-slate-950 dark:text-white flex items-center gap-2">
                 <BookOpen size={24} className="text-emerald-600" />
               Featured Articles
             </h2>
@@ -222,7 +150,7 @@ export default function BlogPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredPosts.map((post) => (
-              <Card key={post.id} className="blog-card overflow-hidden rounded-xl border border-gray-700/50 shadow-lg bg-gray-900/90 backdrop-blur-lg hover:shadow-lg transition-shadow duration-200">
+              <Card key={post.id} className="blog-card overflow-hidden rounded-xl shadow-lg border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 hover:shadow-lg transition-shadow duration-200">
                 <div className="h-48 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                   <BookOpen size={48} className="text-gray-400 dark:text-gray-500" />
                 </div>
@@ -235,10 +163,10 @@ export default function BlogPage() {
                       <Clock size={12} className="mr-1" /> {post.readTime}
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-slate-950 dark:text-white mb-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     {post.title}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-3 line-clamp-2">
+                  <p className="text-gray-600 dark:text-slate-600 dark:text-slate-300 mb-3 line-clamp-2">
                     {post.excerpt}
                   </p>
                   <div className="flex items-center justify-between">
@@ -246,7 +174,7 @@ export default function BlogPage() {
                       <div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
                         <User size={16} className="text-gray-500" />
                       </div>
-                      <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                      <span className="ml-2 text-sm text-gray-700 dark:text-slate-600 dark:text-slate-300">
                         {post.author}
                       </span>
                     </div>
@@ -267,15 +195,15 @@ export default function BlogPage() {
 
         {/* Analytics Section */}
         <div className="analytics-section mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-950 dark:text-white flex items-center gap-2 mb-8">
             <TrendingUp size={24} className="text-blue-600 dark:text-blue-400" />
             Blog Analytics
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Posts by Category Chart */}
-            <Card className="chart-container p-5 rounded-xl border border-gray-700/50 shadow-lg bg-gray-900/90 backdrop-blur-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Posts by Category</h3>
+            <Card className="chart-container p-5 rounded-xl shadow-lg border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-950 dark:text-white mb-4">Posts by Category</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
                   data={postsByCategory}
@@ -303,8 +231,8 @@ export default function BlogPage() {
             </Card>
 
             {/* Reader Engagement Chart */}
-            <Card className="chart-container p-5 rounded-xl border border-gray-700/50 shadow-lg bg-gray-900/90 backdrop-blur-lg">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Reader Engagement</h3>
+            <Card className="chart-container p-5 rounded-xl shadow-lg border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-950 dark:text-white mb-4">Reader Engagement</h3>
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart
                   data={readerEngagement}
@@ -331,15 +259,15 @@ export default function BlogPage() {
 
         {/* Popular Topics */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-950 dark:text-white flex items-center gap-2 mb-6">
             <Tag size={24} className="text-blue-600 dark:text-blue-400" />
             Popular Topics
           </h2>
 
-          <Card className="chart-container p-5 rounded-xl border border-gray-700/50 shadow-lg bg-gray-900/90 backdrop-blur-lg">
+          <Card className="chart-container p-5 rounded-xl shadow-lg border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Topic Distribution</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-950 dark:text-white mb-4">Topic Distribution</h3>
                 <ResponsiveContainer width="100%" height={250}>
                   <PieChart>
                     <Pie
@@ -368,7 +296,7 @@ export default function BlogPage() {
                 </ResponsiveContainer>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Trending Topics</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-950 dark:text-white mb-4">Trending Topics</h3>
                 <div className="flex flex-wrap gap-2">
                   {popularTopics.map((topic, idx) => (
                     <span 
@@ -381,14 +309,14 @@ export default function BlogPage() {
                       }}
                     >
                       {topic.name}
-                      <span className="ml-1.5 bg-gray-900/90 backdrop-blur-lg dark:bg-gray-700 text-xs py-0.5 px-1.5 rounded-full">
+                      <span className="ml-1.5 border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:bg-gray-700 text-xs py-0.5 px-1.5 rounded-full">
                         {topic.value}%
                       </span>
                     </span>
                   ))}
                 </div>
                 <div className="mt-6">
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-2">Most Searched Terms</h4>
+                  <h4 className="font-medium text-gray-900 dark:text-slate-950 dark:text-white mb-2">Most Searched Terms</h4>
                   <div className="flex flex-wrap gap-2 trending-section">
                     {['NIFTY 50', 'Multibagger Stocks', 'Dividend Yield', 'Bank Nifty', 'IT Sector', 'IPO Calendar', 'Technical Patterns'].map((term, idx) => (
                       <span 
@@ -408,7 +336,7 @@ export default function BlogPage() {
         {/* Recent Articles */}
         <div className="mb-16">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-slate-950 dark:text-white flex items-center gap-2">
               <Clock size={24} className="text-blue-600 dark:text-blue-400" />
               Recent Articles
             </h2>
@@ -419,7 +347,7 @@ export default function BlogPage() {
 
           <div className="grid grid-cols-1 gap-4">
             {recentPosts.map((post) => (
-              <Card key={post.id} className="blog-card flex items-center p-4 rounded-xl border border-gray-700/50 shadow-lg bg-gray-900/90 backdrop-blur-lg hover:shadow-md transition-shadow duration-200">
+              <Card key={post.id} className="blog-card flex items-center p-4 rounded-xl shadow-lg border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 hover:shadow-md transition-shadow duration-200">
                 <div className="h-16 w-16 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
                   <BookOpen size={24} className="text-gray-400 dark:text-gray-500" />
                 </div>
@@ -432,7 +360,7 @@ export default function BlogPage() {
                       <Clock size={12} className="mr-1" /> {post.readTime}
                     </span>
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-slate-950 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                     {post.title}
                   </h3>
                 </div>
@@ -456,7 +384,7 @@ export default function BlogPage() {
         <Card className="rounded-xl border border-slate-200/80 bg-white/80 p-8 dark:border-white/10 dark:bg-slate-950/60">
           <div className="flex flex-col md:flex-row items-center justify-between">
             <div className="mb-6 md:mb-0 md:mr-8">
-              <h2 className="text-2xl font-bold mb-2 text-slate-950 dark:text-white">Stay Updated</h2>
+              <h2 className="text-2xl font-bold mb-2 text-slate-950 dark:text-slate-950 dark:text-white">Stay Updated</h2>
               <p className="text-slate-600 dark:text-slate-400">
                 Subscribe to our weekly newsletter for market insights, analysis, and investment ideas delivered straight to your inbox.
               </p>
@@ -467,7 +395,7 @@ export default function BlogPage() {
                 <input
                   id="blog-newsletter-email"
                   type="email"
-                  className="px-4 py-2 min-h-[44px] rounded-lg border border-slate-200/70 bg-white/75 text-slate-950 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                  className="px-4 py-2 min-h-[44px] rounded-lg border border-slate-200/70 bg-white/75 text-slate-950 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 dark:border-white/10 dark:bg-white/5 dark:text-slate-950 dark:text-white"
                   placeholder="Your email address"
                   aria-label="Email address"
                 />

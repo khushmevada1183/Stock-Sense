@@ -38,6 +38,8 @@ const IPO_PREP = [
   'Plan your listing-day exit before the bid is placed.',
 ];
 
+const UPCOMING_IPO_PREVIEW_LIMIT = 6;
+
 const FAQS = [
   {
     question: 'What is an IPO?',
@@ -94,6 +96,7 @@ export default function IpoPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
 
   const loadIpoCalendar = useCallback(async () => {
     setLoading(true);
@@ -128,6 +131,10 @@ export default function IpoPage() {
   const overview = useMemo(() => buildIpoOverview(sections), [sections]);
   const featuredIpo = sections.upcoming[0] || sections.active[0] || sections.listed[0] || sections.closed[0] || null;
   const featuredDetailHref = featuredIpo ? getIpoDetailsHref(featuredIpo) : '/ipo';
+  const visibleUpcoming = showAllUpcoming
+    ? sections.upcoming
+    : sections.upcoming.slice(0, UPCOMING_IPO_PREVIEW_LIMIT);
+  const hiddenUpcomingCount = Math.max(sections.upcoming.length - UPCOMING_IPO_PREVIEW_LIMIT, 0);
 
   if (loading) {
     return (
@@ -253,11 +260,24 @@ export default function IpoPage() {
         description="Open windows, price bands, and issue timing are presented in a clean grid for quick scanning."
       >
         {sections.upcoming.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {sections.upcoming.map((ipo) => (
-              <IpoEntryCard key={ipo.id || ipo.symbol} ipo={ipo} variant="upcoming" />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {visibleUpcoming.map((ipo) => (
+                <IpoEntryCard key={ipo.id || ipo.symbol} ipo={ipo} variant="upcoming" />
+              ))}
+            </div>
+            {hiddenUpcomingCount > 0 ? (
+              <div className="flex justify-center pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAllUpcoming((current) => !current)}
+                >
+                  {showAllUpcoming ? 'Show fewer' : `Show ${hiddenUpcomingCount} more upcoming IPOs`}
+                </Button>
+              </div>
+            ) : null}
+          </>
         ) : (
           <IpoEmptyState
             title="No upcoming IPOs right now"

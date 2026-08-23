@@ -19,6 +19,7 @@ import * as stockApi from '@/api/api';
 import { useAuth } from '@/context/AuthContext';
 import { useWebSocket } from '@/hooks/useWebSocket';
 import { insetPanelClass, panelShellClass } from '@/styles/design-tokens';
+import { Button } from '@/components/ui/button';
 
 interface PortfolioHolding {
   symbol: string;
@@ -755,13 +756,13 @@ const PortfolioDashboard = () => {
                 placeholder="Price"
                 className="h-12 rounded-2xl border border-slate-200/80 bg-slate-50/90 px-4 text-sm text-slate-950 placeholder:text-slate-400 outline-none transition-colors focus:border-emerald-400 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-500"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={submittingTransaction}
-                className="h-12 rounded-2xl bg-slate-950 px-5 text-sm font-semibold text-white transition-transform duration-200 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-950"
+                className="h-12 rounded-2xl px-5"
               >
                 {submittingTransaction ? 'Submitting...' : 'Submit'}
-              </button>
+              </Button>
             </form>
           ) : null}
 

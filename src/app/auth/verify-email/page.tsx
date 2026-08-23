@@ -169,7 +169,7 @@ function VerifyEmailContent() {
 
 export default function VerifyEmailPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-slate-950" />}>
+    <Suspense fallback={<div className="min-h-screen bg-transparent" />}>
       <VerifyEmailContent />
     </Suspense>
   );

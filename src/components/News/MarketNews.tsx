@@ -3,8 +3,8 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';
+import { contentCardClass, secondaryButtonClass, tabActiveClass } from '@/styles/design-tokens';
 
-// Define the NewsItem interface locally to avoid import issues
 interface NewsItem {
   id?: string | number;
   title: string;
@@ -30,10 +30,7 @@ const NEWS_PER_PAGE = 4;
 const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsProps) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const normalizedNews = useMemo(
-    () => (Array.isArray(newsData) ? newsData : []),
-    [newsData]
-  );
+  const normalizedNews = useMemo(() => (Array.isArray(newsData) ? newsData : []), [newsData]);
 
   const totalPages = Math.max(1, Math.ceil(normalizedNews.length / NEWS_PER_PAGE));
   const effectivePage = Math.min(currentPage, totalPages);
@@ -44,13 +41,11 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
 
   const formatDate = (dateString: string | undefined) => {
     if (!dateString) return 'Unknown date';
-    
     try {
-      const date = new Date(dateString);
-      return date.toLocaleDateString('en-GB', {
+      return new Date(dateString).toLocaleDateString('en-GB', {
         day: 'numeric',
         month: 'short',
-        year: 'numeric'
+        year: 'numeric',
       });
     } catch {
       return 'Invalid date';
@@ -58,7 +53,7 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
   };
 
   return (
-    <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50">
+    <Card className={contentCardClass}>
       <CardHeader>
         <CardTitle>Market News</CardTitle>
       </CardHeader>
@@ -67,54 +62,51 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
           <div className="space-y-4">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="animate-pulse">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
-                <div className="h-24 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+                <div className="mb-2 h-4 w-3/4 rounded bg-slate-200 dark:bg-white/10" />
+                <div className="mb-4 h-3 w-1/2 rounded bg-slate-200 dark:bg-white/10" />
+                <div className="h-24 w-full rounded bg-slate-200 dark:bg-white/10" />
               </div>
             ))}
           </div>
         ) : error ? (
-          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-600 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
             <p>{error}</p>
           </div>
         ) : normalizedNews.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+          <div className="py-8 text-center text-slate-500 dark:text-slate-400">
             No market news available at the moment.
           </div>
         ) : (
           <div className="space-y-4">
             {visibleNews.map((item, index) => (
-              <div key={item.id || index} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
-                <a 
-                  href={item.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="group"
-                >
-                  <h3 className="font-medium text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 flex items-start">
+              <div
+                key={item.id || index}
+                className="border-b border-slate-200 pb-4 last:border-0 last:pb-0 dark:border-white/10"
+              >
+                <a href={item.url} target="_blank" rel="noopener noreferrer" className="group">
+                  <h3 className="flex items-start font-medium text-slate-950 group-hover:text-emerald-600 dark:text-white dark:group-hover:text-emerald-400">
                     <span>{item.title}</span>
-                    <ExternalLink className="h-3.5 w-3.5 ml-1 mt-1 opacity-70" />
+                    <ExternalLink className="ml-1 mt-1 h-3.5 w-3.5 opacity-70" />
                   </h3>
-                  <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">
+                  <div className="mb-2 mt-1 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                     <span>{item.source}</span>
                     <span>{formatDate(item.pub_date || item.publishedAt || item.date)}</span>
                   </div>
                   {(item.image_url || item.imageUrl) && (
-                    <div className="mt-2 mb-3">
-                      <img 
-                        src={item.image_url || item.imageUrl || undefined} 
+                    <div className="mb-3 mt-2">
+                      <img
+                        src={item.image_url || item.imageUrl || undefined}
                         alt={item.title}
-                        className="w-full h-32 object-cover rounded-md"
+                        className="h-32 w-full rounded-md object-cover"
                         loading="lazy"
                         onError={(e) => {
-                          const target = e.currentTarget;
-                          target.onerror = null;
-                          target.style.display = 'none';
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.style.display = 'none';
                         }}
                       />
                     </div>
                   )}
-                  <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                  <p className="line-clamp-2 text-sm text-slate-600 dark:text-slate-300">
                     {item.summary || item.description}
                   </p>
                 </a>
@@ -122,13 +114,13 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
             ))}
 
             {totalPages > 1 && (
-              <div className="pt-2 flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-3 pt-2">
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <button
                     type="button"
                     onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                     disabled={effectivePage === 1}
-                    className="px-3 py-1.5 rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:text-white hover:border-neon-400/40 transition-colors"
+                    className={`${secondaryButtonClass} disabled:cursor-not-allowed disabled:opacity-50`}
                   >
                     Prev
                   </button>
@@ -138,10 +130,8 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
                       key={pageNum}
                       type="button"
                       onClick={() => setCurrentPage(pageNum)}
-                      className={`px-3 py-1.5 rounded-lg border transition-colors ${
-                        pageNum === effectivePage
-                          ? 'bg-neon-400 text-black border-neon-400'
-                          : 'bg-gray-900/90 backdrop-blur-lg border-gray-700/50 text-gray-200 hover:text-white hover:border-neon-400/40'
+                      className={`rounded-lg px-3 py-1.5 text-sm transition-colors ${
+                        pageNum === effectivePage ? tabActiveClass : secondaryButtonClass
                       }`}
                     >
                       {pageNum}
@@ -152,13 +142,14 @@ const MarketNews = ({ newsData = [], loading = false, error = '' }: MarketNewsPr
                     type="button"
                     onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
                     disabled={effectivePage === totalPages}
-                    className="px-3 py-1.5 rounded-lg bg-gray-900/90 backdrop-blur-lg border border-gray-700/50 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed hover:text-white hover:border-neon-400/40 transition-colors"
+                    className={`${secondaryButtonClass} disabled:cursor-not-allowed disabled:opacity-50`}
                   >
                     Next
                   </button>
                 </div>
-                <p className="text-xs text-gray-500">
-                  Page {effectivePage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, normalizedNews.length)} of {normalizedNews.length}
+                <p className="text-xs text-slate-500">
+                  Page {effectivePage} of {totalPages} • Showing {startIndex + 1}-
+                  {Math.min(endIndex, normalizedNews.length)} of {normalizedNews.length}
                 </p>
               </div>
             )}

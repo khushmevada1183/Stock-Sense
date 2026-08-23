@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { ContentPageLayout } from '@/components/content/ContentPageLayout';
+import { contentCardClass, secondaryButtonClass } from '@/styles/design-tokens';
 
 const endpointGroups = [
   {
@@ -60,54 +63,53 @@ const endpointGroups = [
 ];
 
 export default function ApiDocsPage() {
-  if (process.env.NODE_ENV === 'production') notFound();
-
   const displayedApiBaseUrl =
     process.env.NEXT_PUBLIC_API_URL ||
     'https://stock-sense-backend-ocjo.onrender.com/api/v1';
 
   return (
-    <main className="container mx-auto px-4 py-10">
-      <div className="max-w-5xl mx-auto space-y-6">
-        <header className="space-y-2">
-          <h1 className="text-3xl md:text-4xl font-bold text-white">API Documentation</h1>
-          <p className="text-gray-300">
-            Frontend is integrated with backend API v1 at
-            {' '}
-            <span className="font-mono text-neon-400">{displayedApiBaseUrl}</span>.
-          </p>
-        </header>
+    <ContentPageLayout
+      eyebrow="Developers"
+      title="API Documentation"
+      description="Stock Sense frontend integrates with backend API v1. Use these routes for market data, portfolios, alerts, and auth."
+    >
+      <div className="space-y-6">
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Base URL:{' '}
+          <span className="font-mono text-emerald-600 dark:text-emerald-300">{displayedApiBaseUrl}</span>
+        </p>
 
-        <section className="bg-gray-900/80 border border-gray-700/50 rounded-xl p-5 space-y-3">
-          <h2 className="text-xl font-semibold text-white">Quick Links</h2>
+        <div className={`${contentCardClass} space-y-3 p-5`}>
+          <h2 className="text-lg font-semibold text-slate-950 dark:text-white">Quick links</h2>
           <div className="flex flex-wrap gap-3">
-            <Link href="/api-test" className="px-3 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white text-sm">
-              Open API Test Page
+            <Link href="/api-test" className={secondaryButtonClass}>
+              Open API test page
             </Link>
-            <Link href="/login" className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm">
-              Open Auth Login
+            <Link href="/login" className={secondaryButtonClass}>
+              Open auth login
             </Link>
-            <Link href="/alerts" className="px-3 py-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-100 text-sm">
-              Open Alerts
+            <Link href="/alerts" className={secondaryButtonClass}>
+              Open alerts
             </Link>
           </div>
-        </section>
+        </div>
 
-        <section className="space-y-4">
-          {endpointGroups.map((group) => (
-            <div key={group.title} className="bg-gray-900/80 border border-gray-700/50 rounded-xl p-5">
-              <h3 className="text-lg font-semibold text-white mb-3">{group.title}</h3>
-              <ul className="space-y-2">
-                {group.endpoints.map((endpoint) => (
-                  <li key={endpoint} className="font-mono text-sm text-gray-300 bg-gray-800/70 rounded px-3 py-2">
-                    {endpoint}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </section>
+        {endpointGroups.map((group) => (
+          <div key={group.title} className={`${contentCardClass} space-y-3 p-5`}>
+            <h3 className="text-lg font-semibold text-slate-950 dark:text-white">{group.title}</h3>
+            <ul className="space-y-2">
+              {group.endpoints.map((endpoint) => (
+                <li
+                  key={endpoint}
+                  className="rounded-lg border border-slate-200/70 bg-white/60 px-3 py-2 font-mono text-sm text-slate-700 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
+                >
+                  {endpoint}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
-    </main>
+    </ContentPageLayout>
   );
 }

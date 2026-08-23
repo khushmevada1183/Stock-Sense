@@ -62,20 +62,11 @@ export default function HeroSection() {
           </p>
 
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button
-              size="lg"
-              className="inline-flex items-center rounded-full bg-slate-950 px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_40px_rgba(15,23,42,0.22)] transition-transform duration-300 hover:-translate-y-0.5 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-200"
-              onClick={() => router.push('/market')}
-            >
+            <Button size="lg" onClick={() => router.push('/market')}>
               Explore markets
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="inline-flex items-center rounded-full border border-slate-300/80 bg-white/80 px-6 py-3 text-sm font-medium text-slate-700 shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-slate-200 dark:hover:bg-white/10"
-              onClick={() => router.push('/portfolio')}
-            >
+            <Button variant="outline" size="lg" onClick={() => router.push('/portfolio')}>
               Open portfolio
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>

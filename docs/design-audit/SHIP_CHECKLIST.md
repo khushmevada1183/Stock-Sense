@@ -8,7 +8,8 @@
 - [x] `npm run build` — pass
 - [x] Design audit heuristics tests — 6/6 pass
 - [x] safeRedirect tests — 4/4 pass
-- [x] Dev routes gated: `/api-test`, `/api-docs` (`notFound()` in production)
+- [x] Unified page background: header/main/footer transparent, single `--app-bg` canvas (Tasks 1–7)
+- [x] Visual walk: **108/108 clean** (54 routes × light/dark) — `docs/design-audit/visual-walk/VISUAL_WALK_REPORT.md`
 
 ## Manual smoke (recommended before deploy)
 

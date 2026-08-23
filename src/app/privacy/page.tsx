@@ -1,7 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
+import React from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
@@ -36,66 +35,13 @@ const securityMeasures = [
 ];
 
 export default function PrivacyPage() {
-  const mainRef = useRef<HTMLDivElement>(null);
-  const sectionsRef = useRef<HTMLElement[]>([]);
-  const sectionContentsRef = useRef<HTMLElement[]>([]);
-
-  useEffect(() => {
-    // Main entrance animation
-    gsap.from(mainRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.8,
-      ease: "power3.out"
-    });
-
-    // Staggered sections animation
-    gsap.from(sectionsRef.current, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: "back.out(1.2)",
-      delay: 0.3
-    });
-
-    // Content reveals with stagger
-    sectionContentsRef.current.forEach((section, index) => {
-      if (section instanceof HTMLElement) {
-        const children = Array.from(section.children);
-        gsap.from(children, {
-        opacity: 0,
-        y: 15,
-        stagger: 0.1,
-          duration: 0.7,
-          ease: "power2.out",
-          delay: 0.2 + (index * 0.1)
-      });
-      }
-    });
-  }, []);
-
-  // Function to add to section refs
-  const addToSectionsRef = (el: HTMLElement | null) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current.push(el);
-    }
-  };
-
-  // Function to add to section contents refs
-  const addToSectionContentsRef = (el: HTMLElement | null) => {
-    if (el && !sectionContentsRef.current.includes(el)) {
-      sectionContentsRef.current.push(el);
-    }
-  };
-
   return (
     <ContentPageLayout
       eyebrow="Legal"
       title="Privacy Policy"
       description="Indian Stock Analyzer is committed to protecting your privacy and ensuring your data remains secure."
     >
-    <div ref={mainRef}>
+    <div>
       <h2 className="sr-only">Privacy Principles</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {[
@@ -103,43 +49,40 @@ export default function PrivacyPage() {
             title: "Data Protection", 
             description: "Your data is encrypted and protected", 
               icon: <Shield className="w-8 h-8 text-emerald-600" />,
-              color: "bg-gray-900/90"
+              color: "bg-emerald-500/10"
           },
           { 
             title: "Transparency", 
             description: "Clear policies on data usage and rights", 
               icon: <Eye className="w-8 h-8 text-emerald-600" />,
-              color: "bg-gray-900/90"
+              color: "bg-emerald-500/10"
           },
           { 
             title: "User Control", 
             description: "Full control over your information", 
               icon: <User className="w-8 h-8 text-emerald-600" />,
-              color: "bg-gray-900/90"
+              color: "bg-emerald-500/10"
           }
         ].map((item, index) => (
           <div 
             key={index}
-            ref={addToSectionsRef}
-              className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium"
+              className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
           >
               <div className={`rounded-full w-16 h-16 flex items-center justify-center ${item.color} mb-4 mx-auto border border-emerald-500/20`}>
               {item.icon}
             </div>
-              <h3 className="text-xl font-semibold text-center mb-2 text-white">{item.title}</h3>
-              <p className="text-gray-300 text-center">{item.description}</p>
+              <h3 className="text-xl font-semibold text-center mb-2 text-slate-950 dark:text-white">{item.title}</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-center">{item.description}</p>
           </div>
         ))}
       </div>
 
       <section 
-        ref={addToSectionsRef}
-        className="mb-12 bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+        className="mb-12 border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
       >
         <h2 className="text-2xl font-bold mb-6">1. Data We Collect</h2>
         <div 
-          ref={addToSectionContentsRef} 
-          className="space-y-4 text-gray-700 dark:text-gray-300"
+          className="space-y-4 text-gray-700 dark:text-slate-600 dark:text-slate-300"
         >
           <p>
             Indian Stock Analyzer collects several types of information to provide and improve our services.
@@ -182,13 +125,11 @@ export default function PrivacyPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         <section 
-          ref={addToSectionsRef}
-          className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+          className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
         >
           <h2 className="text-2xl font-bold mb-6">2. Data Retention</h2>
           <div 
-            ref={addToSectionContentsRef}
-            className="space-y-4 text-gray-700 dark:text-gray-300 mb-6"
+            className="space-y-4 text-gray-700 dark:text-slate-600 dark:text-slate-300 mb-6"
           >
             <p>
               We retain different types of data for varying periods as required by regulations
@@ -224,13 +165,11 @@ export default function PrivacyPage() {
         </section>
 
         <section 
-          ref={addToSectionsRef}
-          className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+          className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
         >
           <h2 className="text-2xl font-bold mb-6">3. Security Measures</h2>
           <div 
-            ref={addToSectionContentsRef}
-            className="space-y-4 text-gray-700 dark:text-gray-300 mb-6"
+            className="space-y-4 text-gray-700 dark:text-slate-600 dark:text-slate-300 mb-6"
           >
             <p>
               We implement advanced security measures to protect your data from unauthorized 
@@ -266,13 +205,11 @@ export default function PrivacyPage() {
       </div>
 
       <section 
-        ref={addToSectionsRef}
-        className="mb-12 bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+        className="mb-12 border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
       >
         <h2 className="text-2xl font-bold mb-6">4. Your Rights</h2>
         <div 
-          ref={addToSectionContentsRef}
-          className="space-y-4 text-gray-700 dark:text-gray-300"
+          className="space-y-4 text-gray-700 dark:text-slate-600 dark:text-slate-300"
         >
           <p>
             Under data protection laws, you have rights regarding your personal data. These include:
@@ -329,13 +266,11 @@ export default function PrivacyPage() {
       </section>
 
       <section 
-        ref={addToSectionsRef}
-        className="mb-12 bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+        className="mb-12 border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
       >
         <h2 className="text-2xl font-bold mb-6">5. Cookies & Tracking</h2>
         <div 
-          ref={addToSectionContentsRef}
-          className="space-y-4 text-gray-700 dark:text-gray-300"
+          className="space-y-4 text-gray-700 dark:text-slate-600 dark:text-slate-300"
         >
           <p>
             We use cookies and similar tracking technologies to track activity on our service and 
@@ -355,7 +290,7 @@ export default function PrivacyPage() {
                 className={`rounded-full px-4 py-2 text-sm ${
                   cookie.always 
                     ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-slate-600 dark:text-slate-300'
                 }`}
               >
                 {cookie.name}
@@ -367,13 +302,11 @@ export default function PrivacyPage() {
       </section>
 
       <section 
-        ref={addToSectionsRef}
-        className="mb-12 bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+        className="mb-12 border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
       >
         <h2 className="text-2xl font-bold mb-6">6. Changes to This Policy</h2>
         <div 
-          ref={addToSectionContentsRef}
-          className="space-y-4 text-gray-700 dark:text-gray-300"
+          className="space-y-4 text-gray-700 dark:text-slate-600 dark:text-slate-300"
         >
           <p>
             We may update our Privacy Policy from time to time. We will notify you of any changes by:
@@ -395,19 +328,17 @@ export default function PrivacyPage() {
       </section>
 
       <section 
-        ref={addToSectionsRef}
-        className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+        className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
       >
         <h2 className="text-2xl font-bold mb-6">7. Contact Us</h2>
         <div 
-          ref={addToSectionContentsRef}
-          className="space-y-4 text-gray-700 dark:text-gray-300"
+          className="space-y-4 text-gray-700 dark:text-slate-600 dark:text-slate-300"
         >
           <p>
             If you have any questions about this Privacy Policy, please contact us:
           </p>
           <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 inline-block">
-            <p className="text-gray-700 dark:text-gray-300">
+            <p className="text-gray-700 dark:text-slate-600 dark:text-slate-300">
               <strong>Email:</strong> privacy@indianstockanalyzer.com<br/>
               <strong>Address:</strong> 123 Financial District, Mumbai, India 400001<br/>
               <strong>Data Protection Officer:</strong> +91 22-6789-0124

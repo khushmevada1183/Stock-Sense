@@ -4,6 +4,12 @@ export const panelShellClass =
 export const insetPanelClass =
   'rounded-[24px] border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5';
 
+export const contentCardClass =
+  'rounded-xl border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5';
+
+export const chromeGlassClass =
+  'border border-[color:var(--app-border)] bg-[color:var(--app-bg-elevated)]/55 shadow-[var(--app-shadow)] backdrop-blur-xl';
+
 export const sectionEyebrowClass =
   'text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500';
 

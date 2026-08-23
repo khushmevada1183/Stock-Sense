@@ -1,48 +1,17 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
+import React from 'react';
 import { Shield, FileText, AlertTriangle, CheckCircle2, Scale } from 'lucide-react';
 import { ContentPageLayout } from '@/components/content/ContentPageLayout';
 
 export default function TermsPage() {
-  const mainRef = useRef<HTMLDivElement | null>(null);
-  const sectionsRef = useRef<HTMLElement[]>([]);
-
-  useEffect(() => {
-    // Main entrance animation
-    gsap.from(mainRef.current, {
-      opacity: 0,
-      y: 20,
-      duration: 0.8,
-      ease: "power3.out"
-    });
-
-    // Staggered sections animation
-    gsap.from(sectionsRef.current, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.2,
-      duration: 0.8,
-      ease: "back.out(1.2)",
-      delay: 0.3
-    });
-  }, []);
-
-  // Add sections to ref array for animations
-  const addToSectionsRefs = (el: HTMLElement | null) => {
-    if (el && !sectionsRef.current.includes(el)) {
-      sectionsRef.current.push(el);
-    }
-  };
-
   return (
     <ContentPageLayout
       eyebrow="Legal"
       title="Terms of Use"
       description="Please read these terms carefully before using Indian Stock Analyzer services."
     >
-    <div ref={mainRef}>
+    <div>
         <h2 className="sr-only">Terms Overview</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         {[
@@ -50,42 +19,40 @@ export default function TermsPage() {
               title: "Legal Agreement", 
               description: "These terms constitute a binding legal agreement", 
               icon: <FileText className="w-8 h-8 text-emerald-600" />,
-              color: "bg-gray-900/90"
+              color: "bg-emerald-500/10"
           },
           { 
               title: "User Responsibilities", 
               description: "Guidelines for proper platform usage", 
               icon: <Shield className="w-8 h-8 text-emerald-600" />,
-              color: "bg-gray-900/90"
+              color: "bg-emerald-500/10"
           },
           { 
               title: "Compliance", 
               description: "Adherence to financial regulations and laws", 
               icon: <Scale className="w-8 h-8 text-emerald-600" />,
-              color: "bg-gray-900/90"
+              color: "bg-emerald-500/10"
           }
         ].map((item, index) => (
           <div 
             key={index}
-            ref={addToSectionsRefs}
-              className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700/50 glass-premium"
+              className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
           >
               <div className={`rounded-full w-16 h-16 flex items-center justify-center ${item.color} mb-4 mx-auto border border-emerald-500/20`}>
               {item.icon}
             </div>
-              <h3 className="text-xl font-semibold text-center mb-2 text-white">{item.title}</h3>
-              <p className="text-gray-300 text-center">{item.description}</p>
+              <h3 className="text-xl font-semibold text-center mb-2 text-slate-950 dark:text-white">{item.title}</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-center">{item.description}</p>
           </div>
         ))}
       </div>
 
         <div className="space-y-8">
       <section 
-        ref={addToSectionsRefs}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
       >
-            <h2 className="text-2xl font-bold mb-6 text-white">1. Acceptance of Terms</h2>
-            <div className="space-y-4 text-gray-300">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white">1. Acceptance of Terms</h2>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
           <p>
                 By accessing or using the Indian Stock Analyzer platform, you agree to be bound by these Terms of Use. 
                 If you do not agree to these terms, please do not use our services.
@@ -98,11 +65,10 @@ export default function TermsPage() {
       </section>
 
         <section 
-          ref={addToSectionsRefs}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
         >
-            <h2 className="text-2xl font-bold mb-6 text-white">2. User Accounts</h2>
-            <div className="space-y-4 text-gray-300">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white">2. User Accounts</h2>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
             <p>
                 To access certain features of the platform, you may be required to register for an account. You agree to:
             </p>
@@ -116,11 +82,10 @@ export default function TermsPage() {
         </section>
 
         <section 
-          ref={addToSectionsRefs}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
         >
-            <h2 className="text-2xl font-bold mb-6 text-white">3. Financial Information Disclaimer</h2>
-            <div className="space-y-4 text-gray-300">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white">3. Financial Information Disclaimer</h2>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
             <p>
                 The information provided on Indian Stock Analyzer is for informational and educational purposes only and 
                 should not be construed as financial advice.
@@ -136,11 +101,10 @@ export default function TermsPage() {
         </section>
 
       <section 
-        ref={addToSectionsRefs}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
       >
-            <h2 className="text-2xl font-bold mb-6 text-white">4. Intellectual Property</h2>
-            <div className="space-y-4 text-gray-300">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white">4. Intellectual Property</h2>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
           <p>
                 All content on the Indian Stock Analyzer platform, including but not limited to text, graphics, logos, 
                 icons, images, audio clips, and software, is the property of Indian Stock Analyzer and is protected by 
@@ -154,11 +118,10 @@ export default function TermsPage() {
       </section>
 
       <section 
-        ref={addToSectionsRefs}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
       >
-            <h2 className="text-2xl font-bold mb-6 text-white">5. Limitation of Liability</h2>
-            <div className="space-y-4 text-gray-300">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white">5. Limitation of Liability</h2>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
           <p>
                 In no event shall Indian Stock Analyzer, its directors, employees, partners, agents, suppliers, or affiliates 
                 be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, 
@@ -174,11 +137,10 @@ export default function TermsPage() {
           </section>
           
           <section 
-            ref={addToSectionsRefs}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
           >
-            <h2 className="text-2xl font-bold mb-6 text-white">6. Contact Information</h2>
-            <div className="space-y-4 text-gray-300">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white">6. Contact Information</h2>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
               <p>
                 If you have any questions about these Terms of Use, please contact us:
               </p>
@@ -193,11 +155,10 @@ export default function TermsPage() {
       </section>
 
       <section 
-        ref={addToSectionsRefs}
-            className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-700 glass-premium"
+            className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6"
       >
-            <h2 className="text-2xl font-bold mb-6 text-white">7. Governing Law</h2>
-            <div className="space-y-4 text-gray-300">
+            <h2 className="text-2xl font-bold mb-6 text-slate-950 dark:text-white">7. Governing Law</h2>
+            <div className="space-y-4 text-slate-600 dark:text-slate-300">
               <p>
                 These Terms shall be governed and construed in accordance with the laws of India, without regard to its 
                 conflict of law provisions. Any disputes relating to these terms and conditions will be subject to the 

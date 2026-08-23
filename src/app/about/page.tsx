@@ -1,16 +1,12 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
 import { ContentPageLayout } from '@/components/content/ContentPageLayout';
 import { Users, TrendingUp, Award, Target, Globe, Code, Zap, Shield, BookOpen } from 'lucide-react';
-
-gsap.registerPlugin(ScrollTrigger);
 
 // Mock data for metrics
 const companyStats = [
@@ -38,118 +34,36 @@ const marketCoverageData = [
 const COLORS = ['#3b82f6', '#10b981', '#6366f1', '#f59e0b'];
 
 export default function AboutPage() {
-  const mainRef = useRef(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const statsRef = useRef<HTMLDivElement[]>([]);
-  const founderSectionRef = useRef(null);
-  const visionSectionRef = useRef(null);
-
-  useEffect(() => {
-    // Animate page entry
-    gsap.from(mainRef.current, { 
-      opacity: 0, 
-      y: 20, 
-      duration: 0.8, 
-      ease: "power3.out" 
-    });
-
-    // Ensure the ref is available
-    if (!cardsRef.current) return;
-
-    // Animate cards with stagger
-    const cards = Array.from(cardsRef.current.children);
-    gsap.from(cards, {
-      opacity: 0,
-      y: 30,
-      stagger: 0.15,
-      duration: 0.8,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: cardsRef.current,
-        start: "top 80%",
-      }
-    });
-
-    // Animate founder section
-    gsap.from(founderSectionRef.current, {
-      opacity: 0,
-      y: 30,
-      duration: 0.8,
-      ease: "back.out(1.2)",
-      delay: 0.5
-    });
-
-    // Animate vision section
-    gsap.from(visionSectionRef.current, {
-      opacity: 0,
-      y: 30,
-      duration: 0.8,
-      ease: "back.out(1.2)",
-      delay: 0.7
-    });
-
-    // Animate stats numbers counting up
-    statsRef.current.forEach((stat, index) => {
-      const valueDisplay = stat.querySelector('.value-display');
-      const targetValue = companyStats[index].value;
-      
-      // Create a proxy object that we can animate with GSAP
-      const obj = { value: 0 };
-      gsap.to(obj, { 
-        value: targetValue, 
-        duration: 2,
-        delay: 0.5 + index * 0.2,
-        ease: "power2.out",
-        onUpdate: function() {
-          if (valueDisplay) {
-            if (targetValue >= 100) {
-              valueDisplay.textContent = Math.round(obj.value).toLocaleString();
-            } else {
-              valueDisplay.textContent = obj.value.toFixed(1);
-            }
-          }
-        }
-      });
-    });
-  }, []);
-
-  // Function to add stats refs
-  const addToStatsRefs = (el: HTMLDivElement) => {
-    if (el && !statsRef.current.includes(el)) {
-      statsRef.current.push(el);
-    }
-  };
-
   return (
     <ContentPageLayout
       eyebrow="Company"
       title="About Indian Stock Analyzer"
       description="Founded in 2020 by Khush Mevada, Indian Stock Analyzer has revolutionized how investors research and analyze stocks from the Indian market."
     >
-    <div ref={mainRef}>
+    <div>
       {/* Founder's Section */}
-      <section ref={founderSectionRef} className="mb-16">
-          <h2 className="text-2xl font-bold mb-6 text-center text-white">Our Founder</h2>
+      <section className="mb-16">
+          <h2 className="text-2xl font-bold mb-6 text-center text-slate-950 dark:text-white">Our Founder</h2>
           <div className="glass-premium rounded-xl shadow-lg p-6 border border-emerald-500/10">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
               <div className="w-48 h-48 rounded-full bg-gray-900 flex items-center justify-center flex-shrink-0 border-4 border-emerald-500/20">
                 <Users className="w-24 h-24 text-emerald-600" />
             </div>
             <div>
-                <h3 className="text-2xl font-bold mb-2 text-center md:text-left text-white">Khush Mevada</h3>
+                <h3 className="text-2xl font-bold mb-2 text-center md:text-left text-slate-950 dark:text-white">Khush Mevada</h3>
                 <p className="text-emerald-600 font-medium mb-4 text-center md:text-left">Founder & CEO</p>
-                <p className="text-gray-300 mb-4">
+                <p className="text-slate-600 dark:text-slate-300 mb-4">
                 With a passion for financial markets and technology, Khush Mevada founded Indian Stock Analyzer 
                 with the vision of democratizing access to sophisticated stock analysis tools. His background in 
                 financial analysis and software development enabled him to create a platform that combines powerful 
                 analytical capabilities with user-friendly interfaces.
               </p>
-                <p className="text-gray-300 mb-4">
+                <p className="text-slate-600 dark:text-slate-300 mb-4">
                 Prior to founding Indian Stock Analyzer, Khush worked with leading financial institutions where he 
                 identified a significant gap in the market for retail investors seeking professional-grade analysis 
                 tools specifically tailored for Indian markets.
               </p>
-                <p className="text-gray-300">
+                <p className="text-slate-600 dark:text-slate-300">
                 Under his leadership, the company has grown from a small startup to a trusted platform used by 
                 thousands of investors across India, with plans for continued expansion and innovation.
               </p>
@@ -159,14 +73,14 @@ export default function AboutPage() {
       </section>
       
       <section className="mb-16">
-          <h2 className="text-2xl font-bold mb-6 text-center text-white">Our Mission</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center text-slate-950 dark:text-white">Our Mission</h2>
           <div className="glass-premium rounded-xl shadow-lg p-6 border border-emerald-500/10">
           <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 bg-gray-900 rounded-full flex items-center justify-center mb-4">
                 <Target className="w-8 h-8 text-emerald-600" />
             </div>
-              <h3 className="text-xl font-semibold mb-3 text-white">Empowering Informed Investment</h3>
-              <p className="text-gray-300 max-w-3xl">
+              <h3 className="text-xl font-semibold mb-3 text-slate-950 dark:text-white">Empowering Informed Investment</h3>
+              <p className="text-slate-600 dark:text-slate-300 max-w-3xl">
               Our mission is to democratize access to sophisticated stock analysis for Indian 
               investors through cutting-edge technology and data analytics. We aim to empower 
               individuals to make informed investment decisions based on comprehensive, accurate, 
@@ -177,8 +91,8 @@ export default function AboutPage() {
       </section>
 
       {/* Vision Section */}
-      <section ref={visionSectionRef} className="mb-16">
-        <h2 className="text-2xl font-bold mb-6 text-center">Our Vision & Values</h2>
+      <section className="mb-16">
+        <h2 className="text-2xl font-bold mb-6 text-center text-slate-950 dark:text-white">Our Vision & Values</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { 
@@ -208,7 +122,7 @@ export default function AboutPage() {
           ].map((value, index) => (
             <div 
               key={index}
-              className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
+              className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10"
             >
               <div className={`w-16 h-16 ${value.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
                 {value.icon}
@@ -223,14 +137,12 @@ export default function AboutPage() {
       <section className="mb-16">
         <h2 className="text-2xl font-bold mb-6 text-center">Company Metrics</h2>
         <div 
-          ref={cardsRef}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
         >
           {companyStats.map((stat, index) => (
             <div 
               key={stat.name}
-              ref={addToStatsRefs}
-              className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-xl"
+              className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10 transition-all hover:shadow-xl"
             >
               <div className="flex items-center mb-4">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{backgroundColor: `${stat.color}20`}}>
@@ -242,7 +154,9 @@ export default function AboutPage() {
                 <div className="ml-4">
                   <h3 className="font-medium text-gray-600 dark:text-gray-400">{stat.name}</h3>
                   <div className="flex items-baseline">
-                    <span className="text-2xl font-bold value-display">0</span>
+                    <span className="text-2xl font-bold text-slate-950 dark:text-white">
+                      {stat.value >= 100 ? stat.value.toLocaleString('en-IN') : stat.value.toFixed(1)}
+                    </span>
                     <span className="ml-1 text-gray-600 dark:text-gray-400">
                       {index === 0 ? ' users' : index === 1 || index === 2 || index === 3 ? '%' : ''}
                     </span>
@@ -259,7 +173,7 @@ export default function AboutPage() {
       </section>
       
       <section className="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10">
           <h2 className="text-xl font-bold mb-6">Our Team Growth</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
@@ -284,7 +198,7 @@ export default function AboutPage() {
           </div>
         </div>
         
-        <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10">
           <h2 className="text-xl font-bold mb-6">Market Coverage</h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
@@ -328,7 +242,7 @@ export default function AboutPage() {
           ].map((member, index) => (
             <div 
               key={index} 
-              className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 transition-transform hover:-translate-y-1"
+              className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-md overflow-hidden dark:border-white/10 transition-transform hover:-translate-y-1"
             >
               <div className="h-48 bg-gray-300 dark:bg-gray-700 flex items-center justify-center">
                 <Users className="w-16 h-16 text-gray-400 dark:text-gray-500" />
@@ -345,7 +259,7 @@ export default function AboutPage() {
 
       <section className="mb-16">
         <h2 className="text-2xl font-bold mb-6 text-center">Our Technology</h2>
-        <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+        <div className="border border-slate-200/70 bg-white/75 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 rounded-xl shadow-lg p-6 dark:border-white/10">
           <div className="flex flex-col items-center mb-6">
             <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center mb-4">
               <Code className="w-8 h-8 text-purple-600 dark:text-purple-400" />
