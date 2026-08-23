@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { CalendarDays, Mail, MapPin, Pencil, Save, User, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { panelShellClass, insetPanelClass } from '@/styles/design-tokens';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import { Input } from '@/components/ui/input';
 import {
@@ -224,7 +225,7 @@ export default function BasicDetails() {
   if (query.isLoading) {
     return (
       <div className="space-y-4">
-        <div className="rounded-[22px] border border-slate-200 bg-white p-4 shadow-none dark:border-slate-800 dark:bg-slate-950">
+        <div className={`${insetPanelClass} p-4`}>
           <LoadingSkeleton className="h-5 w-40" />
           <LoadingSkeleton className="mt-2.5 h-3.5 w-64" />
           <div className="mt-4 grid gap-3 xl:grid-cols-2">
@@ -271,7 +272,7 @@ export default function BasicDetails() {
       }}
       className="space-y-4"
     >
-      <Card className="rounded-[24px] border border-slate-200 bg-white shadow-none transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950">
+      <Card className={panelShellClass}>
         <CardHeader className="border-b border-slate-200 pb-4 dark:border-slate-800">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>

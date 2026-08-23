@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BadgeCheck, RefreshCw, Save } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { panelShellClass } from '@/styles/design-tokens';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import { Input } from '@/components/ui/input';
 import { TradingDetailsData, getSettingsTradingDetails, updateSettingsTradingDetails } from '@/lib/api';
@@ -69,7 +70,7 @@ export default function TradingDetails() {
   };
 
   return (
-    <Card className="rounded-[24px] border border-slate-200 bg-white shadow-none transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950">
+    <Card className={panelShellClass}>
       <CardHeader className="border-b border-slate-200 pb-4 dark:border-slate-800">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>

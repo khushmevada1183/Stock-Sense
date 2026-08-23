@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Laptop, LogOut, RefreshCw, Smartphone } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { panelShellClass } from '@/styles/design-tokens';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import { ActiveDevice, getSettingsActiveDevices, logoutAllSettingsDevices, logoutSettingsDevice } from '@/lib/api';
 import { toastApiError, toastApiSuccess } from '@/lib/toast';
@@ -97,7 +98,7 @@ export default function ActiveDevices() {
 
   return (
     <div className="space-y-6">
-      <Card className="rounded-[24px] border border-slate-200 bg-white shadow-none transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950">
+      <Card className={panelShellClass}>
         <CardHeader className="border-b border-slate-200 pb-4 dark:border-slate-800">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>

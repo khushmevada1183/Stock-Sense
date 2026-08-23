@@ -1,6 +1,6 @@
 # Design Coverage Matrix
 
-> Generated: 2026-08-23T09:59:41.633Z
+> Generated: 2026-08-23T10:22:40.629Z
 > Benchmark: `src/components/portfolio/PortfolioDashboard.tsx`
 > Brief: `docs/new_design.md`
 
@@ -8,11 +8,11 @@
 
 | Status | Count | Meaning |
 | --- | ---: | --- |
-| implemented (completed) | 11 | Matches portfolio `panelShellClass` language |
-| partial (in progress) | 19 | Some new patterns, inconsistent surfaces |
+| implemented (completed) | 18 | Matches portfolio `panelShellClass` language |
+| partial (in progress) | 12 | Some new patterns, inconsistent surfaces |
 | legacy | 17 | `glass-card`, `PageBackground`, or monolithic old UI |
 | not-started | 14 | No design tokens detected yet |
-| **remaining** | **50** | legacy + partial + not-started |
+| **remaining** | **43** | legacy + partial + not-started |
 | skip-visual | 3 | Redirects or non-UI routes |
 
 ## Route Status (sorted by priority)
@@ -47,13 +47,6 @@
 | `/news/markets` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news-markets.png |
 | `/news/trending` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-trending.png |
 | `/news/trending` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news-trending.png |
-| `/settings` | partial | 65 | settings-shell | docs\design-audit\screenshots\light\settings.png |
-| `/settings?tab=basic` | partial | 60 | settings-shell | docs\design-audit\screenshots\light\settings-tab-basic.png |
-| `/settings?tab=devices` | partial | 60 | settings-shell | docs\design-audit\screenshots\light\settings-tab-devices.png |
-| `/settings?tab=password` | partial | 60 | settings-shell | docs\design-audit\screenshots\light\settings-tab-password.png |
-| `/settings?tab=reports` | partial | 60 | settings-shell | docs\design-audit\screenshots\light\settings-tab-reports.png |
-| `/settings?tab=suspicious` | partial | 60 | settings-shell | docs\design-audit\screenshots\light\settings-tab-suspicious.png |
-| `/settings?tab=trading` | partial | 60 | settings-shell | docs\design-audit\screenshots\light\settings-tab-trading.png |
 | `/stocks/[symbol]` | partial | 75 | panel-shell, neon-accent | docs\design-audit\screenshots\light\stocks-RELIANCE.png |
 | `/_not-found` | not-started | 50 |  | docs\design-audit\screenshots\light\_not-found.png |
 | `/about` | not-started | 50 |  | docs\design-audit\screenshots\light\about.png |
@@ -77,6 +70,13 @@
 | `/market/institutional` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\market-institutional.png |
 | `/notifications` | implemented | 90 | tool-shell | docs\design-audit\screenshots\light\notifications.png |
 | `/portfolio` | implemented | 100 | portfolio-benchmark | docs\design-audit\screenshots\light\portfolio.png |
+| `/settings` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings.png |
+| `/settings?tab=basic` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-basic.png |
+| `/settings?tab=devices` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-devices.png |
+| `/settings?tab=password` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-password.png |
+| `/settings?tab=reports` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-reports.png |
+| `/settings?tab=suspicious` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-suspicious.png |
+| `/settings?tab=trading` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-trading.png |
 | `/stock-search` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stock-search.png |
 | `/stocks` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks.png |
 | `/watchlists` | implemented | 90 | tool-shell | docs\design-audit\screenshots\light\watchlists.png |
@@ -132,13 +132,6 @@ flowchart LR
 - [ ] `/news/markets` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
 - [ ] `/news/trending` — **partial**; file: `src/app/news/trending/page.tsx`
 - [ ] `/news/trending` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
-- [ ] `/settings` — **partial**; file: `src/app/settings/page.tsx`
-- [ ] `/settings?tab=basic` — **partial**; file: `src/components/settings/SettingsPageShell.tsx`
-- [ ] `/settings?tab=devices` — **partial**; file: `src/components/settings/SettingsPageShell.tsx`
-- [ ] `/settings?tab=password` — **partial**; file: `src/components/settings/SettingsPageShell.tsx`
-- [ ] `/settings?tab=reports` — **partial**; file: `src/components/settings/SettingsPageShell.tsx`
-- [ ] `/settings?tab=suspicious` — **partial**; file: `src/components/settings/SettingsPageShell.tsx`
-- [ ] `/settings?tab=trading` — **partial**; file: `src/components/settings/SettingsPageShell.tsx`
 - [ ] `/stocks/[symbol]` — **partial**; file: `src/app/stocks/[symbol]/page.tsx`
 - [ ] `/_not-found` — **not-started**; file: `src/app/not-found.tsx`
 - [ ] `/about` — **not-started**; file: `src/app/about/page.tsx`

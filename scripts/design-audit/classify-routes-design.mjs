@@ -60,14 +60,16 @@ for (const r of audit.routes) {
   });
 }
 
-// Settings subtabs
+// Settings subtabs — inherit shell classification from SettingsPageShell
+const settingsSource = readSource('src/components/settings/SettingsPageShell.tsx');
+const settingsClassified = classifyRouteDesign(settingsSource, 'src/components/settings/SettingsPageShell.tsx');
 for (const tab of audit.matrices.settingsTabs) {
   routes.push({
     route: tab.route,
     capturePath: tab.route,
-    status: DESIGN_STATUS.PARTIAL,
-    score: 60,
-    signals: ['settings-shell'],
+    status: settingsClassified.status,
+    score: settingsClassified.score,
+    signals: settingsClassified.signals,
     file: 'src/components/settings/SettingsPageShell.tsx',
     parentRoute: '/settings',
   });

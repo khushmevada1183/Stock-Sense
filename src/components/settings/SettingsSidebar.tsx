@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { getSettingsBasicDetails } from '@/lib/api';
+import { panelShellClass } from '@/styles/design-tokens';
 import { defaultSettingsTab, settingsTabs, type SettingsTabId } from './settings-config';
 
 type SettingsSidebarProps = {
@@ -31,7 +32,7 @@ function SidebarContent({ activeTab, onSelect, onClose, mobile = false }: Settin
   const displayEmail = profile?.email || 'investor@stocksense.local';
 
   return (
-    <div className="flex h-full flex-col rounded-[22px] border border-slate-200 bg-white shadow-none transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950">
+    <div className={`${panelShellClass} flex h-full flex-col`}>
       <div className="border-b border-slate-200 px-4 py-4 dark:border-slate-800">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold tracking-tight text-slate-950 dark:text-white sm:text-xl">Settings</h2>

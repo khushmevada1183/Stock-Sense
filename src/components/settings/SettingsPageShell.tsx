@@ -10,9 +10,16 @@ import { useAuth } from '@/context/AuthContext';
 import LoadingSkeleton from '@/components/ui/LoadingSkeleton';
 import SettingsSidebar from './SettingsSidebar';
 import { defaultSettingsTab, isSettingsTabId, type SettingsTabId } from './settings-config';
+import {
+  panelShellClass,
+  primaryButtonClass,
+  secondaryButtonClass,
+  sectionEyebrowClass,
+  sectionTitleClass,
+} from '@/styles/design-tokens';
 
 const SectionSkeleton = () => (
-  <div className="space-y-3 rounded-[22px] border border-slate-200 bg-white p-4 shadow-none transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950">
+  <div className={`${panelShellClass} space-y-3 p-4`}>
     <LoadingSkeleton className="h-5 w-36" />
     <LoadingSkeleton className="h-3.5 w-60" />
     <div className="grid gap-3 lg:grid-cols-2">
@@ -128,16 +135,17 @@ export default function SettingsPageShell() {
       <div className="settings-solid-surface relative min-h-screen overflow-hidden bg-slate-50 px-4 py-6 text-slate-950 transition-colors duration-300 lg:px-6 dark:bg-[#07111a] dark:text-slate-100">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.06),transparent_36%),linear-gradient(180deg,#f8fafc_0%,#eef2f7_100%)] dark:bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_36%),linear-gradient(180deg,#07111a_0%,#0c1520_100%)]" />
         <div className="relative mx-auto flex min-h-screen w-full max-w-4xl items-center justify-center">
-          <div className="w-full rounded-[24px] border border-slate-200 bg-white p-6 shadow-none transition-colors duration-300 dark:border-slate-800 dark:bg-slate-950">
-            <h1 className="mt-4 text-2xl font-semibold text-slate-950 dark:text-white">Sign in to manage your settings</h1>
+          <div className={`${panelShellClass} w-full p-6 sm:p-8`}>
+            <p className={sectionEyebrowClass}>Account</p>
+            <h1 className={`mt-2 ${sectionTitleClass}`}>Sign in to manage your settings</h1>
             <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
               The settings dashboard keeps profile details, security controls, and device management in one place.
             </p>
             <div className="mt-6 flex flex-wrap gap-2.5">
-              <Link href="/login" className="inline-flex items-center justify-center rounded-full bg-emerald-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-300">
+              <Link href="/login" className={`${primaryButtonClass} inline-flex items-center justify-center px-4 py-2.5`}>
                 Go to login
               </Link>
-              <Link href="/signup" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:border-slate-300 hover:bg-slate-100 dark:border-slate-800 dark:bg-slate-900 dark:text-white dark:hover:border-slate-700 dark:hover:bg-slate-800">
+              <Link href="/signup" className={`${secondaryButtonClass} inline-flex items-center justify-center px-4 py-2.5`}>
                 Create account
               </Link>
             </div>
@@ -158,9 +166,12 @@ export default function SettingsPageShell() {
         <SettingsSidebar activeTab={activeTab} onSelect={handleTabChange} mobile open={mobileOpen} onClose={() => setMobileOpen(false)} />
 
         <main className="min-w-0 flex-1 space-y-4">
-          <header className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-none transition-colors duration-300 lg:px-5 dark:border-slate-800 dark:bg-slate-950">
+          <header className={`${panelShellClass} px-4 py-4 lg:px-5`}>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h1 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white sm:text-2xl lg:text-[28px]">Settings</h1>
+              <div>
+                <p className={sectionEyebrowClass}>Account</p>
+                <h1 className={`mt-1 ${sectionTitleClass}`}>Settings</h1>
+              </div>
 
               <button
                 type="button"
@@ -173,7 +184,7 @@ export default function SettingsPageShell() {
             </div>
           </header>
 
-          <div className="rounded-[24px] border border-slate-200 bg-white p-3 shadow-none transition-colors duration-300 lg:p-4 dark:border-slate-800 dark:bg-slate-950">
+          <div className={`${panelShellClass} p-3 lg:p-4`}>
             <ActiveSection />
           </div>
         </main>

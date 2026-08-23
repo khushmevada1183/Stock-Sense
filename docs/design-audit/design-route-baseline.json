@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-08-23T09:59:41.057Z",
+  "generatedAt": "2026-08-23T10:22:40.154Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 11,
-    "partial": 19,
+    "implemented": 18,
+    "partial": 12,
     "legacy": 17,
     "notStarted": 14,
     "skipVisual": 3,
     "total": 64,
-    "remaining": 50
+    "remaining": 43
   },
   "routes": [
     {
@@ -359,10 +359,10 @@
     {
       "route": "/settings",
       "capturePath": "/settings",
-      "status": "partial",
-      "score": 65,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "settings-shell"
+        "panel-shell"
       ],
       "file": "src/app/settings/page.tsx",
       "lineCount": 20
@@ -445,10 +445,10 @@
     {
       "route": "/settings?tab=basic",
       "capturePath": "/settings?tab=basic",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "settings-shell"
+        "panel-shell"
       ],
       "file": "src/components/settings/SettingsPageShell.tsx",
       "parentRoute": "/settings"
@@ -456,10 +456,10 @@
     {
       "route": "/settings?tab=reports",
       "capturePath": "/settings?tab=reports",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "settings-shell"
+        "panel-shell"
       ],
       "file": "src/components/settings/SettingsPageShell.tsx",
       "parentRoute": "/settings"
@@ -467,10 +467,10 @@
     {
       "route": "/settings?tab=devices",
       "capturePath": "/settings?tab=devices",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "settings-shell"
+        "panel-shell"
       ],
       "file": "src/components/settings/SettingsPageShell.tsx",
       "parentRoute": "/settings"
@@ -478,10 +478,10 @@
     {
       "route": "/settings?tab=password",
       "capturePath": "/settings?tab=password",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "settings-shell"
+        "panel-shell"
       ],
       "file": "src/components/settings/SettingsPageShell.tsx",
       "parentRoute": "/settings"
@@ -489,10 +489,10 @@
     {
       "route": "/settings?tab=trading",
       "capturePath": "/settings?tab=trading",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "settings-shell"
+        "panel-shell"
       ],
       "file": "src/components/settings/SettingsPageShell.tsx",
       "parentRoute": "/settings"
@@ -500,10 +500,10 @@
     {
       "route": "/settings?tab=suspicious",
       "capturePath": "/settings?tab=suspicious",
-      "status": "partial",
-      "score": 60,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "settings-shell"
+        "panel-shell"
       ],
       "file": "src/components/settings/SettingsPageShell.tsx",
       "parentRoute": "/settings"
