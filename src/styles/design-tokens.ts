@@ -21,3 +21,9 @@ export const secondaryButtonClass =
 
 export const dangerButtonClass =
   'rounded-full border border-rose-300/80 bg-rose-50/80 px-3 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100 dark:border-rose-900/40 dark:bg-rose-950/30 dark:text-rose-300 dark:hover:bg-rose-950/50';
+
+export const tabActiveClass =
+  'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 dark:text-emerald-300';
+
+export const tabIdleClass =
+  'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/5';

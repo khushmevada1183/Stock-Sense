@@ -195,7 +195,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-neon-400" />
+            <Users className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Executive Leadership Team
           </CardTitle>
           <div className="text-sm text-slate-600 dark:text-slate-400">{companyName}</div>
@@ -248,7 +248,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Shield className="w-5 h-5 text-neon-400" />
+            <Shield className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Corporate Governance Score
           </CardTitle>
         </CardHeader>
@@ -277,7 +277,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
                   </div>
                   <div className="w-full bg-gray-800/60 rounded-full h-1.5">
                     <div 
-                      className="bg-gradient-to-r from-neon-400 to-cyan-400 h-1.5 rounded-full"
+                      className="bg-gradient-to-r from-emerald-500 to-cyan-400 h-1.5 rounded-full"
                       style={{ width: `${(metric.score / metric.maxScore) * 100}%` }}
                     ></div>
                   </div>
@@ -288,7 +288,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
                 <div className="space-y-1">
                   {metric.factors.map((factor, factorIndex) => (
                     <div key={factorIndex} className="flex items-center gap-1 text-xs text-gray-500">
-                      <div className="w-1 h-1 bg-neon-400 rounded-full"></div>
+                      <div className="w-1 h-1 bg-emerald-500 rounded-full"></div>
                       <span>{factor}</span>
                     </div>
                   ))}
@@ -303,7 +303,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-neon-400" />
+            <FileText className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Regulatory Compliance
           </CardTitle>
         </CardHeader>
@@ -342,7 +342,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-neon-400" />
+            <BarChart3 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Recent Corporate Actions
           </CardTitle>
         </CardHeader>
@@ -374,7 +374,7 @@ const ManagementGovernance: React.FC<ManagementGovernanceProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-neon-400" />
+            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Management Effectiveness
           </CardTitle>
         </CardHeader>

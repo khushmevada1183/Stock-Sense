@@ -43,7 +43,7 @@ import FutureGrowthPotential from '@/components/stocks/FutureGrowthPotential';
 import Overview from '@/components/stocks/Overview';
 import FundamentalAnalysis from '@/components/stocks/FundamentalAnalysis';
 import MetricCard from '@/components/stocks/MetricCard';
-import { panelShellClass, sectionTitleClass } from '@/styles/design-tokens';
+import { panelShellClass, sectionTitleClass, tabActiveClass, tabIdleClass } from '@/styles/design-tokens';
 // Define types needed for financial data
 interface FinancialRatiosData {
   [key: string]: unknown;
@@ -973,13 +973,13 @@ export default function Page() {
                   tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 border border-transparent'
+                      ? `${tabActiveClass} shadow-sm`
+                      : `${tabIdleClass} border border-transparent`
                   }`}
                 >
                   <span className={`transition-all duration-300 ${
                     activeTab === tab.id 
-                      ? 'text-emerald-600 dark:text-emerald-400'
+                      ? 'text-emerald-700 dark:text-emerald-300'
                       : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
                   }`}>
                     {tab.icon}
@@ -1005,13 +1005,13 @@ export default function Page() {
                   tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 border border-transparent'
+                      ? `${tabActiveClass} shadow-sm`
+                      : `${tabIdleClass} border border-transparent`
                   }`}
                 >
                   <span className={`transition-all duration-300 ${
                     activeTab === tab.id 
-                      ? 'text-emerald-600 dark:text-emerald-400'
+                      ? 'text-emerald-700 dark:text-emerald-300'
                       : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
                   }`}>
                     {tab.icon}
@@ -1039,13 +1039,13 @@ export default function Page() {
                   tabIndex={activeTab === tab.id ? 0 : -1}
                   className={`group relative flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300 flex-shrink-0 ${
                     activeTab === tab.id
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-white/5 border border-transparent'
+                      ? `${tabActiveClass} shadow-sm`
+                      : `${tabIdleClass} border border-transparent`
                   }`}
                 >
                   <span className={`transition-all duration-300 ${
                     activeTab === tab.id 
-                      ? 'text-emerald-600 dark:text-emerald-400'
+                      ? 'text-emerald-700 dark:text-emerald-300'
                       : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300'
                   }`}>
                     {tab.icon}
@@ -1064,7 +1064,7 @@ export default function Page() {
         <div className={`${panelShellClass} overflow-hidden`}>
           {/* Active tab header bar */}
           <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200/70 dark:border-white/10">
-            <span className="text-emerald-600 dark:text-emerald-400">
+            <span className="text-emerald-700 dark:text-emerald-300">
               {tabs.find(t => t.id === activeTab)?.icon}
             </span>
             <div>

@@ -197,7 +197,7 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
     <Card glass className={className}>
       <CardHeader className="pb-3">
         <CardTitle className="text-white flex items-center gap-2">
-          <OverallIcon className="w-5 h-5 text-neon-400" />
+          <OverallIcon className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
           Risk Assessment
         </CardTitle>
       </CardHeader>
@@ -262,7 +262,7 @@ const RiskAssessment: React.FC<RiskAssessmentProps> = ({ stock, className = '' }
           {/* Volume Risk */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-neon-400" />
+              <BarChart3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               <span className="text-sm text-gray-300">Volume Pattern</span>
             </div>
             <div className="flex items-center gap-2">

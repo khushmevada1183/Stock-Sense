@@ -111,7 +111,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                   <div>
                     <div className="text-xs text-gray-500">Website</div>
                     <a href={website} target="_blank" rel="noopener noreferrer" 
-                       className="text-neon-400 hover:text-neon-300 transition-colors">
+                       className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors">
                       {website.replace(/^https?:\/\//, '')}
                     </a>
                   </div>
@@ -143,7 +143,7 @@ const CompanyInfo: React.FC<CompanyInfoProps> = ({
                   <Mail className="h-4 w-4 text-gray-400 mt-1 mr-2" />
                   <div>
                     <div className="text-xs text-gray-500">Email</div>
-                    <a href={`mailto:${email}`} className="text-neon-400 hover:text-neon-300 transition-colors">
+                    <a href={`mailto:${email}`} className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors">
                       {email}
                     </a>
                   </div>

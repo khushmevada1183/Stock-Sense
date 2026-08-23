@@ -194,7 +194,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Building2 className="w-5 h-5 text-neon-400" />
+            <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             {industry} Industry Overview
           </CardTitle>
         </CardHeader>
@@ -234,7 +234,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-neon-400" />
+            <Users className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Competitive Landscape
           </CardTitle>
         </CardHeader>
@@ -290,7 +290,7 @@ const IndustryAnalysis: React.FC<IndustryAnalysisProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-neon-400" />
+            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Industry Trends & Outlook
           </CardTitle>
         </CardHeader>

@@ -69,27 +69,27 @@
 <body>
   <header class="page">
     <h1>Design Rollout Tracker</h1>
-    <p class="sub">Benchmark: PortfolioDashboard · Updated 2026-08-23T10:29:37.559Z · <code>npm run audit:design:refresh</code> to regenerate</p>
+    <p class="sub">Benchmark: PortfolioDashboard · Updated 2026-08-23T10:32:06.523Z · <code>npm run audit:design:refresh</code> to regenerate</p>
 
     <div class="stats">
       <div class="stat done">
-        <div class="num">39</div>
+        <div class="num">54</div>
         <div class="label">Completed</div>
       </div>
       <div class="stat partial">
-        <div class="num">6</div>
+        <div class="num">5</div>
         <div class="label">Partial</div>
       </div>
       <div class="stat remaining">
-        <div class="num">22</div>
+        <div class="num">5</div>
         <div class="label">Remaining work</div>
       </div>
       <div class="stat not-started">
-        <div class="num">5</div>
+        <div class="num">0</div>
         <div class="label">Not started</div>
       </div>
       <div class="stat">
-        <div class="num" style="color:#ef4444">11</div>
+        <div class="num" style="color:#ef4444">0</div>
         <div class="label">Legacy</div>
       </div>
     </div>
@@ -97,20 +97,20 @@
     <div class="progress-wrap">
       <div class="progress-label">
         <span>Rollout progress</span>
-        <span><strong>39</strong> / 61 routes complete (64%)</span>
+        <span><strong>54</strong> / 59 routes complete (92%)</span>
       </div>
-      <div class="progress-bar" role="progressbar" aria-valuenow="64" aria-valuemin="0" aria-valuemax="100">
-        <div class="progress-fill" style="width:64%"></div>
+      <div class="progress-bar" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill" style="width:92%"></div>
       </div>
     </div>
 
     <div class="filters">
-      <button data-filter="all" class="active">All (61)</button>
-      <button data-filter="remaining">Remaining (22)</button>
-      <button data-filter="implemented">Completed (39)</button>
-      <button data-filter="partial">Partial (6)</button>
-      <button data-filter="legacy">Legacy (11)</button>
-      <button data-filter="not-started">Not started (5)</button>
+      <button data-filter="all" class="active">All (59)</button>
+      <button data-filter="remaining">Remaining (5)</button>
+      <button data-filter="implemented">Completed (54)</button>
+      <button data-filter="partial">Partial (5)</button>
+      <button data-filter="legacy">Legacy (0)</button>
+      <button data-filter="not-started">Not started (0)</button>
     </div>
   </header>
 
@@ -118,56 +118,29 @@
     <aside class="sidebar">
       <h2>Route checklist</h2>
       
-    <details class="checklist-group" open>
-      <summary style="--accent:#ef4444">
-        <span class="pill" style="background:#ef4444">11</span>
-        Legacy — redesign needed
-      </summary>
-      <ul><li><code>/stocks/RELIANCE?tab=overview</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=fundamental</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=technical</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=management</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=industry</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=sentiment</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=institutional</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=macroeconomic</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=esg</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=risk</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
-<li><code>/stocks/RELIANCE?tab=growth</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li></ul>
-    </details>
       
-    <details class="checklist-group" open>
-      <summary style="--accent:#64748b">
-        <span class="pill" style="background:#64748b">5</span>
-        Not started
-      </summary>
-      <ul><li><code>/_not-found</code><span class="file">src/app/not-found.tsx</span></li>
-<li><code>/accessibility</code><span class="file">src/app/accessibility/page.tsx</span></li>
-<li><code>/api-docs</code><span class="file">src/app/api-docs/page.tsx</span></li>
-<li><code>/api-test</code><span class="file">src/app/api-test/page.tsx</span></li>
-<li><code>/sitemap</code><span class="file">src/app/sitemap/page.tsx</span></li></ul>
-    </details>
       
     <details class="checklist-group">
       <summary style="--accent:#f59e0b">
-        <span class="pill" style="background:#f59e0b">6</span>
+        <span class="pill" style="background:#f59e0b">5</span>
         Partial — in progress
       </summary>
       <ul><li><code>/news/alerts</code><span class="file">src/app/news/alerts/page.tsx</span></li>
 <li><code>/news/companies</code><span class="file">src/app/news/companies/page.tsx</span></li>
 <li><code>/news/economy</code><span class="file">src/app/news/economy/page.tsx</span></li>
 <li><code>/news/markets</code><span class="file">src/app/news/markets/page.tsx</span></li>
-<li><code>/news/trending</code><span class="file">src/app/news/trending/page.tsx</span></li>
-<li><code>/stocks/[symbol]</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li></ul>
+<li><code>/news/trending</code><span class="file">src/app/news/trending/page.tsx</span></li></ul>
     </details>
       
     <details class="checklist-group">
       <summary style="--accent:#10b981">
-        <span class="pill" style="background:#10b981">39</span>
+        <span class="pill" style="background:#10b981">54</span>
         Completed
       </summary>
       <ul><li><code>/</code><span class="file">src/app/page.tsx</span></li>
+<li><code>/_not-found</code><span class="file">src/app/not-found.tsx</span></li>
 <li><code>/about</code><span class="file">src/app/about/page.tsx</span></li>
+<li><code>/accessibility</code><span class="file">src/app/accessibility/page.tsx</span></li>
 <li><code>/alerts</code><span class="file">src/app/alerts/page.tsx</span></li>
 <li><code>/auth/forgot-password</code><span class="file">src/app/auth/forgot-password/page.tsx</span></li>
 <li><code>/auth/reset-password</code><span class="file">src/app/auth/reset-password/page.tsx</span></li>
@@ -189,8 +162,10 @@
 <li><code>/privacy</code><span class="file">src/app/privacy/page.tsx</span></li>
 <li><code>/settings</code><span class="file">src/app/settings/page.tsx</span></li>
 <li><code>/signup</code><span class="file">src/app/signup/page.tsx</span></li>
+<li><code>/sitemap</code><span class="file">src/app/sitemap/page.tsx</span></li>
 <li><code>/stock-search</code><span class="file">src/app/stock-search/page.tsx</span></li>
 <li><code>/stocks</code><span class="file">src/app/stocks/page.tsx</span></li>
+<li><code>/stocks/[symbol]</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
 <li><code>/terms</code><span class="file">src/app/terms/page.tsx</span></li>
 <li><code>/watchlists</code><span class="file">src/app/watchlists/page.tsx</span></li>
 <li><code>/settings?tab=basic</code><span class="file">src/components/settings/SettingsPageShell.tsx</span></li>
@@ -204,346 +179,21 @@
 <li><code>/news/economy</code><span class="file">src/components/News/NewsCategoryTabs.tsx</span></li>
 <li><code>/news/companies</code><span class="file">src/components/News/NewsCategoryTabs.tsx</span></li>
 <li><code>/news/trending</code><span class="file">src/components/News/NewsCategoryTabs.tsx</span></li>
-<li><code>/news/alerts</code><span class="file">src/components/News/NewsCategoryTabs.tsx</span></li></ul>
+<li><code>/news/alerts</code><span class="file">src/components/News/NewsCategoryTabs.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=overview</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=fundamental</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=technical</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=management</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=industry</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=sentiment</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=institutional</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=macroeconomic</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=esg</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=risk</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li>
+<li><code>/stocks/RELIANCE?tab=growth</code><span class="file">src/app/stocks/[symbol]/page.tsx</span></li></ul>
     </details>
     </aside>
     <main class="cards">
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=esg</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-esg.png" alt="light /stocks/RELIANCE?tab=esg" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-esg.png" alt="dark /stocks/RELIANCE?tab=esg" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=fundamental</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-fundamental.png" alt="light /stocks/RELIANCE?tab=fundamental" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-fundamental.png" alt="dark /stocks/RELIANCE?tab=fundamental" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=growth</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-growth.png" alt="light /stocks/RELIANCE?tab=growth" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-growth.png" alt="dark /stocks/RELIANCE?tab=growth" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=industry</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-industry.png" alt="light /stocks/RELIANCE?tab=industry" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-industry.png" alt="dark /stocks/RELIANCE?tab=industry" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=institutional</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-institutional.png" alt="light /stocks/RELIANCE?tab=institutional" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-institutional.png" alt="dark /stocks/RELIANCE?tab=institutional" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=macroeconomic</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-macroeconomic.png" alt="light /stocks/RELIANCE?tab=macroeconomic" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-macroeconomic.png" alt="dark /stocks/RELIANCE?tab=macroeconomic" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=management</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-management.png" alt="light /stocks/RELIANCE?tab=management" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-management.png" alt="dark /stocks/RELIANCE?tab=management" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=overview</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-overview.png" alt="light /stocks/RELIANCE?tab=overview" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-overview.png" alt="dark /stocks/RELIANCE?tab=overview" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=risk</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-risk.png" alt="light /stocks/RELIANCE?tab=risk" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-risk.png" alt="dark /stocks/RELIANCE?tab=risk" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=sentiment</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-sentiment.png" alt="light /stocks/RELIANCE?tab=sentiment" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-sentiment.png" alt="dark /stocks/RELIANCE?tab=sentiment" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="legacy" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#ef4444">!</span>
-          <h2>/stocks/RELIANCE?tab=technical</h2>
-        </div>
-        <span class="badge" style="background:#ef4444" title="glass-card / PageBackground — redesign needed">Legacy</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 30 · glass-card, stock-details-page</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-technical.png" alt="light /stocks/RELIANCE?tab=technical" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-technical.png" alt="dark /stocks/RELIANCE?tab=technical" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/_not-found</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/not-found.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/_not-found.png" alt="light /_not-found" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/_not-found.png" alt="dark /_not-found" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/accessibility</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/accessibility/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/accessibility.png" alt="light /accessibility" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/accessibility.png" alt="dark /accessibility" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/api-docs</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/api-docs/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/api-docs.png" alt="light /api-docs" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/api-docs.png" alt="dark /api-docs" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/api-test</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/api-test/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/api-test.png" alt="light /api-test" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/api-test.png" alt="dark /api-test" />
-        </figure>
-      </div>
-    </article>
-
-    <article class="card card-remaining" data-status="not-started" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#64748b">○</span>
-          <h2>/sitemap</h2>
-        </div>
-        <span class="badge" style="background:#64748b" title="No design tokens detected yet">Not started</span>
-      </header>
-      <p class="meta">src/app/sitemap/page.tsx · score 50 · </p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/sitemap.png" alt="light /sitemap" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/sitemap.png" alt="dark /sitemap" />
-        </figure>
-      </div>
-    </article>
-
     <article class="card card-remaining" data-status="partial" data-remaining="true">
       <header>
         <div class="title-wrap">
@@ -649,27 +299,6 @@
       </div>
     </article>
 
-    <article class="card card-remaining" data-status="partial" data-remaining="true">
-      <header>
-        <div class="title-wrap">
-          <span class="status-icon" style="color:#f59e0b">◐</span>
-          <h2>/stocks/[symbol]</h2>
-        </div>
-        <span class="badge" style="background:#f59e0b" title="Some new tokens — needs polish">Partial</span>
-      </header>
-      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 75 · panel-shell, neon-accent</p>
-      <div class="shots">
-        <figure>
-          <figcaption>Light</figcaption>
-          <img loading="lazy" src="screenshots/light/stocks-RELIANCE.png" alt="light /stocks/[symbol]" />
-        </figure>
-        <figure>
-          <figcaption>Dark</figcaption>
-          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE.png" alt="dark /stocks/[symbol]" />
-        </figure>
-      </div>
-    </article>
-
     <article class="card card-done" data-status="implemented" data-remaining="false">
       <header>
         <div class="title-wrap">
@@ -695,6 +324,27 @@
       <header>
         <div class="title-wrap">
           <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/_not-found</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/not-found.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/_not-found.png" alt="light /_not-found" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/_not-found.png" alt="dark /_not-found" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
           <h2>/about</h2>
         </div>
         <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
@@ -708,6 +358,27 @@
         <figure>
           <figcaption>Dark</figcaption>
           <img loading="lazy" src="screenshots/dark/about.png" alt="dark /about" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/accessibility</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/accessibility/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/accessibility.png" alt="light /accessibility" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/accessibility.png" alt="dark /accessibility" />
         </figure>
       </div>
     </article>
@@ -1409,6 +1080,27 @@
       <header>
         <div class="title-wrap">
           <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/sitemap</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/sitemap/page.tsx · score 90 · content-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/sitemap.png" alt="light /sitemap" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/sitemap.png" alt="dark /sitemap" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
           <h2>/stock-search</h2>
         </div>
         <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
@@ -1443,6 +1135,258 @@
         <figure>
           <figcaption>Dark</figcaption>
           <img loading="lazy" src="screenshots/dark/stocks.png" alt="dark /stocks" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/[symbol]</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE.png" alt="light /stocks/[symbol]" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE.png" alt="dark /stocks/[symbol]" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=esg</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-esg.png" alt="light /stocks/RELIANCE?tab=esg" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-esg.png" alt="dark /stocks/RELIANCE?tab=esg" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=fundamental</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-fundamental.png" alt="light /stocks/RELIANCE?tab=fundamental" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-fundamental.png" alt="dark /stocks/RELIANCE?tab=fundamental" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=growth</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-growth.png" alt="light /stocks/RELIANCE?tab=growth" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-growth.png" alt="dark /stocks/RELIANCE?tab=growth" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=industry</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-industry.png" alt="light /stocks/RELIANCE?tab=industry" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-industry.png" alt="dark /stocks/RELIANCE?tab=industry" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=institutional</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-institutional.png" alt="light /stocks/RELIANCE?tab=institutional" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-institutional.png" alt="dark /stocks/RELIANCE?tab=institutional" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=macroeconomic</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-macroeconomic.png" alt="light /stocks/RELIANCE?tab=macroeconomic" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-macroeconomic.png" alt="dark /stocks/RELIANCE?tab=macroeconomic" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=management</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-management.png" alt="light /stocks/RELIANCE?tab=management" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-management.png" alt="dark /stocks/RELIANCE?tab=management" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=overview</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-overview.png" alt="light /stocks/RELIANCE?tab=overview" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-overview.png" alt="dark /stocks/RELIANCE?tab=overview" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=risk</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-risk.png" alt="light /stocks/RELIANCE?tab=risk" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-risk.png" alt="dark /stocks/RELIANCE?tab=risk" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=sentiment</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-sentiment.png" alt="light /stocks/RELIANCE?tab=sentiment" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-sentiment.png" alt="dark /stocks/RELIANCE?tab=sentiment" />
+        </figure>
+      </div>
+    </article>
+
+    <article class="card card-done" data-status="implemented" data-remaining="false">
+      <header>
+        <div class="title-wrap">
+          <span class="status-icon" style="color:#10b981">✓</span>
+          <h2>/stocks/RELIANCE?tab=technical</h2>
+        </div>
+        <span class="badge" style="background:#10b981" title="Uses portfolio panelShellClass language">Completed</span>
+      </header>
+      <p class="meta">src/app/stocks/[symbol]/page.tsx · score 90 · panel-shell</p>
+      <div class="shots">
+        <figure>
+          <figcaption>Light</figcaption>
+          <img loading="lazy" src="screenshots/light/stocks-RELIANCE-tab-technical.png" alt="light /stocks/RELIANCE?tab=technical" />
+        </figure>
+        <figure>
+          <figcaption>Dark</figcaption>
+          <img loading="lazy" src="screenshots/dark/stocks-RELIANCE-tab-technical.png" alt="dark /stocks/RELIANCE?tab=technical" />
         </figure>
       </div>
     </article>
@@ -1515,7 +1459,7 @@
 
     // Default: show remaining work first
     const remainingBtn = document.querySelector('[data-filter="remaining"]');
-    if (remainingBtn && 22 > 0) {
+    if (remainingBtn && 5 > 0) {
       buttons.forEach((b) => b.classList.remove('active'));
       remainingBtn.classList.add('active');
       applyFilter('remaining');

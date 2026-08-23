@@ -93,7 +93,7 @@ const NewsCard: React.FC<NewsItemProps> = ({
           href={url} 
           target="_blank" 
           rel="noopener noreferrer"
-          className="ml-auto text-neon-400 hover:text-neon-300 flex items-center gap-1"
+          className="ml-auto text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 flex items-center gap-1"
         >
           Read more
           <ExternalLink className="h-3 w-3" />

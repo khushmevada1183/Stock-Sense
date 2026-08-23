@@ -61,7 +61,7 @@ const Overview: React.FC<OverviewProps> = ({
           <Card glass className="h-full">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-neon-400" />
+                <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                 Price Performance
               </CardTitle>
               <CardDescription className="text-gray-500">Last 30 days</CardDescription>
@@ -96,7 +96,7 @@ const Overview: React.FC<OverviewProps> = ({
         <Card glass>
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <LineChart className="h-5 w-5 text-neon-400" />
+              <LineChart className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               Trading Information
             </CardTitle>
           </CardHeader>
@@ -124,7 +124,7 @@ const Overview: React.FC<OverviewProps> = ({
         <Card glass>
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Building className="h-5 w-5 text-neon-400" />
+              <Building className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               Sector Distribution
             </CardTitle>
           </CardHeader>

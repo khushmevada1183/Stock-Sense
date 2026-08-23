@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-08-23T10:29:36.993Z",
+  "generatedAt": "2026-08-23T10:32:05.876Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 39,
-    "partial": 6,
-    "legacy": 11,
-    "notStarted": 5,
-    "skipVisual": 3,
+    "implemented": 54,
+    "partial": 5,
+    "legacy": 0,
+    "notStarted": 0,
+    "skipVisual": 5,
     "total": 64,
-    "remaining": 22
+    "remaining": 5
   },
   "routes": [
     {
@@ -28,9 +28,11 @@
     {
       "route": "/_not-found",
       "capturePath": "/_not-found",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "panel-shell"
+      ],
       "file": "src/app/not-found.tsx",
       "lineCount": 8
     },
@@ -48,9 +50,11 @@
     {
       "route": "/accessibility",
       "capturePath": "/accessibility",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "content-shell"
+      ],
       "file": "src/app/accessibility/page.tsx",
       "lineCount": 44
     },
@@ -68,20 +72,22 @@
     {
       "route": "/api-docs",
       "capturePath": "/api-docs",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
-      "file": "src/app/api-docs/page.tsx",
-      "lineCount": 111
+      "status": "skip-visual",
+      "score": null,
+      "signals": [
+        "redirect-or-non-ui"
+      ],
+      "file": "src/app/api-docs/page.tsx"
     },
     {
       "route": "/api-test",
       "capturePath": "/api-test",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
-      "file": "src/app/api-test/page.tsx",
-      "lineCount": 144
+      "status": "skip-visual",
+      "score": null,
+      "signals": [
+        "redirect-or-non-ui"
+      ],
+      "file": "src/app/api-test/page.tsx"
     },
     {
       "route": "/auth/forgot-password",
@@ -393,9 +399,11 @@
     {
       "route": "/sitemap",
       "capturePath": "/sitemap",
-      "status": "not-started",
-      "score": 50,
-      "signals": [],
+      "status": "implemented",
+      "score": 90,
+      "signals": [
+        "content-shell"
+      ],
       "file": "src/app/sitemap/page.tsx",
       "lineCount": 38
     },
@@ -424,11 +432,10 @@
     {
       "route": "/stocks/[symbol]",
       "capturePath": "/stocks/RELIANCE",
-      "status": "partial",
-      "score": 75,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "panel-shell",
-        "neon-accent"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "lineCount": 1195
@@ -596,11 +603,10 @@
     {
       "route": "/stocks/RELIANCE?tab=overview",
       "capturePath": "/stocks/RELIANCE?tab=overview",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -608,11 +614,10 @@
     {
       "route": "/stocks/RELIANCE?tab=fundamental",
       "capturePath": "/stocks/RELIANCE?tab=fundamental",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -620,11 +625,10 @@
     {
       "route": "/stocks/RELIANCE?tab=technical",
       "capturePath": "/stocks/RELIANCE?tab=technical",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -632,11 +636,10 @@
     {
       "route": "/stocks/RELIANCE?tab=management",
       "capturePath": "/stocks/RELIANCE?tab=management",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -644,11 +647,10 @@
     {
       "route": "/stocks/RELIANCE?tab=industry",
       "capturePath": "/stocks/RELIANCE?tab=industry",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -656,11 +658,10 @@
     {
       "route": "/stocks/RELIANCE?tab=sentiment",
       "capturePath": "/stocks/RELIANCE?tab=sentiment",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -668,11 +669,10 @@
     {
       "route": "/stocks/RELIANCE?tab=institutional",
       "capturePath": "/stocks/RELIANCE?tab=institutional",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -680,11 +680,10 @@
     {
       "route": "/stocks/RELIANCE?tab=macroeconomic",
       "capturePath": "/stocks/RELIANCE?tab=macroeconomic",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -692,11 +691,10 @@
     {
       "route": "/stocks/RELIANCE?tab=esg",
       "capturePath": "/stocks/RELIANCE?tab=esg",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -704,11 +702,10 @@
     {
       "route": "/stocks/RELIANCE?tab=risk",
       "capturePath": "/stocks/RELIANCE?tab=risk",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"
@@ -716,11 +713,10 @@
     {
       "route": "/stocks/RELIANCE?tab=growth",
       "capturePath": "/stocks/RELIANCE?tab=growth",
-      "status": "legacy",
-      "score": 30,
+      "status": "implemented",
+      "score": 90,
       "signals": [
-        "glass-card",
-        "stock-details-page"
+        "panel-shell"
       ],
       "file": "src/app/stocks/[symbol]/page.tsx",
       "parentRoute": "/stocks/[symbol]"

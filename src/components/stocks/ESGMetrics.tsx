@@ -368,7 +368,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5 text-neon-400" />
+            <Award className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             ESG Initiatives
           </CardTitle>
         </CardHeader>
@@ -466,7 +466,7 @@ const ESGMetrics: React.FC<ESGMetricsProps> = ({
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-white">{company.company}</h3>
                     {company.isCurrentCompany && (
-                      <CheckCircle className="h-4 w-4 text-neon-400" />
+                      <CheckCircle className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
                     )}
                   </div>
                   <span className={`text-lg font-bold ${getScoreColor(company.overallScore)}`}>

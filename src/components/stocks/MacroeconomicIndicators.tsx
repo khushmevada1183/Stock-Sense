@@ -296,7 +296,7 @@ const MacroeconomicIndicators: React.FC<MacroeconomicIndicatorsProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Building className="w-5 h-5 text-neon-400" />
+            <Building className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Recent Policy Updates
           </CardTitle>
         </CardHeader>

@@ -196,7 +196,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'FII': return 'text-cyan-400 bg-neon-400/10';
+      case 'FII': return 'text-cyan-400 bg-emerald-500/10';
       case 'DII': return 'text-green-400 bg-green-500/20';
       case 'MF': return 'text-purple-400 bg-purple-500/20';
       case 'Insurance': return 'text-yellow-400 bg-yellow-500/20';
@@ -247,7 +247,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Building className="w-5 h-5 text-neon-400" />
+            <Building className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Institutional Holdings Overview
           </CardTitle>
         </CardHeader>
@@ -298,7 +298,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-neon-400" />
+            <TrendingUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             FII vs DII Flow Analysis
           </CardTitle>
         </CardHeader>
@@ -357,7 +357,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Target className="w-5 h-5 text-neon-400" />
+            <Target className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Top Institutional Investors
           </CardTitle>
         </CardHeader>
@@ -412,7 +412,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-neon-400" />
+            <BarChart3 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Investment Pattern Analysis
           </CardTitle>
         </CardHeader>
@@ -473,7 +473,7 @@ const InstitutionalInvestment: React.FC<InstitutionalInvestmentProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                 <div className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-neon-400 rounded-full mt-2"></div>
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2"></div>
                   <div>
                     <div className="text-cyan-400 font-medium text-sm">Strong Institutional Support</div>
                     <div className="text-gray-300 text-sm">

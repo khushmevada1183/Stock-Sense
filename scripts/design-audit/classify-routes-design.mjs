@@ -12,6 +12,8 @@ const SKIP_ROUTES = new Set([
   '/auth/register',
   '/auth/profile',
   '/api/health',
+  '/api-test',
+  '/api-docs',
 ]);
 
 const DYNAMIC_SAMPLES = {
@@ -93,18 +95,24 @@ for (const tab of audit.matrices.newsCategoryTabs) {
   });
 }
 
-// Stock detail subtabs
+// Stock detail subtabs — inherit shell classification from page + tab components
 const STOCK_TABS = [
   'overview', 'fundamental', 'technical', 'management', 'industry',
   'sentiment', 'institutional', 'macroeconomic', 'esg', 'risk', 'growth',
 ];
+const stockRoute = audit.routes.find((r) => r.route === '/stocks/[symbol]');
+const stockSources = stockRoute
+  ? [stockRoute.file, ...collectTreeSources(stockRoute.tree)]
+  : ['src/app/stocks/[symbol]/page.tsx'];
+const stockMerged = stockSources.map(readSource).join('\n');
+const stockClassified = classifyRouteDesign(stockMerged, 'src/app/stocks/[symbol]/page.tsx');
 for (const tabId of STOCK_TABS) {
   routes.push({
     route: `/stocks/RELIANCE?tab=${tabId}`,
     capturePath: `/stocks/RELIANCE?tab=${tabId}`,
-    status: DESIGN_STATUS.LEGACY,
-    score: 30,
-    signals: ['glass-card', 'stock-details-page'],
+    status: stockClassified.status,
+    score: stockClassified.score,
+    signals: stockClassified.signals,
     file: 'src/app/stocks/[symbol]/page.tsx',
     parentRoute: '/stocks/[symbol]',
   });

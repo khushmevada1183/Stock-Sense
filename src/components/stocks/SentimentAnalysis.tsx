@@ -192,9 +192,9 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
   };
 
   const getSentimentIcon = (sentiment: number) => {
-    if (sentiment >= 30) return <ThumbsUp className="w-5 h-5 text-neon-400" />;
-    if (sentiment >= -30) return <Activity className="w-5 h-5 text-neon-400" />;
-    return <ThumbsDown className="w-5 h-5 text-neon-400" />;
+    if (sentiment >= 30) return <ThumbsUp className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />;
+    if (sentiment >= -30) return <Activity className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />;
+    return <ThumbsDown className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />;
   };
 
   const getTrendIcon = (trend: 'up' | 'down' | 'stable') => {
@@ -229,7 +229,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
         <Card glass>
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Brain className="w-5 h-5 text-neon-400" />
+              <Brain className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               Overall Sentiment Score
             </CardTitle>
           </CardHeader>
@@ -294,7 +294,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Zap className="w-5 h-5 text-neon-400" />
+            <Zap className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Sentiment Sources
           </CardTitle>
         </CardHeader>
@@ -346,7 +346,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Heart className="w-5 h-5 text-neon-400" />
+            <Heart className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Market Psychology Indicators
           </CardTitle>
         </CardHeader>
@@ -374,7 +374,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Brain className="w-5 h-5 text-neon-400" />
+            <Brain className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             AI Insights
           </CardTitle>
         </CardHeader>
@@ -382,7 +382,7 @@ const SentimentAnalysis: React.FC<SentimentAnalysisProps> = ({ symbol }) => {
           <div className="space-y-3">
             <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
               <div className="flex items-start gap-2">
-                <div className="w-2 h-2 bg-neon-400 rounded-full mt-2"></div>
+                <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2"></div>
                 <div>
                   <div className="text-cyan-400 font-medium text-sm">Sentiment Trend</div>
                   <div className="text-gray-300 text-sm">

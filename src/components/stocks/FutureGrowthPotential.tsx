@@ -350,14 +350,14 @@ const FutureGrowthPotential: React.FC<FutureGrowthPotentialProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Rocket className="h-5 w-5 text-neon-400" />
+            <Rocket className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             Growth Potential Overview
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-4xl font-bold text-neon-400 mb-2">
+              <div className="text-4xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
                 {overallGrowthScore.toFixed(0)}/100
               </div>
               <div className="text-sm text-gray-400">Growth Score</div>

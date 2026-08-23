@@ -63,7 +63,7 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers, fallbackDetai
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Users className="h-5 w-5 text-neon-400" />
+            <Users className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             Management Team
           </CardTitle>
         </CardHeader>
@@ -125,7 +125,7 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers, fallbackDetai
     <Card glass>
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
-          <Users className="h-5 w-5 text-neon-400" />
+          <Users className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           Management Team
         </CardTitle>
       </CardHeader>
@@ -138,8 +138,8 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers, fallbackDetai
             
             return (
               <div key={index} className="flex items-start group">
-                <div className="w-11 h-11 bg-neon-400/10 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 border border-neon-400/10 group-hover:border-neon-400/20 transition-colors">
-                  <span className="text-neon-400 text-base font-bold">
+                <div className="w-11 h-11 bg-emerald-500/10 rounded-xl flex items-center justify-center mr-4 flex-shrink-0 border border-emerald-500/10 group-hover:border-emerald-500/20 transition-colors">
+                  <span className="text-emerald-600 dark:text-emerald-400 text-base font-bold">
                     {name.substring(0, 1)}
                   </span>
                 </div>
@@ -169,7 +169,7 @@ const ManagementInfo: React.FC<ManagementInfoProps> = ({ officers, fallbackDetai
         
         {officers.length > 5 && (
           <div className="mt-5 text-center">
-            <button className="text-sm text-neon-400 hover:text-neon-300 transition-colors">
+            <button className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors">
               View All {officers.length} Management Members
             </button>
           </div>

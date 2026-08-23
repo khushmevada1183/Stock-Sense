@@ -1,6 +1,6 @@
 # Design Coverage Matrix
 
-> Generated: 2026-08-23T10:29:37.548Z
+> Generated: 2026-08-23T10:32:06.509Z
 > Benchmark: `src/components/portfolio/PortfolioDashboard.tsx`
 > Brief: `docs/new_design.md`
 
@@ -8,41 +8,26 @@
 
 | Status | Count | Meaning |
 | --- | ---: | --- |
-| implemented (completed) | 39 | Matches portfolio `panelShellClass` language |
-| partial (in progress) | 6 | Some new patterns, inconsistent surfaces |
-| legacy | 11 | `glass-card`, `PageBackground`, or monolithic old UI |
-| not-started | 5 | No design tokens detected yet |
-| **remaining** | **22** | legacy + partial + not-started |
-| skip-visual | 3 | Redirects or non-UI routes |
+| implemented (completed) | 54 | Matches portfolio `panelShellClass` language |
+| partial (in progress) | 5 | Some new patterns, inconsistent surfaces |
+| legacy | 0 | `glass-card`, `PageBackground`, or monolithic old UI |
+| not-started | 0 | No design tokens detected yet |
+| **remaining** | **5** | legacy + partial + not-started |
+| skip-visual | 5 | Redirects or non-UI routes |
 
 ## Route Status (sorted by priority)
 
 | Route | Status | Score | Signals | Screenshot (light) |
 | --- | --- | ---: | --- | --- |
-| `/stocks/RELIANCE?tab=esg` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-esg.png |
-| `/stocks/RELIANCE?tab=fundamental` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-fundamental.png |
-| `/stocks/RELIANCE?tab=growth` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-growth.png |
-| `/stocks/RELIANCE?tab=industry` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-industry.png |
-| `/stocks/RELIANCE?tab=institutional` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-institutional.png |
-| `/stocks/RELIANCE?tab=macroeconomic` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-macroeconomic.png |
-| `/stocks/RELIANCE?tab=management` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-management.png |
-| `/stocks/RELIANCE?tab=overview` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-overview.png |
-| `/stocks/RELIANCE?tab=risk` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-risk.png |
-| `/stocks/RELIANCE?tab=sentiment` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-sentiment.png |
-| `/stocks/RELIANCE?tab=technical` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-technical.png |
 | `/news/alerts` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-alerts.png |
 | `/news/companies` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-companies.png |
 | `/news/economy` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-economy.png |
 | `/news/markets` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-markets.png |
 | `/news/trending` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-trending.png |
-| `/stocks/[symbol]` | partial | 75 | panel-shell, neon-accent | docs\design-audit\screenshots\light\stocks-RELIANCE.png |
-| `/_not-found` | not-started | 50 |  | docs\design-audit\screenshots\light\_not-found.png |
-| `/accessibility` | not-started | 50 |  | docs\design-audit\screenshots\light\accessibility.png |
-| `/api-docs` | not-started | 50 |  | docs\design-audit\screenshots\light\api-docs.png |
-| `/api-test` | not-started | 50 |  | docs\design-audit\screenshots\light\api-test.png |
-| `/sitemap` | not-started | 50 |  | docs\design-audit\screenshots\light\sitemap.png |
 | `/` | implemented | 100 | panel-shell, premium-type, home-section | docs\design-audit\screenshots\light\home.png |
+| `/_not-found` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\_not-found.png |
 | `/about` | implemented | 90 | content-shell | docs\design-audit\screenshots\light\about.png |
+| `/accessibility` | implemented | 90 | content-shell | docs\design-audit\screenshots\light\accessibility.png |
 | `/alerts` | implemented | 90 | tool-shell | docs\design-audit\screenshots\light\alerts.png |
 | `/auth/forgot-password` | implemented | 90 | auth-shell | docs\design-audit\screenshots\light\auth-forgot-password.png |
 | `/auth/reset-password` | implemented | 90 | auth-shell | docs\design-audit\screenshots\light\auth-reset-password.png |
@@ -76,10 +61,25 @@
 | `/settings?tab=suspicious` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-suspicious.png |
 | `/settings?tab=trading` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings-tab-trading.png |
 | `/signup` | implemented | 90 | auth-shell | docs\design-audit\screenshots\light\signup.png |
+| `/sitemap` | implemented | 90 | content-shell | docs\design-audit\screenshots\light\sitemap.png |
 | `/stock-search` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stock-search.png |
 | `/stocks` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks.png |
+| `/stocks/[symbol]` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE.png |
+| `/stocks/RELIANCE?tab=esg` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-esg.png |
+| `/stocks/RELIANCE?tab=fundamental` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-fundamental.png |
+| `/stocks/RELIANCE?tab=growth` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-growth.png |
+| `/stocks/RELIANCE?tab=industry` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-industry.png |
+| `/stocks/RELIANCE?tab=institutional` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-institutional.png |
+| `/stocks/RELIANCE?tab=macroeconomic` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-macroeconomic.png |
+| `/stocks/RELIANCE?tab=management` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-management.png |
+| `/stocks/RELIANCE?tab=overview` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-overview.png |
+| `/stocks/RELIANCE?tab=risk` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-risk.png |
+| `/stocks/RELIANCE?tab=sentiment` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-sentiment.png |
+| `/stocks/RELIANCE?tab=technical` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-technical.png |
 | `/terms` | implemented | 90 | content-shell | docs\design-audit\screenshots\light\terms.png |
 | `/watchlists` | implemented | 90 | tool-shell | docs\design-audit\screenshots\light\watchlists.png |
+| `/api-docs` | skip-visual | - | redirect-or-non-ui | docs\design-audit\screenshots\light\api-docs.png |
+| `/api-test` | skip-visual | - | redirect-or-non-ui | docs\design-audit\screenshots\light\api-test.png |
 | `/auth/login` | skip-visual | - | redirect-or-non-ui | - |
 | `/auth/profile` | skip-visual | - | redirect-or-non-ui | - |
 | `/auth/register` | skip-visual | - | redirect-or-non-ui | - |
@@ -104,25 +104,8 @@ flowchart LR
 
 ## Remaining work (action list)
 
-- [ ] `/stocks/RELIANCE?tab=esg` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=fundamental` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=growth` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=industry` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=institutional` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=macroeconomic` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=management` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=overview` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=risk` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=sentiment` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/stocks/RELIANCE?tab=technical` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
 - [ ] `/news/alerts` — **partial**; file: `src/app/news/alerts/page.tsx`
 - [ ] `/news/companies` — **partial**; file: `src/app/news/companies/page.tsx`
 - [ ] `/news/economy` — **partial**; file: `src/app/news/economy/page.tsx`
 - [ ] `/news/markets` — **partial**; file: `src/app/news/markets/page.tsx`
 - [ ] `/news/trending` — **partial**; file: `src/app/news/trending/page.tsx`
-- [ ] `/stocks/[symbol]` — **partial**; file: `src/app/stocks/[symbol]/page.tsx`
-- [ ] `/_not-found` — **not-started**; file: `src/app/not-found.tsx`
-- [ ] `/accessibility` — **not-started**; file: `src/app/accessibility/page.tsx`
-- [ ] `/api-docs` — **not-started**; file: `src/app/api-docs/page.tsx`
-- [ ] `/api-test` — **not-started**; file: `src/app/api-test/page.tsx`
-- [ ] `/sitemap` — **not-started**; file: `src/app/sitemap/page.tsx`

@@ -415,7 +415,7 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Signal className="w-5 h-5 text-neon-400" />
+            <Signal className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Technical Analysis Signal
           </CardTitle>
         </CardHeader>
@@ -434,7 +434,7 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-neon-400" />
+            <BarChart3 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Technical Indicators
           </CardTitle>
         </CardHeader>
@@ -469,7 +469,7 @@ const TechnicalAnalysis: React.FC<TechnicalAnalysisProps> = ({
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Target className="w-5 h-5 text-neon-400" />
+            <Target className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             Support & Resistance Levels
           </CardTitle>
         </CardHeader>

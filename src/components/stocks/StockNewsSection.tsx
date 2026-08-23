@@ -23,7 +23,7 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
       <Card glass>
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Newspaper className="h-5 w-5 text-neon-400" />
+            <Newspaper className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             Recent News
           </CardTitle>
         </CardHeader>
@@ -49,7 +49,7 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
     <Card glass>
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
-          <Newspaper className="h-5 w-5 text-neon-400" />
+          <Newspaper className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
           Recent News
         </CardTitle>
       </CardHeader>
@@ -74,7 +74,7 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <h3 className="font-medium text-gray-200 group-hover:text-neon-400 transition-colors flex items-center text-sm">
+                    <h3 className="font-medium text-gray-200 group-hover:text-emerald-600 dark:text-emerald-400 transition-colors flex items-center text-sm">
                       <span className="line-clamp-2">{item.headline}</span>
                       <ExternalLink className="ml-1.5 h-3 w-3 opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0" />
                     </h3>
@@ -90,7 +90,7 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
                       {item.section && (
                         <>
                           <span className="mx-2 text-gray-700">•</span>
-                          <span className="text-neon-400/60">{item.section}</span>
+                          <span className="text-emerald-600 dark:text-emerald-400/60">{item.section}</span>
                         </>
                       )}
                     </div>
@@ -105,7 +105,7 @@ const StockNewsSection: React.FC<StockNewsSectionProps> = ({ news }) => {
             href={`https://www.google.com/search?q=${encodeURIComponent('stock news')}`} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center justify-center mt-5 text-neon-400 hover:text-neon-300 transition-colors text-sm"
+            className="flex items-center justify-center mt-5 text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors text-sm"
           >
             View More News
             <ExternalLink className="h-3 w-3 ml-1" />
