@@ -1,0 +1,860 @@
+{
+  "generatedAt": "2026-08-23T08:53:20.057Z",
+  "baseUrl": "http://localhost:3000",
+  "shots": [
+    {
+      "capturePath": "/",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\home.png",
+      "route": "/",
+      "status": "implemented"
+    },
+    {
+      "capturePath": "/",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\home.png",
+      "route": "/",
+      "status": "implemented"
+    },
+    {
+      "capturePath": "/_not-found",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\_not-found.png",
+      "route": "/_not-found",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/_not-found",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\_not-found.png",
+      "route": "/_not-found",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/about",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\about.png",
+      "route": "/about",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/about",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\about.png",
+      "route": "/about",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/accessibility",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\accessibility.png",
+      "route": "/accessibility",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/accessibility",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\accessibility.png",
+      "route": "/accessibility",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/alerts",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\alerts.png",
+      "route": "/alerts",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/alerts",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\alerts.png",
+      "route": "/alerts",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/api-docs",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\api-docs.png",
+      "route": "/api-docs",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/api-docs",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\api-docs.png",
+      "route": "/api-docs",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/api-test",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\api-test.png",
+      "route": "/api-test",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/api-test",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\api-test.png",
+      "route": "/api-test",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/forgot-password",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\auth-forgot-password.png",
+      "route": "/auth/forgot-password",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/forgot-password",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\auth-forgot-password.png",
+      "route": "/auth/forgot-password",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/reset-password",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\auth-reset-password.png",
+      "route": "/auth/reset-password",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/reset-password",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\auth-reset-password.png",
+      "route": "/auth/reset-password",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/sessions",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\auth-sessions.png",
+      "route": "/auth/sessions",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/sessions",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\auth-sessions.png",
+      "route": "/auth/sessions",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/verify-email",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\auth-verify-email.png",
+      "route": "/auth/verify-email",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/verify-email",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\auth-verify-email.png",
+      "route": "/auth/verify-email",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/verify-reset-code",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\auth-verify-reset-code.png",
+      "route": "/auth/verify-reset-code",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/auth/verify-reset-code",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\auth-verify-reset-code.png",
+      "route": "/auth/verify-reset-code",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/blog",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\blog.png",
+      "route": "/blog",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/blog",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\blog.png",
+      "route": "/blog",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/contact",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\contact.png",
+      "route": "/contact",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/contact",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\contact.png",
+      "route": "/contact",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/faq",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\faq.png",
+      "route": "/faq",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/faq",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\faq.png",
+      "route": "/faq",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/ipo",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\ipo.png",
+      "route": "/ipo",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/ipo",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\ipo.png",
+      "route": "/ipo",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/ipo/sample-ipo",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\ipo-sample-ipo.png",
+      "route": "/ipo/[ipoId]",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/ipo/sample-ipo",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\ipo-sample-ipo.png",
+      "route": "/ipo/[ipoId]",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/learn",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\learn.png",
+      "route": "/learn",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/learn",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\learn.png",
+      "route": "/learn",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/login",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\login.png",
+      "route": "/login",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/login",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\login.png",
+      "route": "/login",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/market",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\market.png",
+      "route": "/market",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/market",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\market.png",
+      "route": "/market",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/market/institutional",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\market-institutional.png",
+      "route": "/market/institutional",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/market/institutional",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\market-institutional.png",
+      "route": "/market/institutional",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/news",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news.png",
+      "route": "/news",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/news",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news.png",
+      "route": "/news",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/news/alerts",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-alerts.png",
+      "route": "/news/alerts",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/alerts",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-alerts.png",
+      "route": "/news/alerts",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/companies",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-companies.png",
+      "route": "/news/companies",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/companies",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-companies.png",
+      "route": "/news/companies",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/economy",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-economy.png",
+      "route": "/news/economy",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/economy",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-economy.png",
+      "route": "/news/economy",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/markets",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-markets.png",
+      "route": "/news/markets",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/markets",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-markets.png",
+      "route": "/news/markets",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/trending",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-trending.png",
+      "route": "/news/trending",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/trending",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-trending.png",
+      "route": "/news/trending",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/notifications",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\notifications.png",
+      "route": "/notifications",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/notifications",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\notifications.png",
+      "route": "/notifications",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/portfolio",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\portfolio.png",
+      "route": "/portfolio",
+      "status": "implemented"
+    },
+    {
+      "capturePath": "/portfolio",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\portfolio.png",
+      "route": "/portfolio",
+      "status": "implemented"
+    },
+    {
+      "capturePath": "/privacy",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\privacy.png",
+      "route": "/privacy",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/privacy",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\privacy.png",
+      "route": "/privacy",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/settings",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\settings.png",
+      "route": "/settings",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\settings.png",
+      "route": "/settings",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/signup",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\signup.png",
+      "route": "/signup",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/signup",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\signup.png",
+      "route": "/signup",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/sitemap",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\sitemap.png",
+      "route": "/sitemap",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/sitemap",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\sitemap.png",
+      "route": "/sitemap",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/stock-search",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stock-search.png",
+      "route": "/stock-search",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/stock-search",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stock-search.png",
+      "route": "/stock-search",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/stocks",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks.png",
+      "route": "/stocks",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/stocks",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks.png",
+      "route": "/stocks",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE.png",
+      "route": "/stocks/[symbol]",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE.png",
+      "route": "/stocks/[symbol]",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/terms",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\terms.png",
+      "route": "/terms",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/terms",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\terms.png",
+      "route": "/terms",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/watchlists",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\watchlists.png",
+      "route": "/watchlists",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/watchlists",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\watchlists.png",
+      "route": "/watchlists",
+      "status": "not-started"
+    },
+    {
+      "capturePath": "/settings?tab=basic",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\settings-tab-basic.png",
+      "route": "/settings?tab=basic",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=basic",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\settings-tab-basic.png",
+      "route": "/settings?tab=basic",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=reports",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\settings-tab-reports.png",
+      "route": "/settings?tab=reports",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=reports",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\settings-tab-reports.png",
+      "route": "/settings?tab=reports",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=devices",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\settings-tab-devices.png",
+      "route": "/settings?tab=devices",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=devices",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\settings-tab-devices.png",
+      "route": "/settings?tab=devices",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=password",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\settings-tab-password.png",
+      "route": "/settings?tab=password",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=password",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\settings-tab-password.png",
+      "route": "/settings?tab=password",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=trading",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\settings-tab-trading.png",
+      "route": "/settings?tab=trading",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=trading",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\settings-tab-trading.png",
+      "route": "/settings?tab=trading",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=suspicious",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\settings-tab-suspicious.png",
+      "route": "/settings?tab=suspicious",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/settings?tab=suspicious",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\settings-tab-suspicious.png",
+      "route": "/settings?tab=suspicious",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news.png",
+      "route": "/news",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news.png",
+      "route": "/news",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/markets",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-markets.png",
+      "route": "/news/markets",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/markets",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-markets.png",
+      "route": "/news/markets",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/economy",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-economy.png",
+      "route": "/news/economy",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/economy",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-economy.png",
+      "route": "/news/economy",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/companies",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-companies.png",
+      "route": "/news/companies",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/companies",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-companies.png",
+      "route": "/news/companies",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/trending",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-trending.png",
+      "route": "/news/trending",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/trending",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-trending.png",
+      "route": "/news/trending",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/alerts",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\news-alerts.png",
+      "route": "/news/alerts",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/news/alerts",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\news-alerts.png",
+      "route": "/news/alerts",
+      "status": "partial"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=overview",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-overview.png",
+      "route": "/stocks/RELIANCE?tab=overview",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=overview",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-overview.png",
+      "route": "/stocks/RELIANCE?tab=overview",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=fundamental",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-fundamental.png",
+      "route": "/stocks/RELIANCE?tab=fundamental",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=fundamental",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-fundamental.png",
+      "route": "/stocks/RELIANCE?tab=fundamental",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=technical",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-technical.png",
+      "route": "/stocks/RELIANCE?tab=technical",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=technical",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-technical.png",
+      "route": "/stocks/RELIANCE?tab=technical",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=management",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-management.png",
+      "route": "/stocks/RELIANCE?tab=management",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=management",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-management.png",
+      "route": "/stocks/RELIANCE?tab=management",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=industry",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-industry.png",
+      "route": "/stocks/RELIANCE?tab=industry",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=industry",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-industry.png",
+      "route": "/stocks/RELIANCE?tab=industry",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=sentiment",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-sentiment.png",
+      "route": "/stocks/RELIANCE?tab=sentiment",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=sentiment",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-sentiment.png",
+      "route": "/stocks/RELIANCE?tab=sentiment",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=institutional",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-institutional.png",
+      "route": "/stocks/RELIANCE?tab=institutional",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=institutional",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-institutional.png",
+      "route": "/stocks/RELIANCE?tab=institutional",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=macroeconomic",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-macroeconomic.png",
+      "route": "/stocks/RELIANCE?tab=macroeconomic",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=macroeconomic",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-macroeconomic.png",
+      "route": "/stocks/RELIANCE?tab=macroeconomic",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=esg",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-esg.png",
+      "route": "/stocks/RELIANCE?tab=esg",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=esg",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-esg.png",
+      "route": "/stocks/RELIANCE?tab=esg",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=risk",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-risk.png",
+      "route": "/stocks/RELIANCE?tab=risk",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=risk",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-risk.png",
+      "route": "/stocks/RELIANCE?tab=risk",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=growth",
+      "theme": "light",
+      "file": "docs\\design-audit\\screenshots\\light\\stocks-RELIANCE-tab-growth.png",
+      "route": "/stocks/RELIANCE?tab=growth",
+      "status": "legacy"
+    },
+    {
+      "capturePath": "/stocks/RELIANCE?tab=growth",
+      "theme": "dark",
+      "file": "docs\\design-audit\\screenshots\\dark\\stocks-RELIANCE-tab-growth.png",
+      "route": "/stocks/RELIANCE?tab=growth",
+      "status": "legacy"
+    }
+  ]
+}

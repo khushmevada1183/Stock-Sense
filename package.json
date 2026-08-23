@@ -19,7 +19,8 @@
     "export": "next export || echo 'Export included in build with Next.js 13+'",
     "audit:routes": "node scripts/generate-route-ui-audit.mjs",
     "audit:design:classify": "node scripts/design-audit/classify-routes-design.mjs",
-    "audit:design": "npm run audit:routes && npm run audit:design:classify"
+    "audit:design": "npm run audit:routes && npm run audit:design:classify",
+    "audit:design:capture": "node scripts/design-audit/capture-route-screenshots.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.1.2",
@@ -75,6 +76,7 @@
     "eslint": "^9.39.1",
     "eslint-config-next": "^16.2.1",
     "gh-pages": "^6.3.0",
+    "playwright": "^1.49.1",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.2.2"
