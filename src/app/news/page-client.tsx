@@ -4,6 +4,13 @@ import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import * as stockApi from '@/api/api';
 import { logger } from '@/lib/logger';
+import {
+  fieldClass,
+  panelShellClass,
+  primaryButtonClass,
+  sectionEyebrowClass,
+  sectionTitleClass,
+} from '@/styles/design-tokens';
 
 // Dynamically import components with SSR disabled for those with client-side data fetching
 const MarketNews = dynamic(() => import('@/components/News/MarketNews'), { ssr: false });
@@ -184,114 +191,89 @@ export default function NewsPageClient() {
 
 
   return (
-    <div className="min-h-screen">
-      {/* Grid overlay for entire page */}
-      <div className="fixed inset-0 bg-grid-white/[0.02] bg-[length:50px_50px] pointer-events-none z-0"></div>
-      
-      <div className="container mx-auto px-4 py-6 relative z-10">
-      <div className="flex flex-col space-y-2 mb-6">
-          <h1 className="text-3xl font-bold text-white">Market News</h1>
-          <p className="text-gray-300">
-          Stay updated with the latest market news, sector updates, and financial insights.
-        </p>
-        <div>
+    <div className="relative min-h-screen text-slate-950 dark:text-white">
+      <div className="mx-auto w-full max-w-[1400px] space-y-6 px-4 py-6 sm:px-6 sm:py-8">
+        <header>
+          <p className={sectionEyebrowClass}>Markets</p>
+          <h1 className={`mt-2 ${sectionTitleClass}`}>Market News</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-400">
+            Stay updated with the latest market news, sector updates, and financial insights.
+          </p>
           <button
             type="button"
             onClick={() => void handleSyncNews()}
             disabled={syncing}
-            className="mt-2 px-3 py-1.5 rounded-md text-xs bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white"
+            className={`${primaryButtonClass} mt-4 disabled:opacity-60`}
           >
-            {syncing ? 'Syncing News...' : 'Trigger News Sync'}
+            {syncing ? 'Syncing News…' : 'Trigger News Sync'}
           </button>
-        </div>
-      </div>
-      
-      {/* News Category Tabs */}
-      <div className="mb-8">
+        </header>
+
         <NewsCategoryTabs />
-      </div>
-      
-      {/* Main content and sidebar layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Main content - 3/4 width on large screens */}
-        <div className="lg:col-span-3 space-y-8">
-          {/* Featured News Section */}
-          <section>
-              <h2 className="text-xl font-bold mb-4 flex items-center text-white">
-                <span className="inline-block w-1.5 h-6 bg-neon-400 rounded-sm mr-2"></span>
-              Featured News
-            </h2>
-            <FeaturedNews newsData={newsData} loading={loading} error={error} />
-          </section>
-          
-          {/* Market News Section */}
-          <section>
-              <h2 className="text-xl font-bold mb-4 flex items-center text-white">
-                <span className="inline-block w-1.5 h-6 bg-neon-400 rounded-sm mr-2"></span>
-              Latest Market Updates
-            </h2>
-            <MarketNews newsData={newsData} loading={loading} error={error} />
-          </section>
-          
-          {/* Sector News Section */}
-          <section>
-              <h2 className="text-xl font-bold mb-4 flex items-center text-white">
-                <span className="inline-block w-1.5 h-6 bg-cyan-500 rounded-sm mr-2"></span>
-              Sector News
-            </h2>
-            <SectorNews newsData={newsData} loading={loading} error={error} />
-          </section>
-        </div>
-        
-        {/* Sidebar - 1/4 width on large screens */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-4 glass">
-            <h3 className="text-lg font-bold mb-3 text-white">Fear & Greed Index</h3>
-            <div className="text-3xl font-bold text-neon-400">
-              {fearGreed.value === null ? '--' : fearGreed.value}
-            </div>
-            <p className="text-sm text-gray-300 mt-1">{fearGreed.label}</p>
-            {fearGreed.updatedAt ? <p className="text-xs text-gray-500 mt-1">Updated: {fearGreed.updatedAt}</p> : null}
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
+          <div className="space-y-8 lg:col-span-3">
+            <section className={`${panelShellClass} p-5 sm:p-6`}>
+              <h2 className="mb-4 text-lg font-semibold tracking-tight text-slate-950 dark:text-white">Featured News</h2>
+              <FeaturedNews newsData={newsData} loading={loading} error={error} />
+            </section>
+
+            <section className={`${panelShellClass} p-5 sm:p-6`}>
+              <h2 className="mb-4 text-lg font-semibold tracking-tight text-slate-950 dark:text-white">Latest Market Updates</h2>
+              <MarketNews newsData={newsData} loading={loading} error={error} />
+            </section>
+
+            <section className={`${panelShellClass} p-5 sm:p-6`}>
+              <h2 className="mb-4 text-lg font-semibold tracking-tight text-slate-950 dark:text-white">Sector News</h2>
+              <SectorNews newsData={newsData} loading={loading} error={error} />
+            </section>
           </div>
 
-          {/* Trending Topics */}
-            <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-4 glass">
-              <h3 className="text-lg font-bold mb-4 text-white">Trending Topics</h3>
-            <TrendingTopics />
-          </div>
-          
-          {/* Market Calendar */}
-            <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-gray-700/50 p-4 glass">
-              <h3 className="text-lg font-bold mb-4 text-white">Market Calendar</h3>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">RBI Policy Meeting</span>
-                <span className="text-xs text-gray-400">Jun 5-7</span>
+          <div className="space-y-6 lg:col-span-1">
+            <div className={`${panelShellClass} p-4`}>
+              <h3 className="mb-3 text-lg font-semibold text-slate-950 dark:text-white">Fear & Greed Index</h3>
+              <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+                {fearGreed.value === null ? '--' : fearGreed.value}
               </div>
-              <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Q1 Results Season</span>
-                <span className="text-xs text-gray-400">Jul 15-Aug 15</span>
-              </div>
-              <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-300">Budget Session</span>
-                <span className="text-xs text-gray-400">Jul 1</span>
+              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{fearGreed.label}</p>
+              {fearGreed.updatedAt ? (
+                <p className="mt-1 text-xs text-slate-500">Updated: {fearGreed.updatedAt}</p>
+              ) : null}
+            </div>
+
+            <div className={`${panelShellClass} p-4`}>
+              <h3 className="mb-4 text-lg font-semibold text-slate-950 dark:text-white">Trending Topics</h3>
+              <TrendingTopics />
+            </div>
+
+            <div className={`${panelShellClass} p-4`}>
+              <h3 className="mb-4 text-lg font-semibold text-slate-950 dark:text-white">Market Calendar</h3>
+              <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
+                <div className="flex items-center justify-between">
+                  <span>RBI Policy Meeting</span>
+                  <span className="text-xs text-slate-500">Jun 5-7</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Q1 Results Season</span>
+                  <span className="text-xs text-slate-500">Jul 15-Aug 15</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Budget Session</span>
+                  <span className="text-xs text-slate-500">Jul 1</span>
+                </div>
               </div>
             </div>
-          </div>
-          
-          {/* Newsletter Signup */}
-            <div className="bg-gray-900/90 backdrop-blur-lg rounded-xl border border-neon-400/20 p-4 glass-premium">
-              <h3 className="text-lg font-bold mb-2 text-white">Daily Market Digest</h3>
-            <p className="text-sm text-gray-300 mb-4">Get the day's top financial stories delivered to your inbox</p>
-            <div className="space-y-2">
-              <input 
-                type="email" 
-                placeholder="Your email address" 
-                  className="w-full px-3 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-sm focus:ring-1 focus:ring-neon-400 focus:border-neon-400"
-              />
-                <button className="w-full bg-neon-400 hover:bg-neon-300 text-black py-2 rounded-lg text-sm transition-colors hover:shadow-neon-sm">
-                Subscribe
-              </button>
+
+            <div className={`${panelShellClass} p-4`}>
+              <h3 className="mb-2 text-lg font-semibold text-slate-950 dark:text-white">Daily Market Digest</h3>
+              <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
+                Get the day&apos;s top financial stories delivered to your inbox
+              </p>
+              <div className="space-y-2">
+                <input type="email" placeholder="Your email address" className={`${fieldClass} w-full`} />
+                <button type="button" className={`${primaryButtonClass} w-full`}>
+                  Subscribe
+                </button>
               </div>
             </div>
           </div>

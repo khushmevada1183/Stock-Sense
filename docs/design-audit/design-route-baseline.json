@@ -1,15 +1,15 @@
 {
-  "generatedAt": "2026-08-23T10:22:40.154Z",
+  "generatedAt": "2026-08-23T10:23:36.229Z",
   "benchmark": "src/components/portfolio/PortfolioDashboard.tsx",
   "designBrief": "docs/new_design.md",
   "summary": {
-    "implemented": 18,
-    "partial": 12,
+    "implemented": 25,
+    "partial": 6,
     "legacy": 17,
-    "notStarted": 14,
+    "notStarted": 13,
     "skipVisual": 3,
     "total": 64,
-    "remaining": 43
+    "remaining": 36
   },
   "routes": [
     {
@@ -259,9 +259,10 @@
     {
       "route": "/news",
       "capturePath": "/news",
-      "status": "not-started",
-      "score": 45,
+      "status": "implemented",
+      "score": 85,
       "signals": [
+        "panel-shell",
         "news-shell",
         "neon-accent"
       ],
@@ -511,9 +512,10 @@
     {
       "route": "/news",
       "capturePath": "/news",
-      "status": "partial",
-      "score": 58,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "panel-shell",
         "news-shell"
       ],
       "file": "src/components/News/NewsCategoryTabs.tsx",
@@ -522,9 +524,10 @@
     {
       "route": "/news/markets",
       "capturePath": "/news/markets",
-      "status": "partial",
-      "score": 58,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "panel-shell",
         "news-shell"
       ],
       "file": "src/components/News/NewsCategoryTabs.tsx",
@@ -533,9 +536,10 @@
     {
       "route": "/news/economy",
       "capturePath": "/news/economy",
-      "status": "partial",
-      "score": 58,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "panel-shell",
         "news-shell"
       ],
       "file": "src/components/News/NewsCategoryTabs.tsx",
@@ -544,9 +548,10 @@
     {
       "route": "/news/companies",
       "capturePath": "/news/companies",
-      "status": "partial",
-      "score": 58,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "panel-shell",
         "news-shell"
       ],
       "file": "src/components/News/NewsCategoryTabs.tsx",
@@ -555,9 +560,10 @@
     {
       "route": "/news/trending",
       "capturePath": "/news/trending",
-      "status": "partial",
-      "score": 58,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "panel-shell",
         "news-shell"
       ],
       "file": "src/components/News/NewsCategoryTabs.tsx",
@@ -566,9 +572,10 @@
     {
       "route": "/news/alerts",
       "capturePath": "/news/alerts",
-      "status": "partial",
-      "score": 58,
+      "status": "implemented",
+      "score": 100,
       "signals": [
+        "panel-shell",
         "news-shell"
       ],
       "file": "src/components/News/NewsCategoryTabs.tsx",

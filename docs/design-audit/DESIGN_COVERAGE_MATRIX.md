@@ -1,6 +1,6 @@
 # Design Coverage Matrix
 
-> Generated: 2026-08-23T10:22:40.629Z
+> Generated: 2026-08-23T10:23:36.667Z
 > Benchmark: `src/components/portfolio/PortfolioDashboard.tsx`
 > Brief: `docs/new_design.md`
 
@@ -8,11 +8,11 @@
 
 | Status | Count | Meaning |
 | --- | ---: | --- |
-| implemented (completed) | 18 | Matches portfolio `panelShellClass` language |
-| partial (in progress) | 12 | Some new patterns, inconsistent surfaces |
+| implemented (completed) | 25 | Matches portfolio `panelShellClass` language |
+| partial (in progress) | 6 | Some new patterns, inconsistent surfaces |
 | legacy | 17 | `glass-card`, `PageBackground`, or monolithic old UI |
-| not-started | 14 | No design tokens detected yet |
-| **remaining** | **43** | legacy + partial + not-started |
+| not-started | 13 | No design tokens detected yet |
+| **remaining** | **36** | legacy + partial + not-started |
 | skip-visual | 3 | Redirects or non-UI routes |
 
 ## Route Status (sorted by priority)
@@ -36,17 +36,11 @@
 | `/stocks/RELIANCE?tab=sentiment` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-sentiment.png |
 | `/stocks/RELIANCE?tab=technical` | legacy | 30 | glass-card, stock-details-page | docs\design-audit\screenshots\light\stocks-RELIANCE-tab-technical.png |
 | `/terms` | legacy | 5 | PageBackground, neon-accent | docs\design-audit\screenshots\light\terms.png |
-| `/news` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news.png |
 | `/news/alerts` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-alerts.png |
-| `/news/alerts` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news-alerts.png |
 | `/news/companies` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-companies.png |
-| `/news/companies` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news-companies.png |
 | `/news/economy` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-economy.png |
-| `/news/economy` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news-economy.png |
 | `/news/markets` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-markets.png |
-| `/news/markets` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news-markets.png |
 | `/news/trending` | partial | 60 | news-shell | docs\design-audit\screenshots\light\news-trending.png |
-| `/news/trending` | partial | 58 | news-shell | docs\design-audit\screenshots\light\news-trending.png |
 | `/stocks/[symbol]` | partial | 75 | panel-shell, neon-accent | docs\design-audit\screenshots\light\stocks-RELIANCE.png |
 | `/_not-found` | not-started | 50 |  | docs\design-audit\screenshots\light\_not-found.png |
 | `/about` | not-started | 50 |  | docs\design-audit\screenshots\light\about.png |
@@ -59,7 +53,6 @@
 | `/auth/verify-email` | not-started | 50 |  | docs\design-audit\screenshots\light\auth-verify-email.png |
 | `/auth/verify-reset-code` | not-started | 50 |  | docs\design-audit\screenshots\light\auth-verify-reset-code.png |
 | `/login` | not-started | 50 |  | docs\design-audit\screenshots\light\login.png |
-| `/news` | not-started | 45 | news-shell, neon-accent | docs\design-audit\screenshots\light\news.png |
 | `/signup` | not-started | 50 |  | docs\design-audit\screenshots\light\signup.png |
 | `/sitemap` | not-started | 50 |  | docs\design-audit\screenshots\light\sitemap.png |
 | `/` | implemented | 100 | panel-shell, premium-type, home-section | docs\design-audit\screenshots\light\home.png |
@@ -68,6 +61,13 @@
 | `/ipo/[ipoId]` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\ipo-sample-ipo.png |
 | `/market` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\market.png |
 | `/market/institutional` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\market-institutional.png |
+| `/news` | implemented | 85 | panel-shell, news-shell, neon-accent | docs\design-audit\screenshots\light\news.png |
+| `/news` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news.png |
+| `/news/alerts` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-alerts.png |
+| `/news/companies` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-companies.png |
+| `/news/economy` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-economy.png |
+| `/news/markets` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-markets.png |
+| `/news/trending` | implemented | 100 | panel-shell, news-shell | docs\design-audit\screenshots\light\news-trending.png |
 | `/notifications` | implemented | 90 | tool-shell | docs\design-audit\screenshots\light\notifications.png |
 | `/portfolio` | implemented | 100 | portfolio-benchmark | docs\design-audit\screenshots\light\portfolio.png |
 | `/settings` | implemented | 90 | panel-shell | docs\design-audit\screenshots\light\settings.png |
@@ -121,17 +121,11 @@ flowchart LR
 - [ ] `/stocks/RELIANCE?tab=sentiment` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
 - [ ] `/stocks/RELIANCE?tab=technical` — **legacy**; file: `src/app/stocks/[symbol]/page.tsx`
 - [ ] `/terms` — **legacy**; file: `src/app/terms/page.tsx`
-- [ ] `/news` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
 - [ ] `/news/alerts` — **partial**; file: `src/app/news/alerts/page.tsx`
-- [ ] `/news/alerts` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
 - [ ] `/news/companies` — **partial**; file: `src/app/news/companies/page.tsx`
-- [ ] `/news/companies` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
 - [ ] `/news/economy` — **partial**; file: `src/app/news/economy/page.tsx`
-- [ ] `/news/economy` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
 - [ ] `/news/markets` — **partial**; file: `src/app/news/markets/page.tsx`
-- [ ] `/news/markets` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
 - [ ] `/news/trending` — **partial**; file: `src/app/news/trending/page.tsx`
-- [ ] `/news/trending` — **partial**; file: `src/components/News/NewsCategoryTabs.tsx`
 - [ ] `/stocks/[symbol]` — **partial**; file: `src/app/stocks/[symbol]/page.tsx`
 - [ ] `/_not-found` — **not-started**; file: `src/app/not-found.tsx`
 - [ ] `/about` — **not-started**; file: `src/app/about/page.tsx`
@@ -144,6 +138,5 @@ flowchart LR
 - [ ] `/auth/verify-email` — **not-started**; file: `src/app/auth/verify-email/page.tsx`
 - [ ] `/auth/verify-reset-code` — **not-started**; file: `src/app/auth/verify-reset-code/page.tsx`
 - [ ] `/login` — **not-started**; file: `src/app/login/page.tsx`
-- [ ] `/news` — **not-started**; file: `src/app/news/page.tsx`
 - [ ] `/signup` — **not-started**; file: `src/app/signup/page.tsx`
 - [ ] `/sitemap` — **not-started**; file: `src/app/sitemap/page.tsx`
