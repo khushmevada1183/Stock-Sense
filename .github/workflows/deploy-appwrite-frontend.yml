@@ -33,6 +33,9 @@ jobs:
             --project-id "stock-sense" \
             --key "${{ secrets.APPWRITE_API_KEY }}"
 
+      - name: Build Production Next.js App
+        run: npm run build
+
       - name: Deploy Site to Appwrite
         run: |
           appwrite sites create-deployment \
