@@ -17,7 +17,15 @@ type UseWebSocketOptions = {
 const FALLBACK_API_URL = 'http://localhost:10000/api/v1';
 
 const resolveSocketBaseUrl = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || FALLBACK_API_URL;
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  let apiUrl = envUrl;
+  if (!apiUrl || !apiUrl.startsWith('http') || apiUrl.includes('localhost')) {
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      apiUrl = 'https://stock-sense-backend-api.appwrite.network/api/v1';
+    } else {
+      apiUrl = FALLBACK_API_URL;
+    }
+  }
   return apiUrl.replace(/\/api\/v1\/?$/, '');
 };
 

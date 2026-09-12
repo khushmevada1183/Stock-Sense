@@ -5,8 +5,18 @@ import {
   saveAuthTokens,
 } from '@/lib/auth';
 
-const FALLBACK_BASE_URL = 'http://localhost:10000/api/v1';
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || FALLBACK_BASE_URL;
+const getBaseUrl = () => {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && envUrl.startsWith('http') && !envUrl.includes('localhost')) {
+    return envUrl;
+  }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return 'https://stock-sense-backend-api.appwrite.network/api/v1';
+  }
+  return envUrl || 'http://localhost:10000/api/v1';
+};
+
+const BASE_URL = getBaseUrl();
 
 type QueryValue = string | number | boolean | null | undefined;
 

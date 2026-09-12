@@ -1,0 +1,41 @@
+name: Deploy Frontend to Appwrite Sites
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/base-setup@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install Appwrite CLI
+        run: npm install -g appwrite-cli || curl -sSL https://appwrite.io/cli/install.sh | bash
+
+      - name: Configure Appwrite CLI Client
+        run: |
+          appwrite client \
+            --endpoint "https://sgp.cloud.appwrite.io/v1" \
+            --project-id "stock-sense" \
+            --key "${{ secrets.APPWRITE_API_KEY }}"
+
+      - name: Deploy Site to Appwrite
+        run: |
+          appwrite sites create-deployment \
+            --site-id "stock-sense-frontend" \
+            --code "." \
+            --activate
