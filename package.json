@@ -8,6 +8,7 @@
     "dev:webpack": "next dev --webpack",
     "build": "next build --webpack",
     "build:gh-pages": "cross-env GITHUB_PAGES=1 next build --webpack",
+    "build:appwrite": "cross-env APPWRITE_EXPORT=1 next build --webpack",
     "build:production": "NODE_ENV=production next build --webpack",
     "start": "next start",
     "lint": "eslint .",
