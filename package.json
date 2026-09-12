@@ -7,7 +7,7 @@
     "dev": "next dev --turbopack",
     "dev:webpack": "next dev --webpack",
     "build": "next build --webpack",
-    "build:gh-pages": "GITHUB_PAGES=1 next build --webpack",
+    "build:gh-pages": "cross-env GITHUB_PAGES=1 next build --webpack",
     "build:production": "NODE_ENV=production next build --webpack",
     "start": "next start",
     "lint": "eslint .",

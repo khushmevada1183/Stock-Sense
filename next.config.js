@@ -35,6 +35,7 @@ Object.entries(envFromDotEnv).forEach(([key, value]) => {
 
 /** @type {import('next').NextConfig} */
 const isGithubPagesBuild = process.env.GITHUB_PAGES === '1';
+const isAppwriteExport = process.env.APPWRITE_EXPORT === '1';
 const githubPagesBasePath = '/stock-sense-frontend';
 
 const nextConfig = {
@@ -42,6 +43,10 @@ const nextConfig = {
     ? {
         basePath: githubPagesBasePath,
         assetPrefix: githubPagesBasePath,
+        output: 'export',
+      }
+    : isAppwriteExport
+    ? {
         output: 'export',
       }
     : {}),
